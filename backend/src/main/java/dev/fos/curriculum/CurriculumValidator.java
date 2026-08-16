@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CurriculumValidator {
+
+    /** Id de vídeo do YouTube: 11 caracteres de [A-Za-z0-9_-]. */
+    private static final Pattern YOUTUBE_ID = Pattern.compile("[\\w-]{11}");
 
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
@@ -85,11 +89,7 @@ public class CurriculumValidator {
                 }
 
                 if (node.video() != null && node.video().youtubeId() != null) {
-                    // Crédito visível ao canal é parte da política de uso de vídeo (D7),
-                    // não um campo opcional de metadado.
-                    requireText(
-                            node.video().channel(),
-                            where + ": vídeo catalogado sem canal creditado (política D7)");
+                    validateVideo(node.video(), where);
                 }
 
                 validateQuiz(node, where);
@@ -97,6 +97,26 @@ public class CurriculumValidator {
         }
         if (byCode.isEmpty()) {
             throw new CurriculumException("Currículo vazio");
+        }
+    }
+
+    /**
+     * Um vídeo catalogado precisa ser <em>utilizável</em>: id no formato que o player aceita e
+     * canal creditado.
+     *
+     * <p>O id é conferido aqui porque um id inválido não quebra nada na ingestão — ele vira um
+     * iframe vazio na tela do nó, semanas depois. Crédito ao canal é política de uso de vídeo (D7),
+     * não metadado opcional.
+     */
+    private void validateVideo(CurriculumSource.VideoSpec video, String where) {
+        if (!YOUTUBE_ID.matcher(video.youtubeId()).matches()) {
+            throw new CurriculumException(
+                    where + ": id de vídeo fora do formato do YouTube '" + video.youtubeId() + "'");
+        }
+        requireText(video.channel(), where + ": vídeo catalogado sem canal creditado (política D7)");
+        if (video.startSeconds() != null && video.startSeconds() < 0) {
+            throw new CurriculumException(
+                    where + ": startSeconds negativo (" + video.startSeconds() + ")");
         }
     }
 

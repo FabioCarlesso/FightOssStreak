@@ -97,10 +97,28 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó ainda sem vídeo catalogado é servido sem quebrar")
     void uncataloguedVideoIsNormalState() throws Exception {
-        mockMvc.perform(get("/api/nodes/M0.1"))
+        // M2 em diante ainda não passou por curadoria — o nó tem que abrir mesmo assim.
+        mockMvc.perform(get("/api/nodes/M2.1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.video.catalogued").value(false))
                 .andExpect(jsonPath("$.video.youtubeId").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("nó com vídeo catalogado traz embed sem cookie, link do watch e crédito ao canal")
+    void cataloguedVideoIsServedWithCredit() throws Exception {
+        JsonNode video = getJson("/api/nodes/M0.1").get("video");
+
+        assertThat(video.get("catalogued").asBoolean()).isTrue();
+        assertThat(video.get("youtubeId").asText()).matches("[\\w-]{11}");
+        assertThat(video.get("channel").asText())
+                .as("crédito ao canal é requisito da política D7, não enfeite")
+                .isNotBlank();
+        assertThat(video.get("embedUrl").asText())
+                .startsWith("https://www.youtube-nocookie.com/embed/")
+                .endsWith(video.get("youtubeId").asText());
+        assertThat(video.get("watchUrl").asText())
+                .isEqualTo("https://www.youtube.com/watch?v=" + video.get("youtubeId").asText());
     }
 
     @Test

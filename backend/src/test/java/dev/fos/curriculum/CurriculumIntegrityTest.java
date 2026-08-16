@@ -93,8 +93,7 @@ class CurriculumIntegrityTest {
         Map<String, CurriculumSource.NodeSpec> byCode = byCode();
 
         for (CurriculumSource.NodeSpec node : byCode.values()) {
-            boolean curated = node.code().startsWith("M0.") || node.code().startsWith("M1.");
-            if (curated) {
+            if (isCurated(node)) {
                 assertThat(node.quiz())
                         .as("quiz de %s", node.code())
                         .hasSizeBetween(3, 5);
@@ -103,10 +102,52 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("nenhum vídeo catalogado ainda — curadoria é etapa humana pendente")
-    void noVideosCataloguedYet() {
+    @DisplayName("M0 e M1 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
+    void videoCoverageMatchesCuratedScope() {
+        for (CurriculumSource.NodeSpec node : byCode().values()) {
+            if (isCurated(node)) {
+                assertThat(node.video())
+                        .as("vídeo de %s", node.code())
+                        .isNotNull();
+            } else {
+                assertThat(node.video())
+                        .as("vídeo de %s — M2–M8 entram em issues próprias", node.code())
+                        .isNull();
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("todo vídeo catalogado tem id utilizável, título e crédito de canal (D7)")
+    void cataloguedVideosAreUsableAndCredited() {
         assertThat(byCode().values())
-                .allSatisfy(node -> assertThat(node.video()).isNull());
+                .filteredOn(node -> node.video() != null)
+                .isNotEmpty()
+                .allSatisfy(node -> {
+                    CurriculumSource.VideoSpec video = node.video();
+                    assertThat(video.youtubeId())
+                            .as("id de vídeo de %s", node.code())
+                            .matches("[\\w-]{11}");
+                    assertThat(video.title()).as("título do vídeo de %s", node.code()).isNotBlank();
+                    assertThat(video.channel()).as("canal do vídeo de %s", node.code()).isNotBlank();
+                    if (video.startSeconds() != null) {
+                        assertThat(video.startSeconds())
+                                .as("startSeconds de %s", node.code())
+                                .isNotNegative();
+                    }
+                });
+    }
+
+    @Test
+    @DisplayName("nenhum vídeo é reaproveitado em dois nós — cada nó tem sua própria referência")
+    void cataloguedVideosAreNotReused() {
+        List<String> ids = byCode().values().stream()
+                .map(CurriculumSource.NodeSpec::video)
+                .filter(java.util.Objects::nonNull)
+                .map(CurriculumSource.VideoSpec::youtubeId)
+                .toList();
+
+        assertThat(ids).doesNotHaveDuplicates();
     }
 
     @Test
@@ -172,16 +213,46 @@ class CurriculumIntegrityTest {
     @Test
     @DisplayName("o validador exige crédito ao canal em vídeo catalogado (política D7)")
     void rejectsVideoWithoutChannelCredit() {
-        CurriculumSource.Module broken = new CurriculumSource.Module(
-                "MX", "Quebrado", "resumo",
-                List.of(new CurriculumSource.NodeSpec(
-                        "MX.1", "t", "BRANCA", 1, "ALL", List.of(), "conceito",
-                        new CurriculumSource.VideoSpec("abc123", "titulo", null, null),
-                        List.of())));
+        CurriculumSource.Module broken =
+                moduleWithVideo(new CurriculumSource.VideoSpec("REFdmhRCsSQ", "titulo", null, null));
 
         assertThatThrownBy(() -> validator.validate(List.of(broken)))
                 .isInstanceOf(CurriculumException.class)
                 .hasMessageContaining("canal creditado");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita id de vídeo fora do formato do YouTube")
+    void rejectsMalformedYoutubeId() {
+        CurriculumSource.Module broken = moduleWithVideo(
+                new CurriculumSource.VideoSpec("abc123", "titulo", "canal", null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora do formato do YouTube");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita startSeconds negativo")
+    void rejectsNegativeStartSeconds() {
+        CurriculumSource.Module broken = moduleWithVideo(
+                new CurriculumSource.VideoSpec("REFdmhRCsSQ", "titulo", "canal", -1));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("startSeconds negativo");
+    }
+
+    private CurriculumSource.Module moduleWithVideo(CurriculumSource.VideoSpec video) {
+        return new CurriculumSource.Module(
+                "MX", "Quebrado", "resumo",
+                List.of(new CurriculumSource.NodeSpec(
+                        "MX.1", "t", "BRANCA", 1, "ALL", List.of(), "conceito", video, List.of())));
+    }
+
+    /** M0 e M1 são o escopo curado do MVP: quiz escrito e vídeo catalogado. */
+    private boolean isCurated(CurriculumSource.NodeSpec node) {
+        return node.code().startsWith("M0.") || node.code().startsWith("M1.");
     }
 
     private CurriculumSource.NodeSpec node(String code, List<String> prereqs) {

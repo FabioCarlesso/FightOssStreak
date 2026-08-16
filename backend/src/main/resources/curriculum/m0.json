@@ -11,7 +11,11 @@
       "unlockRule": "ALL",
       "prereqs": [],
       "concept": "Etiqueta em jiu-jitsu não é formalidade decorativa: é o protocolo de segurança de um ambiente onde pessoas aplicam torções e estrangulamentos umas nas outras. Higiene, pontualidade, avisar lesão e pedir permissão para entrar ou sair do tatame existem porque o custo de ignorá-los recai sobre o corpo de outra pessoa. A hierarquia de faixas cumpre a mesma função: sinaliza quem tem controle suficiente para regular a intensidade — por isso quem tem mais graduação normalmente puxa a intensidade para baixo, não para cima.",
-      "video": null,
+      "video": {
+        "youtubeId": "REFdmhRCsSQ",
+        "title": "15 Unwritten Rules Every Jiu Jitsu Beginner Needs To Know",
+        "channel": "Keenan Cornelius"
+      },
       "quiz": [
         {
           "prompt": "Qual é a razão de fundo para a maior parte das regras de etiqueta de tatame?",
@@ -53,7 +57,11 @@
       "unlockRule": "ALL",
       "prereqs": [],
       "concept": "Você vai cair — em pé, raspado ou derrubado — e a queda é a habilidade que decide se isso custa nada ou custa uma cirurgia. O princípio é distribuir o impacto por uma área grande em vez de concentrá-lo em uma articulação: bater a superfície do braço no tatame em vez de amortecer com a mão, manter o queixo no peito para a cabeça não bater, e soltar o ar em vez de travar a respiração. Cair bem é o que permite treinar por décadas.",
-      "video": null,
+      "video": {
+        "youtubeId": "aauMRslfCyo",
+        "title": "Jiu-Jitsu Basics | How & Why to Breakfall",
+        "channel": "Knight Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual é o princípio central de uma queda segura?",
@@ -95,7 +103,11 @@
       "unlockRule": "ALL",
       "prereqs": [],
       "concept": "O tap é o mecanismo que torna possível treinar finalizações de verdade sem se machucar: ele converte uma lesão em uma informação. O ponto é tocar *antes* do dano, não no limite — em torção articular a dor avisa com antecedência, mas em estrangulamento o apagão pode chegar sem aviso claro. Tocar cedo não é fraqueza; é o que permite treinar de novo amanhã. Do outro lado, reconhecer o tap do parceiro e soltar imediatamente é obrigação absoluta, incluindo tap verbal ou batida no tatame quando os braços estão presos.",
-      "video": null,
+      "video": {
+        "youtubeId": "sBfx-lqdPgE",
+        "title": "Brazilian Jiu Jitsu Basics: What is Tapping Out?",
+        "channel": "Ritchie Yip"
+      },
       "quiz": [
         {
           "prompt": "Qual é o momento certo de tocar em uma chave de articulação?",
@@ -147,7 +159,11 @@
       "unlockRule": "ALL",
       "prereqs": [],
       "concept": "Postura é o que decide se a força do oponente encontra estrutura óssea ou músculo cansado. As três bases resolvem problemas diferentes: em pé, joelhos flexionados e centro de gravidade baixo evitam a queda; de quatro, cotovelos colados e coluna neutra impedem que te virem; sentado na guarda, a coluna ereta com quadril móvel mantém a distância sob seu controle. O erro que atravessa as três é o mesmo: braço esticado longe do corpo vira alavanca para o oponente.",
-      "video": null,
+      "video": {
+        "youtubeId": "KuZtR1mogvY",
+        "title": "How Base, Posture and Connection Work in BJJ",
+        "channel": "SBG PDX & Vancouver BJJ and MMA Videos"
+      },
       "quiz": [
         {
           "prompt": "O que uma boa postura resolve, em uma frase?",
@@ -189,7 +205,11 @@
       "unlockRule": "ALL",
       "prereqs": [],
       "concept": "No gi, a pegada é o que substitui a força: ela conecta você ao oponente e transforma movimento de quadril em controle do corpo dele. Por isso pegada é pré-requisito conceitual de quase tudo — raspagem, passagem e estrangulamento começam com uma pegada específica, não com o movimento. Duas ideias importam mais que a lista de pegadas: quem controla a manga controla o braço e, com ele, a postura; e uma pegada só vale se o cotovelo estiver perto do seu corpo, senão o custo de mantê-la é maior para você do que para ele.",
-      "video": null,
+      "video": {
+        "youtubeId": "MR4nJQ6qhuU",
+        "title": "BJJ Lesson 3: Understanding Gi Grips - An Introduction To Brazilian Jiu Jitsu",
+        "channel": "RVV BJJ"
+      },
       "quiz": [
         {
           "prompt": "Por que a pegada é considerada pré-requisito conceitual de quase tudo no gi?",

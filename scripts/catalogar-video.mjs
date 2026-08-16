@@ -192,7 +192,13 @@ async function main() {
     );
   }
 
-  if (!oembed.author_name) {
+  // O oEmbed às vezes devolve nome de canal com espaço nas pontas, e o crédito aparece na tela
+  // colado a outros textos ("— canal X · assistir"). Aparar não é digitar: o valor continua vindo
+  // da fonte.
+  const title = oembed.title?.trim();
+  const channel = oembed.author_name?.trim();
+
+  if (!channel) {
     throw new Error(
       `O oEmbed não devolveu o canal de ${videoId}. Sem crédito ao canal não dá para catalogar (D7).`,
     );
@@ -200,8 +206,8 @@ async function main() {
 
   const video = {
     youtubeId: videoId,
-    title: oembed.title,
-    channel: oembed.author_name,
+    title,
+    channel,
     ...(startSeconds !== null ? { startSeconds } : {}),
   };
 
@@ -216,8 +222,8 @@ async function main() {
   }
 
   console.log(`nó      : ${nodeCode} — ${node.title}`);
-  console.log(`vídeo   : ${oembed.title}`);
-  console.log(`canal   : ${oembed.author_name}`);
+  console.log(`vídeo   : ${title}`);
+  console.log(`canal   : ${channel}`);
   console.log(`embed   : ${embed.known ? (embed.embeddable ? 'permitido' : 'BLOQUEADO') : 'não determinado'}`);
 
   if (dryRun) {

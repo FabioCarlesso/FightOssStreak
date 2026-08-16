@@ -12,7 +12,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 |---|---|
 | Currículo (46 nós, 9 módulos) | Transcrito como dado versionado em `backend/src/main/resources/curriculum/` |
 | Quiz conceitual | Escrito para **M0 e M1** (11 nós, 35 perguntas). Os outros 35 nós estão pendentes de curadoria |
-| Vídeos do YouTube | **Nenhum catalogado ainda** — é curadoria humana, ver [instruções](backend/src/main/resources/curriculum/README.md) |
+| Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Backend | Spring Boot + Flyway, API documentada em OpenAPI |
 | Web | React + Vite |
 | Mobile | Não iniciado (fase posterior, D4) |
@@ -68,10 +68,11 @@ Detalhes em [`docs/03-estrutura-projeto.md`](docs/03-estrutura-projeto.md) e [`C
 
 ## Próximos passos
 
-1. **Catalogar vídeos do YouTube** para os nós de M0 e M1 — é o gargalo real do projeto.
-   Critérios por nó em [`docs/08-curadoria-videos.md`](docs/08-curadoria-videos.md);
-   use `node scripts/catalogar-video.mjs <NÓ> <url>`, que verifica e credita o canal automaticamente
-2. Escrever o quiz conceitual dos módulos M2–M8
+1. **Assistir aos 11 vídeos de M0 e M1 e confirmar o encaixe** — a única etapa que não se
+   automatiza (D21). Critérios por nó em [`docs/08-curadoria-videos.md`](docs/08-curadoria-videos.md);
+   para trocar um vídeo, `node scripts/catalogar-video.mjs <NÓ> <url>`, que verifica e credita o
+   canal automaticamente
+2. Catalogar os vídeos de M2–M8 e escrever o quiz conceitual desses módulos
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/05-mvp-web-plano.md)
 4. Só então considerar mobile (D4)
 

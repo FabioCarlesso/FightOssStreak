@@ -34,9 +34,10 @@ como "pré-requisito: M3.2 **ou** M3.3 (qualquer passagem)" — semântica de OU
 
 ### `video`
 
-Todos os nós estão com `video: null` — **nenhum vídeo foi catalogado ainda**. Catalogar é a etapa 3
-de `docs/05-mvp-web-plano.md` e é trabalho de curadoria humana: exige assistir e escolher.
-Inventar IDs de vídeo produziria referências quebradas ou, pior, tecnicamente erradas.
+**M0 e M1 estão catalogados** (11 nós); de M2 a M8 os nós seguem com `video: null`, que é estado
+normal — a curadoria é incremental. Catalogar é a etapa 3 de `docs/05-mvp-web-plano.md` e é
+trabalho de curadoria humana: exige assistir e escolher. Inventar IDs de vídeo produziria
+referências quebradas ou, pior, tecnicamente erradas.
 
 Para catalogar, **use o script em vez de editar à mão** — ele busca título e canal no próprio
 YouTube e recusa vídeo inexistente, privado ou com incorporação desativada:
