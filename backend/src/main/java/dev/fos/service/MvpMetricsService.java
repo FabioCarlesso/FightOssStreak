@@ -13,10 +13,8 @@ import dev.fos.web.dto.MetricsDtos;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,15 +98,18 @@ public class MvpMetricsService {
      *
      * <p>Em aberto é o que ainda está vencido na agenda: como atender uma revisão empurra
      * {@code next_review_on} para frente, o que continua no passado é exatamente o que foi ignorado.
-     * A conta se limita ao que venceu dentro da janela — revisão vencida antes dela foi cobrada em
-     * outro período e contaria duas vezes.
+     *
+     * <p>As duas pontas recortam pela mesma régua — só entra o que <em>venceu</em> dentro da janela.
+     * Sem isso a conta fica assimétrica e mente para cima: limpar parte de um backlog antigo somaria
+     * ao numerador, enquanto o resto do backlog, vencido antes da janela, ficaria de fora do
+     * denominador — e um dia em que se atendeu 1 de 5 atrasadas apareceria como 100%.
      */
     private MetricsDtos.SrsAdherence srsAdherence(
             Long userId, List<DrillLog> drills, LocalDate windowStart, LocalDate today) {
 
         Set<String> attended = new HashSet<>();
         for (DrillLog drill : drills) {
-            if (drill.isWasDue() && !drill.getDrilledOn().isAfter(today)) {
+            if (drill.isWasDue() && !drill.getDrilledOn().isAfter(today) && dueInWindow(drill, windowStart)) {
                 attended.add(drill.getNodeId() + "@" + drill.getDrilledOn());
             }
         }
@@ -122,6 +123,11 @@ public class MvpMetricsService {
                 attended.size(), attended.size() + outstanding, TARGET_SRS_ADHERENCE_PERCENT);
     }
 
+    /** A revisão que este drill atendeu venceu dentro da janela? */
+    private boolean dueInWindow(DrillLog drill, LocalDate windowStart) {
+        return drill.getDueOn() != null && !drill.getDueOn().isBefore(windowStart);
+    }
+
     /** Nós concluídos na janela — o currículo acompanha o que aparece na aula? */
     private long nodesCompleted(Long userId, LocalDate windowStart, LocalDate today) {
         return progressRepository.findByIdUserId(userId).stream()
@@ -131,18 +137,36 @@ public class MvpMetricsService {
                 .count();
     }
 
-    /** Nós com mais de uma tentativa de quiz — sinal de retenção, não de streak. */
+    /**
+     * Nós cujo quiz foi refeito depois de já ter sido aprovado — sinal de retenção, não de streak.
+     *
+     * <p>"Mais de uma tentativa" não serve como definição: reprovar e passar na segunda é o caminho
+     * normal para concluir um nó, e contá-lo acenderia a meta no primeiro erro de quem só está
+     * avançando. O que docs/05 chama de espontâneo é voltar a um quiz que já estava resolvido — daí
+     * só contar tentativa posterior à primeira aprovação.
+     *
+     * <p>O histórico é lido inteiro, e não só a janela, porque a aprovação que torna a tentativa uma
+     * repetição costuma ser bem anterior a ela; a janela recorta a repetição, não a aprovação.
+     */
     private long quizRetakes(Long userId, LocalDate windowStart, LocalDate today) {
-        List<QuizAttempt> attempts =
-                quizAttemptRepository.findByUserIdAndAttemptedOnGreaterThanEqual(userId, windowStart);
+        List<QuizAttempt> attempts = quizAttemptRepository.findByUserIdOrderByAttemptedOnAscIdAsc(userId);
 
-        Map<Long, Integer> byNode = new HashMap<>();
+        Set<Long> passedNodes = new HashSet<>();
+        Set<Long> retaken = new HashSet<>();
+
         for (QuizAttempt attempt : attempts) {
-            if (!attempt.getAttemptedOn().isAfter(today)) {
-                byNode.merge(attempt.getNodeId(), 1, Integer::sum);
+            if (attempt.getAttemptedOn().isAfter(today)) {
+                continue;
+            }
+            boolean afterFirstPass = passedNodes.contains(attempt.getNodeId());
+            if (afterFirstPass && !attempt.getAttemptedOn().isBefore(windowStart)) {
+                retaken.add(attempt.getNodeId());
+            }
+            if (attempt.isPassed()) {
+                passedNodes.add(attempt.getNodeId());
             }
         }
-        return byNode.values().stream().filter(count -> count > 1).count();
+        return retaken.size();
     }
 
     /** {@code completed_at} é instante; a janela é em dias, no mesmo fuso que define "hoje". */

@@ -11,7 +11,7 @@ import dev.fos.repo.QuizQuestionRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserProgressRepository;
 import dev.fos.web.dto.ActivityDtos;
-import java.time.Instant;
+import java.time.Clock;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +32,7 @@ public class DrillService {
     private final CurriculumQueryService curriculumQueryService;
     private final SrsScheduler srsScheduler;
     private final StreakQueryService streakQueryService;
+    private final Clock clock;
 
     public DrillService(
             DrillLogRepository drillLogRepository,
@@ -40,7 +41,8 @@ public class DrillService {
             QuizQuestionRepository quizQuestionRepository,
             CurriculumQueryService curriculumQueryService,
             SrsScheduler srsScheduler,
-            StreakQueryService streakQueryService) {
+            StreakQueryService streakQueryService,
+            Clock clock) {
         this.drillLogRepository = drillLogRepository;
         this.srsRepository = srsRepository;
         this.progressRepository = progressRepository;
@@ -48,6 +50,7 @@ public class DrillService {
         this.curriculumQueryService = curriculumQueryService;
         this.srsScheduler = srsScheduler;
         this.streakQueryService = streakQueryService;
+        this.clock = clock;
     }
 
     @Transactional
@@ -77,7 +80,7 @@ public class DrillService {
                 request.note(),
                 wasDue,
                 dueOn,
-                Instant.now()));
+                clock.instant()));
 
         SrsReview review = reschedule(scheduled, key, request, drilledOn);
         ProgressStatus status = advanceProgress(userId, node, key);
@@ -125,17 +128,17 @@ public class DrillService {
     private ProgressStatus advanceProgress(Long userId, Node node, UserNodeKey key) {
         UserProgress progress = progressRepository
                 .findById(key)
-                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, Instant.now()));
+                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, clock.instant()));
 
         boolean hasQuiz = !quizQuestionRepository.findByNodeIdOrderByOrderIndexAsc(node.getId()).isEmpty();
 
         if (progress.getStatus() != ProgressStatus.COMPLETED) {
             progress.setStatus(hasQuiz ? ProgressStatus.IN_PROGRESS : ProgressStatus.COMPLETED);
             if (!hasQuiz && progress.getCompletedAt() == null) {
-                progress.setCompletedAt(Instant.now());
+                progress.setCompletedAt(clock.instant());
             }
         }
-        progress.setUpdatedAt(Instant.now());
+        progress.setUpdatedAt(clock.instant());
         progressRepository.save(progress);
         return progress.getStatus();
     }

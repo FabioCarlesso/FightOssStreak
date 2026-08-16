@@ -158,6 +158,24 @@ class MvpMetricsServiceTest {
     }
 
     @Test
+    @DisplayName("atender revisão vencida antes da janela não infla a aderência da janela")
+    void attendingOldBacklogDoesNotInflateAdherence() {
+        // Backlog de 45 dias: uma atrasada foi limpa hoje, quatro continuam largadas. Se só o
+        // numerador enxergasse o passado remoto, isto apareceria como 100% de aderência.
+        givenDrills(drill(10L, TODAY, true, WINDOW_START.minusDays(15)));
+        givenOverdueReviews(
+                review(11L, WINDOW_START.minusDays(15)),
+                review(12L, WINDOW_START.minusDays(15)),
+                review(13L, WINDOW_START.minusDays(15)),
+                review(14L, WINDOW_START.minusDays(15)));
+
+        MetricsDtos.SrsAdherence adherence = metrics().srsAdherence();
+        assertThat(adherence.attended()).isZero();
+        assertThat(adherence.scheduled()).isZero();
+        assertThat(adherence.percent()).isNull();
+    }
+
+    @Test
     @DisplayName("sem nada agendado na janela, a aderência é ausente em vez de zero")
     void noScheduledReviewsMeansNoPercent() {
         MetricsDtos.SrsAdherence adherence = metrics().srsAdherence();
@@ -178,16 +196,52 @@ class MvpMetricsServiceTest {
     }
 
     @Test
-    @DisplayName("nó com mais de uma tentativa de quiz conta como refeito")
-    void quizRetakeNeedsMoreThanOneAttempt() {
+    @DisplayName("voltar a um quiz já aprovado conta como refeito")
+    void quizRetakeIsAnAttemptAfterPassing() {
         givenQuizAttempts(
-                attempt(10L, TODAY.minusDays(5)),
-                attempt(10L, TODAY),
-                attempt(11L, TODAY));
+                passed(10L, TODAY.minusDays(5)),
+                passed(10L, TODAY),
+                passed(11L, TODAY));
 
         MetricsDtos.Counted retakes = metrics().quizRetakes();
         assertThat(retakes.value()).isEqualTo(1);
         assertThat(retakes.met()).isTrue();
+    }
+
+    @Test
+    @DisplayName("errar e passar na segunda tentativa não é quiz refeito")
+    void failingThenPassingIsNotARetake() {
+        // Caminho normal para concluir um nó. Contar isto acenderia a meta no primeiro erro de
+        // quem está apenas avançando no currículo — o oposto do sinal que docs/05 procura.
+        givenQuizAttempts(failed(10L, TODAY), passed(10L, TODAY));
+
+        assertThat(metrics().quizRetakes().value()).isZero();
+    }
+
+    @Test
+    @DisplayName("errar de novo um quiz já aprovado conta como refeito")
+    void failingAfterPassingIsARetake() {
+        givenQuizAttempts(passed(10L, TODAY.minusDays(3)), failed(10L, TODAY));
+
+        assertThat(metrics().quizRetakes().value()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("aprovação anterior à janela ainda torna a repetição de hoje um refazer")
+    void passOutsideWindowStillCountsTodaysRetake() {
+        givenQuizAttempts(passed(10L, WINDOW_START.minusDays(10)), passed(10L, TODAY));
+
+        assertThat(metrics().quizRetakes().value()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("a repetição precisa cair dentro da janela")
+    void retakeOutsideWindowIsNotCounted() {
+        givenQuizAttempts(
+                passed(10L, WINDOW_START.minusDays(10)),
+                passed(10L, WINDOW_START.minusDays(5)));
+
+        assertThat(metrics().quizRetakes().value()).isZero();
     }
 
     @Test
@@ -213,7 +267,7 @@ class MvpMetricsServiceTest {
     }
 
     private void givenQuizAttempts(QuizAttempt... attempts) {
-        when(quizAttemptRepository.findByUserIdAndAttemptedOnGreaterThanEqual(eq(USER), any()))
+        when(quizAttemptRepository.findByUserIdOrderByAttemptedOnAscIdAsc(USER))
                 .thenReturn(List.of(attempts));
     }
 
@@ -230,8 +284,12 @@ class MvpMetricsServiceTest {
         return new DrillLog(USER, nodeId, drilledOn, Recall.OK, null, wasDue, dueOn, Instant.now());
     }
 
-    private QuizAttempt attempt(long nodeId, LocalDate attemptedOn) {
+    private QuizAttempt passed(long nodeId, LocalDate attemptedOn) {
         return new QuizAttempt(USER, nodeId, 100, true, attemptedOn, Instant.now());
+    }
+
+    private QuizAttempt failed(long nodeId, LocalDate attemptedOn) {
+        return new QuizAttempt(USER, nodeId, 33, false, attemptedOn, Instant.now());
     }
 
     private SrsReview review(long nodeId, LocalDate nextReviewOn) {

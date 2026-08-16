@@ -305,6 +305,12 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("refazer o quiz de um nó já concluído conta como quiz refeito")
     void metricsCountQuizRetakes() throws Exception {
+        // Errar e passar na segunda é o caminho normal de conclusão, não repetição espontânea.
+        JsonNode node = getJson("/api/nodes/M0.1");
+        mockMvc.perform(post("/api/nodes/M0.1/quiz")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(answerPayload(node, false)))
+                .andExpect(status().isOk());
         completeNode("M0.1");
 
         mockMvc.perform(get("/api/metrics/mvp")).andExpect(jsonPath("$.quizRetakes.value").value(0));
