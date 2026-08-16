@@ -36,6 +36,13 @@
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
+    <!-- /actuator/health: é por ele que a Railway decide se o deploy subiu e o Compose
+         decide se o backend está pronto. Só o endpoint health fica exposto (application.yml). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>

@@ -1,3 +1,9 @@
+# Topologia igual à de produção: o browser fala só com o `web`, e é o nginx que encaminha
+# /api para o backend. Nenhuma chamada sai para :8080 direto — por isso o WebCorsConfig
+# segue restrito a localhost sem nada quebrar.
+#
+# As portas do container são parametrizadas para provar que a imagem não tem porta fixa:
+#   PORT=9090 docker compose up web    # nginx escuta 9090 dentro do container
 services:
   db:
     image: postgres:16-alpine
@@ -15,6 +21,57 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  backend:
+    build:
+      # Contexto na raiz nos dois serviços — é o que a Railway usa, e assim o build local e
+      # o de lá não divergem. Ver o cabeçalho do backend/Dockerfile.
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: fos-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      # As credenciais fos/fos/fos são conveniência local. Não reaproveitar na Railway.
+      FOS_DB_URL: jdbc:postgresql://db:5432/fos
+      FOS_DB_USER: fos
+      FOS_DB_PASSWORD: fos
+      PORT: "8080"
+      SERVER_ADDRESS: 0.0.0.0
+      TZ: America/Sao_Paulo
+    # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
+    # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # wget do busybox — a imagem jre-alpine não traz curl.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/actuator/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  web:
+    build:
+      # Contexto na raiz também aqui, e por um motivo extra: o build do Vite compila o
+      # TypeScript de shared/ junto, então os pacotes irmãos precisam estar no contexto.
+      context: .
+      dockerfile: web/Dockerfile
+    container_name: fos-web
+    environment:
+      PORT: "${PORT:-80}"
+      BACKEND_ORIGIN: http://backend:8080
+      # DNS embutido do Docker. ipv6=off porque os containers aqui são IPv4-only e o nginx
+      # trataria a consulta AAAA sem resposta como falha de resolução.
+      NGINX_RESOLVER: 127.0.0.11 ipv6=off
+      TZ: America/Sao_Paulo
+    ports:
+      - "${WEB_HOST_PORT:-8081}:${PORT:-80}"
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   fos-pgdata:

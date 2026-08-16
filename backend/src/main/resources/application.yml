@@ -32,7 +32,20 @@ springdoc:
     path: /swagger-ui.html
 
 server:
-  port: 8080
+  # PORT em vez de SERVER_PORT porque é o nome que a Railway injeta em runtime (ela ignora
+  # o EXPOSE do Dockerfile). O default 8080 mantém `./mvnw spring-boot:run` como era.
+  port: ${PORT:8080}
+  # `::` na Railway: a rede privada resolve IPv6 e ambientes anteriores a 16/10/2025 são
+  # IPv6-only — com 0.0.0.0 o backend fica invisível para o nginx lá. Local segue 0.0.0.0.
+  address: ${SERVER_ADDRESS:0.0.0.0}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Só o health. É o que a Railway consulta em deploy.healthcheckPath e o que o
+        # healthcheck do Compose usa; o resto do actuator não precisa estar no ar.
+        include: health
 
 ---
 spring:

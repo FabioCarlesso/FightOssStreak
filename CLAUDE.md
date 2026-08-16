@@ -34,8 +34,13 @@ npm run dev:web             # Vite em :5173, proxy /api -> :8080
 npm test                    # testes de shared/domain
 npm run gen:types           # regenera shared/types a partir do OpenAPI
 cd backend && ./mvnw test   # testes do backend
-docker compose up -d db     # Postgres local (perfil prod-like)
+docker compose up -d db     # só o Postgres local (perfil prod-like)
+docker compose up --build   # stack inteira em container: db + backend + web (nginx) em :8081
 ```
+
+As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .`, `-f web/Dockerfile .`)
+e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
+variável de ambiente. Tabela completa no README.
 
 ## Ao alterar o currículo
 

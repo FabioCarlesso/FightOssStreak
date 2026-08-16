@@ -1,0 +1,61 @@
+# Template processado por envsubst no start do container (imagem oficial do nginx, script
+# /docker-entrypoint.d/20-envsubst-on-templates.sh). Só ${PORT}, ${BACKEND_ORIGIN} e
+# ${NGINX_RESOLVER} são substituídos — ver NGINX_ENVSUBST_FILTER no Dockerfile. As demais
+# variáveis ($uri, $host, $request_uri...) chegam intactas ao nginx.
+
+server {
+    # A porta vem do ambiente: a Railway injeta a dela em runtime e ignora o EXPOSE.
+    listen ${PORT};
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # DNS do ambiente: 127.0.0.11 (embutido do Docker) local, [fd12::10] ipv6=on na rede
+    # privada da Railway. `valid=1s` é curto de propósito — ver a nota no location /api/.
+    resolver ${NGINX_RESOLVER} valid=1s;
+
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 1024;
+    gzip_types application/javascript application/json image/svg+xml text/css text/plain;
+
+    # Endpoint de healthcheck da plataforma. Não toca o backend de propósito: o que ele
+    # responde é "o nginx está servindo", não "a API está de pé".
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location /api/ {
+        # proxy_pass com variável é o que força o nginx a re-resolver o nome pelo resolver
+        # acima. Com URL literal ele resolve uma vez no start e cacheia para sempre — na
+        # Railway o IP do backend muda a cada deploy, e o proxy passaria a servir 502.
+        # Nesse modo o nginx não reescreve a URI, então ela vai explícita em $request_uri.
+        set $upstream ${BACKEND_ORIGIN};
+        proxy_pass $upstream$request_uri;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Bundles do Vite têm hash no nome: podem ser cacheados para sempre.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # O index.html não tem hash e é quem aponta para os bundles novos. Cacheá-lo deixaria o
+    # navegador preso na versão anterior depois de um deploy.
+    location = /index.html {
+        add_header Cache-Control "no-cache";
+    }
+
+    # Fallback de SPA: /arvore e /no/M3.1 são rotas do react-router, não arquivos.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

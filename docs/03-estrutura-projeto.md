@@ -13,7 +13,8 @@ fightossstreak/
 │   ├── src/main/resources/
 │   │   └── curriculum/        # currículo versionado como dados (JSON/YAML), não hardcoded
 │   ├── pom.xml
-│   └── Dockerfile
+│   ├── Dockerfile             # contexto de build: a raiz do repo, não backend/
+│   └── railway.json
 │
 ├── web/                       # React + Vite (MVP web-first)
 │   ├── src/
@@ -22,7 +23,10 @@ fightossstreak/
 │   │   ├── api/
 │   │   └── state/
 │   ├── package.json
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   ├── Dockerfile             # nginx servindo o dist/ e proxiando /api (D23)
+│   ├── nginx.conf.template    # envsubst no start: porta e upstream vêm do ambiente
+│   └── railway.json
 │
 ├── mobile/                    # React Native / Expo (fase posterior)
 │   └── src/{components,screens,api,state}/
@@ -42,4 +46,4 @@ fightossstreak/
 - **`shared/types` é gerado.** Springdoc-openapi expõe o spec; `openapi-typescript` gera os tipos. Colocar num script `npm run gen:types` e rodar no CI para falhar se estiver desatualizado.
 - **`shared/domain` é o que mais se paga na migração para RN** — cálculo de streak, agendamento de SRS e lógica de desbloqueio são idênticos em web e mobile e não dependem de UI.
 - **CI path-filtered**: `backend.yml` e `web.yml` disparam só quando a respectiva pasta muda.
-- `infra/` com Terraform é prematuro — deploy simples (Railway/Render/Fly.io) resolve nesta fase.
+- `infra/` com Terraform é prematuro. A plataforma é a **Railway** (D22), com dois serviços a partir deste repo mais um Postgres gerenciado; a configuração de cada um cabe em um `railway.json` versionado ao lado do respectivo Dockerfile.
