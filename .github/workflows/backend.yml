@@ -1,22 +1,24 @@
 name: backend
 
-# Path-filtered: só roda quando o backend (ou o currículo versionado) muda.
 on:
   # Permite disparar pela aba Actions. Útil quando o push não gera evento — por exemplo,
   # quando o commit chega por um token de app que não aciona workflow.
   workflow_dispatch:
+  # No push a main o filtro por caminho vale: nada depende desse resultado.
   push:
     branches: [main]
     paths:
       - 'backend/**'
       - '.github/workflows/backend.yml'
+  # Em PR NÃO há filtro por caminho, de propósito. Este job é required check da ruleset
+  # de `main`: workflow filtrado por path simplesmente não reporta status, e um required
+  # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend.yml'
 
 jobs:
-  test:
+  # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
+  # Renomear aqui exige renomear lá.
+  backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
