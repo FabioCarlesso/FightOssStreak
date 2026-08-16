@@ -38,7 +38,14 @@ Todos os nós estão com `video: null` — **nenhum vídeo foi catalogado ainda*
 de `docs/05-mvp-web-plano.md` e é trabalho de curadoria humana: exige assistir e escolher.
 Inventar IDs de vídeo produziria referências quebradas ou, pior, tecnicamente erradas.
 
-Quando catalogar, o formato é:
+Para catalogar, **use o script em vez de editar à mão** — ele busca título e canal no próprio
+YouTube e recusa vídeo inexistente, privado ou com incorporação desativada:
+
+```bash
+node scripts/catalogar-video.mjs M1.2 https://www.youtube.com/watch?v=XXXXXXXXXXX
+```
+
+Critérios de escolha por nó estão em `docs/08-curadoria-videos.md`. O formato gravado é:
 
 ```jsonc
 "video": {

@@ -2,6 +2,9 @@ name: backend
 
 # Path-filtered: só roda quando o backend (ou o currículo versionado) muda.
 on:
+  # Permite disparar pela aba Actions. Útil quando o push não gera evento — por exemplo,
+  # quando o commit chega por um token de app que não aciona workflow.
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -35,11 +38,19 @@ jobs:
       - name: Spec OpenAPI está atualizado
         working-directory: backend
         run: |
+          set -euo pipefail
           ./mvnw -B -q spring-boot:run > /tmp/backend.log 2>&1 &
           for i in $(seq 1 60); do
             curl -sf http://localhost:8080/v3/api-docs -o /tmp/openapi.json && break
             sleep 2
           done
+          # Sem esta checagem, um backend que não sobe vira um erro obscuro do json.tool
+          # em vez de dizer o que de fato aconteceu.
+          if [ ! -s /tmp/openapi.json ]; then
+            echo "::error::backend não respondeu em 120s — log abaixo"
+            tail -50 /tmp/backend.log
+            exit 1
+          fi
           python3 -m json.tool /tmp/openapi.json > /tmp/current.json
           python3 -m json.tool openapi.json > /tmp/committed.json
           diff -u /tmp/committed.json /tmp/current.json \

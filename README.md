@@ -68,7 +68,9 @@ Detalhes em [`docs/03-estrutura-projeto.md`](docs/03-estrutura-projeto.md) e [`C
 
 ## Próximos passos
 
-1. **Catalogar vídeos do YouTube** para os nós de M0 e M1 — é o gargalo real do projeto
+1. **Catalogar vídeos do YouTube** para os nós de M0 e M1 — é o gargalo real do projeto.
+   Critérios por nó em [`docs/08-curadoria-videos.md`](docs/08-curadoria-videos.md);
+   use `node scripts/catalogar-video.mjs <NÓ> <url>`, que verifica e credita o canal automaticamente
 2. Escrever o quiz conceitual dos módulos M2–M8
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/05-mvp-web-plano.md)
 4. Só então considerar mobile (D4)

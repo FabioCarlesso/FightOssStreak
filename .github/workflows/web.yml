@@ -2,6 +2,9 @@ name: web
 
 # Path-filtered: front, código compartilhado e o spec que gera os tipos.
 on:
+  # Permite disparar pela aba Actions. Útil quando o push não gera evento — por exemplo,
+  # quando o commit chega por um token de app que não aciona workflow.
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
