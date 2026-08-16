@@ -1,10 +1,10 @@
 name: web
 
-# Path-filtered: front, código compartilhado e o spec que gera os tipos.
 on:
   # Permite disparar pela aba Actions. Útil quando o push não gera evento — por exemplo,
   # quando o commit chega por um token de app que não aciona workflow.
   workflow_dispatch:
+  # No push a main o filtro por caminho vale: nada depende desse resultado.
   push:
     branches: [main]
     paths:
@@ -15,18 +15,15 @@ on:
       - 'package-lock.json'
       - 'backend/openapi.json'
       - '.github/workflows/web.yml'
+  # Em PR NÃO há filtro por caminho, de propósito. Este job é required check da ruleset
+  # de `main`: workflow filtrado por path simplesmente não reporta status, e um required
+  # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
-    paths:
-      - 'web/**'
-      - 'shared/**'
-      - 'scripts/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'backend/openapi.json'
-      - '.github/workflows/web.yml'
 
 jobs:
-  build:
+  # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
+  # Renomear aqui exige renomear lá.
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

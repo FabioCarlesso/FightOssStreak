@@ -87,6 +87,23 @@ Toda a documentação de planejamento está em [`docs/`](docs/):
 - [`05-mvp-web-plano.md`](docs/05-mvp-web-plano.md)
 - [`06-disclaimer-responsabilidade.md`](docs/06-disclaimer-responsabilidade.md)
 - [`07-decisoes.md`](docs/07-decisoes.md) — log de decisões
+- [`08-curadoria-videos.md`](docs/08-curadoria-videos.md) — critérios de curadoria dos vídeos
+- [`09-regras-repositorio.md`](docs/09-regras-repositorio.md) — `main` protegida, PR obrigatório, CI como portão
+
+## Contribuindo
+
+`main` é protegida: não aceita push direto e o merge só libera com o CI verde. Toda mudança entra
+por pull request.
+
+```bash
+git switch -c minha-mudanca
+# ... commits ...
+git push -u origin minha-mudanca
+gh pr create --fill
+```
+
+As regras são versionadas em [`.github/rulesets/main.json`](.github/rulesets/main.json) — ver
+[`docs/09-regras-repositorio.md`](docs/09-regras-repositorio.md) para aplicá-las ou alterá-las.
 
 ## Aviso de responsabilidade
 
