@@ -1,0 +1,84 @@
+{
+  "code": "M2",
+  "title": "Guarda Fechada",
+  "summary": "Primeira posição em que você ataca de baixo. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M2.1",
+      "title": "Guarda fechada: postura, controle e quebra de postura",
+      "belt": "BRANCA",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M1.5"],
+      "concept": "A guarda fechada é a única posição inferior em que você tem mais opções de ataque do que o oponente. Tudo nela depende de uma variável: a postura dele. Com a postura ereta, ele passa ou abre a guarda; com a postura quebrada, o peso vem para frente e raspagens e estrangulamentos aparecem. Por isso o trabalho não começa na finalização — começa em pegadas que impeçam a postura de subir.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.2",
+      "title": "Raspagem de tesoura (scissor sweep)",
+      "belt": "BRANCA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1"],
+      "concept": "A tesoura ensina o princípio mais reaproveitável das raspagens: tirar a base de um lado e empurrar o peso para esse lado vazio. O joelho atravessado no peito e a outra perna varrendo funcionam como as duas lâminas — mas o que decide é o desequilíbrio prévio, não a força das pernas. Raspagem que precisa de força foi tentada antes do desequilíbrio existir.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.3",
+      "title": "Raspagem pêndulo (hip bump / flower)",
+      "belt": "BRANCA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1"],
+      "concept": "O pêndulo é a resposta natural quando o oponente resiste à tesoura postando o peso para trás: você usa o balanço do quadril e o peso do próprio corpo para levá-lo na direção em que ele já está indo. É o primeiro contato com a ideia de encadeamento — a raspagem não vence a resistência, ela usa a resistência.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.4",
+      "title": "Estrangulamento cruzado (cross collar)",
+      "belt": "BRANCA",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1"],
+      "concept": "O cross collar é o ataque fundamental da guarda fechada no gi, não conteúdo avançado: ele nasce direto da mesma pegada de gola usada para quebrar a postura. O detalhe que decide é a profundidade da primeira pegada — rasa, não há alavanca; profunda, o segundo braço apenas fecha o triângulo de pressão. Sua ameaça constante é o que abre as raspagens.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.5",
+      "title": "Armlock da guarda (juji-gatame)",
+      "belt": "BRANCA",
+      "order": 5,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1"],
+      "concept": "O armlock da guarda é o ataque que pune o braço que fica esticado ou apoiado longe do corpo — exatamente o erro de postura estudado em M0.4, agora do outro lado. O ponto conceitual é que ele não começa com o braço: começa com o controle de postura e do ângulo. Sem girar o quadril para fora, não existe alavanca, e a força do bíceps do oponente basta para defender.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.6",
+      "title": "Triângulo",
+      "belt": "BRANCA",
+      "order": 6,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1"],
+      "concept": "O triângulo aproveita uma assimetria comum: um braço do oponente dentro da guarda e o outro fora. O estrangulamento não vem da força das pernas fechando, e sim do ângulo — girar o quadril para o lado é o que transforma uma posição travada em finalização. É também a porta de entrada para o encadeamento com armlock e omoplata, que aparecem em M7.4.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M2.7",
+      "title": "Omoplata",
+      "belt": "AZUL",
+      "order": 7,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.6"],
+      "concept": "A omoplata usa a perna como alavanca sobre o ombro, e sua utilidade real vai além da finalização: ela controla e desequilibra, servindo como raspagem quando o oponente rola para escapar. Depende de triângulo porque compartilha o mecanismo de girar o quadril para criar ângulo — quem não entendeu isso ali, aqui só decora a sequência.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

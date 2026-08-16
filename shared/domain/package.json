@@ -1,0 +1,21 @@
+{
+  "name": "@fos/domain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Regras puras compartilhadas entre web e mobile: streak, SRS e desbloqueio de nó.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
+  }
+}

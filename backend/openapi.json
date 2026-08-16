@@ -1,0 +1,815 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "FightOssStreak API",
+    "description": "API de currículo, progresso, streak e repetição espaçada.\n\nAVISO: o FightOssStreak é ferramenta de organização e revisão de estudos. Não ensina jiu-jitsu e não substitui instrução presencial com professor qualificado.",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Atividade",
+      "description": "Streak, agenda de revisão e aceite do aviso"
+    },
+    {
+      "name": "Currículo",
+      "description": "Árvore de currículo, nós, quiz e registro de drill"
+    }
+  ],
+  "paths": {
+    "/api/nodes/{code}/quiz": {
+      "post": {
+        "tags": [
+          "Currículo"
+        ],
+        "summary": "Submete o quiz conceitual e devolve nota e explicações",
+        "operationId": "submitQuiz",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuizSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nodes/{code}/drill": {
+      "post": {
+        "tags": [
+          "Currículo"
+        ],
+        "summary": "Registra 'treinei isso hoje' — alimenta streak e reagenda o SRS",
+        "operationId": "logDrill",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrillRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrillResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disclaimer/accept": {
+      "post": {
+        "tags": [
+          "Atividade"
+        ],
+        "summary": "Registra o aceite com data e versão do texto",
+        "operationId": "acceptDisclaimer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptDisclaimerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisclaimerStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/streak": {
+      "get": {
+        "tags": [
+          "Atividade"
+        ],
+        "summary": "Streak atual, recorde e dias ativos nos últimos 30",
+        "operationId": "streak",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreakView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/today": {
+      "get": {
+        "tags": [
+          "Atividade"
+        ],
+        "summary": "O que drillar hoje, do mais atrasado para o menos",
+        "operationId": "reviewsToday",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewAgenda"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nodes/{code}": {
+      "get": {
+        "tags": [
+          "Currículo"
+        ],
+        "summary": "Detalhe de um nó: conceito, vídeo, quiz e agenda de revisão",
+        "operationId": "node",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeDetailView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disclaimer": {
+      "get": {
+        "tags": [
+          "Atividade"
+        ],
+        "summary": "Estado do aceite do aviso de responsabilidade",
+        "operationId": "disclaimer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisclaimerStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/curriculum/tree": {
+      "get": {
+        "tags": [
+          "Currículo"
+        ],
+        "summary": "Árvore completa com estado de bloqueio resolvido para o usuário",
+        "operationId": "tree",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreeView"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Answer": {
+        "required": [
+          "optionId",
+          "questionId"
+        ],
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optionId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuizSubmission": {
+        "required": [
+          "answers"
+        ],
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            }
+          }
+        }
+      },
+      "QuestionFeedback": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "chosenOptionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "correctOptionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
+      "QuizResult": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuestions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "passingScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOCKED",
+              "AVAILABLE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "feedback": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionFeedback"
+            }
+          }
+        }
+      },
+      "DrillRequest": {
+        "required": [
+          "recall"
+        ],
+        "type": "object",
+        "properties": {
+          "recall": {
+            "type": "string",
+            "enum": [
+              "FORGOT",
+              "HARD",
+              "OK",
+              "EASY"
+            ]
+          },
+          "note": {
+            "maxLength": 1000,
+            "minLength": 0,
+            "type": "string"
+          },
+          "drilledOn": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "DrillResult": {
+        "type": "object",
+        "properties": {
+          "nodeCode": {
+            "type": "string"
+          },
+          "drilledOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOCKED",
+              "AVAILABLE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "nextReviewOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "intervalDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "streak": {
+            "$ref": "#/components/schemas/StreakView"
+          }
+        }
+      },
+      "StreakView": {
+        "type": "object",
+        "properties": {
+          "currentStreak": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "longestStreak": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drilledToday": {
+            "type": "boolean"
+          },
+          "activeDaysLast30": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetDaysLast30": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "today": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "AcceptDisclaimerRequest": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "DisclaimerStatus": {
+        "type": "object",
+        "properties": {
+          "accepted": {
+            "type": "boolean"
+          },
+          "acceptedVersion": {
+            "type": "string"
+          },
+          "currentVersion": {
+            "type": "string"
+          },
+          "shortNotice": {
+            "type": "string"
+          }
+        }
+      },
+      "DueItemView": {
+        "type": "object",
+        "properties": {
+          "nodeCode": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "belt": {
+            "type": "string",
+            "enum": [
+              "BRANCA",
+              "AZUL",
+              "ROXA"
+            ]
+          },
+          "moduleCode": {
+            "type": "string"
+          },
+          "nextReviewOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "daysOverdue": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastQuizScore": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ReviewAgenda": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "due": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DueItemView"
+            }
+          }
+        }
+      },
+      "DrillEntryView": {
+        "type": "object",
+        "properties": {
+          "drilledOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "recall": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "NodeDetailView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "belt": {
+            "type": "string",
+            "enum": [
+              "BRANCA",
+              "AZUL",
+              "ROXA"
+            ]
+          },
+          "concept": {
+            "type": "string"
+          },
+          "moduleCode": {
+            "type": "string"
+          },
+          "moduleTitle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOCKED",
+              "AVAILABLE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "unlockRule": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "ANY"
+            ]
+          },
+          "prereqs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrereqView"
+            }
+          },
+          "video": {
+            "$ref": "#/components/schemas/VideoView"
+          },
+          "quiz": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionView"
+            }
+          },
+          "srs": {
+            "$ref": "#/components/schemas/SrsView"
+          },
+          "recentDrills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrillEntryView"
+            }
+          },
+          "safetyNotice": {
+            "type": "string"
+          }
+        }
+      },
+      "OptionView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "PrereqView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "QuestionView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionView"
+            }
+          }
+        }
+      },
+      "SrsView": {
+        "type": "object",
+        "properties": {
+          "scheduled": {
+            "type": "boolean"
+          },
+          "nextReviewOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "intervalDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "repetitions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "due": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VideoView": {
+        "type": "object",
+        "properties": {
+          "catalogued": {
+            "type": "boolean"
+          },
+          "youtubeId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "startSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "embedUrl": {
+            "type": "string"
+          },
+          "watchUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "ModuleView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeSummaryView"
+            }
+          }
+        }
+      },
+      "NodeSummaryView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "belt": {
+            "type": "string",
+            "enum": [
+              "BRANCA",
+              "AZUL",
+              "ROXA"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOCKED",
+              "AVAILABLE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "unlockRule": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "ANY"
+            ]
+          },
+          "prereqCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasVideo": {
+            "type": "boolean"
+          },
+          "quizQuestionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastQuizScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextReviewOn": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "ProgressSummary": {
+        "type": "object",
+        "properties": {
+          "totalNodes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedNodes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "availableNodes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lockedNodes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TreeView": {
+        "type": "object",
+        "properties": {
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleView"
+            }
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ProgressSummary"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "code": "M4",
+  "title": "Controle Superior",
+  "summary": "Manter e progredir por cima. M4.1 usa unlockRule ANY — qualquer passagem serve (D13). Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M4.1",
+      "title": "100kg (side control): manutenção e pressão",
+      "belt": "BRANCA",
+      "order": 1,
+      "unlockRule": "ANY",
+      "prereqs": ["M3.2", "M3.3"],
+      "concept": "Manter o 100kg é um problema de peso, não de força: o peso precisa cair sobre o oponente e não sobre seus próprios joelhos e mãos. Quem se apoia no tatame carrega o próprio corpo e deixa o adversário livre para enquadrar. A referência prática é o espelho de M1.3 — tudo o que você aprendeu a fazer para escapar é exatamente o que precisa negar aqui.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M4.2",
+      "title": "Joelho na barriga (knee on belly)",
+      "belt": "BRANCA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "concept": "O joelho na barriga troca estabilidade por mobilidade: concentra pressão numa área pequena e desconfortável, e ao mesmo tempo te deixa alto e livre para girar. É a posição que melhor ilustra que controle superior não significa ficar parado — a pressão desconfortável é o que força a reação de onde nascem montada e costas.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M4.3",
+      "title": "Transição 100kg → montada",
+      "belt": "BRANCA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "concept": "Toda transição tem um instante em que o controle diminui — é nele que as fugas acontecem. Passar do 100kg para a montada é, portanto, um exercício de reduzir esse instante: bloquear o quadril do oponente antes de mover a perna, para que ele não tenha para onde inserir o joelho enquanto você atravessa.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M4.4",
+      "title": "Montada: manutenção e base",
+      "belt": "BRANCA",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.3"],
+      "concept": "A montada é dominante e instável ao mesmo tempo: você está acima do centro de gravidade dele, e o que impede a ponte é a sua base. O princípio é manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha. É o outro lado exato de M1.4.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M4.5",
+      "title": "Americana e Ezequiel",
+      "belt": "BRANCA",
+      "order": 5,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1", "M4.4"],
+      "concept": "Duas finalizações que nascem de posições que você já mantém, sem abrir mão do controle — e é essa a lição. A americana pune o braço que o oponente deixa no chão em ângulo; o ezequiel usa a própria manga do gi e funciona justamente porque exige pouquíssimo espaço. Ataques que custam a posição são ruins no início; estes custam pouco.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M4.6",
+      "title": "Armlock da montada",
+      "belt": "BRANCA",
+      "order": 6,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.4"],
+      "concept": "O armlock da montada aparece quando o oponente empurra para tirar o peso — ou seja, é a punição da defesa mais instintiva embaixo da montada. Reaproveita o mecanismo de M2.5, mas com uma diferença cara: aqui você troca a montada pela posição de ataque, e errar significa perder o controle inteiro. Por isso vem depois da manutenção, nunca antes.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

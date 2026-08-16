@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Java / Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties.bak
+
+# Ambiente
+.env
+.env.local
+*.local
+
+# Editores
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

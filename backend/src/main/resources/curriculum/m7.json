@@ -1,0 +1,51 @@
+{
+  "code": "M7",
+  "title": "Finalizações Encadeadas",
+  "summary": "Onde as finalizações deixam de ser isoladas e viram sequência. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M7.1",
+      "title": "Kimura: da guarda, do 100kg e das costas",
+      "belt": "AZUL",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1", "M4.1"],
+      "concept": "A kimura é o melhor exemplo de que jiu-jitsu se organiza por mecanismo, e não por posição: a mesma figura-quatro no braço funciona da guarda, do 100kg e das costas. Estudá-la em três posições de uma vez ensina a reconhecer o mecanismo em vez de decorar três técnicas distintas — e é também um controle poderoso, não só uma finalização.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M7.2",
+      "title": "Front headlock e guilhotina",
+      "belt": "AZUL",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M6.4"],
+      "concept": "O front headlock é o que sobra depois de um sprawl bem-sucedido: o oponente está com a cabeça baixa e à sua frente, e daí nascem tanto o controle quanto a guilhotina. Encadear os dois é o ponto — a guilhotina isolada é uma finalização de sorte; a partir do front headlock, é a conclusão de uma sequência que começou na defesa de queda.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M7.3",
+      "title": "Defesa de guilhotina",
+      "belt": "AZUL",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M7.2"],
+      "concept": "Defender a guilhotina é urgente porque a posição aperta enquanto você pensa. A lógica é a de sempre em defesa de estrangulamento: aliviar a pressão no pescoço antes de tentar sair, tipicamente ganhando o lado correto e tirando a cabeça do eixo. Vir logo depois do ataque é proposital — entender como se aplica é o que revela onde a defesa entra.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M7.4",
+      "title": "Encadeamento triângulo → armlock → omoplata",
+      "belt": "AZUL",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.5", "M2.6", "M2.7"],
+      "concept": "As três finalizações da guarda fechada compartilham controle e ângulo, e cada defesa do oponente abre exatamente uma das outras duas. Tratá-las como um sistema — em vez de três técnicas — é o salto conceitual do módulo: você deixa de tentar impor uma finalização e passa a seguir para onde a defesa dele aponta.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

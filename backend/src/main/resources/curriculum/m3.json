@@ -1,0 +1,84 @@
+{
+  "code": "M3",
+  "title": "Guarda Aberta e Passagem",
+  "summary": "Distância, enquadramento e as primeiras passagens. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M3.1",
+      "title": "Guarda aberta: grips, distância e enquadramento",
+      "belt": "BRANCA",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M2.1", "M0.5"],
+      "concept": "Na guarda aberta, sem as pernas travadas, o que segura o jogo é a gestão de distância: pegadas definem o que o oponente pode fazer, e pés e joelhos funcionam como enquadramento móvel. A regra que organiza tudo é simples — ou você o mantém longe o bastante para não ser alcançado, ou perto o bastante para controlá-lo. A distância intermediária é onde a guarda é passada.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.2",
+      "title": "Passagem torreando (toreando)",
+      "belt": "BRANCA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "concept": "A torreando é a passagem por fora: em vez de vencer as pernas, você as desloca para um lado e corre para o outro. Depende de controlar as calças e de mudar de direção mais rápido do que o oponente reposiciona o quadril. O erro típico é tentar passar em linha reta — a passagem existe justamente por causa do ângulo.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.3",
+      "title": "Passagem por cima (over-under / smash)",
+      "belt": "BRANCA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "concept": "A passagem por cima é o oposto da torreando: em vez de velocidade e ângulo, pressão e paciência. Você fecha o espaço, esmaga as pernas do oponente contra o corpo dele e avança pouco, sem devolver o que ganhou. Serve de complemento porque cobre o cenário em que o oponente é rápido demais para o jogo de fora.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.4",
+      "title": "Guarda de gancho (butterfly)",
+      "belt": "BRANCA",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "concept": "A butterfly transforma as pernas em alavancas de elevação em vez de barreiras. Ela funciona sentado, com o oponente perto — a conexão de tronco é o que permite levantá-lo. É a guarda que melhor ensina que raspagem é desequilíbrio somado a elevação, não empurrão.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.5",
+      "title": "Raspagem de butterfly",
+      "belt": "BRANCA",
+      "order": 5,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.4"],
+      "concept": "A raspagem de butterfly é a aplicação direta do gancho: você carrega o peso do oponente na perna e o joga para o lado em que ele não tem apoio. O detalhe decisivo é a inclinação do próprio tronco — quem tenta levantar sentado ereto usa só a perna e trava; quem cai para o lado usa o corpo inteiro.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.6",
+      "title": "Meia-guarda: conceito e enquadramento",
+      "belt": "BRANCA",
+      "order": 6,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "concept": "A meia-guarda deixou de ser posição defensiva quando se entendeu que o que importa não é a perna presa, e sim o enquadramento do tronco: com o antebraço no espaço certo, você impede que ele te esmague e mantém a possibilidade de chegar embaixo dele. Sem isso, a meia-guarda vira apenas um 100kg com uma perna dentro.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M3.7",
+      "title": "Raspagem de meia-guarda (old school)",
+      "belt": "BRANCA",
+      "order": 7,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.6"],
+      "concept": "A old school ensina o princípio de chegar por baixo do centro de gravidade: com o ombro sob o oponente e o controle do tornozelo dele, a base desaparece e ele cai por cima do próprio peso. É a demonstração mais clara de que a raspagem eficiente remove apoio em vez de aplicar força.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

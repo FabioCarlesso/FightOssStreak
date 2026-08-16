@@ -1,0 +1,46 @@
+name: backend
+
+# Path-filtered: só roda quando o backend (ou o currículo versionado) muda.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: maven
+
+      # Cobre os testes de regra (streak, SRS, desbloqueio), a integridade do currículo
+      # versionado e o fluxo de ponta a ponta contra a aplicação inteira.
+      - name: Testes
+        working-directory: backend
+        run: ./mvnw -B verify
+
+      # O spec versionado alimenta a geração de tipos do front. Se ele sair do ar em relação
+      # ao código, shared/types passa a mentir — e o CI do web não teria como perceber.
+      - name: Spec OpenAPI está atualizado
+        working-directory: backend
+        run: |
+          ./mvnw -B -q spring-boot:run > /tmp/backend.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8080/v3/api-docs -o /tmp/openapi.json && break
+            sleep 2
+          done
+          python3 -m json.tool /tmp/openapi.json > /tmp/current.json
+          python3 -m json.tool openapi.json > /tmp/committed.json
+          diff -u /tmp/committed.json /tmp/current.json \
+            || { echo "::error::backend/openapi.json desatualizado — rode 'npm run gen:types' e commite"; exit 1; }

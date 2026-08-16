@@ -1,0 +1,15 @@
+{
+  "version": "2026-08-16",
+  "scope": "GI",
+  "modules": [
+    { "order": 0, "file": "m0.json" },
+    { "order": 1, "file": "m1.json" },
+    { "order": 2, "file": "m2.json" },
+    { "order": 3, "file": "m3.json" },
+    { "order": 4, "file": "m4.json" },
+    { "order": 5, "file": "m5.json" },
+    { "order": 6, "file": "m6.json" },
+    { "order": 7, "file": "m7.json" },
+    { "order": 8, "file": "m8.json" }
+  ]
+}

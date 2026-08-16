@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FightOssStreak">
+  <rect width="64" height="64" rx="14" fill="#0f1115"/>
+  <path d="M32 12c5 7 8 11 8 16a8 8 0 0 1-16 0c0-5 3-9 8-16z" fill="#e2703a"/>
+  <path d="M32 30c2.5 3.5 4 5.5 4 8a4 4 0 0 1-8 0c0-2.5 1.5-4.5 4-8z" fill="#f6b26b"/>
+  <rect x="16" y="46" width="32" height="6" rx="3" fill="#e8eaf0"/>
+</svg>

@@ -1,0 +1,227 @@
+{
+  "code": "M0",
+  "title": "Fundamentos e Segurança",
+  "summary": "Porta de entrada, sem pré-requisitos. Antes de qualquer técnica, o que mantém você inteiro no tatame.",
+  "nodes": [
+    {
+      "code": "M0.1",
+      "title": "Etiqueta de tatame e hierarquia",
+      "belt": "BRANCA",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": [],
+      "concept": "Etiqueta em jiu-jitsu não é formalidade decorativa: é o protocolo de segurança de um ambiente onde pessoas aplicam torções e estrangulamentos umas nas outras. Higiene, pontualidade, avisar lesão e pedir permissão para entrar ou sair do tatame existem porque o custo de ignorá-los recai sobre o corpo de outra pessoa. A hierarquia de faixas cumpre a mesma função: sinaliza quem tem controle suficiente para regular a intensidade — por isso quem tem mais graduação normalmente puxa a intensidade para baixo, não para cima.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Qual é a razão de fundo para a maior parte das regras de etiqueta de tatame?",
+          "explanation": "As regras existem porque o esporte envolve contato próximo e técnicas que machucam de verdade. Tradição e hierarquia explicam a forma das regras, mas não o motivo delas.",
+          "options": [
+            { "text": "Segurança e confiança mútua entre quem treina", "correct": true },
+            { "text": "Preservar a tradição japonesa do esporte", "correct": false },
+            { "text": "Facilitar a organização das turmas pelo professor", "correct": false },
+            { "text": "Distinguir visualmente os alunos por nível", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você chegou machucado do trabalho: ombro dolorido, mas dá para treinar leve. O que a etiqueta espera de você?",
+          "explanation": "Avisar professor e parceiro antes de rolar é o que permite que o outro ajuste a intensidade. Quem esconde lesão transfere ao parceiro o risco de machucá-lo sem saber.",
+          "options": [
+            { "text": "Avisar o professor e o parceiro antes de começar", "correct": true },
+            { "text": "Treinar normalmente e tocar cedo se doer", "correct": false },
+            { "text": "Não comentar para não parecer que está se esquivando do treino", "correct": false },
+            { "text": "Escolher sozinho um parceiro mais leve e não avisar ninguém", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Ao rolar com alguém bem menos graduado, o comportamento esperado do mais graduado é:",
+          "explanation": "Quem tem mais controle é quem regula a intensidade para baixo. Usar vantagem técnica para impor ritmo é justamente o oposto do que a hierarquia sinaliza.",
+          "options": [
+            { "text": "Regular a intensidade para baixo e dar espaço para o outro trabalhar", "correct": true },
+            { "text": "Manter a intensidade máxima para preparar o outro para a competição", "correct": false },
+            { "text": "Finalizar o mais rápido possível para demonstrar a diferença de nível", "correct": false },
+            { "text": "Evitar rolar com faixas mais baixas", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M0.2",
+      "title": "Quedas seguras (breakfalls / ukemi)",
+      "belt": "BRANCA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": [],
+      "concept": "Você vai cair — em pé, raspado ou derrubado — e a queda é a habilidade que decide se isso custa nada ou custa uma cirurgia. O princípio é distribuir o impacto por uma área grande em vez de concentrá-lo em uma articulação: bater a superfície do braço no tatame em vez de amortecer com a mão, manter o queixo no peito para a cabeça não bater, e soltar o ar em vez de travar a respiração. Cair bem é o que permite treinar por décadas.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Qual é o princípio central de uma queda segura?",
+          "explanation": "Distribuir o impacto por uma superfície grande reduz a força por área. Concentrar o impacto em mão, cotovelo ou ombro é exatamente o que gera fratura e luxação.",
+          "options": [
+            { "text": "Distribuir o impacto por uma área grande do corpo", "correct": true },
+            { "text": "Absorver o impacto com a mão para proteger o tronco", "correct": false },
+            { "text": "Enrijecer o corpo inteiro no momento do contato", "correct": false },
+            { "text": "Cair o mais rápido possível para encurtar a queda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O erro clássico de quem nunca treinou queda é:",
+          "explanation": "O reflexo natural é esticar o braço para o chão. Ele concentra todo o peso do corpo em punho, cotovelo e ombro — a causa mais comum de lesão em queda.",
+          "options": [
+            { "text": "Esticar o braço para o chão para amortecer", "correct": true },
+            { "text": "Bater a mão no tatame cedo demais", "correct": false },
+            { "text": "Manter o queixo colado no peito", "correct": false },
+            { "text": "Soltar o ar durante o impacto", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que manter o queixo no peito durante a queda?",
+          "explanation": "Sem essa contração, a inércia joga a cabeça contra o tatame no fim da queda. É a diferença entre uma queda e uma concussão.",
+          "options": [
+            { "text": "Para impedir que a cabeça bata no tatame", "correct": true },
+            { "text": "Para conseguir enxergar o oponente durante a queda", "correct": false },
+            { "text": "Para proteger o pescoço de estrangulamento na sequência", "correct": false },
+            { "text": "Para deslocar o centro de gravidade e cair mais perto", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M0.3",
+      "title": "Como tocar (tap) e reconhecer perigo",
+      "belt": "BRANCA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": [],
+      "concept": "O tap é o mecanismo que torna possível treinar finalizações de verdade sem se machucar: ele converte uma lesão em uma informação. O ponto é tocar *antes* do dano, não no limite — em torção articular a dor avisa com antecedência, mas em estrangulamento o apagão pode chegar sem aviso claro. Tocar cedo não é fraqueza; é o que permite treinar de novo amanhã. Do outro lado, reconhecer o tap do parceiro e soltar imediatamente é obrigação absoluta, incluindo tap verbal ou batida no tatame quando os braços estão presos.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Qual é o momento certo de tocar em uma chave de articulação?",
+          "explanation": "O tap serve para evitar o dano, não para registrá-lo. Esperar a dor máxima significa que a estrutura já está sendo forçada além do limite seguro.",
+          "options": [
+            { "text": "Quando a posição já está travada e a pressão começa a subir", "correct": true },
+            { "text": "Quando a dor se torna insuportável", "correct": false },
+            { "text": "Quando você sente que não conseguirá mais escapar em 30 segundos", "correct": false },
+            { "text": "Somente depois de tentar todas as defesas possíveis", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que estrangulamento é mais perigoso que chave de braço para quem demora a tocar?",
+          "explanation": "A torção articular dói progressivamente e dá aviso. O estrangulamento pode levar à inconsciência sem uma escalada de dor equivalente — por isso a margem de erro é menor.",
+          "options": [
+            { "text": "Pode levar à inconsciência sem um aviso de dor proporcional", "correct": true },
+            { "text": "Dói mais e por isso confunde o julgamento", "correct": false },
+            { "text": "É mais difícil de escapar tecnicamente", "correct": false },
+            { "text": "O parceiro tem menos controle sobre a pressão aplicada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Seus dois braços estão presos e você precisa tocar. O que fazer?",
+          "explanation": "Tap verbal e batida com o pé no tatame são taps válidos. O parceiro precisa reconhecê-los da mesma forma que reconhece a batida com a mão.",
+          "options": [
+            { "text": "Tocar verbalmente ou bater o pé no tatame", "correct": true },
+            { "text": "Esperar liberar um braço para dar o tap com a mão", "correct": false },
+            { "text": "Parar de resistir e deixar a posição terminar", "correct": false },
+            { "text": "Não há alternativa — o tap só vale com a mão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você aplica uma finalização e ouve o parceiro dizer 'para'. Qual a resposta correta?",
+          "explanation": "Qualquer sinal de tap encerra a posição imediatamente. Interpretar, confirmar ou hesitar transfere risco de lesão para o parceiro.",
+          "options": [
+            { "text": "Soltar imediatamente, sem confirmar nem hesitar", "correct": true },
+            { "text": "Reduzir a pressão e perguntar se ele quer parar", "correct": false },
+            { "text": "Manter a posição sem pressão até ele bater com a mão", "correct": false },
+            { "text": "Soltar apenas se o professor perceber", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M0.4",
+      "title": "Posturas base: quadrupedia, base de guarda, postura em pé",
+      "belt": "BRANCA",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": [],
+      "concept": "Postura é o que decide se a força do oponente encontra estrutura óssea ou músculo cansado. As três bases resolvem problemas diferentes: em pé, joelhos flexionados e centro de gravidade baixo evitam a queda; de quatro, cotovelos colados e coluna neutra impedem que te virem; sentado na guarda, a coluna ereta com quadril móvel mantém a distância sob seu controle. O erro que atravessa as três é o mesmo: braço esticado longe do corpo vira alavanca para o oponente.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "O que uma boa postura resolve, em uma frase?",
+          "explanation": "Postura transfere a carga para a estrutura esquelética e para a base. Sem ela, cada segundo de defesa é pago com força muscular — que acaba.",
+          "options": [
+            { "text": "Sustentar pressão com estrutura em vez de com força muscular", "correct": true },
+            { "text": "Permitir aplicar finalizações mais rápido", "correct": false },
+            { "text": "Deixar o oponente confortável para ele cometer erros", "correct": false },
+            { "text": "Economizar ar durante o rolamento", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual erro compromete simultaneamente a quadrupedia, a base de guarda e a postura em pé?",
+          "explanation": "Braço esticado longe do corpo é alavanca de graça para o oponente — serve de pegada, de entrada de queda e de material para chave de braço.",
+          "options": [
+            { "text": "Deixar o braço esticado longe do corpo", "correct": true },
+            { "text": "Manter os joelhos flexionados", "correct": false },
+            { "text": "Manter o quadril móvel", "correct": false },
+            { "text": "Manter a coluna em posição neutra", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Na quadrupedia, por que manter os cotovelos colados ao corpo?",
+          "explanation": "Cotovelo aberto abre espaço para o oponente enfiar o braço e conquistar controle por baixo — o caminho natural para as costas.",
+          "options": [
+            { "text": "Para negar o espaço por onde o oponente entra em busca das costas", "correct": true },
+            { "text": "Para aumentar a área de apoio e ficar mais estável", "correct": false },
+            { "text": "Para conseguir levantar mais rápido", "correct": false },
+            { "text": "Para proteger as costelas de pressão", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M0.5",
+      "title": "Pegadas de gi: manga, gola, calça",
+      "belt": "BRANCA",
+      "order": 5,
+      "unlockRule": "ALL",
+      "prereqs": [],
+      "concept": "No gi, a pegada é o que substitui a força: ela conecta você ao oponente e transforma movimento de quadril em controle do corpo dele. Por isso pegada é pré-requisito conceitual de quase tudo — raspagem, passagem e estrangulamento começam com uma pegada específica, não com o movimento. Duas ideias importam mais que a lista de pegadas: quem controla a manga controla o braço e, com ele, a postura; e uma pegada só vale se o cotovelo estiver perto do seu corpo, senão o custo de mantê-la é maior para você do que para ele.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Por que a pegada é considerada pré-requisito conceitual de quase tudo no gi?",
+          "explanation": "A pegada é a conexão que transmite força: sem ela, movimento de quadril não vira controle do oponente. Raspagens, passagens e estrangulamentos partem de pegadas específicas.",
+          "options": [
+            { "text": "É o que conecta você ao oponente e transforma seu movimento em controle dele", "correct": true },
+            { "text": "É o critério usado para pontuar em competição", "correct": false },
+            { "text": "É o que impede o oponente de encostar em você", "correct": false },
+            { "text": "É o único jeito de aplicar força superior à do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Uma pegada boa e uma pegada ruim se distinguem principalmente por:",
+          "explanation": "Cotovelo perto do corpo permite usar estrutura. Braço esticado gasta força e entrega alavanca — a pegada passa a custar mais para quem a mantém.",
+          "options": [
+            { "text": "A posição do seu cotovelo em relação ao seu corpo", "correct": true },
+            { "text": "A força com que se aperta o tecido", "correct": false },
+            { "text": "O tempo que se consegue mantê-la", "correct": false },
+            { "text": "A quantidade de pano agarrado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Controlar a manga do oponente serve principalmente para:",
+          "explanation": "O braço é o que sustenta a postura e defende. Neutralizar um braço abre, de uma vez, ataque e raspagem — muito mais do que apenas segurar o oponente no lugar.",
+          "options": [
+            { "text": "Controlar o braço e, por consequência, a postura e a defesa dele", "correct": true },
+            { "text": "Impedir que ele se levante", "correct": false },
+            { "text": "Prepará-lo para uma queda em pé", "correct": false },
+            { "text": "Cansar o antebraço do oponente", "correct": false }
+          ]
+        }
+      ]
+    }
+  ]
+}

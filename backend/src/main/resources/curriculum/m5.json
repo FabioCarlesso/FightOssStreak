@@ -1,0 +1,51 @@
+{
+  "code": "M5",
+  "title": "Costas (Back Control)",
+  "summary": "A posição mais dominante do jiu-jitsu. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M5.1",
+      "title": "Pegar as costas a partir da montada",
+      "belt": "AZUL",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.4"],
+      "concept": "Pegar as costas raramente é um ataque: é a colheita de uma defesa do oponente. Quando ele vira de lado para escapar da montada, ele mesmo entrega as costas — o seu trabalho é reconhecer o instante e acompanhar o giro em vez de forçá-lo. Quem tenta obrigar a virada geralmente perde a montada por nada.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M5.2",
+      "title": "Controle de costas: hooks e seat belt",
+      "belt": "AZUL",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.1"],
+      "concept": "O controle de costas se sustenta em dois elementos independentes: os ganchos, que impedem que ele deslize para fora, e o seat belt, que impede que ele gire de frente. Perder um só normalmente ainda dá para recuperar; perder os dois acaba a posição. Entender essa divisão é o que transforma costas de posição instável em posição dominante.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M5.3",
+      "title": "Mata-leão (rear naked choke)",
+      "belt": "AZUL",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.2"],
+      "concept": "O mata-leão é a finalização mais confiável do jiu-jitsu porque não depende do gi nem de erro do oponente — depende só de o controle estar mantido. O trabalho real acontece antes do estrangulamento: neutralizar as mãos que defendem o pescoço. Por ser uma técnica que interrompe circulação, é também a que menos tolera demora no tap (M0.3).",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M5.4",
+      "title": "Manutenção de costas contra defesa",
+      "belt": "AZUL",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.2"],
+      "concept": "Contra alguém que sabe defender, costas vira um jogo de deslocamento: ele leva os ombros ao chão e tenta girar, e você precisa acompanhar mantendo o peito colado, trocando de lado sem soltar o seat belt. A lição transferível é que manter posição é movimento contínuo, não travamento.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

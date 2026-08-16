@@ -172,7 +172,7 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 ## Notas de design
 - **SRS não revisa teoria, agenda drill.** Esse é o diferencial: o app abre e diz *"hoje revise fuga de montada e raspagem de tesoura"*, priorizando nós antigos e os de quiz com erro.
 - Nós com múltiplos pré-requisitos (M1.5, M7.1, M7.4) são bons **checkpoints** de revisão consolidada.
-- Total: **43 nós**. Cobre faixa branca com folga e entra em azul. É deliberadamente enxuto — currículo real de faixa branca é maior, e a expansão deve vir do uso, não do planejamento.
+- Total: **46 nós** (5+6+7+7+6+4+4+4+3). *Correção: a versão anterior deste documento dizia 43, que não batia com a soma das próprias tabelas — ver D14 em `07-decisoes.md`.* Cobre faixa branca com folga e entra em azul. É deliberadamente enxuto — currículo real de faixa branca é maior, e a expansão deve vir do uso, não do planejamento.
 - O currículo é dado versionado (ver `03-estrutura-projeto.md`): alterar a árvore é um PR revisável, não uma migração de banco.
 
 ## Pendências de validação

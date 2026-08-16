@@ -46,7 +46,11 @@ Essa distinção define tudo:
 - [x] Nome definido
 - [x] Disclaimers redigidos
 - [x] Critérios de sucesso do MVP definidos
-- [ ] Schema de banco de dados
-- [ ] Estrutura de telas do MVP web
-- [ ] Setup do repositório e workspaces
-- [ ] Escolha e catalogação dos vídeos do YouTube por nó
+- [x] Schema de banco de dados — migrations em `backend/src/main/resources/db/migration/`
+- [x] Estrutura de telas do MVP web — home (streak + agenda), árvore, detalhe do nó
+- [x] Setup do repositório e workspaces — monorepo npm + Maven, CI path-filtered
+- [x] Currículo transcrito como dado versionado (46 nós, ver D14)
+- [x] Quiz conceitual escrito para M0 e M1 (11 nós)
+- [ ] Quiz conceitual dos módulos M2–M8
+- [ ] Escolha e catalogação dos vídeos do YouTube por nó *(nenhum vídeo catalogado ainda)*
+- [ ] Uso real por 30 dias para avaliar os critérios de sucesso de `05`

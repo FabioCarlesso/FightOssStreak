@@ -1,0 +1,55 @@
+name: web
+
+# Path-filtered: front, código compartilhado e o spec que gera os tipos.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'shared/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'backend/openapi.json'
+      - '.github/workflows/web.yml'
+  pull_request:
+    paths:
+      - 'web/**'
+      - 'shared/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'backend/openapi.json'
+      - '.github/workflows/web.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Regras puras: streak, SM-2 e desbloqueio. Os casos de SRS são espelhados no backend,
+      # então uma divergência entre as duas implementações quebra aqui ou lá.
+      - name: Testes de shared/domain
+        run: npm test
+
+      # shared/types é GERADO. Se o resultado divergir do que está commitado, o front está
+      # compilando contra um contrato que o backend não serve mais.
+      - name: shared/types está em dia com o OpenAPI
+        run: |
+          npm run gen:types
+          git diff --exit-code -- shared/types/generated \
+            || { echo "::error::shared/types desatualizado — rode 'npm run gen:types' e commite"; exit 1; }
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build --workspace @fos/web

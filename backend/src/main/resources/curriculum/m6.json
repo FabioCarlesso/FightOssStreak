@@ -1,0 +1,51 @@
+{
+  "code": "M6",
+  "title": "Quedas e Entrada em Combate",
+  "summary": "Trilha paralela — pode ser cursada cedo, logo após M0. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M6.1",
+      "title": "Puxar guarda com segurança",
+      "belt": "BRANCA",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M0.2", "M0.5"],
+      "concept": "Puxar guarda é uma decisão legítima, mas é onde muita gente se machuca por pressa: soltar o corpo sem controlar o oponente entrega uma queda por cima de você. O princípio é ter pegada antes de sentar e descer controlando o próprio peso — puxar guarda é levar o oponente junto, não simplesmente cair sentado.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M6.2",
+      "title": "Queda de mão única (single leg)",
+      "belt": "BRANCA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M0.2", "M0.5"],
+      "concept": "O single leg reduz o problema da queda a uma ideia: tirar um dos dois apoios do oponente. Ele exige entrada com o nível baixo — quem se abaixa curvando a coluna em vez de flexionar os joelhos perde a postura e a força ao mesmo tempo. É a queda mais acessível para quem começa porque tolera erro de distância melhor que o double.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M6.3",
+      "title": "Queda de dois pés (double leg)",
+      "belt": "BRANCA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M0.2", "M0.5"],
+      "concept": "O double leg ataca os dois apoios de uma vez, e por isso é mais decisivo e menos tolerante: sem mudança de nível e sem penetração real com o passo, vira um empurrão de tronco que o oponente defende com um sprawl simples. É também a queda que mais exige responsabilidade de quem aplica — levar o parceiro ao chão com controle, nunca projetá-lo.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M6.4",
+      "title": "Sprawl e defesa de queda",
+      "belt": "AZUL",
+      "order": 4,
+      "unlockRule": "ALL",
+      "prereqs": ["M6.2", "M6.3"],
+      "concept": "O sprawl é a resposta simétrica à entrada de queda: jogar o quadril para baixo e as pernas para trás tira exatamente aquilo que o oponente veio buscar. Vale como nó de currículo não só pela defesa — é dele que nasce o front headlock, e por isso M7.2 depende deste nó, e não de guarda aberta.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "code": "M8",
+  "title": "Jogo Integrado",
+  "summary": "Integração e personalização. Quiz pendente de curadoria.",
+  "nodes": [
+    {
+      "code": "M8.1",
+      "title": "Encadeamento de raspagens (sweep chains)",
+      "belt": "ROXA",
+      "order": 1,
+      "unlockRule": "ALL",
+      "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
+      "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona — o que funciona é a segunda. Encadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma seja a entrada da outra. É o mesmo raciocínio de M2.2 e M2.3, agora aplicado deliberadamente em vez de por acidente.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M8.2",
+      "title": "Leitura de pressão e antecipação de reação",
+      "belt": "ROXA",
+      "order": 2,
+      "unlockRule": "ALL",
+      "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
+      "concept": "A partir de certo ponto, o ganho não vem de saber mais técnicas, e sim de perceber mais cedo o que o oponente vai fazer. Ler direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação consumada — é a diferença entre reagir e antecipar, e é o que faz um jogo parecer sem esforço.",
+      "video": null,
+      "quiz": []
+    },
+    {
+      "code": "M8.3",
+      "title": "Construção de jogo A-B-C (game plan pessoal)",
+      "belt": "ROXA",
+      "order": 3,
+      "unlockRule": "ALL",
+      "prereqs": ["M8.1", "M8.2"],
+      "concept": "Jogo pessoal é escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis: uma posição de partida, uma sequência principal e uma alternativa para quando ela é defendida. O nó final do currículo é justamente o que não se pode copiar de um vídeo — ele depende do seu corpo, do seu tempo de treino e do que já funcionou para você.",
+      "video": null,
+      "quiz": []
+    }
+  ]
+}
