@@ -19,7 +19,45 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 
 ## Rodando
 
-Requer **Java 21** e **Node 22**.
+Dois modos. **Docker** para usar o app; **dev** para mexer no código.
+
+### Com Docker (só precisa de Docker)
+
+```bash
+docker compose up --build
+```
+
+Abra <http://localhost:8081>. Na primeira abertura o app pede aceite do aviso de responsabilidade.
+
+Sobe `db` (Postgres), `backend` e `web`. O browser fala só com o `web`: é o nginx dele que
+encaminha `/api` para o backend — mesma topologia de produção, e por isso nenhuma requisição
+sai para `:8080`. Os dados ficam no volume `fos-pgdata` e sobrevivem a `docker compose down`;
+`docker compose down -v` zera.
+
+```bash
+docker compose logs -f backend     # logs
+docker compose restart backend     # reiniciar sem perder dados
+docker compose down -v             # apagar tudo, inclusive o banco
+```
+
+O backend também publica `:8080` no host, só para depurar e para o Swagger
+(<http://localhost:8080/swagger-ui.html>). O app não usa essa porta.
+
+As portas são parametrizadas — a imagem não tem porta fixa dentro dela:
+
+| Variável | Default | O que faz |
+|---|---|---|
+| `WEB_HOST_PORT` | `8081` | porta publicada no host |
+| `PORT` | `80` | porta em que o nginx escuta **dentro** do container |
+
+```bash
+WEB_HOST_PORT=3000 docker compose up   # app em http://localhost:3000
+PORT=9090 docker compose up web        # nginx escuta 9090 dentro do container
+```
+
+### Modo dev (Java 21 + Node 22)
+
+Hot reload; é o fluxo para desenvolver. Não roda em container.
 
 ```bash
 npm install
@@ -31,18 +69,63 @@ npm run dev:backend
 npm run dev:web
 ```
 
-Abra <http://localhost:5173>. Na primeira abertura o app pede aceite do aviso de responsabilidade.
+Abra <http://localhost:5173>.
 
-Documentação da API: <http://localhost:8080/swagger-ui.html>
-
-### Com Postgres
-
-O perfil `dev` usa H2 em memória — os dados somem ao reiniciar. Para persistir:
+O perfil `dev` usa H2 em memória — os dados somem ao reiniciar. Para desenvolver contra
+Postgres sem subir a stack inteira:
 
 ```bash
 docker compose up -d db
 cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
+
+## Deploy na Railway
+
+Dois serviços a partir deste repo (`backend` e `web`) mais um Postgres gerenciado. **As
+imagens são as mesmas do Compose** — o que muda é só o ambiente. Nenhum host, porta ou
+credencial está fixo dentro delas, e o deploy não exige editar `application.yml` nem os
+Dockerfiles.
+
+**Só o `web` recebe domínio público.** O backend fica acessível apenas pela rede privada,
+atrás do nginx (D24).
+
+Passo a passo:
+
+1. Criar o projeto e adicionar o **Postgres** (template gerenciado da Railway).
+2. Criar o serviço **backend** a partir deste repo. Em *Settings → Config as code*, apontar
+   para `backend/railway.json` — ele já traz `dockerfilePath` e o `healthcheckPath`.
+   Não mexer em *Root Directory*: as duas imagens constroem a partir da raiz do repo.
+3. Criar o serviço **web** do mesmo jeito, com `web/railway.json`.
+4. Preencher as variáveis da tabela abaixo em cada serviço.
+5. Gerar domínio público **só no `web`** (*Settings → Networking → Generate Domain*).
+
+Variáveis, e o que cada uma vale nos dois ambientes:
+
+| Variável | Serviço | Compose local | Railway |
+|---|---|---|---|
+| `PORT` | web / backend | `80` / `8080` | injetada pela plataforma |
+| `BACKEND_ORIGIN` | web | `http://backend:8080` | `http://backend.railway.internal:8080` |
+| `NGINX_RESOLVER` | web | `127.0.0.11 ipv6=off` | `[fd12::10] ipv6=on` |
+| `SPRING_PROFILES_ACTIVE` | backend | `postgres` | `postgres` |
+| `FOS_DB_URL` | backend | `jdbc:postgresql://db:5432/fos` | `jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}` |
+| `FOS_DB_USER` | backend | `fos` | `${{Postgres.PGUSER}}` |
+| `FOS_DB_PASSWORD` | backend | `fos` | `${{Postgres.PGPASSWORD}}` |
+| `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
+| `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
+
+Detalhes que não são óbvios:
+
+- **`DATABASE_URL` não serve.** A Railway a expõe no formato `postgresql://user:pass@host/db`,
+  que não é uma URL JDBC e o Spring não aceita. Daí montar `FOS_DB_URL` a partir das variáveis
+  de referência do Postgres.
+- **`SERVER_ADDRESS=::`.** A rede privada da Railway resolve IPv6, e ambientes criados antes
+  de 16/10/2025 são IPv6-only. Com `0.0.0.0` o backend fica invisível para o nginx.
+- **`NGINX_RESOLVER`.** O nginx resolve o upstream no start e cacheia; como o IP do backend
+  muda a cada deploy, o `proxy_pass` vai por variável e o `resolver` re-resolve em runtime.
+  Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
+- **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
+  do dia seguinte.
+- **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
 
 ## Testes
 
@@ -58,8 +141,13 @@ O teste de integridade do currículo falha se houver ciclo de pré-requisitos, r
 
 ```
 backend/   Spring Boot + Postgres — fonte da verdade de progresso e SRS
-  └── src/main/resources/curriculum/   currículo versionado como dado (D11)
+  ├── src/main/resources/curriculum/   currículo versionado como dado (D11)
+  ├── Dockerfile                       imagem da API (contexto de build: raiz do repo)
+  └── railway.json                     config do serviço backend na Railway
 web/       React + Vite — MVP
+  ├── Dockerfile                       imagem do nginx que serve o dist/ e proxia /api
+  ├── nginx.conf.template              template processado por envsubst no start
+  └── railway.json                     config do serviço web na Railway
 shared/    domain (regras puras), api-client, types (GERADOS do OpenAPI)
 docs/      planejamento e log de decisões
 ```

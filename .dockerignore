@@ -1,0 +1,28 @@
+# Contexto de build das duas imagens — backend e web constroem a partir da raiz (ver o
+# cabeçalho de backend/Dockerfile). Sem estas exclusões o contexto enviado ao daemon sai de
+# poucos MB para centenas: node_modules sozinho já passa de 200 MB.
+
+node_modules/
+*/node_modules/
+*/*/node_modules/
+
+web/dist/
+backend/target/
+
+.git/
+.github/
+.gitignore
+
+docs/
+mobile/
+scripts/
+
+.idea/
+.vscode/
+*.iml
+.DS_Store
+*.log
+
+.env
+.env.local
+*.local
