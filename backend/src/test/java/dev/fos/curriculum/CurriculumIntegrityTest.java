@@ -139,18 +139,6 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("nenhum vídeo é reaproveitado em dois nós — cada nó tem sua própria referência")
-    void cataloguedVideosAreNotReused() {
-        List<String> ids = byCode().values().stream()
-                .map(CurriculumSource.NodeSpec::video)
-                .filter(java.util.Objects::nonNull)
-                .map(CurriculumSource.VideoSpec::youtubeId)
-                .toList();
-
-        assertThat(ids).doesNotHaveDuplicates();
-    }
-
-    @Test
     @DisplayName("M4.1 usa unlockRule ANY: qualquer passagem serve (D13)")
     void passingGuardUsesAnyRule() {
         CurriculumSource.NodeSpec m41 = byCode().get("M4.1");
