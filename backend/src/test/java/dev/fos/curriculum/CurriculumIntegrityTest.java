@@ -127,7 +127,7 @@ class CurriculumIntegrityTest {
                     CurriculumSource.VideoSpec video = node.video();
                     assertThat(video.youtubeId())
                             .as("id de vídeo de %s", node.code())
-                            .matches("[\\w-]{11}");
+                            .matches(CurriculumValidator.YOUTUBE_ID_REGEX);
                     assertThat(video.title()).as("título do vídeo de %s", node.code()).isNotBlank();
                     assertThat(video.channel()).as("canal do vídeo de %s", node.code()).isNotBlank();
                     if (video.startSeconds() != null) {
@@ -207,6 +207,17 @@ class CurriculumIntegrityTest {
         assertThatThrownBy(() -> validator.validate(List.of(broken)))
                 .isInstanceOf(CurriculumException.class)
                 .hasMessageContaining("canal creditado");
+    }
+
+    @Test
+    @DisplayName("o validador exige título em vídeo catalogado")
+    void rejectsVideoWithoutTitle() {
+        CurriculumSource.Module broken =
+                moduleWithVideo(new CurriculumSource.VideoSpec("REFdmhRCsSQ", null, "canal", null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("sem título");
     }
 
     @Test

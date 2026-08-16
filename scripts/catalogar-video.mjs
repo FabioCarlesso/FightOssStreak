@@ -27,7 +27,12 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const curriculumDir = resolve(root, 'backend/src/main/resources/curriculum');
 
-/** Extrai o id de 11 caracteres das formas de URL que o YouTube usa. */
+/**
+ * Extrai o id de 11 caracteres das formas de URL que o YouTube usa.
+ *
+ * O formato do id também é validado no backend, em `CurriculumValidator.YOUTUBE_ID_REGEX`. São as
+ * duas únicas cópias, e são inevitáveis: uma em JavaScript, outra em Java. Mudou uma, mude a outra.
+ */
 export function parseVideoId(input) {
   if (/^[\w-]{11}$/.test(input)) return input;
 
@@ -202,6 +207,13 @@ async function main() {
     throw new Error(
       `O oEmbed não devolveu o canal de ${videoId}. Sem crédito ao canal não dá para catalogar (D7).`,
     );
+  }
+
+  // Sem esta checagem, `title` indefinido viraria o literal `undefined` no JSON e o erro só
+  // apareceria como "Unexpected token 'u'" na releitura do arquivo — mensagem que não ajuda
+  // ninguém. O validador do backend também recusa vídeo sem título.
+  if (!title) {
+    throw new Error(`O oEmbed não devolveu o título de ${videoId}. Sem título não dá para catalogar.`);
   }
 
   const video = {

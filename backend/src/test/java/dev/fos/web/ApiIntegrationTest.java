@@ -3,6 +3,7 @@ package dev.fos.web;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import dev.fos.curriculum.CurriculumValidator;
 import dev.fos.model.QuizQuestion;
 import dev.fos.repo.QuizQuestionRepository;
 import java.time.Clock;
@@ -97,8 +99,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó ainda sem vídeo catalogado é servido sem quebrar")
     void uncataloguedVideoIsNormalState() throws Exception {
-        // M2 em diante ainda não passou por curadoria — o nó tem que abrir mesmo assim.
-        mockMvc.perform(get("/api/nodes/M2.1"))
+        String code = anyNodeWithVideo(false);
+        assumeTrue(code != null, "todo nó já tem vídeo — a curadoria terminou");
+
+        mockMvc.perform(get("/api/nodes/" + code))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.video.catalogued").value(false))
                 .andExpect(jsonPath("$.video.youtubeId").doesNotExist());
@@ -107,10 +111,13 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó com vídeo catalogado traz embed sem cookie, link do watch e crédito ao canal")
     void cataloguedVideoIsServedWithCredit() throws Exception {
-        JsonNode video = getJson("/api/nodes/M0.1").get("video");
+        String code = anyNodeWithVideo(true);
+        assertThat(code).as("o currículo precisa ter ao menos um vídeo catalogado").isNotNull();
+
+        JsonNode video = getJson("/api/nodes/" + code).get("video");
 
         assertThat(video.get("catalogued").asBoolean()).isTrue();
-        assertThat(video.get("youtubeId").asText()).matches("[\\w-]{11}");
+        assertThat(video.get("youtubeId").asText()).matches(CurriculumValidator.YOUTUBE_ID_REGEX);
         assertThat(video.get("channel").asText())
                 .as("crédito ao canal é requisito da política D7, não enfeite")
                 .isNotBlank();
@@ -357,6 +364,24 @@ class ApiIntegrationTest {
                         .content(answerPayload(node, true)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.passed").value(true));
+    }
+
+    /**
+     * Primeiro nó da árvore com (ou sem) vídeo catalogado, ou {@code null} se não houver.
+     *
+     * <p>Fixar um código aqui amarraria o teste ao estado da curadoria, que muda por design: o
+     * escopo catalogado cresce a cada issue e um nó pode voltar a ficar sem vídeo quando a escolha
+     * não sobrevive à revisão.
+     */
+    private String anyNodeWithVideo(boolean catalogued) throws Exception {
+        for (JsonNode module : getJson("/api/curriculum/tree").get("modules")) {
+            for (JsonNode node : module.get("nodes")) {
+                if (node.get("hasVideo").asBoolean() == catalogued) {
+                    return node.get("code").asText();
+                }
+            }
+        }
+        return null;
     }
 
     /** Procura o status de um nó dentro do payload da árvore. */

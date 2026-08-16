@@ -24,8 +24,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurriculumValidator {
 
-    /** Id de vídeo do YouTube: 11 caracteres de [A-Za-z0-9_-]. */
-    private static final Pattern YOUTUBE_ID = Pattern.compile("[\\w-]{11}");
+    /**
+     * Id de vídeo do YouTube: 11 caracteres de [A-Za-z0-9_-].
+     *
+     * <p>Público para que os testes afirmem a <em>mesma</em> regra que a ingestão aplica, em vez de
+     * uma cópia que pode divergir. {@code scripts/catalogar-video.mjs} carrega a única outra cópia,
+     * inevitável por ser JavaScript.
+     */
+    public static final String YOUTUBE_ID_REGEX = "[\\w-]{11}";
+
+    private static final Pattern YOUTUBE_ID = Pattern.compile(YOUTUBE_ID_REGEX);
 
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
@@ -106,13 +114,15 @@ public class CurriculumValidator {
      *
      * <p>O id é conferido aqui porque um id inválido não quebra nada na ingestão — ele vira um
      * iframe vazio na tela do nó, semanas depois. Crédito ao canal é política de uso de vídeo (D7),
-     * não metadado opcional.
+     * não metadado opcional; e sem título o crédito na tela começa com um travessão solto
+     * ("— canal X"), que parece defeito.
      */
     private void validateVideo(CurriculumSource.VideoSpec video, String where) {
         if (!YOUTUBE_ID.matcher(video.youtubeId()).matches()) {
             throw new CurriculumException(
                     where + ": id de vídeo fora do formato do YouTube '" + video.youtubeId() + "'");
         }
+        requireText(video.title(), where + ": vídeo catalogado sem título");
         requireText(video.channel(), where + ": vídeo catalogado sem canal creditado (política D7)");
         if (video.startSeconds() != null && video.startSeconds() < 0) {
             throw new CurriculumException(
