@@ -2,6 +2,7 @@ package dev.fos.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -238,6 +239,95 @@ class ApiIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"version\":\"2020-01-01\"}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("sem uso, as métricas do MVP respondem zerado e com as metas de docs/05")
+    void metricsStartEmpty() throws Exception {
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.windowDays").value(30))
+                .andExpect(jsonPath("$.windowStart").value("2026-07-18"))
+                .andExpect(jsonPath("$.windowEnd").value("2026-08-16"))
+                .andExpect(jsonPath("$.daysWithDrill.value").value(0))
+                .andExpect(jsonPath("$.daysWithDrill.target").value(12))
+                .andExpect(jsonPath("$.nodesCompleted.target").value(15))
+                .andExpect(jsonPath("$.srsAdherence.targetPercent").value(60))
+                // Nada agendado ainda: aderência ausente, não 0% — não houve cobrança a ignorar.
+                .andExpect(jsonPath("$.srsAdherence.percent").value(nullValue()));
+    }
+
+    @Test
+    @DisplayName("concluir um nó e registrar drill move dias com drill e nós concluídos")
+    void metricsFollowRealUse() throws Exception {
+        completeNode("M0.1");
+
+        mockMvc.perform(post("/api/nodes/M0.1/drill")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"recall\":\"OK\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.daysWithDrill.value").value(1))
+                .andExpect(jsonPath("$.nodesCompleted.value").value(1));
+    }
+
+    @Test
+    @DisplayName("só o drill que atende revisão vencida entra na aderência ao SRS")
+    void metricsCountAttendedReviews() throws Exception {
+        completeNode("M0.1");
+
+        // Drill retroativo com recall ruim: o nó é reagendado para o passado e passa a estar vencido.
+        // Neste registro ele ainda não estava vencido — a revisão era para 17/08.
+        mockMvc.perform(post("/api/nodes/M0.1/drill")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"recall\":\"FORGOT\",\"drilledOn\":\"2026-08-10\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.srsAdherence.attended").value(0))
+                .andExpect(jsonPath("$.srsAdherence.scheduled").value(1))
+                .andExpect(jsonPath("$.srsAdherence.percent").value(0));
+
+        // Agora sim: o nó está vencido e o drill de hoje atende à sugestão da agenda.
+        mockMvc.perform(post("/api/nodes/M0.1/drill")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"recall\":\"OK\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.srsAdherence.attended").value(1))
+                .andExpect(jsonPath("$.srsAdherence.scheduled").value(1))
+                .andExpect(jsonPath("$.srsAdherence.percent").value(100))
+                .andExpect(jsonPath("$.srsAdherence.met").value(true));
+    }
+
+    @Test
+    @DisplayName("refazer o quiz de um nó já concluído conta como quiz refeito")
+    void metricsCountQuizRetakes() throws Exception {
+        // Errar e passar na segunda é o caminho normal de conclusão, não repetição espontânea.
+        JsonNode node = getJson("/api/nodes/M0.1");
+        mockMvc.perform(post("/api/nodes/M0.1/quiz")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(answerPayload(node, false)))
+                .andExpect(status().isOk());
+        completeNode("M0.1");
+
+        mockMvc.perform(get("/api/metrics/mvp")).andExpect(jsonPath("$.quizRetakes.value").value(0));
+
+        completeNode("M0.1");
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.quizRetakes.value").value(1))
+                .andExpect(jsonPath("$.quizRetakes.met").value(true));
+    }
+
+    @Test
+    @DisplayName("janela de medição fora do intervalo aceito responde 400")
+    void metricsRejectInvalidWindow() throws Exception {
+        mockMvc.perform(get("/api/metrics/mvp").param("days", "0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("invalid_request"));
     }
 
     // --- helpers ---

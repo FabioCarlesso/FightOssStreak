@@ -2,6 +2,7 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { HomePage } from './pages/HomePage.tsx';
 import { NodePage } from './pages/NodePage.tsx';
+import { ProgressPage } from './pages/ProgressPage.tsx';
 import { TreePage } from './pages/TreePage.tsx';
 
 export function App() {
@@ -23,6 +24,7 @@ export function App() {
               Hoje
             </NavLink>
             <NavLink to="/arvore">Árvore</NavLink>
+            <NavLink to="/progresso">Progresso</NavLink>
           </nav>
         </header>
 
@@ -31,6 +33,7 @@ export function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/arvore" element={<TreePage />} />
             <Route path="/no/:code" element={<NodePage />} />
+            <Route path="/progresso" element={<ProgressPage />} />
             <Route path="*" element={<p className="empty">Página não encontrada.</p>} />
           </Routes>
         </main>

@@ -6,7 +6,7 @@ Ferramenta pessoal de revisão e retenção do que é aprendido no tatame, com m
 
 ## O que já funciona
 
-MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, streak e agenda de revisão por repetição espaçada.
+MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real.
 
 | Camada | Estado |
 |---|---|

@@ -42,6 +42,19 @@ public class DrillLog {
     @Column
     private String note;
 
+    /**
+     * O nó estava vencido na agenda quando este drill foi registrado?
+     *
+     * <p>Gravado aqui, e não derivado depois, porque {@code srs_review.next_review_on} é
+     * sobrescrito pelo próprio drill: um instante depois do registro a informação já não existe.
+     */
+    @Column(name = "was_due", nullable = false)
+    private boolean wasDue;
+
+    /** Data que estava agendada no momento do registro; {@code null} = nó sem revisão agendada. */
+    @Column(name = "due_on")
+    private LocalDate dueOn;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -50,12 +63,21 @@ public class DrillLog {
     }
 
     public DrillLog(
-            Long userId, Long nodeId, LocalDate drilledOn, Recall recall, String note, Instant createdAt) {
+            Long userId,
+            Long nodeId,
+            LocalDate drilledOn,
+            Recall recall,
+            String note,
+            boolean wasDue,
+            LocalDate dueOn,
+            Instant createdAt) {
         this.userId = userId;
         this.nodeId = nodeId;
         this.drilledOn = drilledOn;
         this.recall = recall;
         this.note = note;
+        this.wasDue = wasDue;
+        this.dueOn = dueOn;
         this.createdAt = createdAt;
     }
 
@@ -81,6 +103,14 @@ public class DrillLog {
 
     public String getNote() {
         return note;
+    }
+
+    public boolean isWasDue() {
+        return wasDue;
+    }
+
+    public LocalDate getDueOn() {
+        return dueOn;
     }
 
     public Instant getCreatedAt() {

@@ -2,16 +2,18 @@ package dev.fos.service;
 
 import dev.fos.model.Node;
 import dev.fos.model.ProgressStatus;
+import dev.fos.model.QuizAttempt;
 import dev.fos.model.QuizOption;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.SrsReview;
 import dev.fos.model.UserNodeKey;
 import dev.fos.model.UserProgress;
+import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.QuizQuestionRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserProgressRepository;
 import dev.fos.web.dto.QuizDtos;
-import java.time.Instant;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +37,26 @@ public class QuizService {
     private final QuizQuestionRepository quizQuestionRepository;
     private final UserProgressRepository progressRepository;
     private final SrsReviewRepository srsRepository;
+    private final QuizAttemptRepository quizAttemptRepository;
     private final CurriculumQueryService curriculumQueryService;
     private final SrsScheduler srsScheduler;
+    private final Clock clock;
 
     public QuizService(
             QuizQuestionRepository quizQuestionRepository,
             UserProgressRepository progressRepository,
             SrsReviewRepository srsRepository,
+            QuizAttemptRepository quizAttemptRepository,
             CurriculumQueryService curriculumQueryService,
-            SrsScheduler srsScheduler) {
+            SrsScheduler srsScheduler,
+            Clock clock) {
         this.quizQuestionRepository = quizQuestionRepository;
         this.progressRepository = progressRepository;
         this.srsRepository = srsRepository;
+        this.quizAttemptRepository = quizAttemptRepository;
         this.curriculumQueryService = curriculumQueryService;
         this.srsScheduler = srsScheduler;
+        this.clock = clock;
     }
 
     @Transactional
@@ -86,6 +94,12 @@ public class QuizService {
 
         int score = Math.round((correctCount * 100f) / questions.size());
         boolean passed = score >= PASSING_SCORE;
+
+        // Toda submissão entra no histórico, inclusive a reprovada e a refeita depois de já ter
+        // passado: é a repetição que interessa medir, não a nota final.
+        quizAttemptRepository.save(
+                new QuizAttempt(userId, node.getId(), score, passed, today, clock.instant()));
+
         ProgressStatus status = applyResult(userId, node, score, passed, today);
 
         return new QuizDtos.QuizResult(
@@ -98,16 +112,16 @@ public class QuizService {
         UserNodeKey key = new UserNodeKey(userId, node.getId());
         UserProgress progress = progressRepository
                 .findById(key)
-                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, Instant.now()));
+                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, clock.instant()));
 
         boolean firstCompletion = progress.getStatus() != ProgressStatus.COMPLETED && passed;
 
         progress.setLastQuizScore(score);
-        progress.setUpdatedAt(Instant.now());
+        progress.setUpdatedAt(clock.instant());
         if (passed) {
             progress.setStatus(ProgressStatus.COMPLETED);
             if (progress.getCompletedAt() == null) {
-                progress.setCompletedAt(Instant.now());
+                progress.setCompletedAt(clock.instant());
             }
         } else if (progress.getStatus() != ProgressStatus.COMPLETED) {
             // Refazer um quiz já aprovado e errar não "desconclui" o nó — desbloqueios que já

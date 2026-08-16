@@ -33,6 +33,13 @@ Sem número, "validar" não valida nada. Como o usuário inicial é o próprio a
 | Nós concluídos | ≥ 15 (módulos 0 e 1 completos) | O currículo acompanha o que aparece na aula? |
 | Quiz refeito espontaneamente | qualquer ocorrência | Sinal forte de que o quiz tem valor de retenção real |
 
+### Como as métricas são medidas
+
+As quatro estão em `GET /api/metrics/mvp` e na tela `/progresso`, cada uma ao lado da própria meta. Duas exigiram dado novo, porque não eram reconstituíveis depois (ver D20 em `07-decisoes.md`):
+
+- **Revisões atendidas** — o drill grava, no momento do registro, se o nó estava vencido e para quando estava agendado. As duas pontas da fração recortam pela mesma régua: só entra o que venceu dentro da janela, senão limpar parte de um backlog antigo apareceria como 100%. Janela sem nada agendado não vira 0%, vira "sem agenda", porque não houve sugestão a ignorar.
+- **Quiz refeito** — toda submissão entra em `quiz_attempt`, e conta a tentativa **posterior à primeira aprovação** do nó. Errar e passar na segunda é o caminho normal de conclusão; contá-lo acenderia a meta no primeiro erro de quem só está avançando.
+
 **Critério de falha honesto:** se depois de 30 dias o app estiver sendo aberto só para "não perder o streak", sem que o SRS mude o que se treina no tatame, a mecânica falhou — a gamificação estará se sustentando sozinha, sem gerar aprendizado. Nesse caso, repensar antes de investir em mobile.
 
 ## Próximos passos
