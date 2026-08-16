@@ -81,30 +81,39 @@ cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
 
 ## Deploy na Railway
 
-Dois serviços a partir deste repo (`backend` e `web`) mais um Postgres gerenciado. **As
-imagens são as mesmas do Compose** — o que muda é só o ambiente. Nenhum host, porta ou
-credencial está fixo dentro delas, e o deploy não exige editar `application.yml` nem os
-Dockerfiles.
+Dois serviços a partir deste repo (papéis **backend** e **web**) mais um Postgres
+gerenciado. **As imagens são as mesmas do Compose** — o que muda é só o ambiente. Nenhum
+host, porta ou credencial está fixo dentro delas, e o deploy não exige editar
+`application.yml` nem os Dockerfiles.
 
 **Só o `web` recebe domínio público.** O backend fica acessível apenas pela rede privada,
 atrás do nginx (D24).
 
 Passo a passo:
 
-1. Criar o projeto e adicionar o **Postgres** (template gerenciado da Railway).
+1. Criar o projeto e adicionar o **Postgres** (template gerenciado da Railway). Manter o
+   nome padrão `Postgres`: as referências `${{Postgres.PGHOST}}` da tabela casam pelo nome
+   do serviço.
 2. Criar o serviço **backend** a partir deste repo. Em *Settings → Config as code*, apontar
    para `backend/railway.json` — ele já traz `dockerfilePath` e o `healthcheckPath`.
    Não mexer em *Root Directory*: as duas imagens constroem a partir da raiz do repo.
 3. Criar o serviço **web** do mesmo jeito, com `web/railway.json`.
-4. Preencher as variáveis da tabela abaixo em cada serviço.
-5. Gerar domínio público **só no `web`** (*Settings → Networking → Generate Domain*).
+4. Preencher as variáveis da tabela abaixo em cada serviço, **backend primeiro**: até ele
+   subir no Postgres, o `web` não tem o que proxiar.
+5. Gerar domínio público **só no `web`** (*Settings → Networking → Generate Domain*), com
+   *target port* igual ao `PORT` do serviço.
+
+Os nomes dos serviços são livres, mas não são cosméticos: o domínio da rede privada sai
+deles. Um serviço chamado `FOS-backend` atende em `fos-backend.railway.internal`, e é esse
+valor que vai no `BACKEND_ORIGIN` do `web`. Confirme o domínio em *Settings → Networking →
+Private Networking* do backend antes de colar.
 
 Variáveis, e o que cada uma vale nos dois ambientes:
 
 | Variável | Serviço | Compose local | Railway |
 |---|---|---|---|
-| `PORT` | web / backend | `80` / `8080` | injetada pela plataforma |
-| `BACKEND_ORIGIN` | web | `http://backend:8080` | `http://backend.railway.internal:8080` |
+| `PORT` | web / backend | `80` / `8080` | `8080` nos dois, definida à mão |
+| `BACKEND_ORIGIN` | web | `http://backend:8080` | `http://<serviço-backend>.railway.internal:8080` |
 | `NGINX_RESOLVER` | web | `127.0.0.11 ipv6=off` | `[fd12::10] ipv6=on` |
 | `SPRING_PROFILES_ACTIVE` | backend | `postgres` | `postgres` |
 | `FOS_DB_URL` | backend | `jdbc:postgresql://db:5432/fos` | `jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}` |
@@ -115,6 +124,14 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 
 Detalhes que não são óbvios:
 
+- **`PORT` explícita, mesmo a plataforma sabendo injetá-la.** No backend porque o
+  `BACKEND_ORIGIN` do nginx aponta para uma porta fixa: serviço sem domínio público não tem
+  garantia de receber a variável, e se receber outra o proxy bate em porta errada. No web
+  para que o *target port* do domínio tenha um valor conhecido para casar.
+- **`SPRING_PROFILES_ACTIVE` esquecida não quebra nada — e é justamente o problema.** O
+  `application.yml` tem `profiles.default: dev`, que é H2 em memória. O deploy fica verde, o
+  healthcheck passa, a API responde, e todo progresso some no deploy seguinte. Sinal de que
+  o perfil pegou: as migrations do Flyway nos logs da subida.
 - **`DATABASE_URL` não serve.** A Railway a expõe no formato `postgresql://user:pass@host/db`,
   que não é uma URL JDBC e o Spring não aceita. Daí montar `FOS_DB_URL` a partir das variáveis
   de referência do Postgres.
