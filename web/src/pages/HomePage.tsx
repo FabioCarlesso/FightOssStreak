@@ -37,10 +37,10 @@ export function HomePage() {
           {agenda.data?.due?.map((item) => (
             <li key={item.nodeCode}>
               <Link to={`/no/${item.nodeCode}`} className="due-list__item">
-                <div>
+                <span className="due-list__main">
                   <span className="due-list__code">{item.nodeCode}</span>
                   <span className="due-list__title">{item.title}</span>
-                </div>
+                </span>
                 <span className={overdueClass(item.daysOverdue ?? 0)}>
                   {formatOverdue(item.daysOverdue ?? 0)}
                 </span>

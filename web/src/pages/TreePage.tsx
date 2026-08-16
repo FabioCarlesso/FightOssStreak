@@ -50,8 +50,10 @@ function NodeRow({ node }: { node: NodeSummary }) {
       <span className="node-row__status" aria-hidden="true">
         {statusIcon(node.status)}
       </span>
-      <span className="node-row__code">{node.code}</span>
-      <span className="node-row__title">{node.title}</span>
+      <span className="node-row__label">
+        <span className="node-row__code">{node.code}</span>
+        <span className="node-row__title">{node.title}</span>
+      </span>
       <span className="node-row__tags">
         <span className={`belt belt--${(node.belt ?? 'BRANCA').toLowerCase()}`}>{node.belt}</span>
         {(node.quizQuestionCount ?? 0) > 0 && <span className="tag">quiz</span>}

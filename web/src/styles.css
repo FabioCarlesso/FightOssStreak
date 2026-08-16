@@ -23,6 +23,28 @@ body {
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+/*
+ * Guardas contra estouro horizontal. Título de nó e caminho de arquivo em <code> são as fontes
+ * reais de palavra longa aqui; sem isso um único token estica a página inteira no celular.
+ */
+img,
+iframe {
+  max-width: 100%;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p,
+li {
+  overflow-wrap: break-word;
 }
 
 a {
@@ -83,10 +105,13 @@ button:disabled {
 
 .app__nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .app__nav a {
+  display: inline-flex;
+  align-items: center;
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
   border: 1px solid var(--border);
@@ -124,6 +149,7 @@ button:disabled {
 
 .card__header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
@@ -238,6 +264,16 @@ button:disabled {
   color: var(--text);
 }
 
+/*
+ * Segue bloco com conteúdo inline — o código é `inline-block` e o título flui depois dele, então a
+ * quebra já é natural. O que faltava era `min-width: 0`: sem isso o item não encolhia abaixo do
+ * próprio conteúdo e empurrava o prazo para fora do card.
+ */
+.due-list__main {
+  display: block;
+  min-width: 0;
+}
+
 .due-list__code {
   display: inline-block;
   min-width: 3.2rem;
@@ -323,7 +359,24 @@ button:disabled {
   color: var(--ok);
 }
 
+.node-row__status {
+  flex: none;
+}
+
+/*
+ * Código e título andam juntos: é esse par que ocupa o espaço livre da linha e o que, no mobile,
+ * fica em cima enquanto as chips descem para a linha de baixo.
+ */
+.node-row__label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .node-row__code {
+  flex: none;
   color: var(--muted);
   font-size: 0.82rem;
   min-width: 3.2rem;
@@ -331,11 +384,14 @@ button:disabled {
 
 .node-row__title {
   flex: 1;
+  min-width: 0;
   font-size: 0.94rem;
 }
 
 .node-row__tags {
   display: flex;
+  flex: none;
+  flex-wrap: wrap;
   gap: 0.35rem;
   align-items: center;
 }
@@ -586,17 +642,24 @@ button:disabled {
 .gate {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 1.5rem 1rem;
 }
 
+/*
+ * `margin: auto` centraliza o card, mas — ao contrário de `align-items: center` — nunca empurra o
+ * topo para fora da viewport. Em paisagem no celular o aviso é mais alto que a tela, e com
+ * centralização por alinhamento o começo do texto ficava inacessível.
+ */
 .gate__card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
   max-width: 460px;
+  width: 100%;
+  margin: auto;
 }
 
 .gate__card--wide {
@@ -625,4 +688,138 @@ button:disabled {
 .gate__error {
   color: var(--warn);
   font-size: 0.88rem;
+}
+
+/* ==========================================================================
+ * Mobile
+ *
+ * O celular é o alvo principal de uso do MVP, então os ajustes ficam concentrados aqui em vez de
+ * espalhados por cada componente. Dois breakpoints: 640px cobre qualquer celular em retrato,
+ * 380px aperta o respiro nos aparelhos mais estreitos (iPhone SE e afins).
+ * ========================================================================== */
+
+@media (max-width: 640px) {
+  .app {
+    padding: 1.1rem 0.85rem 2.5rem;
+  }
+
+  .app__header {
+    gap: 0.85rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .app__nav a {
+    padding: 0.4rem 0.85rem;
+  }
+
+  /*
+   * A linha de nó vira grade: ícone de status na primeira coluna, código + título na segunda e as
+   * chips embaixo, alinhadas ao título. Antes as chips disputavam a mesma linha sem poder encolher
+   * e o título era espremido até uma palavra por linha.
+   */
+  .node-row__inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'status label'
+      '.      tags';
+    align-items: start;
+    row-gap: 0.4rem;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .node-row__status {
+    grid-area: status;
+  }
+
+  /* Título de duas ou três linhas: o código acompanha a primeira, não o meio do bloco. */
+  .node-row__label {
+    grid-area: label;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .node-row__tags {
+    grid-area: tags;
+  }
+
+  /* Alinhado ao padding do card do nó, não mais ao layout de uma linha só. */
+  .node-row__hint {
+    margin: 0.25rem 0 0 0.7rem;
+  }
+
+  /* Duas colunas fixas: com `auto-fit` e base de 150px o grid caía para uma coluna só. */
+  .drill__options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gate {
+    padding: 1rem 0.85rem;
+  }
+
+  .gate__card {
+    padding: 1.15rem;
+  }
+
+  .gate__text {
+    max-height: 52vh;
+  }
+}
+
+/*
+ * Alvos de toque.
+ *
+ * Vale por dispositivo, não por largura: o celular em paisagem tem ~740px e continua sendo dedo.
+ * Separado do bloco acima justamente por isso — e assim o desktop com mouse fica intocado.
+ */
+@media (pointer: coarse) {
+  button,
+  .app__nav a,
+  .node-row__inner,
+  .due-list__item {
+    min-height: 44px;
+  }
+
+  /* `align-items: flex-start` continua valendo: opção de três linhas não deve centralizar o radio. */
+  .quiz__option {
+    min-height: 44px;
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .app {
+    padding: 1rem 0.65rem 2.5rem;
+  }
+
+  .app__logo {
+    font-size: 1.6rem;
+  }
+
+  .app__header h1 {
+    font-size: 1.15rem;
+  }
+
+  .app__nav a {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .card {
+    padding: 0.9rem 0.8rem;
+  }
+
+  .node-row__code,
+  .due-list__code {
+    min-width: 2.8rem;
+  }
+
+  /* Empilha as opções de recall: em 320px duas colunas deixariam ~120px por opção. */
+  .drill__options {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
