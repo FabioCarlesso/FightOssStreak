@@ -149,7 +149,6 @@ button:disabled {
 
 .card__header {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
@@ -642,24 +641,17 @@ button:disabled {
 .gate {
   min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 1.5rem 1rem;
 }
 
-/*
- * `margin: auto` centraliza o card, mas — ao contrário de `align-items: center` — nunca empurra o
- * topo para fora da viewport. Em paisagem no celular o aviso é mais alto que a tela, e com
- * centralização por alinhamento o começo do texto ficava inacessível.
- */
 .gate__card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
   max-width: 460px;
-  width: 100%;
-  margin: auto;
 }
 
 .gate__card--wide {
