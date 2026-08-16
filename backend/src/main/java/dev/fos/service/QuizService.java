@@ -2,11 +2,13 @@ package dev.fos.service;
 
 import dev.fos.model.Node;
 import dev.fos.model.ProgressStatus;
+import dev.fos.model.QuizAttempt;
 import dev.fos.model.QuizOption;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.SrsReview;
 import dev.fos.model.UserNodeKey;
 import dev.fos.model.UserProgress;
+import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.QuizQuestionRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserProgressRepository;
@@ -35,6 +37,7 @@ public class QuizService {
     private final QuizQuestionRepository quizQuestionRepository;
     private final UserProgressRepository progressRepository;
     private final SrsReviewRepository srsRepository;
+    private final QuizAttemptRepository quizAttemptRepository;
     private final CurriculumQueryService curriculumQueryService;
     private final SrsScheduler srsScheduler;
 
@@ -42,11 +45,13 @@ public class QuizService {
             QuizQuestionRepository quizQuestionRepository,
             UserProgressRepository progressRepository,
             SrsReviewRepository srsRepository,
+            QuizAttemptRepository quizAttemptRepository,
             CurriculumQueryService curriculumQueryService,
             SrsScheduler srsScheduler) {
         this.quizQuestionRepository = quizQuestionRepository;
         this.progressRepository = progressRepository;
         this.srsRepository = srsRepository;
+        this.quizAttemptRepository = quizAttemptRepository;
         this.curriculumQueryService = curriculumQueryService;
         this.srsScheduler = srsScheduler;
     }
@@ -86,6 +91,12 @@ public class QuizService {
 
         int score = Math.round((correctCount * 100f) / questions.size());
         boolean passed = score >= PASSING_SCORE;
+
+        // Toda submissão entra no histórico, inclusive a reprovada e a refeita depois de já ter
+        // passado: é a repetição que interessa medir, não a nota final.
+        quizAttemptRepository.save(
+                new QuizAttempt(userId, node.getId(), score, passed, today, Instant.now()));
+
         ProgressStatus status = applyResult(userId, node, score, passed, today);
 
         return new QuizDtos.QuizResult(

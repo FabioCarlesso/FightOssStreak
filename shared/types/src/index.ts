@@ -32,4 +32,8 @@ export type ReviewAgenda = Schemas['ReviewAgenda'];
 export type DueItem = Schemas['DueItemView'];
 export type DisclaimerStatus = Schemas['DisclaimerStatus'];
 
+export type MvpMetrics = Schemas['MvpMetrics'];
+export type CountedMetric = Schemas['Counted'];
+export type SrsAdherence = Schemas['SrsAdherence'];
+
 export type { components, paths } from '../generated/api.ts';

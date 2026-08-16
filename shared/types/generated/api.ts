@@ -111,6 +111,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/metrics/mvp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Os quatro critérios de sucesso do MVP, com valor e meta
+         * @description As metas são as de docs/05-mvp-web-plano.md e valem para a janela de 30 dias.
+         */
+        get: operations["mvp"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/disclaimer": {
         parameters: {
             query?: never;
@@ -305,6 +325,37 @@ export interface components {
             embedUrl?: string;
             watchUrl?: string;
         };
+        Counted: {
+            /** Format: int64 */
+            value?: number;
+            /** Format: int64 */
+            target?: number;
+            met?: boolean;
+        };
+        MvpMetrics: {
+            /** Format: date */
+            windowStart?: string;
+            /** Format: date */
+            windowEnd?: string;
+            /** Format: int32 */
+            windowDays?: number;
+            targetsFor30Days?: boolean;
+            daysWithDrill?: components["schemas"]["Counted"];
+            srsAdherence?: components["schemas"]["SrsAdherence"];
+            nodesCompleted?: components["schemas"]["Counted"];
+            quizRetakes?: components["schemas"]["Counted"];
+        };
+        SrsAdherence: {
+            /** Format: int64 */
+            attended?: number;
+            /** Format: int64 */
+            scheduled?: number;
+            /** Format: int32 */
+            percent?: number;
+            /** Format: int32 */
+            targetPercent?: number;
+            met?: boolean;
+        };
         ModuleView: {
             code?: string;
             title?: string;
@@ -486,6 +537,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["NodeDetailView"];
+                };
+            };
+        };
+    };
+    mvp: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MvpMetrics"];
                 };
             };
         };

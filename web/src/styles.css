@@ -257,6 +257,31 @@ button:disabled {
   font-weight: 600;
 }
 
+.pill--met {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+/* Critérios de sucesso do MVP */
+.metric__value {
+  margin: 0.2rem 0 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric__detail {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.metric__target {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 /* Árvore */
 .tree__summary,
 .module__summary {

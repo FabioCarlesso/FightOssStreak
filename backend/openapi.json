@@ -16,6 +16,10 @@
   ],
   "tags": [
     {
+      "name": "Métricas",
+      "description": "Critérios de sucesso do MVP medidos sobre o uso real"
+    },
+    {
       "name": "Atividade",
       "description": "Streak, agenda de revisão e aceite do aviso"
     },
@@ -204,6 +208,40 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NodeDetailView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/metrics/mvp": {
+      "get": {
+        "tags": [
+          "Métricas"
+        ],
+        "summary": "Os quatro critérios de sucesso do MVP, com valor e meta",
+        "description": "As metas são as de docs/05-mvp-web-plano.md e valem para a janela de 30 dias.",
+        "operationId": "mvp",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MvpMetrics"
                 }
               }
             }
@@ -696,6 +734,78 @@
           },
           "watchUrl": {
             "type": "string"
+          }
+        }
+      },
+      "Counted": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "target": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "met": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MvpMetrics": {
+        "type": "object",
+        "properties": {
+          "windowStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "windowEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "windowDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetsFor30Days": {
+            "type": "boolean"
+          },
+          "daysWithDrill": {
+            "$ref": "#/components/schemas/Counted"
+          },
+          "srsAdherence": {
+            "$ref": "#/components/schemas/SrsAdherence"
+          },
+          "nodesCompleted": {
+            "$ref": "#/components/schemas/Counted"
+          },
+          "quizRetakes": {
+            "$ref": "#/components/schemas/Counted"
+          }
+        }
+      },
+      "SrsAdherence": {
+        "type": "object",
+        "properties": {
+          "attended": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "scheduled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "percent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "met": {
+            "type": "boolean"
           }
         }
       },

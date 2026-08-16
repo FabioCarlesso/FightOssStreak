@@ -15,5 +15,8 @@ public interface DrillLogRepository extends JpaRepository<DrillLog, Long> {
 
     List<DrillLog> findByUserIdAndNodeIdOrderByDrilledOnDesc(Long userId, Long nodeId);
 
+    /** Registros dentro da janela de medição dos critérios de sucesso do MVP. */
+    List<DrillLog> findByUserIdAndDrilledOnGreaterThanEqual(Long userId, LocalDate from);
+
     long countByUserId(Long userId);
 }

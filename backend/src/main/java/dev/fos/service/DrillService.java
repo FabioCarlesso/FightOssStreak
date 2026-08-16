@@ -60,11 +60,26 @@ public class DrillService {
             throw new IllegalArgumentException("Não dá para registrar drill em data futura: " + drilledOn);
         }
 
-        drillLogRepository.save(new DrillLog(
-                userId, node.getId(), drilledOn, request.recall(), request.note(), Instant.now()));
-
         UserNodeKey key = new UserNodeKey(userId, node.getId());
-        SrsReview review = reschedule(key, request, drilledOn);
+
+        // Lido ANTES do reagendamento: é o reagendamento que apaga o estado anterior da agenda,
+        // e é esse estado que responde se o drill atendeu a uma revisão sugerida pelo SRS
+        // (critério de sucesso em docs/05-mvp-web-plano.md).
+        SrsReview scheduled = srsRepository.findById(key).orElse(null);
+        LocalDate dueOn = scheduled != null ? scheduled.getNextReviewOn() : null;
+        boolean wasDue = dueOn != null && !dueOn.isAfter(drilledOn);
+
+        drillLogRepository.save(new DrillLog(
+                userId,
+                node.getId(),
+                drilledOn,
+                request.recall(),
+                request.note(),
+                wasDue,
+                dueOn,
+                Instant.now()));
+
+        SrsReview review = reschedule(scheduled, key, request, drilledOn);
         ProgressStatus status = advanceProgress(userId, node, key);
 
         return new ActivityDtos.DrillResult(
@@ -76,8 +91,8 @@ public class DrillService {
                 streakQueryService.streak(userId, today));
     }
 
-    private SrsReview reschedule(UserNodeKey key, ActivityDtos.DrillRequest request, LocalDate drilledOn) {
-        SrsReview existing = srsRepository.findById(key).orElse(null);
+    private SrsReview reschedule(
+            SrsReview existing, UserNodeKey key, ActivityDtos.DrillRequest request, LocalDate drilledOn) {
         SrsScheduler.State current = existing == null
                 ? null
                 : new SrsScheduler.State(

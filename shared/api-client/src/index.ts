@@ -8,6 +8,7 @@ import type {
   DisclaimerStatus,
   DrillRequest,
   DrillResult,
+  MvpMetrics,
   NodeDetail,
   QuizResult,
   QuizSubmission,
@@ -90,6 +91,10 @@ export function createApiClient(options: ApiClientOptions = {}) {
       }),
 
     getStreak: () => request<StreakView>('/api/streak'),
+
+    /** Critérios de sucesso do MVP medidos sobre o uso real (docs/05-mvp-web-plano.md). */
+    getMvpMetrics: (days?: number) =>
+      request<MvpMetrics>(`/api/metrics/mvp${days ? `?days=${days}` : ''}`),
 
     /** O que drillar hoje, do mais atrasado para o menos. */
     getReviewsToday: () => request<ReviewAgenda>('/api/reviews/today'),
