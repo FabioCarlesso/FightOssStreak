@@ -33,8 +33,8 @@ Depois de catalogar, valide:
 cd backend && ./mvnw test
 ```
 
-Requer acesso de rede ao `youtube.com` — o que não existe no ambiente onde este projeto foi gerado,
-e é o motivo de os campos ainda estarem `null`.
+Requer acesso de rede ao `youtube.com`. Onde ele não existe, o script falha em vez de gravar — e o
+campo continua `null`, que é estado normal.
 
 ## Critérios gerais de escolha
 
@@ -73,6 +73,26 @@ e é o motivo de os campos ainda estarem `null`.
 | **M1.4** Fuga de montada | Upa **com o braço bloqueado** (senão ele posta a mão); elbow escape; as duas como par | Ensinar upa sem explicar por que o braço precisa estar preso |
 | **M1.5** Recuperação de guarda | Reconstruir a barreira de pernas e retomar a distância | Tratar como "voltar à guarda fechada" apenas |
 | **M1.6** Fuga de costas | Pescoço primeiro; ombros ao chão **do lado do braço que estrangula** | Ensinar a tirar os ganchos antes de defender o pescoço |
+
+## Estado atual (M0 e M1)
+
+Os 11 nós estão catalogados. O que foi verificado e o que não foi está em D21 de
+`07-decisoes.md` — em resumo: id, título, canal e permissão de incorporação vieram do YouTube;
+o encaixe pedagógico foi julgado sem assistir aos vídeos por inteiro.
+
+| Nó | Canal | Duração | Observação |
+|---|---|---|---|
+| M0.1 | Keenan Cornelius | 23:04 | O mais longo da leva; formato de lista, mas merece um `--start` depois de assistir |
+| M0.2 | Knight Jiu-Jitsu | 6:36 | — |
+| M0.3 ⚠️ | Ritchie Yip | 1:41 | Enquadra o tap como segurança do parceiro e cita o tap verbal; escolhido por ser o mais conservador |
+| M0.4 | SBG PDX (Matt Thornton) | 3:42 | Base e postura como conceito; não confirmado que percorre as três bases do nó |
+| M0.5 | RVV BJJ | 8:05 | Gola, manga e calça em capítulos |
+| M1.1 | Jordan Teaches Jiujitsu | 5:32 | "T-rex arms" = cotovelos colados; o exemplo é meia-guarda |
+| M1.2 | Ritchie Yip | 4:36 | — |
+| M1.3 | Stephan Kesting | 8:11 | — |
+| M1.4 | Stephan Kesting | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
+| M1.5 | Jordan Teaches Jiujitsu | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
+| M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
 
 ## Registro
 

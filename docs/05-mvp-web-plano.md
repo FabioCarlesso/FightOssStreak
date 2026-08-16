@@ -42,8 +42,13 @@ As quatro estão em `GET /api/metrics/mvp` e na tela `/progresso`, cada uma ao l
 
 **Critério de falha honesto:** se depois de 30 dias o app estiver sendo aberto só para "não perder o streak", sem que o SRS mude o que se treina no tatame, a mecânica falhou — a gamificação estará se sustentando sozinha, sem gerar aprendizado. Nesse caso, repensar antes de investir em mobile.
 
-## Próximos passos
-1. Estrutura de telas e fluxo de navegação
-2. Schema de banco (esqueleto já em `01-stack-tecnica.md`)
-3. Catalogar vídeos do YouTube para os nós de M0 e M1 (suficiente para começar)
-4. Setup do repositório, workspaces e geração de tipos via OpenAPI
+## Etapas de construção — todas concluídas
+
+1. ~~Estrutura de telas e fluxo de navegação~~
+2. ~~Schema de banco~~ (esqueleto em `01-stack-tecnica.md`)
+3. ~~Catalogar vídeos do YouTube para os nós de M0 e M1~~ — feito com a ressalva de D21: os 11
+   vídeos ainda não foram assistidos por inteiro
+4. ~~Setup do repositório, workspaces e geração de tipos via OpenAPI~~
+
+O que vem depois não é mais construção, é uso: a lista viva está em **Próximos passos** no
+[`README.md`](../README.md). Manter duas listas era garantir que uma ficasse mentindo.

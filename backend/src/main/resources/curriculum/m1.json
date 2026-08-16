@@ -11,7 +11,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M0.3", "M0.4"],
       "concept": "A primeira habilidade do jiu-jitsu não é escapar — é não perder enquanto você ainda não pode escapar. Sob pressão, a prioridade é uma hierarquia curta: proteger o pescoço, manter os cotovelos colados e continuar respirando. Fugas exigem espaço e tempo, e ambos aparecem quando o oponente se move; sobreviver é o que te mantém no jogo até esse momento chegar. O erro que define o faixa branca é gastar todo o ar em explosão aleatória nos primeiros trinta segundos e não ter nada quando a brecha real surge.",
-      "video": null,
+      "video": {
+        "youtubeId": "6Q0iCb2Oac8",
+        "title": "How To NOT Get Smashed On Bottom - Concepts For BJJ White Belts",
+        "channel": "Jordan Teaches Jiujitsu"
+      },
       "quiz": [
         {
           "prompt": "Sob pressão em uma posição ruim, qual é a primeira prioridade?",
@@ -63,7 +67,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.1"],
       "concept": "Shrimping é o movimento que cria espaço entre o seu quadril e o oponente — e espaço é a moeda de toda fuga. A ideia central é que quem move o quadril move o corpo inteiro: empurrar com os braços apenas cansa, mas plantar o pé, levantar o quadril e deslocá-lo para longe reposiciona a estrutura toda. Por isso ele aparece embaixo da fuga de 100kg, da fuga de montada e da recuperação de guarda: não é um exercício de aquecimento, é o mecanismo comum das três.",
-      "video": null,
+      "video": {
+        "youtubeId": "RnIlw0gQK5k",
+        "title": "The Ultimate BJJ Beginner's Guide Part 2 - How To Shrimp",
+        "channel": "Ritchie Yip"
+      },
       "quiz": [
         {
           "prompt": "O que o shrimping produz, tecnicamente?",
@@ -105,7 +113,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.2"],
       "concept": "Embaixo do 100kg o problema não é o peso, é a falta de enquadramento: sem estruturas de braço separando você do oponente, o peito dele cola no seu e some o espaço. A fuga é uma sequência lógica — construir enquadramento, usar o shrimp para abrir espaço, e ocupar esse espaço com o joelho antes que ele feche de novo. Quem tenta empurrar sem enquadramento, ou faz o shrimp sem ter para onde levar o joelho, cria espaço e o devolve de graça.",
-      "video": null,
+      "video": {
+        "youtubeId": "5ALqUk9uefk",
+        "title": "How to Escape a Really Tight Side Control",
+        "channel": "Stephan Kesting"
+      },
       "quiz": [
         {
           "prompt": "Qual é a ordem correta dos elementos na fuga de 100kg?",
@@ -147,7 +159,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.2"],
       "concept": "As duas fugas de montada resolvem o mesmo problema por caminhos opostos, e a escolha depende do que o oponente faz. A upa usa a ponte para jogar o peso dele por cima da sua cabeça — só funciona se o braço daquele lado estiver bloqueado, senão ele apoia a mão e para. O elbow escape trabalha de lado, recuperando espaço para trazer o joelho por dentro. Na prática elas são um par: quando ele se defende de uma, abre a outra. Por isso decorá-las isoladamente rende pouco.",
-      "video": null,
+      "video": {
+        "youtubeId": "whaSmJBrKZY",
+        "title": "4 Mistakes That'll Murder Your Mount Escape",
+        "channel": "Stephan Kesting"
+      },
       "quiz": [
         {
           "prompt": "Por que a upa exige bloquear o braço do oponente do lado para o qual você vai virar?",
@@ -189,7 +205,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.3", "M1.4"],
       "concept": "Recuperar a guarda é o ponto onde a sobrevivência vira jogo outra vez: você deixa de só resistir e volta a ter pernas entre você e o oponente. É um checkpoint natural do currículo porque consolida shrimp, enquadramento e as duas fugas — nenhuma delas termina de verdade sem essa etapa. O critério não é chegar à guarda fechada, e sim reconstruir qualquer barreira de pernas que devolva a distância ao seu controle.",
-      "video": null,
+      "video": {
+        "youtubeId": "cdV5cRGYsyA",
+        "title": "Key Guard Retention CONCEPTS | BJJ Gi Drilling",
+        "channel": "Jordan Teaches Jiujitsu"
+      },
       "quiz": [
         {
           "prompt": "Por que a recuperação de guarda é considerada um checkpoint do currículo?",
@@ -231,7 +251,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.1"],
       "concept": "Costas é a pior posição do jiu-jitsu porque o oponente vê você e você não vê ele — e o pescoço está exposto o tempo todo. Por isso a ordem de prioridade é rígida: primeiro defender o pescoço com as mãos, só depois trabalhar a fuga levando os ombros para o chão do lado do braço que estrangula. Inverter essa ordem é o erro que mais custa: quem tenta escapar antes de neutralizar a mão que busca a gola simplesmente entrega o estrangulamento durante a tentativa.",
-      "video": null,
+      "video": {
+        "youtubeId": "N6lKNqUOZoY",
+        "title": "How to Escape the Back EVERY TIME | Jiu Jitsu Back Escape System",
+        "channel": "Matt Arroyo Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual é a ordem correta de prioridades quando o oponente pega suas costas?",
