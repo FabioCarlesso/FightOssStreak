@@ -88,12 +88,12 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("M0 e M1 têm quiz escrito; os demais módulos ainda não")
+    @DisplayName("M0 a M3 têm quiz escrito; os demais módulos ainda não")
     void quizCoverageMatchesCuratedScope() {
         Map<String, CurriculumSource.NodeSpec> byCode = byCode();
 
         for (CurriculumSource.NodeSpec node : byCode.values()) {
-            if (isCurated(node)) {
+            if (hasCuratedQuiz(node)) {
                 assertThat(node.quiz())
                         .as("quiz de %s", node.code())
                         .hasSizeBetween(3, 5);
@@ -102,10 +102,23 @@ class CurriculumIntegrityTest {
     }
 
     @Test
+    @DisplayName("a alternativa correta é sempre a primeira do array (convenção de D16)")
+    void correctOptionIsAlwaysWrittenFirst() {
+        for (CurriculumSource.NodeSpec node : byCode().values()) {
+            for (int i = 0; i < node.quiz().size(); i++) {
+                CurriculumSource.QuestionSpec question = node.quiz().get(i);
+                assertThat(question.options().getFirst().correct())
+                        .as("nó %s, pergunta %d: gabarito fora da primeira posição", node.code(), i + 1)
+                        .isTrue();
+            }
+        }
+    }
+
+    @Test
     @DisplayName("M0 e M1 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
     void videoCoverageMatchesCuratedScope() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
-            if (isCurated(node)) {
+            if (hasCuratedVideo(node)) {
                 assertThat(node.video())
                         .as("vídeo de %s", node.code())
                         .isNotNull();
@@ -249,8 +262,19 @@ class CurriculumIntegrityTest {
                         "MX.1", "t", "BRANCA", 1, "ALL", List.of(), "conceito", video, List.of())));
     }
 
-    /** M0 e M1 são o escopo curado do MVP: quiz escrito e vídeo catalogado. */
-    private boolean isCurated(CurriculumSource.NodeSpec node) {
+    /**
+     * A curadoria é incremental e as duas frentes andam em ritmos diferentes: o quiz já cobre até
+     * M3, o vídeo ainda para em M1. Por isso são dois escopos, e não um só.
+     */
+    private boolean hasCuratedQuiz(CurriculumSource.NodeSpec node) {
+        return node.code().startsWith("M0.")
+                || node.code().startsWith("M1.")
+                || node.code().startsWith("M2.")
+                || node.code().startsWith("M3.");
+    }
+
+    /** Catalogar vídeo exige assistir (D21); M2–M8 entram em issues próprias. */
+    private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
         return node.code().startsWith("M0.") || node.code().startsWith("M1.");
     }
 

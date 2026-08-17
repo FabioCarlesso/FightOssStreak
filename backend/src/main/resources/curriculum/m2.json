@@ -1,7 +1,7 @@
 {
   "code": "M2",
   "title": "Guarda Fechada",
-  "summary": "Primeira posição em que você ataca de baixo. Quiz pendente de curadoria.",
+  "summary": "Primeira posição em que você ataca de baixo. Tudo aqui depende de uma variável: a postura do oponente.",
   "nodes": [
     {
       "code": "M2.1",
@@ -12,7 +12,48 @@
       "prereqs": ["M1.5"],
       "concept": "A guarda fechada é a única posição inferior em que você tem mais opções de ataque do que o oponente. Tudo nela depende de uma variável: a postura dele. Com a postura ereta, ele passa ou abre a guarda; com a postura quebrada, o peso vem para frente e raspagens e estrangulamentos aparecem. Por isso o trabalho não começa na finalização — começa em pegadas que impeçam a postura de subir.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Qual variável determina o que você consegue fazer da guarda fechada?",
+          "explanation": "Postura ereta é o estado em que ele abre ou passa a guarda; postura quebrada traz o peso para frente e é o que coloca raspagem e estrangulamento ao alcance. Todo o resto é consequência disso.",
+          "options": [
+            { "text": "A postura do oponente", "correct": true },
+            { "text": "A força com que você cruza os tornozelos", "correct": false },
+            { "text": "A diferença de peso entre vocês dois", "correct": false },
+            { "text": "Qual pegada você escolhe, de manga ou de gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o trabalho da guarda fechada começa em pegadas, e não na finalização?",
+          "explanation": "Ataque de guarda fechada só tem alcance com o oponente para frente. As pegadas existem para impedir a postura de subir — sem elas você ataca alguém que está fora do seu raio.",
+          "options": [
+            { "text": "Sem pegada que impeça a postura de subir, nenhum ataque tem alcance", "correct": true },
+            { "text": "Porque a pegada cansa o oponente até a defesa dele falhar", "correct": false },
+            { "text": "Porque pegada é o que pontua enquanto a finalização não sai", "correct": false },
+            { "text": "Porque finalização de guarda só é válida com o gi agarrado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O oponente enfia as duas mãos no seu quadril e ergue o tronco. O que isso ameaça primeiro?",
+          "explanation": "Postura ereta com as mãos no quadril é a preparação padrão para abrir a guarda — o ataque dele começa aí, não em uma finalização. Reagir é assunto de postura, não de defesa de gola.",
+          "options": [
+            { "text": "Abrir a sua guarda e iniciar a passagem", "correct": true },
+            { "text": "Um estrangulamento de gola vindo de cima", "correct": false },
+            { "text": "Uma tentativa de finalização de braço", "correct": false },
+            { "text": "Nada — mãos no quadril são postura defensiva dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você fecha a guarda e parte direto para o estrangulamento, mas ele nunca encaixa. O erro mais provável é:",
+          "explanation": "Atacar antes de quebrar a postura é o erro que define a guarda fechada de faixa branca: a finalização é tentada contra alguém ereto e longe, e vira disputa de força de braço.",
+          "options": [
+            { "text": "Atacar com o oponente ainda de postura ereta", "correct": true },
+            { "text": "Cruzar os tornozelos alto demais nas costas dele", "correct": false },
+            { "text": "Não ter apertado a guarda com força suficiente", "correct": false },
+            { "text": "Ter escolhido a finalização errada para o físico dele", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.2",
@@ -23,7 +64,48 @@
       "prereqs": ["M2.1"],
       "concept": "A tesoura ensina o princípio mais reaproveitável das raspagens: tirar a base de um lado e empurrar o peso para esse lado vazio. O joelho atravessado no peito e a outra perna varrendo funcionam como as duas lâminas — mas o que decide é o desequilíbrio prévio, não a força das pernas. Raspagem que precisa de força foi tentada antes do desequilíbrio existir.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Qual princípio a tesoura ensina, e que se repete em quase toda raspagem?",
+          "explanation": "Tirar o apoio de um lado e mandar o peso justamente para esse lado vazio. É o mesmo mecanismo que reaparece no pêndulo, na butterfly e na old school — mudam as pernas, não a ideia.",
+          "options": [
+            { "text": "Tirar a base de um lado e levar o peso para o lado vazio", "correct": true },
+            { "text": "Somar força das duas pernas na mesma direção", "correct": false },
+            { "text": "Surpreender o oponente antes que ele firme a pegada", "correct": false },
+            { "text": "Puxar a gola até que ele caia para frente sozinho", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que de fato decide se a tesoura funciona?",
+          "explanation": "As pernas apenas entregam o oponente na direção em que ele já não tem apoio. Sem o desequilíbrio prévio, elas empurram um corpo bem baseado — e corpo bem baseado não vai a lugar nenhum.",
+          "options": [
+            { "text": "O desequilíbrio criado antes de as pernas se moverem", "correct": true },
+            { "text": "A força das duas pernas fechando como lâminas", "correct": false },
+            { "text": "A velocidade com que o movimento é executado", "correct": false },
+            { "text": "A altura em que o joelho atravessa o peito dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você precisa de muita força para completar a tesoura. Isso normalmente indica que:",
+          "explanation": "Força é o sintoma clássico de raspagem tentada cedo demais. Quando o desequilíbrio já existe, o movimento parece leve — e é por isso que gente pequena rasparia gente grande.",
+          "options": [
+            { "text": "A raspagem foi tentada antes de o desequilíbrio existir", "correct": true },
+            { "text": "O oponente é simplesmente mais pesado que você", "correct": false },
+            { "text": "Faltou explosão nas pernas no momento da varrida", "correct": false },
+            { "text": "A guarda deveria ter permanecido fechada por mais tempo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Ao sentir a tesoura, o oponente joga o peso para trás e senta sobre os calcanhares. O que isso significa para você?",
+          "explanation": "Ele tirou o peso da direção para onde a tesoura o mandaria — a raspagem morreu, mas a resistência criou a abertura para o pêndulo, que leva o oponente na direção em que ele já está indo.",
+          "options": [
+            { "text": "A tesoura perdeu o alvo, e é a hora natural do pêndulo", "correct": true },
+            { "text": "É hora de insistir na tesoura com mais velocidade", "correct": false },
+            { "text": "A guarda está prestes a ser aberta e o certo é defender", "correct": false },
+            { "text": "Nada muda: a tesoura funciona igual para os dois lados", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.3",
@@ -34,7 +116,48 @@
       "prereqs": ["M2.1"],
       "concept": "O pêndulo é a resposta natural quando o oponente resiste à tesoura postando o peso para trás: você usa o balanço do quadril e o peso do próprio corpo para levá-lo na direção em que ele já está indo. É o primeiro contato com a ideia de encadeamento — a raspagem não vence a resistência, ela usa a resistência.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Quando o pêndulo é a escolha natural?",
+          "explanation": "Ele nasce da defesa da tesoura: o oponente joga o peso para trás para não ser varrido de lado, e o pêndulo simplesmente o acompanha nessa direção.",
+          "options": [
+            { "text": "Quando o oponente posta o peso para trás para resistir à tesoura", "correct": true },
+            { "text": "Quando ele deita o peito sobre você e cola o quadril", "correct": false },
+            { "text": "Quando ele já abriu a sua guarda e recuou", "correct": false },
+            { "text": "Quando ele prende as duas mãos na sua gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que ideia de encadeamento o pêndulo introduz?",
+          "explanation": "A raspagem não disputa força com a defesa: ela aproveita a direção que a defesa já criou. Encadear é isso — cada resistência abre a próxima opção, e não é uma sequência decorada.",
+          "options": [
+            { "text": "A raspagem usa a direção da resistência em vez de vencê-la", "correct": true },
+            { "text": "Se a primeira raspagem falhar, repita com mais força", "correct": false },
+            { "text": "Toda raspagem precisa ter uma finalização como plano B", "correct": false },
+            { "text": "Encadear é decorar uma sequência fixa de três ataques", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você senta para o pêndulo e o oponente te empurra de volta ao chão sem sair do lugar. O que provavelmente faltou?",
+          "explanation": "Sem o braço bloqueado, ele apoia a mão e a estrutura dele não vira — o mesmo motivo pelo qual a upa da fuga de montada morre quando o braço não é preso.",
+          "options": [
+            { "text": "Prender o braço dele do lado para onde você gira", "correct": true },
+            { "text": "Sentar mais rápido, antes que ele reaja", "correct": false },
+            { "text": "Cruzar os tornozelos mais apertado antes de sentar", "correct": false },
+            { "text": "Apoiar as duas mãos no chão para ganhar altura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o pêndulo tem em comum com a upa da fuga de montada?",
+          "explanation": "Os dois derrubam removendo o apoio do lado para onde o peso vai. Reconhecer o mecanismo repetido é o que evita aprender cada técnica como um caso isolado.",
+          "options": [
+            { "text": "Ambos derrubam bloqueando o apoio do lado para onde o peso vai", "correct": true },
+            { "text": "Ambos dependem de a guarda estar fechada", "correct": false },
+            { "text": "Ambos terminam com você por cima na montada", "correct": false },
+            { "text": "Ambos são movimentos de explosão, decididos pela velocidade", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.4",
@@ -45,7 +168,48 @@
       "prereqs": ["M2.1"],
       "concept": "O cross collar é o ataque fundamental da guarda fechada no gi, não conteúdo avançado: ele nasce direto da mesma pegada de gola usada para quebrar a postura. O detalhe que decide é a profundidade da primeira pegada — rasa, não há alavanca; profunda, o segundo braço apenas fecha o triângulo de pressão. Sua ameaça constante é o que abre as raspagens.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que decide se o cross collar tem alavanca?",
+          "explanation": "A profundidade da primeira pegada. Profunda, o antebraço já está no lugar e o segundo braço só fecha a pressão; rasa, não existe alavanca para fechar coisa alguma.",
+          "options": [
+            { "text": "A profundidade da primeira pegada na gola", "correct": true },
+            { "text": "A força do aperto dos dois antebraços", "correct": false },
+            { "text": "Qual das duas mãos entra primeiro", "correct": false },
+            { "text": "Manter os tornozelos cruzados durante o aperto", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o cross collar aparece entre os fundamentos da guarda fechada, e não como técnica avançada?",
+          "explanation": "Ele sai da mesma pegada de gola que já é usada para quebrar a postura — não há posição nova a aprender, o ataque está a um movimento do controle que você já tem.",
+          "options": [
+            { "text": "Nasce da mesma pegada de gola usada para quebrar a postura", "correct": true },
+            { "text": "É a finalização mais rápida do jiu-jitsu", "correct": false },
+            { "text": "É a única finalização que não exige força nenhuma", "correct": false },
+            { "text": "É a primeira finalização permitida para faixa branca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o efeito da ameaça constante de cross collar, mesmo nas vezes em que ele não finaliza?",
+          "explanation": "Defender a gola ocupa as mãos e traz o peso para frente. É exatamente o estado em que as raspagens funcionam — a finalização que não sai ainda assim faz trabalho.",
+          "options": [
+            { "text": "Ocupa as mãos dele com defesa e abre as raspagens", "correct": true },
+            { "text": "Cansa os braços dele até a defesa falhar sozinha", "correct": false },
+            { "text": "Impede que ele abra a guarda enquanto durar", "correct": false },
+            { "text": "Serve apenas como treino de pegada, sem efeito na posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sua primeira pegada ficou rasa e você aperta assim mesmo. O resultado típico é:",
+          "explanation": "Sem alavanca o estrangulamento vira força de braço, o que dá tempo e espaço para o oponente recuperar a postura — e postura recuperada acaba com o ataque.",
+          "options": [
+            { "text": "O aperto vira disputa de força e ele recupera a postura", "correct": true },
+            { "text": "A finalização sai do mesmo jeito, só mais devagar", "correct": false },
+            { "text": "Você acaba machucando o pescoço do parceiro", "correct": false },
+            { "text": "O oponente fica obrigado a abrir a guarda", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.5",
@@ -56,7 +220,48 @@
       "prereqs": ["M2.1"],
       "concept": "O armlock da guarda é o ataque que pune o braço que fica esticado ou apoiado longe do corpo — exatamente o erro de postura estudado em M0.4, agora do outro lado. O ponto conceitual é que ele não começa com o braço: começa com o controle de postura e do ângulo. Sem girar o quadril para fora, não existe alavanca, e a força do bíceps do oponente basta para defender.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Que erro do oponente o armlock da guarda pune?",
+          "explanation": "Braço esticado ou apoiado longe do corpo é braço sem defesa estrutural — é o alvo. Cotovelos colados ao tronco são justamente a postura que tira o ataque de cena.",
+          "options": [
+            { "text": "Deixar um braço esticado ou apoiado longe do corpo", "correct": true },
+            { "text": "Manter os dois cotovelos colados às costelas", "correct": false },
+            { "text": "Apoiar a testa no seu peito para baixar o centro", "correct": false },
+            { "text": "Abrir demais a base das pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem qual elemento não existe alavanca no armlock?",
+          "explanation": "O giro do quadril para fora é o que cria o ângulo entre o seu corpo e o braço dele. De frente, você disputa o cotovelo com a força do bíceps do oponente — e perde.",
+          "options": [
+            { "text": "O giro do quadril para fora, criando ângulo", "correct": true },
+            { "text": "Força suficiente para esticar o braço dele", "correct": false },
+            { "text": "A guarda mantida fechada até o fim do movimento", "correct": false },
+            { "text": "As duas mãos presas na manga dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você parte direto para puxar o braço e ele apenas flexiona o cotovelo e escapa. O que faltou?",
+          "explanation": "O armlock começa em postura e ângulo, não no braço. Puxar primeiro avisa a ameaça enquanto ele ainda tem a estrutura inteira para defender.",
+          "options": [
+            { "text": "Controlar a postura e o ângulo antes de disputar o braço", "correct": true },
+            { "text": "Puxar com as duas mãos em vez de uma", "correct": false },
+            { "text": "Passar a perna mais alto sobre a cabeça dele", "correct": false },
+            { "text": "Ter mais força de tração que o bíceps dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que este nó é lido como o outro lado do que M0.4 ensina sobre postura?",
+          "explanation": "Lá o braço longe do corpo é o erro que você aprende a não cometer; aqui é o erro que você aprende a punir. É a mesma regra vista dos dois lados da posição.",
+          "options": [
+            { "text": "O erro de postura que se aprende a evitar lá é o alvo do ataque aqui", "correct": true },
+            { "text": "As duas técnicas partem da mesma pegada de manga", "correct": false },
+            { "text": "Quem tem boa postura nunca precisa defender armlock", "correct": false },
+            { "text": "O armlock só funciona contra quem nunca treinou postura", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.6",
@@ -67,7 +272,48 @@
       "prereqs": ["M2.1"],
       "concept": "O triângulo aproveita uma assimetria comum: um braço do oponente dentro da guarda e o outro fora. O estrangulamento não vem da força das pernas fechando, e sim do ângulo — girar o quadril para o lado é o que transforma uma posição travada em finalização. É também a porta de entrada para o encadeamento com armlock e omoplata, que aparecem em M7.4.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Que assimetria o triângulo aproveita?",
+          "explanation": "Um braço dentro e o outro fora é o que permite fechar o pescoço contra o próprio ombro do oponente. Com os dois braços dentro ou os dois fora, não existe triângulo a fazer.",
+          "options": [
+            { "text": "Um braço do oponente dentro da guarda e o outro fora", "correct": true },
+            { "text": "Os dois braços dele dentro da guarda", "correct": false },
+            { "text": "Os dois braços dele apoiados no seu quadril", "correct": false },
+            { "text": "A cabeça baixa com os dois cotovelos colados", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde vem, de fato, o estrangulamento do triângulo?",
+          "explanation": "Do ângulo: girar o quadril para o lado é o que fecha o espaço contra o ombro dele. Pernas fechando de frente produzem uma posição apertada e desconfortável, não uma finalização.",
+          "options": [
+            { "text": "Do ângulo obtido ao girar o quadril para o lado", "correct": true },
+            { "text": "Da força das pernas fechando de frente", "correct": false },
+            { "text": "Do peso do oponente prensando o próprio pescoço", "correct": false },
+            { "text": "Da pegada na gola dele com a mão livre", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você fecha o triângulo, aperta com tudo e ele não toca. O erro mais provável é:",
+          "explanation": "Sem ângulo o triângulo é apenas uma posição incômoda — o oponente aguenta e trabalha a postura. Girar resolve o que apertar mais não resolve.",
+          "options": [
+            { "text": "Continuar de frente para ele, sem ter criado o ângulo", "correct": true },
+            { "text": "Não ter puxado a cabeça dele com as duas mãos", "correct": false },
+            { "text": "Ter deixado o braço errado dentro da guarda", "correct": false },
+            { "text": "Faltar força nas pernas para o aperto final", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o triângulo é pré-requisito da omoplata?",
+          "explanation": "As duas dependem do mesmo mecanismo: girar o quadril para criar ângulo. Quem chega à omoplata sem ter entendido isso decora a sequência e trava assim que o oponente reage diferente.",
+          "options": [
+            { "text": "Compartilham o mecanismo de girar o quadril para criar ângulo", "correct": true },
+            { "text": "A omoplata é a defesa natural do triângulo", "correct": false },
+            { "text": "As duas terminam na mesma finalização", "correct": false },
+            { "text": "É apenas a ordem cronológica em que se costuma ensinar", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M2.7",
@@ -78,7 +324,48 @@
       "prereqs": ["M2.6"],
       "concept": "A omoplata usa a perna como alavanca sobre o ombro, e sua utilidade real vai além da finalização: ela controla e desequilibra, servindo como raspagem quando o oponente rola para escapar. Depende de triângulo porque compartilha o mecanismo de girar o quadril para criar ângulo — quem não entendeu isso ali, aqui só decora a sequência.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Qual é a utilidade da omoplata além de finalizar?",
+          "explanation": "Ela controla e desequilibra. Boa parte do valor da posição está aí: mesmo sem a finalização, o oponente é obrigado a se mover, e o movimento dele vira raspagem.",
+          "options": [
+            { "text": "Controlar e desequilibrar, virando raspagem quando ele reage", "correct": true },
+            { "text": "Cansar o ombro dele para a próxima finalização", "correct": false },
+            { "text": "Obrigá-lo a ficar de pé e reiniciar a posição", "correct": false },
+            { "text": "Ganhar tempo para você recuperar o fôlego", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O oponente rola para frente para escapar da omoplata. Como ler isso?",
+          "explanation": "O rolamento é a fuga esperada, e ela move o corpo dele — que é justamente do que a raspagem precisa. Soltar nessa hora é abrir mão da parte mais útil da posição.",
+          "options": [
+            { "text": "É a fuga esperada, e é dela que sai a raspagem", "correct": true },
+            { "text": "É sinal de que a omoplata falhou e é hora de soltar", "correct": false },
+            { "text": "É sinal de que você prendeu o braço errado", "correct": false },
+            { "text": "É uma fuga que só funciona no gi, e deve ser ignorada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o papel da perna na omoplata?",
+          "explanation": "Ela funciona como alavanca sobre o ombro — é a estrutura que gira a articulação. Não é apoio nem controle de pescoço: é o próprio instrumento da finalização.",
+          "options": [
+            { "text": "Servir de alavanca sobre o ombro dele", "correct": true },
+            { "text": "Prender o pescoço, como no triângulo", "correct": false },
+            { "text": "Servir de apoio para você sentar", "correct": false },
+            { "text": "Impedir que ele use a outra mão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quem chega à omoplata sem ter entendido o ângulo do triângulo costuma:",
+          "explanation": "Sem o mecanismo, sobra a sequência. Ela funciona enquanto o parceiro colabora e trava na primeira reação fora do roteiro — que é o que acontece no rola.",
+          "options": [
+            { "text": "Decorar a sequência e travar quando o oponente reage diferente", "correct": true },
+            { "text": "Aplicar força demais e machucar o parceiro", "correct": false },
+            { "text": "Confundir a omoplata com a americana", "correct": false },
+            { "text": "Conseguir a finalização, mas nunca a raspagem", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

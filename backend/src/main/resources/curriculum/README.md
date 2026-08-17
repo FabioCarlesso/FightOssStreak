@@ -62,12 +62,18 @@ oficial, só vídeos públicos e incorporáveis, sempre com crédito ao canal.
 
 ### `quiz`
 
-Preenchido para **M0 e M1** (os 11 nós de fundamento e sobrevivência) — escopo suficiente para
-começar, conforme `docs/05-mvp-web-plano.md`. Os demais módulos têm `quiz: []` e o app trata isso
-como "quiz ainda não escrito", sem quebrar.
+Preenchido para **M0 a M3** (25 dos 46 nós). M0 e M1 vieram primeiro por serem fundamento e
+sobrevivência; M2 e M3 entraram em seguida porque são o que se alcança poucas semanas depois de
+terminar M1 — sem eles o app perde a camada de retenção justo onde a progressão continua. De M4 a
+M8 os nós seguem com `quiz: []`, e o app trata isso como "quiz ainda não escrito", sem quebrar
+(**D15**).
 
 As perguntas testam compreensão de conceito — *quando usar*, *qual o erro comum*, *o que o oponente
 faz* — e nunca decoreba de sequência de passos.
+
+M0 e M1 têm 3 a 4 perguntas por nó; **M2 e M3 têm 4**, por causa da nota de corte de 70
+(`QuizService.PASSING_SCORE`): com 3 perguntas, um erro reprova; com 4, tolera-se um erro (75).
+Registrado em **D27**.
 
 ## Validação
 

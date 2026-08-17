@@ -52,6 +52,7 @@ Essa distinção define tudo:
 - [x] Currículo transcrito como dado versionado (46 nós, ver D14)
 - [x] Quiz conceitual escrito para M0 e M1 (11 nós)
 - [x] Medição dos critérios de sucesso instrumentada (`/progresso`, ver D20)
-- [ ] Quiz conceitual dos módulos M2–M8
+- [x] Quiz conceitual escrito para M2 e M3 (14 nós — guarda fechada, guarda aberta e passagem)
+- [ ] Quiz conceitual dos módulos M4–M8
 - [ ] Escolha e catalogação dos vídeos do YouTube por nó *(nenhum vídeo catalogado ainda)*
 - [ ] Uso real por 30 dias para avaliar os critérios de sucesso de `05`

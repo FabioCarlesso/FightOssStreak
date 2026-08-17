@@ -228,7 +228,7 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz é concluído pelo registro de drill")
     void nodeWithoutQuizIsCompletedByDrill() throws Exception {
-        mockMvc.perform(post("/api/nodes/M2.2/drill")
+        mockMvc.perform(post("/api/nodes/M8.3/drill")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk())

@@ -11,7 +11,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Camada | Estado |
 |---|---|
 | Currículo (46 nós, 9 módulos) | Transcrito como dado versionado em `backend/src/main/resources/curriculum/` |
-| Quiz conceitual | Escrito para **M0 e M1** (11 nós, 35 perguntas). Os outros 35 nós estão pendentes de curadoria |
+| Quiz conceitual | Escrito para **M0 a M3** (25 nós, 91 perguntas). Os outros 21 nós, de M4 a M8, estão pendentes de curadoria |
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Backend | Spring Boot + Flyway, API documentada em OpenAPI |
 | Web | React + Vite |
@@ -177,7 +177,7 @@ Detalhes em [`docs/03-estrutura-projeto.md`](docs/03-estrutura-projeto.md) e [`C
    automatiza (D21). Critérios por nó em [`docs/08-curadoria-videos.md`](docs/08-curadoria-videos.md);
    para trocar um vídeo, `node scripts/catalogar-video.mjs <NÓ> <url>`, que verifica e credita o
    canal automaticamente
-2. Catalogar os vídeos de M2–M8 e escrever o quiz conceitual desses módulos
+2. Catalogar os vídeos de M2–M8 e escrever o quiz conceitual de M4–M8 (M2 e M3 já têm quiz)
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/05-mvp-web-plano.md)
 4. Só então considerar mobile (D4)
 
