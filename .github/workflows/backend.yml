@@ -80,7 +80,7 @@ jobs:
       # A imagem é o caminho de produção: a Railway builda a partir do Dockerfile (D22), então
       # Dockerfile quebrado deixou de ser incômodo local e virou deploy falho. `mvnw verify` acima
       # roda no runner, que é um ambiente diferente do container — não prova que a imagem sobe.
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Imagem do backend builda
         uses: docker/build-push-action@v6
