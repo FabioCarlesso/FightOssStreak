@@ -147,7 +147,7 @@ Detalhes que não são óbvios:
 ## Testes
 
 ```bash
-npm test                    # regras puras de shared/domain (streak, SRS, desbloqueio)
+npm test                    # regras puras de shared/domain (streak, SRS, desbloqueio) + scripts
 cd backend && ./mvnw test   # regras, integridade do currículo e fluxo de ponta a ponta
 npm run typecheck           # todos os workspaces TypeScript
 ```
@@ -176,7 +176,8 @@ Detalhes em [`docs/03-estrutura-projeto.md`](docs/03-estrutura-projeto.md) e [`C
 1. **Assistir aos 11 vídeos de M0 e M1 e confirmar o encaixe** — a única etapa que não se
    automatiza (D21). Critérios por nó em [`docs/08-curadoria-videos.md`](docs/08-curadoria-videos.md);
    para trocar um vídeo, `node scripts/catalogar-video.mjs <NÓ> <url>`, que verifica e credita o
-   canal automaticamente
+   canal automaticamente. Os já catalogados são reconferidos semanalmente pelo workflow `videos`
+   (`node scripts/verificar-videos.mjs`), que avisa quando um sai do ar
 2. Catalogar os vídeos de M2–M8 e escrever o quiz conceitual de M4–M8 (M2 e M3 já têm quiz)
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/05-mvp-web-plano.md)
 4. Só então considerar mobile (D4)

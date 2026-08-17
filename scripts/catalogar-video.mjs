@@ -18,84 +18,19 @@
  * O que ele NÃO verifica, e só um humano pode: se o vídeo ensina de fato o que o nó descreve,
  * no nível certo e sem erro técnico. Assista antes de rodar isto.
  *
+ * A conversa com o YouTube vive em `lib/youtube.mjs`, compartilhada com `verificar-videos.mjs` —
+ * o que este script confere ao gravar é o mesmo que a verificação periódica reconfere depois.
+ *
  * Requer acesso de rede ao youtube.com.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { checkEmbeddable, fetchOEmbed, parseVideoId } from './lib/youtube.mjs';
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const curriculumDir = resolve(root, 'backend/src/main/resources/curriculum');
-
-/**
- * Extrai o id de 11 caracteres das formas de URL que o YouTube usa.
- *
- * O formato do id também é validado no backend, em `CurriculumValidator.YOUTUBE_ID_REGEX`. São as
- * duas únicas cópias, e são inevitáveis: uma em JavaScript, outra em Java. Mudou uma, mude a outra.
- */
-export function parseVideoId(input) {
-  if (/^[\w-]{11}$/.test(input)) return input;
-
-  let url;
-  try {
-    url = new URL(input);
-  } catch {
-    throw new Error(`URL inválida: ${input}`);
-  }
-
-  const host = url.hostname.replace(/^www\./, '');
-  let candidate = null;
-
-  if (host === 'youtu.be') {
-    candidate = url.pathname.slice(1);
-  } else if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
-    if (url.pathname === '/watch') {
-      candidate = url.searchParams.get('v');
-    } else if (url.pathname.startsWith('/shorts/') || url.pathname.startsWith('/embed/')) {
-      candidate = url.pathname.split('/')[2];
-    }
-  }
-
-  if (!candidate || !/^[\w-]{11}$/.test(candidate)) {
-    throw new Error(`Não consegui extrair um id de vídeo de: ${input}`);
-  }
-  return candidate;
-}
-
-/** Consulta o oEmbed: confirma existência e devolve título e canal reais. */
-async function fetchOEmbed(videoId) {
-  const endpoint =
-    'https://www.youtube.com/oembed?format=json&url=' +
-    encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`);
-
-  const response = await fetch(endpoint);
-  if (response.status === 404 || response.status === 401) {
-    throw new Error(
-      `Vídeo ${videoId} não está acessível (HTTP ${response.status}). ` +
-        'Pode não existir, ser privado ou ter sido removido.',
-    );
-  }
-  if (!response.ok) {
-    throw new Error(`oEmbed respondeu HTTP ${response.status} para ${videoId}`);
-  }
-  return response.json();
-}
-
-/**
- * Confere se o autor permite incorporação. A política D7 proíbe embutir vídeo marcado como
- * não-incorporável — respeitar isso é obrigação, não detalhe.
- */
-async function checkEmbeddable(videoId) {
-  const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-    headers: { 'accept-language': 'pt-BR,pt;q=0.9,en;q=0.8' },
-  });
-  if (!response.ok) return { known: false, embeddable: null };
-
-  const html = await response.text();
-  const match = html.match(/"playableInEmbed":(true|false)/);
-  if (!match) return { known: false, embeddable: null };
-  return { known: true, embeddable: match[1] === 'true' };
-}
 
 function loadModuleFor(nodeCode) {
   const moduleCode = nodeCode.split('.')[0];
@@ -248,7 +183,7 @@ async function main() {
   console.log('Agora rode `cd backend && ./mvnw test` para validar a integridade do currículo.');
 }
 
-// Só executa quando chamado direto, para que parseVideoId possa ser importado em teste.
+// Só executa quando chamado direto, para que replaceVideoBlock possa ser importado em teste.
 if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
   main().catch((error) => {
     console.error(`erro: ${error.message}`);

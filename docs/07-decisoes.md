@@ -49,6 +49,6 @@ Registro de decisões com justificativa, para que o "porquê" não se perca — 
 | Risco | Impacto | Estado |
 |---|---|---|
 | Currículo montado sem revisão de graduado | Pode ensinar ordem ou conceito errado | Aceito conscientemente enquanto o uso for pessoal (D12) |
-| Vídeos do YouTube saem do ar / ficam privados | Nós ficam sem referência | Não mitigado — considerar checagem periódica de disponibilidade |
+| Vídeos do YouTube saem do ar / ficam privados | Nós ficam sem referência | Detectado, não evitado — `scripts/verificar-videos.mjs` roda semanalmente pelo workflow `videos` e abre issue com os nós afetados (`08-curadoria-videos.md`). A substituição segue humana |
 | Gamificação sustentar-se sozinha sem gerar aprendizado | Produto vira streak vazio | Coberto pelo critério de falha em `05-mvp-web-plano.md` |
 | App ser visto como wrapper de YouTube na review da Apple | Rejeição | Fase futura; mitigação em `02` |

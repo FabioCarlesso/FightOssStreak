@@ -111,6 +111,42 @@ Mudança de currículo é PR revisável (D11) — inclusive troca de vídeo.
 
 ## Manutenção
 
-Risco em aberto de `07-decisoes.md`: vídeos saem do ar. Vale rodar uma checagem periódica de
-disponibilidade dos ids já catalogados. Não existe ainda — quando existir, o lugar natural é um job
-no `backend.yml` que só avisa, sem quebrar o build.
+Vídeo do YouTube sai do ar, vira privado ou tem a incorporação desativada depois de catalogado —
+risco listado em `07-decisoes.md`. Sem checagem, a descoberta é acidental e acontece no pior
+momento possível: abrindo o nó depois do treino.
+
+```bash
+node scripts/verificar-videos.mjs
+```
+
+O script lê todos os `m*.json`, pega os nós com `video` preenchido e pergunta ao YouTube, um a um,
+se cada id continua público e incorporável — a mesma consulta que a catalogação faz, do mesmo
+módulo (`scripts/lib/youtube.mjs`). Nós com `video: null` são ignorados, e um currículo inteiro sem
+vídeo produz "nada a verificar", não erro. **Não altera arquivo nenhum:** trocar um vídeo é escolha
+humana, com os critérios deste documento.
+
+O código de saída distingue três desfechos, e é por ele que o workflow decide o que fazer:
+
+| Código | Significado |
+|---|---|
+| `0` | Todos disponíveis — inclusive o caso "nenhum vídeo catalogado ainda" |
+| `1` | Há vídeo indisponível ou não-incorporável: alguém precisa escolher outro |
+| `2` | Não deu para verificar (rede, YouTube fora). Não é conclusão sobre o currículo |
+
+A distinção entre `1` e `2` é o que impede que instabilidade de rede vire aviso falso de vídeo
+quebrado.
+
+### O aviso automático
+
+O workflow [`videos.yml`](../.github/workflows/videos.yml) roda a verificação **toda segunda-feira
+às 06:00 UTC** e também sob demanda pela aba *Actions* (`workflow_dispatch`). Encontrando problema,
+ele abre uma issue com o relatório — ou atualiza a que já estiver aberta, em vez de abrir uma nova a
+cada semana — e comenta só quando o relatório muda. Quando todos voltam a estar disponíveis, a issue
+é fechada sozinha.
+
+O job `videos` **não é required check de `main`** (`09-regras-repositorio.md`), de propósito: um
+vídeo fora do ar é problema de curadoria e não pode travar o merge de código. Ele nem roda em pull
+request — a agenda é o gatilho.
+
+Para conferir o formato do aviso sem esperar a segunda-feira, dispare o workflow manualmente em
+*Actions → videos → Run workflow*.
