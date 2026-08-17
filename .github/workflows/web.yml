@@ -73,3 +73,21 @@ jobs:
 
       - name: Build
         run: npm run build --workspace @fos/web
+
+      # O build acima roda direto no runner; a imagem é outro ambiente, e é ela que a Railway
+      # usa (D22). Este build é especialmente frágil por motivo estrutural: o contexto precisa ser
+      # a raiz do monorepo, porque os workspaces @fos/* exportam TypeScript de src/ sem dist/.
+      # Mudança em package.json, em package-lock.json ou na estrutura de shared/ quebra a imagem
+      # sem quebrar teste nenhum.
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Imagem do web builda
+        uses: docker/build-push-action@v6
+        with:
+          # Contexto é a RAIZ, não web/. `docker build web/` passa a impressão de funcionar até
+          # falhar na resolução dos imports dos workspaces.
+          context: .
+          file: web/Dockerfile
+          push: false
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web,ignore-error=true

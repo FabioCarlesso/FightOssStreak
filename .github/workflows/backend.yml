@@ -71,3 +71,20 @@ jobs:
           python3 -m json.tool openapi.json > /tmp/committed.json
           diff -u /tmp/committed.json /tmp/current.json \
             || { echo "::error::backend/openapi.json desatualizado — rode 'npm run gen:types' e commite"; exit 1; }
+
+      # A imagem é o caminho de produção: a Railway builda a partir do Dockerfile (D22), então
+      # Dockerfile quebrado deixou de ser incômodo local e virou deploy falho. `mvnw verify` acima
+      # roda no runner, que é um ambiente diferente do container — não prova que a imagem sobe.
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Imagem do backend builda
+        uses: docker/build-push-action@v6
+        with:
+          # Contexto é a RAIZ do monorepo, não backend/ — ver o cabeçalho de backend/Dockerfile.
+          context: .
+          file: backend/Dockerfile
+          # Sem push: não há consumidor de imagem publicada hoje, a Railway builda do repositório.
+          push: false
+          # Cache de camadas entre runs, senão o passo baixaria o mundo do Maven toda vez.
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend,ignore-error=true
