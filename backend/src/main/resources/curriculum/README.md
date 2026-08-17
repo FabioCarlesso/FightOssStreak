@@ -46,6 +46,9 @@ YouTube e recusa vídeo inexistente, privado ou com incorporação desativada:
 node scripts/catalogar-video.mjs M1.2 https://www.youtube.com/watch?v=XXXXXXXXXXX
 ```
 
+Os ids já gravados são reconferidos semanalmente por `scripts/verificar-videos.mjs` (workflow
+`videos`), que avisa quando um vídeo sai do ar ou perde a permissão de incorporação.
+
 Critérios de escolha por nó estão em `docs/08-curadoria-videos.md`. O formato gravado é:
 
 ```jsonc

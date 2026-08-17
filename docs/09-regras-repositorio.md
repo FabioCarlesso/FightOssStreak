@@ -68,6 +68,14 @@ O contexto de um required check do GitHub Actions é o **nome do job**, não o n
 | `backend` | [`.github/workflows/backend.yml`](../.github/workflows/backend.yml) | `mvnw verify` (regras, integridade do currículo, fluxo ponta a ponta) e `openapi.json` em dia |
 | `web` | [`.github/workflows/web.yml`](../.github/workflows/web.yml) | testes de `shared/domain`, `shared/types` em dia, typecheck e build |
 
+### Workflows que deliberadamente não são portão
+
+O job `videos` ([`videos.yml`](../.github/workflows/videos.yml)) verifica semanalmente se os vídeos
+catalogados continuam no ar (`08-curadoria-videos.md`). Ele **não** está na ruleset e não deve
+entrar: um vídeo que o autor tirou do ar é problema de curadoria, não defeito do código, e travar o
+merge por causa disso pararia o projeto por algo que ninguém aqui controla. Por isso ele nem roda em
+`pull_request` — o gatilho é a agenda, e o aviso sai por issue.
+
 **Renomear um desses jobs quebra a proteção em silêncio**: o check exigido deixa de existir e o PR
 fica preso em *"Expected — waiting for status to be reported"*. Renomeou o job? Atualize
 `.github/rulesets/main.json` e rode o script no mesmo PR.

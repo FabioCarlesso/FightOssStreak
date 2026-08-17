@@ -14,7 +14,9 @@
     "dev:web": "npm run dev --workspace @fos/web",
     "dev:backend": "cd backend && ./mvnw spring-boot:run",
     "build": "npm run build --workspace @fos/domain && npm run build --workspace @fos/api-client && npm run build --workspace @fos/web",
-    "test": "npm run test --workspace @fos/domain",
+    "test": "npm run test:domain && npm run test:scripts",
+    "test:domain": "npm run test --workspace @fos/domain",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "gen:types": "node scripts/gen-types.mjs"
   },
