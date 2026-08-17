@@ -1,0 +1,92 @@
+name: codeql
+
+# Análise estática de segurança. Este workflow **não** é required check da ruleset de `main`
+# (.github/rulesets/main.json), e não deve virar um: análise de segurança que trava merge por falso
+# positivo vira coisa que se aprende a ignorar. O valor está no alerta na aba Security, não no
+# portão. Por isso ele é workflow separado dos jobs `backend` e `web` — e por isso acrescentá-lo
+# não exigiu mexer na ruleset, ao contrário do que valeria para um job que fosse portão.
+#
+# A prioridade era baixa enquanto o app não estava publicado: sem login (D9), sem dado de terceiro
+# e sem origem alcançável, a superfície era pequena. Ela cresceu com a publicação na Railway
+# (D22) — o backend passou a ter origem alcançável e o nginx virou peça de borda escrita à mão.
+# O momento de ligar isso é antes de publicar, não depois.
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Terça-feira, 07:00 UTC. O agendado é o que pega CVE nova em código que não mudou — sem ele a
+    # análise só olharia o que acabou de mudar. Dia diferente do workflow `videos` para os dois não
+    # disputarem runner na mesma manhã.
+    - cron: '0 7 * * 2'
+
+# Analisar duas linguagens dobra o tempo, e como isto não é required check ninguém espera por ele.
+# Ainda assim não faz sentido manter dois runs do mesmo ref em paralelo.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Este nome de job NÃO está na ruleset, de propósito (ver o cabeçalho). Renomeá-lo é seguro, e a
+  # guarda de `scripts/verificar-ruleset.mjs` não vai reclamar — ela só cobra o caminho inverso.
+  analyze:
+    name: Analisar ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    permissions:
+      # É o que permite publicar o resultado na aba Security. Sem isso a análise roda e o
+      # resultado não chega a lugar nenhum.
+      security-events: write
+      contents: read
+      actions: read
+
+    strategy:
+      # Uma linguagem falhar não pode esconder o resultado da outra.
+      fail-fast: false
+      matrix:
+        include:
+          # Java precisa do código compilado para a análise ter fidelidade. `manual` em vez de
+          # `autobuild` porque o comando é conhecido e já roda no job `backend`: adivinhação a
+          # menos, e a falha (se vier) aponta para o passo certo.
+          - language: java-kotlin
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Java
+        if: matrix.build-mode == 'manual'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: maven
+
+      - name: Inicializar CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          # Sem `queries:` — fica a suite padrão. Endurecer para `security-extended` depois, se o
+          # ruído da primeira leva for aceitável.
+          config: |
+            paths-ignore:
+              # Gerado a partir do OpenAPI (regra 2 do CLAUDE.md): alerta aqui não tem correção
+              # possível à mão, só ruído que ninguém pode resolver.
+              - shared/types/generated
+              - web/dist
+
+      # Só compila: os testes são assunto do job `backend`, e rodá-los aqui dobraria o tempo por
+      # nada. `-DskipTests` ainda compila o código de teste, que é o que a análise quer ver.
+      - name: Compilar o backend
+        if: matrix.build-mode == 'manual'
+        working-directory: backend
+        run: ./mvnw -B -q -DskipTests test-compile
+
+      - name: Analisar
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
