@@ -40,9 +40,11 @@ jobs:
       - name: Lint e formatação
         run: npm run lint
 
-      # Regras puras: streak, SM-2 e desbloqueio. Os casos de SRS são espelhados no backend,
-      # então uma divergência entre as duas implementações quebra aqui ou lá.
-      - name: Testes de shared/domain
+      # Três camadas: as regras puras de shared/domain (streak, SM-2 e desbloqueio — cujos casos
+      # de SRS são espelhados no backend, então divergir entre as duas implementações quebra aqui
+      # ou lá), os scripts de curadoria, e os fluxos de UI que decidem se o produto é usável:
+      # aceite do disclaimer, quiz e drill.
+      - name: Testes
         run: npm test
 
       # shared/types é GERADO. Se o resultado divergir do que está commitado, o front está
