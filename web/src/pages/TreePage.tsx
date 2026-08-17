@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import type { NodeSummary } from '@fos/types';
 import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
+import { useDemoMode } from '../state/demoMode.ts';
 
 /** Árvore de currículo com estado de bloqueio já resolvido pelo backend. */
 export function TreePage() {
   const tree = useAsync(() => api.getTree(), []);
+  const demo = useDemoMode();
 
   if (tree.loading && !tree.data) return <p className="empty">Carregando currículo…</p>;
   if (tree.error && !tree.data) return <p className="error">{tree.error.message}</p>;
@@ -16,7 +18,21 @@ export function TreePage() {
   return (
     <div className="stack">
       <section className="card">
-        <h2>Progresso</h2>
+        <header className="card__header">
+          <h2>Progresso</h2>
+          <button
+            type="button"
+            className={demo.enabled ? 'demo-toggle demo-toggle--on' : 'demo-toggle'}
+            aria-pressed={demo.enabled}
+            onClick={() => demo.setEnabled(!demo.enabled)}
+          >
+            Demonstração: {demo.enabled ? 'ligada' : 'desligada'}
+          </button>
+        </header>
+        {/*
+         * Os contadores são os números reais e continuam assim com a demonstração ligada: são eles
+         * a referência do que ainda está travado de verdade.
+         */}
         <p className="tree__summary">
           <strong>{summary?.completedNodes ?? 0}</strong> concluídos ·{' '}
           <strong>{summary?.availableNodes ?? 0}</strong> disponíveis ·{' '}
@@ -36,7 +52,7 @@ export function TreePage() {
 
           <ul className="node-list">
             {module.nodes?.map((node) => (
-              <NodeRow key={node.code} node={node} />
+              <NodeRow key={node.code} node={node} demo={demo.enabled} />
             ))}
           </ul>
         </section>
@@ -45,12 +61,24 @@ export function TreePage() {
   );
 }
 
-function NodeRow({ node }: { node: NodeSummary }) {
-  const locked = node.status === 'LOCKED';
+function NodeRow({ node, demo }: { node: NodeSummary; demo: boolean }) {
+  const lockedByProgress = node.status === 'LOCKED';
+  // Em demonstração o nó bloqueado é apresentado como disponível — o bloqueio sempre foi só de
+  // apresentação, o backend já entrega conceito, vídeo e quiz de qualquer nó. A dica de
+  // pré-requisito continua nos dois modos, agora como informação e não como portão.
+  const shownStatus = lockedByProgress && demo ? 'AVAILABLE' : node.status;
+  const hint = lockedByProgress && (
+    <p className="node-row__hint">
+      {node.unlockRule === 'ANY'
+        ? `Conclua qualquer um: ${(node.prereqCodes ?? []).join(', ')}`
+        : `Requer: ${(node.prereqCodes ?? []).join(', ')}`}
+    </p>
+  );
+
   const body = (
     <>
       <span className="node-row__status" aria-hidden="true">
-        {statusIcon(node.status)}
+        {statusIcon(shownStatus)}
       </span>
       <span className="node-row__label">
         <span className="node-row__code">{node.code}</span>
@@ -64,24 +92,21 @@ function NodeRow({ node }: { node: NodeSummary }) {
     </>
   );
 
-  if (locked) {
+  if (shownStatus === 'LOCKED') {
     return (
       <li className="node-row node-row--locked">
         <div className="node-row__inner">{body}</div>
-        <p className="node-row__hint">
-          {node.unlockRule === 'ANY'
-            ? `Conclua qualquer um: ${(node.prereqCodes ?? []).join(', ')}`
-            : `Requer: ${(node.prereqCodes ?? []).join(', ')}`}
-        </p>
+        {hint}
       </li>
     );
   }
 
   return (
-    <li className={`node-row node-row--${(node.status ?? 'AVAILABLE').toLowerCase()}`}>
+    <li className={`node-row node-row--${(shownStatus ?? 'AVAILABLE').toLowerCase()}`}>
       <Link className="node-row__inner" to={`/no/${node.code}`}>
         {body}
       </Link>
+      {hint}
     </li>
   );
 }
