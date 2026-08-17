@@ -56,6 +56,11 @@ jobs:
         run: |
           set -euo pipefail
           ./mvnw -B -q spring-boot:run > /tmp/backend.log 2>&1 &
+          # O runner não mata processo de fundo entre steps do mesmo job. Sem este trap a JVM
+          # (com H2 em memória) seguiria viva durante o build da imagem logo abaixo, disputando
+          # RAM com o Maven que roda dentro do BuildKit — e a falha apareceria como um build
+          # Docker morto por OOM, sem relação aparente com a mudança que a provocou.
+          trap 'kill %1 2>/dev/null || true' EXIT
           for i in $(seq 1 60); do
             curl -sf http://localhost:8080/v3/api-docs -o /tmp/openapi.json && break
             sleep 2

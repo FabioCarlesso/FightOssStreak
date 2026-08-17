@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
+  codigoDeSaida,
   contextosDeJobs,
   contextosDisponiveis,
   contextosExigidos,
@@ -89,6 +90,37 @@ describe('contextos que os workflows reportam', () => {
     assert.deepEqual(contextosDeJobs(yaml), ['web']);
   });
 
+  it('acha o name: em qualquer recuo de corpo, não só no dobro do recuo do id', () => {
+    // id a 4 e corpo a 6 é YAML legal. Fixar "o dobro" fazia o name: passar batido, e aí a
+    // guarda dava por satisfeita uma ruleset que na prática estava quebrada.
+    for (const [recuoId, recuoCorpo] of [
+      [2, 4],
+      [4, 6],
+      [4, 8],
+      [2, 6],
+    ]) {
+      const yaml = [
+        'jobs:',
+        `${' '.repeat(recuoId)}web:`,
+        `${' '.repeat(recuoCorpo)}name: Web`,
+        `${' '.repeat(recuoCorpo)}runs-on: x`,
+      ].join('\n');
+      assert.deepEqual(contextosDeJobs(yaml), ['Web'], `id=${recuoId} corpo=${recuoCorpo}`);
+    }
+  });
+
+  it('comentário no fim da linha do name: não entra no contexto', () => {
+    // `Web  # o contexto` como contexto seria um órfão inventado, reprovando todo PR de um
+    // workflow correto.
+    const yaml = ['jobs:', '  web:', '    name: Web  # o contexto da ruleset', '    runs-on: x'];
+    assert.deepEqual(contextosDeJobs(yaml.join('\n')), ['Web']);
+  });
+
+  it('name: entre aspas preserva o que está dentro, inclusive #', () => {
+    const yaml = ['jobs:', '  web:', '    name: "Web #1"', '    runs-on: x'];
+    assert.deepEqual(contextosDeJobs(yaml.join('\n')), ['Web #1']);
+  });
+
   it('workflow sem bloco jobs: não reporta contexto', () => {
     assert.deepEqual(contextosDeJobs('name: nada\non:\n  push:\n'), []);
   });
@@ -152,5 +184,26 @@ describe('relatório', () => {
   it('ruleset que não exige check nenhum é avisado, não tratado como sucesso', () => {
     const texto = formatarRelatorio([], disponiveis);
     assert.match(texto, /aceitando merge sem CI/);
+  });
+});
+
+describe('código de saída', () => {
+  const disponiveis = new Map([
+    ['backend', 'backend.yml'],
+    ['web', 'web.yml'],
+  ]);
+
+  it('ruleset e workflows em dia sai 0', () => {
+    assert.equal(codigoDeSaida(['backend', 'web'], disponiveis), 0);
+  });
+
+  it('contexto órfão sai 1', () => {
+    assert.equal(codigoDeSaida(['backend', 'frontend'], disponiveis), 1);
+  });
+
+  it('ruleset sem check nenhum sai 1, e não 0', () => {
+    // Este é o buraco que o relatório denunciava em texto enquanto o job ficava verde: `main`
+    // aceitando merge sem CI é a falha máxima, não a ausência de órfão.
+    assert.equal(codigoDeSaida([], disponiveis), 1);
   });
 });

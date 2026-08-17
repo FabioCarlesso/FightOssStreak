@@ -105,6 +105,13 @@ tratado, porque a divergência só apareceria no dia em que alguém adicionasse 
 A guarda vive dentro do job `web` e não em job próprio pelo mesmo motivo que ela existe: job novo só
 vira portão entrando na ruleset, e aí precisaria rodar em `pull_request` sem filtro de path (D19).
 
+**O que ela ainda não cobre.** A guarda compara contextos com nomes de job; ela não lê o bloco `on:`.
+Acrescentar `paths:` ao `pull_request:` de `backend.yml` ou `web.yml` derruba a proteção do mesmo
+jeito — o workflow descartado pelo filtro não reporta status nenhum, e o PR trava em *"waiting for
+status"* — e a guarda continuaria verde. Esse lado segue dependendo de leitura: o comentário no topo
+de cada workflow explica por que o `paths` só existe no `push`. Fechar também esse buraco é
+candidato a issue própria.
+
 Renomeou o job? Atualize `.github/rulesets/main.json` e rode `./scripts/apply-repo-rules.sh` no
 mesmo PR.
 

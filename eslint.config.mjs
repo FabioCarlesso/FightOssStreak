@@ -86,9 +86,9 @@ export default tseslint.config(
     },
   },
 
-  // Vite e Vitest rodam no Node, não no navegador.
+  // O Vite roda no Node, não no navegador.
   {
-    files: ['web/vite.config.ts', 'web/vitest.setup.ts'],
+    files: ['web/vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

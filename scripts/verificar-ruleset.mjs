@@ -64,20 +64,36 @@ export function contextosDeJobs(yaml) {
 
     if (recuo === recuoDoId) {
       const id = linha.trim().match(/^([A-Za-z0-9_.-]+):\s*(#.*)?$/)?.[1];
-      if (id) jobs.push({ id, name: null });
+      if (id) jobs.push({ id, name: null, recuoDoCorpo: null });
       continue;
     }
 
-    // `name:` do job — só o do nível imediatamente abaixo do id conta. Mais fundo é `name:` de
-    // step, que não tem relação com o contexto do check.
     const job = jobs.at(-1);
-    if (job && recuo === recuoDoId * 2) {
-      const valor = linha.trim().match(/^name:\s*(.+?)\s*$/)?.[1];
-      if (valor) job.name = valor.replace(/^['"]|['"]$/g, '');
-    }
+    if (!job) continue;
+
+    // O corpo do job pode estar em qualquer recuo maior que o do id — 2, 4 ou 6 espaços são todos
+    // YAML legal. Fixar "o dobro do recuo do id" fazia o `name:` de um workflow com id a 4 e corpo
+    // a 6 passar batido, e aí a guarda dava por satisfeita uma ruleset quebrada. O nível do corpo é
+    // o da primeira linha dentro do job; só nesse nível um `name:` é do job, e não de um step.
+    if (job.recuoDoCorpo === null) job.recuoDoCorpo = recuo;
+    if (recuo !== job.recuoDoCorpo) continue;
+
+    const valor = linha.trim().match(/^name:\s*(\S.*?)\s*$/)?.[1];
+    if (valor) job.name = valorDeEscalar(valor);
   }
 
   return jobs.map((job) => job.name ?? job.id);
+}
+
+/**
+ * Valor de um escalar YAML simples: tira as aspas quando há, e o comentário de fim de linha quando
+ * não há. Sem isso, `name: Web  # o contexto` virava o contexto literal `Web  # o contexto` — um
+ * órfão inventado que reprovaria todo PR de um workflow correto.
+ */
+function valorDeEscalar(bruto) {
+  const aspas = bruto.match(/^(['"])(.*?)\1/);
+  if (aspas) return aspas[2];
+  return bruto.replace(/\s+#.*$/, '').trim();
 }
 
 /** Todos os contextos que os workflows do repositório são capazes de reportar. */
@@ -93,6 +109,17 @@ export function contextosDisponiveis(dir = workflowsDir) {
 
 export function orfaos(exigidos, disponiveis) {
   return exigidos.filter((contexto) => !disponiveis.has(contexto));
+}
+
+/**
+ * 0 = ruleset e workflows batem; 1 = a proteção de `main` está quebrada.
+ *
+ * Ruleset sem contexto nenhum conta como quebra, e não como "não há órfão": é o estado em que
+ * `main` aceita merge sem CI, que é justamente o que esta guarda existe para não deixar passar.
+ */
+export function codigoDeSaida(exigidos, disponiveis) {
+  if (exigidos.length === 0) return 1;
+  return orfaos(exigidos, disponiveis).length > 0 ? 1 : 0;
 }
 
 /**
@@ -151,7 +178,7 @@ function main() {
   const disponiveis = contextosDisponiveis();
   const relatorio = formatarRelatorio(exigidos, disponiveis);
 
-  if (orfaos(exigidos, disponiveis).length > 0) {
+  if (codigoDeSaida(exigidos, disponiveis) !== 0) {
     console.error(`::error::${relatorio.split('\n')[0]}`);
     console.error(relatorio);
     return 1;

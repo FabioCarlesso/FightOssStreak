@@ -14,7 +14,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 4. **Sem login no MVP** (D9). Usuário único, resolvido pelo backend. Não introduzir contas sem revisitar a decisão.
 5. **Disclaimer é requisito de produto**, não enfeite. Textos em `docs/06-disclaimer-responsabilidade.md`; mudança material no texto exige subir a versão do aceite.
 6. **`main` só muda por PR com CI verde** (D18). Nunca commitar direto em `main` — trabalhe em branch e abra PR. As regras são versionadas em `.github/rulesets/main.json`; mudança nelas entra por PR como qualquer outra, e depois roda `./scripts/apply-repo-rules.sh`.
-7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/09-regras-repositorio.md`). Isso não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão.
+7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/09-regras-repositorio.md`). O caso de renome não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão. Já **acrescentar `paths:` ao `pull_request:`** derruba a proteção do mesmo jeito e a guarda não pega — não introduza (D19).
 8. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
