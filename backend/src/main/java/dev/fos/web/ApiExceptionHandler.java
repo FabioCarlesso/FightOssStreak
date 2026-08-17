@@ -43,10 +43,11 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException e) {
-        String detail = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .findFirst()
-                .orElse("payload inválido");
+        String detail =
+                e.getBindingResult().getFieldErrors().stream()
+                        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                        .findFirst()
+                        .orElse("payload inválido");
         return ResponseEntity.badRequest().body(ApiError.of("invalid_request", detail));
     }
 

@@ -31,7 +31,8 @@ public class MetricsController {
     @GetMapping("/metrics/mvp")
     @Operation(
             summary = "Os quatro critérios de sucesso do MVP, com valor e meta",
-            description = "As metas são as de docs/05-mvp-web-plano.md e valem para a janela de 30 dias.")
+            description =
+                    "As metas são as de docs/05-mvp-web-plano.md e valem para a janela de 30 dias.")
     public MetricsDtos.MvpMetrics mvp(
             @RequestParam(defaultValue = "" + MvpMetricsService.DEFAULT_WINDOW_DAYS) int days) {
         return metricsService.metrics(currentUser.currentUserId(), LocalDate.now(clock), days);

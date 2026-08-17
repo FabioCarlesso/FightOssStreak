@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
  * Dispara a ingestão do currículo quando a aplicação sobe.
  *
  * <p>Fica em um bean separado de propósito: chamar {@code sync()} de dentro do próprio serviço
- * seria auto-invocação, o proxy do Spring não se aplicaria e o método rodaria <em>sem transação</em>.
+ * seria auto-invocação, o proxy do Spring não se aplicaria e o método rodaria <em>sem
+ * transação</em>.
  */
 @Component
 class CurriculumStartupSync {

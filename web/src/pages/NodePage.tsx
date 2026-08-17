@@ -69,7 +69,11 @@ export function NodePage() {
         <>
           <section className="card">
             <h3>Quiz conceitual</h3>
-            <QuizForm nodeCode={detail.code ?? code} questions={detail.quiz ?? []} onDone={node.reload} />
+            <QuizForm
+              nodeCode={detail.code ?? code}
+              questions={detail.quiz ?? []}
+              onDone={node.reload}
+            />
           </section>
 
           <section className="card">

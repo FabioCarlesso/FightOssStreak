@@ -55,8 +55,7 @@ public class Node {
     @Column(name = "unlock_rule", nullable = false)
     private UnlockRule unlockRule = UnlockRule.ALL;
 
-    @Embedded
-    private VideoRef video;
+    @Embedded private VideoRef video;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "node_prereq", joinColumns = @JoinColumn(name = "node_id"))

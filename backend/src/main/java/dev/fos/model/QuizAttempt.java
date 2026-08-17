@@ -49,7 +49,12 @@ public class QuizAttempt {
     }
 
     public QuizAttempt(
-            Long userId, Long nodeId, int score, boolean passed, LocalDate attemptedOn, Instant createdAt) {
+            Long userId,
+            Long nodeId,
+            int score,
+            boolean passed,
+            LocalDate attemptedOn,
+            Instant createdAt) {
         this.userId = userId;
         this.nodeId = nodeId;
         this.score = score;

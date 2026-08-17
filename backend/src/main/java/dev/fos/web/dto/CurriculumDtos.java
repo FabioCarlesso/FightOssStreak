@@ -9,18 +9,17 @@ import java.util.List;
 /** Formas de leitura do currículo expostas pela API. */
 public final class CurriculumDtos {
 
-    private CurriculumDtos() {
-    }
+    private CurriculumDtos() {}
 
     /** Árvore completa com o estado do usuário — payload da tela principal. */
-    public record TreeView(List<ModuleView> modules, ProgressSummary summary) {
-    }
+    public record TreeView(List<ModuleView> modules, ProgressSummary summary) {}
 
-    public record ModuleView(String code, String title, String summary, List<NodeSummaryView> nodes) {
-    }
+    public record ModuleView(
+            String code, String title, String summary, List<NodeSummaryView> nodes) {}
 
     /**
-     * @param prereqCodes códigos dos pré-requisitos, para a UI explicar <em>por que</em> está travado
+     * @param prereqCodes códigos dos pré-requisitos, para a UI explicar <em>por que</em> está
+     *     travado
      */
     public record NodeSummaryView(
             String code,
@@ -32,11 +31,10 @@ public final class CurriculumDtos {
             boolean hasVideo,
             int quizQuestionCount,
             Integer lastQuizScore,
-            LocalDate nextReviewOn) {
-    }
+            LocalDate nextReviewOn) {}
 
-    public record ProgressSummary(int totalNodes, int completedNodes, int availableNodes, int lockedNodes) {
-    }
+    public record ProgressSummary(
+            int totalNodes, int completedNodes, int availableNodes, int lockedNodes) {}
 
     /** Detalhe de um nó: conceito, vídeo, quiz e estado de revisão. */
     public record NodeDetailView(
@@ -53,11 +51,9 @@ public final class CurriculumDtos {
             List<QuizDtos.QuestionView> quiz,
             SrsView srs,
             List<DrillEntryView> recentDrills,
-            String safetyNotice) {
-    }
+            String safetyNotice) {}
 
-    public record PrereqView(String code, String title, boolean completed) {
-    }
+    public record PrereqView(String code, String title, boolean completed) {}
 
     /**
      * Vídeo sempre por embed do player oficial (D7). {@code catalogued=false} é estado normal: a
@@ -78,13 +74,16 @@ public final class CurriculumDtos {
     }
 
     public record SrsView(
-            boolean scheduled, LocalDate nextReviewOn, int intervalDays, int repetitions, boolean due) {
+            boolean scheduled,
+            LocalDate nextReviewOn,
+            int intervalDays,
+            int repetitions,
+            boolean due) {
 
         public static SrsView notScheduled() {
             return new SrsView(false, null, 0, 0, false);
         }
     }
 
-    public record DrillEntryView(LocalDate drilledOn, String recall, String note) {
-    }
+    public record DrillEntryView(LocalDate drilledOn, String recall, String note) {}
 }

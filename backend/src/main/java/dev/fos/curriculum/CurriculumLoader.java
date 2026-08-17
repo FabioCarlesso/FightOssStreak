@@ -52,7 +52,8 @@ public class CurriculumLoader {
         try (InputStream in = resource.getInputStream()) {
             return objectMapper.readValue(in, type);
         } catch (IOException e) {
-            throw new CurriculumException("Falha ao ler currículo em " + location + ": " + e.getMessage(), e);
+            throw new CurriculumException(
+                    "Falha ao ler currículo em " + location + ": " + e.getMessage(), e);
         }
     }
 }

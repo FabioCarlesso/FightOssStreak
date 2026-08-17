@@ -112,7 +112,11 @@ export function QuizForm({
 function QuizFeedback({ result, onRetry }: { result: QuizResult; onRetry: () => void }) {
   return (
     <div className="quiz-result">
-      <p className={result.passed ? 'quiz-result__score' : 'quiz-result__score quiz-result__score--fail'}>
+      <p
+        className={
+          result.passed ? 'quiz-result__score' : 'quiz-result__score quiz-result__score--fail'
+        }
+      >
         {result.score}/100 — {result.correctCount} de {result.totalQuestions} corretas
       </p>
       <p className="hint">

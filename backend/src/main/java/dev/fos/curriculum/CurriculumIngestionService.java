@@ -25,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Ingere o currículo versionado no banco.
  *
- * <p>O JSON é a fonte da verdade (D11) e o banco é projeção dele: por isso a ingestão é
- * idempotente e reexecutada na subida. Progresso, drills e SRS ficam intocados — eles referenciam
- * nós por id, e ids de nós existentes são preservados entre execuções.
+ * <p>O JSON é a fonte da verdade (D11) e o banco é projeção dele: por isso a ingestão é idempotente
+ * e reexecutada na subida. Progresso, drills e SRS ficam intocados — eles referenciam nós por id, e
+ * ids de nós existentes são preservados entre execuções.
  */
 @Service
 public class CurriculumIngestionService {
@@ -65,8 +65,8 @@ public class CurriculumIngestionService {
     }
 
     /**
-     * Valida e grava o currículo. Falha alto: subir com currículo quebrado seria pior do que
-     * não subir.
+     * Valida e grava o currículo. Falha alto: subir com currículo quebrado seria pior do que não
+     * subir.
      */
     @Transactional
     public void sync() {
@@ -94,12 +94,19 @@ public class CurriculumIngestionService {
     private CurriculumModule upsertModule(CurriculumSource.Module source, int orderIndex) {
         return moduleRepository
                 .findByCode(source.code())
-                .map(existing -> {
-                    existing.update(source.title(), source.summary(), orderIndex);
-                    return moduleRepository.save(existing);
-                })
-                .orElseGet(() -> moduleRepository.save(
-                        new CurriculumModule(source.code(), source.title(), source.summary(), orderIndex)));
+                .map(
+                        existing -> {
+                            existing.update(source.title(), source.summary(), orderIndex);
+                            return moduleRepository.save(existing);
+                        })
+                .orElseGet(
+                        () ->
+                                moduleRepository.save(
+                                        new CurriculumModule(
+                                                source.code(),
+                                                source.title(),
+                                                source.summary(),
+                                                orderIndex)));
     }
 
     private Node upsertNode(CurriculumModule module, CurriculumSource.NodeSpec spec) {
@@ -109,19 +116,30 @@ public class CurriculumIngestionService {
 
         return nodeRepository
                 .findByCode(spec.code())
-                .map(existing -> {
-                    existing.update(module, spec.title(), belt, spec.concept(), spec.order(), rule, video);
-                    return nodeRepository.save(existing);
-                })
-                .orElseGet(() -> nodeRepository.save(new Node(
-                        module,
-                        spec.code(),
-                        spec.title(),
-                        belt,
-                        spec.concept(),
-                        spec.order(),
-                        rule,
-                        video)));
+                .map(
+                        existing -> {
+                            existing.update(
+                                    module,
+                                    spec.title(),
+                                    belt,
+                                    spec.concept(),
+                                    spec.order(),
+                                    rule,
+                                    video);
+                            return nodeRepository.save(existing);
+                        })
+                .orElseGet(
+                        () ->
+                                nodeRepository.save(
+                                        new Node(
+                                                module,
+                                                spec.code(),
+                                                spec.title(),
+                                                belt,
+                                                spec.concept(),
+                                                spec.order(),
+                                                rule,
+                                                video)));
     }
 
     private void linkPrereqs(List<CurriculumSource.Module> modules, Map<String, Node> nodesByCode) {
@@ -143,7 +161,8 @@ public class CurriculumIngestionService {
      * pergunta exigiria ids estáveis no JSON, e o histórico que importa (score do nó) vive em
      * user_progress, não nas perguntas.
      */
-    private void replaceQuizzes(List<CurriculumSource.Module> modules, Map<String, Node> nodesByCode) {
+    private void replaceQuizzes(
+            List<CurriculumSource.Module> modules, Map<String, Node> nodesByCode) {
         entityManager.flush();
         entityManager.createQuery("delete from QuizOption").executeUpdate();
         entityManager.createQuery("delete from QuizQuestion").executeUpdate();
@@ -153,12 +172,20 @@ public class CurriculumIngestionService {
                 Node node = nodesByCode.get(spec.code());
                 int questionOrder = 0;
                 for (CurriculumSource.QuestionSpec questionSpec : spec.quiz()) {
-                    QuizQuestion question = new QuizQuestion(
-                            node, questionSpec.prompt(), questionSpec.explanation(), questionOrder++);
+                    QuizQuestion question =
+                            new QuizQuestion(
+                                    node,
+                                    questionSpec.prompt(),
+                                    questionSpec.explanation(),
+                                    questionOrder++);
                     int optionOrder = 0;
                     for (CurriculumSource.OptionSpec optionSpec : questionSpec.options()) {
-                        question.addOption(new QuizOption(
-                                question, optionSpec.text(), optionSpec.correct(), optionOrder++));
+                        question.addOption(
+                                new QuizOption(
+                                        question,
+                                        optionSpec.text(),
+                                        optionSpec.correct(),
+                                        optionOrder++));
                     }
                     quizQuestionRepository.save(question);
                 }

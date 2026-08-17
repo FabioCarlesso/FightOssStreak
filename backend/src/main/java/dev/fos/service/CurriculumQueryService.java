@@ -1,6 +1,5 @@
 package dev.fos.service;
 
-import dev.fos.model.DrillLog;
 import dev.fos.model.Node;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.QuizOption;
@@ -61,11 +60,12 @@ public class CurriculumQueryService {
     @Transactional(readOnly = true)
     public CurriculumDtos.TreeView tree(Long userId) {
         List<Node> nodes = nodeRepository.findAllOrdered();
-        Map<Long, ProgressStatus> statuses = unlockService.resolveStatuses(nodes, persistedStatuses(userId));
+        Map<Long, ProgressStatus> statuses =
+                unlockService.resolveStatuses(nodes, persistedStatuses(userId));
         Map<Long, UserProgress> progress = progressByNodeId(userId);
         Map<Long, SrsReview> srs = srsByNodeId(userId);
-        Map<Long, String> codeById = nodes.stream()
-                .collect(Collectors.toMap(Node::getId, Node::getCode));
+        Map<Long, String> codeById =
+                nodes.stream().collect(Collectors.toMap(Node::getId, Node::getCode));
         Map<Long, Integer> quizCounts = quizCountsByNodeId();
 
         Map<String, List<CurriculumDtos.NodeSummaryView>> byModule = new LinkedHashMap<>();
@@ -75,28 +75,36 @@ public class CurriculumQueryService {
             String moduleCode = node.getModule().getCode();
             moduleAnchor.putIfAbsent(moduleCode, node);
             byModule.computeIfAbsent(moduleCode, key -> new ArrayList<>())
-                    .add(new CurriculumDtos.NodeSummaryView(
-                            node.getCode(),
-                            node.getTitle(),
-                            node.getBelt(),
-                            statuses.get(node.getId()),
-                            node.getUnlockRule(),
-                            node.getPrereqNodeIds().stream().map(codeById::get).toList(),
-                            node.getVideo() != null && node.getVideo().isCatalogued(),
-                            quizCounts.getOrDefault(node.getId(), 0),
-                            progress.containsKey(node.getId())
-                                    ? progress.get(node.getId()).getLastQuizScore()
-                                    : null,
-                            srs.containsKey(node.getId()) ? srs.get(node.getId()).getNextReviewOn() : null));
+                    .add(
+                            new CurriculumDtos.NodeSummaryView(
+                                    node.getCode(),
+                                    node.getTitle(),
+                                    node.getBelt(),
+                                    statuses.get(node.getId()),
+                                    node.getUnlockRule(),
+                                    node.getPrereqNodeIds().stream().map(codeById::get).toList(),
+                                    node.getVideo() != null && node.getVideo().isCatalogued(),
+                                    quizCounts.getOrDefault(node.getId(), 0),
+                                    progress.containsKey(node.getId())
+                                            ? progress.get(node.getId()).getLastQuizScore()
+                                            : null,
+                                    srs.containsKey(node.getId())
+                                            ? srs.get(node.getId()).getNextReviewOn()
+                                            : null));
         }
 
-        List<CurriculumDtos.ModuleView> modules = byModule.entrySet().stream()
-                .map(entry -> {
-                    var module = moduleAnchor.get(entry.getKey()).getModule();
-                    return new CurriculumDtos.ModuleView(
-                            module.getCode(), module.getTitle(), module.getSummary(), entry.getValue());
-                })
-                .toList();
+        List<CurriculumDtos.ModuleView> modules =
+                byModule.entrySet().stream()
+                        .map(
+                                entry -> {
+                                    var module = moduleAnchor.get(entry.getKey()).getModule();
+                                    return new CurriculumDtos.ModuleView(
+                                            module.getCode(),
+                                            module.getTitle(),
+                                            module.getSummary(),
+                                            entry.getValue());
+                                })
+                        .toList();
 
         return new CurriculumDtos.TreeView(modules, summarize(statuses));
     }
@@ -107,31 +115,44 @@ public class CurriculumQueryService {
         List<Node> allNodes = nodeRepository.findAllOrdered();
         Map<Long, ProgressStatus> statuses =
                 unlockService.resolveStatuses(allNodes, persistedStatuses(userId));
-        Map<Long, Node> byId = allNodes.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
+        Map<Long, Node> byId =
+                allNodes.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
 
-        List<CurriculumDtos.PrereqView> prereqs = node.getPrereqNodeIds().stream()
-                .map(byId::get)
-                .filter(java.util.Objects::nonNull)
-                .map(prereq -> new CurriculumDtos.PrereqView(
-                        prereq.getCode(),
-                        prereq.getTitle(),
-                        statuses.get(prereq.getId()) == ProgressStatus.COMPLETED))
-                .toList();
+        List<CurriculumDtos.PrereqView> prereqs =
+                node.getPrereqNodeIds().stream()
+                        .map(byId::get)
+                        .filter(java.util.Objects::nonNull)
+                        .map(
+                                prereq ->
+                                        new CurriculumDtos.PrereqView(
+                                                prereq.getCode(),
+                                                prereq.getTitle(),
+                                                statuses.get(prereq.getId())
+                                                        == ProgressStatus.COMPLETED))
+                        .toList();
 
-        List<QuizDtos.QuestionView> quiz = quizQuestionRepository
-                .findByNodeIdWithOptions(node.getId()).stream()
-                .map(question -> new QuizDtos.QuestionView(
-                        question.getId(),
-                        question.getPrompt(),
-                        shuffleOptions(question)))
-                .toList();
+        List<QuizDtos.QuestionView> quiz =
+                quizQuestionRepository.findByNodeIdWithOptions(node.getId()).stream()
+                        .map(
+                                question ->
+                                        new QuizDtos.QuestionView(
+                                                question.getId(),
+                                                question.getPrompt(),
+                                                shuffleOptions(question)))
+                        .toList();
 
-        List<CurriculumDtos.DrillEntryView> drills = drillLogRepository
-                .findByUserIdAndNodeIdOrderByDrilledOnDesc(userId, node.getId()).stream()
-                .limit(10)
-                .map(entry -> new CurriculumDtos.DrillEntryView(
-                        entry.getDrilledOn(), entry.getRecall().name(), entry.getNote()))
-                .toList();
+        List<CurriculumDtos.DrillEntryView> drills =
+                drillLogRepository
+                        .findByUserIdAndNodeIdOrderByDrilledOnDesc(userId, node.getId())
+                        .stream()
+                        .limit(10)
+                        .map(
+                                entry ->
+                                        new CurriculumDtos.DrillEntryView(
+                                                entry.getDrilledOn(),
+                                                entry.getRecall().name(),
+                                                entry.getNote()))
+                        .toList();
 
         return new CurriculumDtos.NodeDetailView(
                 node.getCode(),
@@ -152,9 +173,7 @@ public class CurriculumQueryService {
 
     @Transactional(readOnly = true)
     public Node requireNode(String code) {
-        return nodeRepository
-                .findByCode(code)
-                .orElseThrow(() -> new NodeNotFoundException(code));
+        return nodeRepository.findByCode(code).orElseThrow(() -> new NodeNotFoundException(code));
     }
 
     Map<Long, ProgressStatus> persistedStatuses(Long userId) {
@@ -181,10 +200,11 @@ public class CurriculumQueryService {
      * não ver as opções pulando de lugar ao recarregar, e sem relação com a posição original.
      */
     private static List<QuizDtos.OptionView> shuffleOptions(QuizQuestion question) {
-        Comparator<QuizOption> deterministicShuffle = Comparator
-                .comparingLong((QuizOption option) ->
-                        mix(question.getId() * 1_000_003L + option.getId()))
-                .thenComparing(QuizOption::getId);
+        Comparator<QuizOption> deterministicShuffle =
+                Comparator.comparingLong(
+                                (QuizOption option) ->
+                                        mix(question.getId() * 1_000_003L + option.getId()))
+                        .thenComparing(QuizOption::getId);
 
         return question.getOptions().stream()
                 .sorted(deterministicShuffle)
@@ -210,9 +230,10 @@ public class CurriculumQueryService {
 
     private Map<Long, Integer> quizCountsByNodeId() {
         return quizQuestionRepository.findAll().stream()
-                .collect(Collectors.groupingBy(
-                        question -> question.getNode().getId(),
-                        Collectors.reducing(0, question -> 1, Integer::sum)));
+                .collect(
+                        Collectors.groupingBy(
+                                question -> question.getNode().getId(),
+                                Collectors.reducing(0, question -> 1, Integer::sum)));
     }
 
     private CurriculumDtos.ProgressSummary summarize(Map<Long, ProgressStatus> statuses) {
@@ -233,9 +254,10 @@ public class CurriculumQueryService {
         if (video == null || !video.isCatalogued()) {
             return CurriculumDtos.VideoView.notCatalogued();
         }
-        String start = video.getStartSeconds() != null && video.getStartSeconds() > 0
-                ? "?start=" + video.getStartSeconds()
-                : "";
+        String start =
+                video.getStartSeconds() != null && video.getStartSeconds() > 0
+                        ? "?start=" + video.getStartSeconds()
+                        : "";
         return new CurriculumDtos.VideoView(
                 true,
                 video.getYoutubeId(),

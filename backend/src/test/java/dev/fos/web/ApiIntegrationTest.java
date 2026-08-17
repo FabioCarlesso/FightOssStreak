@@ -36,8 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Percorre o fluxo real do MVP contra a aplicação inteira: sobe, ingere o currículo versionado,
- * lê a árvore, responde o quiz, registra drill e confere a agenda de revisão.
+ * Percorre o fluxo real do MVP contra a aplicação inteira: sobe, ingere o currículo versionado, lê
+ * a árvore, responde o quiz, registra drill e confere a agenda de revisão.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,7 +46,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class ApiIntegrationTest {
 
-    /** Relógio fixo: streak e SRS são definidos por datas, então "hoje" precisa ser determinístico. */
+    /**
+     * Relógio fixo: streak e SRS são definidos por datas, então "hoje" precisa ser determinístico.
+     */
     @TestConfiguration
     static class FixedClockConfig {
         @Bean
@@ -55,14 +57,11 @@ class ApiIntegrationTest {
         }
     }
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private QuizQuestionRepository quizQuestionRepository;
+    @Autowired private QuizQuestionRepository quizQuestionRepository;
 
     @Test
     @DisplayName("a árvore sobe com os 46 nós do currículo versionado")
@@ -100,18 +99,20 @@ class ApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("o embaralhamento de D16 realmente embaralha: o gabarito não fica sempre na frente")
+    @DisplayName(
+            "o embaralhamento de D16 realmente embaralha: o gabarito não fica sempre na frente")
     void answerKeyIsNotAlwaysServedFirst() throws Exception {
         Map<Integer, Integer> questionsByCorrectPosition = new TreeMap<>();
         int total = 0;
 
         for (String code : nodeCodesWithQuiz()) {
             for (JsonNode question : getJson("/api/nodes/" + code).get("quiz")) {
-                long correctId = quizQuestionRepository
-                        .findById(question.get("id").asLong())
-                        .orElseThrow()
-                        .correctOption()
-                        .getId();
+                long correctId =
+                        quizQuestionRepository
+                                .findById(question.get("id").asLong())
+                                .orElseThrow()
+                                .correctOption()
+                                .getId();
 
                 ArrayNode options = (ArrayNode) question.get("options");
                 for (int position = 0; position < options.size(); position++) {
@@ -123,12 +124,15 @@ class ApiIntegrationTest {
             }
         }
 
-        assertThat(total).as("o currículo precisa ter quiz para este teste dizer algo").isGreaterThan(50);
+        assertThat(total)
+                .as("o currículo precisa ter quiz para este teste dizer algo")
+                .isGreaterThan(50);
         assertThat(questionsByCorrectPosition.keySet())
                 .as("posições ocupadas pela alternativa correta ao longo do currículo")
                 .containsExactly(0, 1, 2, 3);
         assertThat(questionsByCorrectPosition.get(0))
-                .as("gabarito servido em primeiro lugar — era 100%% quando o hash não espalhava bits")
+                .as(
+                        "gabarito servido em primeiro lugar — era 100%% quando o hash não espalhava bits")
                 .isLessThan(total / 2);
     }
 
@@ -172,9 +176,7 @@ class ApiIntegrationTest {
 
         JsonNode tree = getJson("/api/curriculum/tree");
         assertThat(statusOf(tree, "M0.3")).isEqualTo("COMPLETED");
-        assertThat(statusOf(tree, "M1.1"))
-                .as("M1.1 depende de M0.3 e M0.4")
-                .isEqualTo("AVAILABLE");
+        assertThat(statusOf(tree, "M1.1")).as("M1.1 depende de M0.3 e M0.4").isEqualTo("AVAILABLE");
     }
 
     @Test
@@ -183,15 +185,17 @@ class ApiIntegrationTest {
         JsonNode node = getJson("/api/nodes/M0.1");
         String payload = answerPayload(node, false);
 
-        JsonNode result = objectMapper.readTree(mockMvc
-                .perform(post("/api/nodes/M0.1/quiz")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(payload))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.passed").value(false))
-                .andReturn()
-                .getResponse()
-                .getContentAsString());
+        JsonNode result =
+                objectMapper.readTree(
+                        mockMvc.perform(
+                                        post("/api/nodes/M0.1/quiz")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(payload))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.passed").value(false))
+                                .andReturn()
+                                .getResponse()
+                                .getContentAsString());
 
         assertThat(result.get("status").asText()).isEqualTo("IN_PROGRESS");
         assertThat(result.get("feedback")).isNotEmpty();
@@ -213,9 +217,10 @@ class ApiIntegrationTest {
     void drillFeedsStreakAndSrs() throws Exception {
         completeNode("M0.1");
 
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"OK\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.streak.currentStreak").value(1))
                 .andExpect(jsonPath("$.streak.drilledToday").value(true))
@@ -229,9 +234,10 @@ class ApiIntegrationTest {
         completeNode("M0.1");
 
         // Drill registrado há dias: o reagendamento cai no passado e o nó vence.
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"FORGOT\",\"drilledOn\":\"2026-08-10\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"FORGOT\",\"drilledOn\":\"2026-08-10\"}"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/reviews/today"))
@@ -244,9 +250,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("drill em data futura é recusado")
     void futureDrillIsRejected() throws Exception {
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"OK\",\"drilledOn\":\"2027-01-01\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\",\"drilledOn\":\"2027-01-01\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("invalid_request"));
     }
@@ -254,9 +261,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz escrito responde 409, não erro de servidor")
     void nodeWithoutQuizReturnsConflict() throws Exception {
-        mockMvc.perform(post("/api/nodes/M8.3/quiz")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"answers\":[{\"questionId\":1,\"optionId\":1}]}"))
+        mockMvc.perform(
+                        post("/api/nodes/M8.3/quiz")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"answers\":[{\"questionId\":1,\"optionId\":1}]}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("quiz_unavailable"));
     }
@@ -264,9 +272,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz é concluído pelo registro de drill")
     void nodeWithoutQuizIsCompletedByDrill() throws Exception {
-        mockMvc.perform(post("/api/nodes/M8.3/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"OK\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M8.3/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"));
     }
@@ -286,9 +295,10 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$.accepted").value(false))
                 .andExpect(jsonPath("$.currentVersion").value("test-1"));
 
-        mockMvc.perform(post("/api/disclaimer/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"version\":\"test-1\"}"))
+        mockMvc.perform(
+                        post("/api/disclaimer/accept")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"version\":\"test-1\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accepted").value(true));
     }
@@ -296,9 +306,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("aceitar uma versão antiga do aviso é recusado")
     void staleDisclaimerVersionIsRejected() throws Exception {
-        mockMvc.perform(post("/api/disclaimer/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"version\":\"2020-01-01\"}"))
+        mockMvc.perform(
+                        post("/api/disclaimer/accept")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"version\":\"2020-01-01\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -323,9 +334,10 @@ class ApiIntegrationTest {
     void metricsFollowRealUse() throws Exception {
         completeNode("M0.1");
 
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"OK\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/metrics/mvp"))
@@ -338,11 +350,13 @@ class ApiIntegrationTest {
     void metricsCountAttendedReviews() throws Exception {
         completeNode("M0.1");
 
-        // Drill retroativo com recall ruim: o nó é reagendado para o passado e passa a estar vencido.
+        // Drill retroativo com recall ruim: o nó é reagendado para o passado e passa a estar
+        // vencido.
         // Neste registro ele ainda não estava vencido — a revisão era para 17/08.
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"FORGOT\",\"drilledOn\":\"2026-08-10\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"FORGOT\",\"drilledOn\":\"2026-08-10\"}"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/metrics/mvp"))
@@ -351,9 +365,10 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$.srsAdherence.percent").value(0));
 
         // Agora sim: o nó está vencido e o drill de hoje atende à sugestão da agenda.
-        mockMvc.perform(post("/api/nodes/M0.1/drill")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"recall\":\"OK\"}"))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/metrics/mvp"))
@@ -368,13 +383,15 @@ class ApiIntegrationTest {
     void metricsCountQuizRetakes() throws Exception {
         // Errar e passar na segunda é o caminho normal de conclusão, não repetição espontânea.
         JsonNode node = getJson("/api/nodes/M0.1");
-        mockMvc.perform(post("/api/nodes/M0.1/quiz")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(answerPayload(node, false)))
+        mockMvc.perform(
+                        post("/api/nodes/M0.1/quiz")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(answerPayload(node, false)))
                 .andExpect(status().isOk());
         completeNode("M0.1");
 
-        mockMvc.perform(get("/api/metrics/mvp")).andExpect(jsonPath("$.quizRetakes.value").value(0));
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.quizRetakes.value").value(0));
 
         completeNode("M0.1");
 
@@ -395,9 +412,10 @@ class ApiIntegrationTest {
 
     private void completeNode(String code) throws Exception {
         JsonNode node = getJson("/api/nodes/" + code);
-        mockMvc.perform(post("/api/nodes/" + code + "/quiz")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(answerPayload(node, true)))
+        mockMvc.perform(
+                        post("/api/nodes/" + code + "/quiz")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(answerPayload(node, true)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.passed").value(true));
     }
@@ -446,19 +464,19 @@ class ApiIntegrationTest {
     }
 
     private JsonNode getJson(String path) throws Exception {
-        return objectMapper.readTree(mockMvc
-                .perform(get(path))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString());
+        return objectMapper.readTree(
+                mockMvc.perform(get(path))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString());
     }
 
     /**
      * Monta respostas para o quiz.
      *
-     * <p>O gabarito não vem na API — de propósito, e a ordem das alternativas é embaralhada. Então o
-     * teste consulta o repositório para saber qual é a correta, em vez de assumir posição.
+     * <p>O gabarito não vem na API — de propósito, e a ordem das alternativas é embaralhada. Então
+     * o teste consulta o repositório para saber qual é a correta, em vez de assumir posição.
      */
     private String answerPayload(JsonNode node, boolean correct) throws Exception {
         ArrayNode answers = objectMapper.createArrayNode();
@@ -467,13 +485,14 @@ class ApiIntegrationTest {
             QuizQuestion stored = quizQuestionRepository.findById(questionId).orElseThrow();
             long correctId = stored.correctOption().getId();
 
-            long chosen = correct
-                    ? correctId
-                    : stored.getOptions().stream()
-                            .filter(option -> !option.isCorrect())
-                            .findFirst()
-                            .orElseThrow()
-                            .getId();
+            long chosen =
+                    correct
+                            ? correctId
+                            : stored.getOptions().stream()
+                                    .filter(option -> !option.isCorrect())
+                                    .findFirst()
+                                    .orElseThrow()
+                                    .getId();
 
             ObjectNode answer = objectMapper.createObjectNode();
             answer.put("questionId", questionId);

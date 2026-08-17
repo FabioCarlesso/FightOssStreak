@@ -61,7 +61,9 @@ export function DrillForm({
         {RECALL_LABELS.map((option) => (
           <label
             key={option.value}
-            className={recall === option.value ? 'drill__option drill__option--on' : 'drill__option'}
+            className={
+              recall === option.value ? 'drill__option drill__option--on' : 'drill__option'
+            }
           >
             <input
               type="radio"

@@ -60,7 +60,8 @@ public class DrillService {
         Node node = curriculumQueryService.requireNode(nodeCode);
         LocalDate drilledOn = request.drilledOn() != null ? request.drilledOn() : today;
         if (drilledOn.isAfter(today)) {
-            throw new IllegalArgumentException("Não dá para registrar drill em data futura: " + drilledOn);
+            throw new IllegalArgumentException(
+                    "Não dá para registrar drill em data futura: " + drilledOn);
         }
 
         UserNodeKey key = new UserNodeKey(userId, node.getId());
@@ -72,15 +73,16 @@ public class DrillService {
         LocalDate dueOn = scheduled != null ? scheduled.getNextReviewOn() : null;
         boolean wasDue = dueOn != null && !dueOn.isAfter(drilledOn);
 
-        drillLogRepository.save(new DrillLog(
-                userId,
-                node.getId(),
-                drilledOn,
-                request.recall(),
-                request.note(),
-                wasDue,
-                dueOn,
-                clock.instant()));
+        drillLogRepository.save(
+                new DrillLog(
+                        userId,
+                        node.getId(),
+                        drilledOn,
+                        request.recall(),
+                        request.note(),
+                        wasDue,
+                        dueOn,
+                        clock.instant()));
 
         SrsReview review = reschedule(scheduled, key, request, drilledOn);
         ProgressStatus status = advanceProgress(userId, node, key);
@@ -95,21 +97,30 @@ public class DrillService {
     }
 
     private SrsReview reschedule(
-            SrsReview existing, UserNodeKey key, ActivityDtos.DrillRequest request, LocalDate drilledOn) {
-        SrsScheduler.State current = existing == null
-                ? null
-                : new SrsScheduler.State(
-                        existing.getRepetitions(),
-                        existing.getIntervalDays(),
-                        existing.getEaseFactor(),
-                        existing.getNextReviewOn());
+            SrsReview existing,
+            UserNodeKey key,
+            ActivityDtos.DrillRequest request,
+            LocalDate drilledOn) {
+        SrsScheduler.State current =
+                existing == null
+                        ? null
+                        : new SrsScheduler.State(
+                                existing.getRepetitions(),
+                                existing.getIntervalDays(),
+                                existing.getEaseFactor(),
+                                existing.getNextReviewOn());
 
         SrsScheduler.State next = srsScheduler.review(current, request.recall(), drilledOn);
 
-        SrsReview review = existing != null
-                ? existing
-                : new SrsReview(
-                        key, next.nextReviewOn(), next.intervalDays(), next.easeFactor(), next.repetitions());
+        SrsReview review =
+                existing != null
+                        ? existing
+                        : new SrsReview(
+                                key,
+                                next.nextReviewOn(),
+                                next.intervalDays(),
+                                next.easeFactor(),
+                                next.repetitions());
         review.setNextReviewOn(next.nextReviewOn());
         review.setIntervalDays(next.intervalDays());
         review.setEaseFactor(next.easeFactor());
@@ -122,15 +133,20 @@ public class DrillService {
      * Nó sem quiz é concluído pelo drill.
      *
      * <p>Se a conclusão dependesse só do quiz, os módulos sem quiz escrito ainda travariam a árvore
-     * inteira — e a curadoria de quiz é incremental por decisão (M0 e M1 primeiro). Onde há quiz, ele
-     * continua sendo o que conclui: drill sozinho só move o nó para IN_PROGRESS.
+     * inteira — e a curadoria de quiz é incremental por decisão (M0 e M1 primeiro). Onde há quiz,
+     * ele continua sendo o que conclui: drill sozinho só move o nó para IN_PROGRESS.
      */
     private ProgressStatus advanceProgress(Long userId, Node node, UserNodeKey key) {
-        UserProgress progress = progressRepository
-                .findById(key)
-                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, clock.instant()));
+        UserProgress progress =
+                progressRepository
+                        .findById(key)
+                        .orElseGet(
+                                () ->
+                                        new UserProgress(
+                                                key, ProgressStatus.IN_PROGRESS, clock.instant()));
 
-        boolean hasQuiz = !quizQuestionRepository.findByNodeIdOrderByOrderIndexAsc(node.getId()).isEmpty();
+        boolean hasQuiz =
+                !quizQuestionRepository.findByNodeIdOrderByOrderIndexAsc(node.getId()).isEmpty();
 
         if (progress.getStatus() != ProgressStatus.COMPLETED) {
             progress.setStatus(hasQuiz ? ProgressStatus.IN_PROGRESS : ProgressStatus.COMPLETED);

@@ -17,7 +17,10 @@ export interface AsyncState<T> {
  * zerados, a tela cairia no estado de carregamento a cada `reload()` e desmontaria os componentes
  * filhos — que é exatamente o que apagava o resultado do quiz logo depois de respondê-lo.
  */
-export function useAsync<T>(loader: () => Promise<T>, deps: readonly unknown[] = []): AsyncState<T> {
+export function useAsync<T>(
+  loader: () => Promise<T>,
+  deps: readonly unknown[] = [],
+): AsyncState<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

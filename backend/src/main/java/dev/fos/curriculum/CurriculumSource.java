@@ -11,21 +11,17 @@ import java.util.List;
  */
 public final class CurriculumSource {
 
-    private CurriculumSource() {
-    }
+    private CurriculumSource() {}
 
     /** Conteúdo de {@code modules.json}. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Index(String version, String scope, List<ModuleRef> modules) {
-    }
+    public record Index(String version, String scope, List<ModuleRef> modules) {}
 
-    public record ModuleRef(int order, String file) {
-    }
+    public record ModuleRef(int order, String file) {}
 
     /** Conteúdo de {@code m0.json} … {@code m8.json}. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Module(String code, String title, String summary, List<NodeSpec> nodes) {
-    }
+    public record Module(String code, String title, String summary, List<NodeSpec> nodes) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record NodeSpec(
@@ -53,8 +49,7 @@ public final class CurriculumSource {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record VideoSpec(String youtubeId, String title, String channel, Integer startSeconds) {
-    }
+    public record VideoSpec(String youtubeId, String title, String channel, Integer startSeconds) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record QuestionSpec(String prompt, String explanation, List<OptionSpec> options) {
@@ -65,6 +60,5 @@ public final class CurriculumSource {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record OptionSpec(String text, boolean correct) {
-    }
+    public record OptionSpec(String text, boolean correct) {}
 }

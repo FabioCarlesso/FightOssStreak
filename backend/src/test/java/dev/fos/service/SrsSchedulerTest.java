@@ -48,8 +48,9 @@ class SrsSchedulerTest {
     @Test
     @DisplayName("esquecer zera as repetições e traz a técnica de volta amanhã")
     void forgettingResetsSchedule() {
-        SrsScheduler.State grown = scheduler.review(
-                scheduler.review(null, Recall.EASY, TODAY), Recall.EASY, TODAY.plusDays(2));
+        SrsScheduler.State grown =
+                scheduler.review(
+                        scheduler.review(null, Recall.EASY, TODAY), Recall.EASY, TODAY.plusDays(2));
 
         SrsScheduler.State lapsed = scheduler.review(grown, Recall.FORGOT, TODAY.plusDays(7));
 

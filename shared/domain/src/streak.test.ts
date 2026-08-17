@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { activeDaysInWindow, addDays, currentStreak, daysBetween, longestStreak } from './streak.ts';
+import {
+  activeDaysInWindow,
+  addDays,
+  currentStreak,
+  daysBetween,
+  longestStreak,
+} from './streak.ts';
 
 const TODAY = '2026-08-16';
 

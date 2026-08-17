@@ -13,11 +13,11 @@ services:
       POSTGRES_USER: fos
       POSTGRES_PASSWORD: fos
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - fos-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fos -d fos"]
+      test: ['CMD-SHELL', 'pg_isready -U fos -d fos']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -35,19 +35,19 @@ services:
       FOS_DB_URL: jdbc:postgresql://db:5432/fos
       FOS_DB_USER: fos
       FOS_DB_PASSWORD: fos
-      PORT: "8080"
+      PORT: '8080'
       SERVER_ADDRESS: 0.0.0.0
       TZ: America/Sao_Paulo
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
       # wget do busybox — a imagem jre-alpine não traz curl.
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/actuator/health || exit 1"]
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8080/actuator/health || exit 1']
       interval: 5s
       timeout: 5s
       retries: 20
@@ -61,14 +61,14 @@ services:
       dockerfile: web/Dockerfile
     container_name: fos-web
     environment:
-      PORT: "${PORT:-80}"
+      PORT: '${PORT:-80}'
       BACKEND_ORIGIN: http://backend:8080
       # DNS embutido do Docker. ipv6=off porque os containers aqui são IPv4-only e o nginx
       # trataria a consulta AAAA sem resposta como falha de resolução.
       NGINX_RESOLVER: 127.0.0.11 ipv6=off
       TZ: America/Sao_Paulo
     ports:
-      - "${WEB_HOST_PORT:-8081}:${PORT:-80}"
+      - '${WEB_HOST_PORT:-8081}:${PORT:-80}'
     depends_on:
       backend:
         condition: service_healthy

@@ -18,8 +18,7 @@ import java.time.Instant;
 @Table(name = "user_progress")
 public class UserProgress {
 
-    @EmbeddedId
-    private UserNodeKey id;
+    @EmbeddedId private UserNodeKey id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

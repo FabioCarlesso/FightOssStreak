@@ -40,7 +40,8 @@ class MvpMetricsServiceTest {
     private static final long USER = 1L;
     private static final LocalDate TODAY = LocalDate.of(2026, 8, 16);
     private static final LocalDate WINDOW_START = TODAY.minusDays(29);
-    private static final Clock CLOCK = Clock.fixed(Instant.parse("2026-08-16T10:00:00Z"), ZoneOffset.UTC);
+    private static final Clock CLOCK =
+            Clock.fixed(Instant.parse("2026-08-16T10:00:00Z"), ZoneOffset.UTC);
 
     private DrillLogRepository drillLogRepository;
     private QuizAttemptRepository quizAttemptRepository;
@@ -54,8 +55,13 @@ class MvpMetricsServiceTest {
         quizAttemptRepository = mock(QuizAttemptRepository.class);
         srsRepository = mock(SrsReviewRepository.class);
         progressRepository = mock(UserProgressRepository.class);
-        service = new MvpMetricsService(
-                drillLogRepository, quizAttemptRepository, srsRepository, progressRepository, CLOCK);
+        service =
+                new MvpMetricsService(
+                        drillLogRepository,
+                        quizAttemptRepository,
+                        srsRepository,
+                        progressRepository,
+                        CLOCK);
 
         givenDrills();
         givenQuizAttempts();
@@ -114,9 +120,7 @@ class MvpMetricsServiceTest {
     @Test
     @DisplayName("só o drill marcado como vencido conta como revisão atendida")
     void adherenceCountsOnlyDueDrills() {
-        givenDrills(
-                drill(10L, TODAY, true, TODAY.minusDays(1)),
-                drill(11L, TODAY, false, null));
+        givenDrills(drill(10L, TODAY, true, TODAY.minusDays(1)), drill(11L, TODAY, false, null));
 
         MetricsDtos.SrsAdherence adherence = metrics().srsAdherence();
         assertThat(adherence.attended()).isEqualTo(1);
@@ -187,10 +191,7 @@ class MvpMetricsServiceTest {
     @Test
     @DisplayName("nó concluído fora da janela não conta")
     void completedNodesRespectWindow() {
-        givenProgress(
-                completed(TODAY.minusDays(2)),
-                completed(TODAY.minusDays(40)),
-                inProgress());
+        givenProgress(completed(TODAY.minusDays(2)), completed(TODAY.minusDays(40)), inProgress());
 
         assertThat(metrics().nodesCompleted().value()).isEqualTo(1);
     }
@@ -198,10 +199,7 @@ class MvpMetricsServiceTest {
     @Test
     @DisplayName("voltar a um quiz já aprovado conta como refeito")
     void quizRetakeIsAnAttemptAfterPassing() {
-        givenQuizAttempts(
-                passed(10L, TODAY.minusDays(5)),
-                passed(10L, TODAY),
-                passed(11L, TODAY));
+        givenQuizAttempts(passed(10L, TODAY.minusDays(5)), passed(10L, TODAY), passed(11L, TODAY));
 
         MetricsDtos.Counted retakes = metrics().quizRetakes();
         assertThat(retakes.value()).isEqualTo(1);
@@ -238,8 +236,7 @@ class MvpMetricsServiceTest {
     @DisplayName("a repetição precisa cair dentro da janela")
     void retakeOutsideWindowIsNotCounted() {
         givenQuizAttempts(
-                passed(10L, WINDOW_START.minusDays(10)),
-                passed(10L, WINDOW_START.minusDays(5)));
+                passed(10L, WINDOW_START.minusDays(10)), passed(10L, WINDOW_START.minusDays(5)));
 
         assertThat(metrics().quizRetakes().value()).isZero();
     }
@@ -297,13 +294,17 @@ class MvpMetricsServiceTest {
     }
 
     private UserProgress completed(LocalDate completedOn) {
-        UserProgress progress = new UserProgress(
-                new UserNodeKey(USER, completedOn.toEpochDay()), ProgressStatus.COMPLETED, Instant.now());
+        UserProgress progress =
+                new UserProgress(
+                        new UserNodeKey(USER, completedOn.toEpochDay()),
+                        ProgressStatus.COMPLETED,
+                        Instant.now());
         progress.setCompletedAt(completedOn.atStartOfDay(ZoneOffset.UTC).toInstant());
         return progress;
     }
 
     private UserProgress inProgress() {
-        return new UserProgress(new UserNodeKey(USER, 99L), ProgressStatus.IN_PROGRESS, Instant.now());
+        return new UserProgress(
+                new UserNodeKey(USER, 99L), ProgressStatus.IN_PROGRESS, Instant.now());
     }
 }

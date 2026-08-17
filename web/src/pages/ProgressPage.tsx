@@ -97,7 +97,11 @@ function AdherenceCard({ adherence }: { adherence?: SrsAdherence }) {
     <section className="card metric">
       <header className="card__header">
         <h3>Revisões atendidas via SRS</h3>
-        {percent === null ? <span className="pill">sem agenda</span> : <MetStamp met={adherence?.met ?? false} />}
+        {percent === null ? (
+          <span className="pill">sem agenda</span>
+        ) : (
+          <MetStamp met={adherence?.met ?? false} />
+        )}
       </header>
       <p className="metric__value">
         {percent === null ? '—' : `${percent}%`}
@@ -119,5 +123,9 @@ function AdherenceCard({ adherence }: { adherence?: SrsAdherence }) {
 }
 
 function MetStamp({ met }: { met: boolean }) {
-  return <span className={met ? 'pill pill--met' : 'pill pill--late'}>{met ? 'atingido' : 'em aberto'}</span>;
+  return (
+    <span className={met ? 'pill pill--met' : 'pill pill--late'}>
+      {met ? 'atingido' : 'em aberto'}
+    </span>
+  );
 }

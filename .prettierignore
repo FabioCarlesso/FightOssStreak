@@ -12,4 +12,11 @@ backend/target/
 # não de ferramenta.
 backend/src/main/resources/curriculum/
 
+# Markdown fica de fora. O Prettier alinha as colunas das tabelas com espaço, e `docs/` é feito
+# de tabelas cujas células são parágrafos inteiros (07-decisoes.md à frente): o alinhamento
+# produz linhas de milhares de colunas e faz *acrescentar uma linha* reescrever a tabela toda.
+# O que o lint existe para pegar é código morto e estilo divergente, não prosa. O .editorconfig
+# ainda cobre o editor.
+*.md
+
 package-lock.json

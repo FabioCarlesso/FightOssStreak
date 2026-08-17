@@ -64,10 +64,12 @@ public class StreakService {
      * <p>É a métrica que realmente responde ao critério de sucesso do MVP — "≥ 12 dias de 30" —
      * enquanto o streak responde só a "manteve a corrente" (docs/05-mvp-web-plano.md).
      */
-    public int activeDaysInWindow(Collection<LocalDate> drillDates, LocalDate today, int windowDays) {
+    public int activeDaysInWindow(
+            Collection<LocalDate> drillDates, LocalDate today, int windowDays) {
         LocalDate from = today.minusDays(windowDays - 1L);
-        return (int) List.copyOf(new TreeSet<>(drillDates)).stream()
-                .filter(day -> !day.isBefore(from) && !day.isAfter(today))
-                .count();
+        return (int)
+                List.copyOf(new TreeSet<>(drillDates)).stream()
+                        .filter(day -> !day.isBefore(from) && !day.isAfter(today))
+                        .count();
     }
 }
