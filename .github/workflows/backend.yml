@@ -15,6 +15,14 @@ on:
   # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
 
+# Este job é o caro do repositório: ele sobe a aplicação inteira para diffar o openapi.json contra
+# o spec versionado. Sem isto, dois pushes seguidos rodavam tudo duas vezes em paralelo. A
+# mergeabilidade do PR é avaliada no commit mais recente, então cancelar o run superado não trava
+# merge.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
   # Renomear aqui exige renomear lá.

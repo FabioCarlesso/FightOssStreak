@@ -1,0 +1,61 @@
+# Atualização de dependência em projeto solo apodrece em silêncio: nada avisa que uma versão
+# ficou para trás até o dia em que atualizar vira obrigatório e vem com três breaking changes de
+# uma vez. São três ecossistemas versionados aqui, e nenhum tinha aviso.
+#
+# Sem automerge de propósito. Com `required_approving_review_count: 0` seria tecnicamente
+# possível, mas mergear sem ninguém ler o changelog é justamente o que a D18 evita — o PR do bot
+# passa pelos mesmos checks `backend` e `web`, e o merge continua sendo decisão humana.
+version: 2
+
+updates:
+  # npm na raiz: os workspaces (web, shared/*) são resolvidos por este único package-lock.json.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    groups:
+      # Patch e minor num PR só: é o lote que costuma passar direto no CI e não pede leitura.
+      patch-e-minor:
+        applies-to: version-updates
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: maven
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    groups:
+      patch-e-minor:
+        applies-to: version-updates
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
+
+  # As actions dos workflows também são dependência versionada, e são as que mais silenciosamente
+  # ficam para trás — `actions/checkout@v4` continua funcionando por anos depois de superado.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    groups:
+      patch-e-minor:
+        applies-to: version-updates
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope

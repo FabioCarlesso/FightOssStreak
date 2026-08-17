@@ -20,6 +20,13 @@ on:
   # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
 
+# Corrigir um typo e empurrar de novo deixava dois runs completos disputando o runner. A
+# mergeabilidade do PR é avaliada no commit mais recente, então um run cancelado por supersessão
+# não trava merge. Vale também para push em `main`, onde nada depende do resultado.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
   # Renomear aqui exige renomear lá.
@@ -27,6 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Primeiro passo do job, antes de qualquer instalação: falha em segundos e não custa nada.
+      # Renomear um job de CI derruba a proteção de `main` em silêncio, porque o contexto do
+      # required check é o nome do job. Só o Node do runner é usado — nada de `npm ci` aqui.
+      - name: Ruleset e jobs de CI batem
+        run: node scripts/verificar-ruleset.mjs
 
       - uses: actions/setup-node@v4
         with:
