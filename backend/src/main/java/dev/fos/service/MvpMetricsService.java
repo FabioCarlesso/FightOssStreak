@@ -38,6 +38,7 @@ public class MvpMetricsService {
     static final int TARGET_DAYS_WITH_DRILL = 12;
     static final int TARGET_SRS_ADHERENCE_PERCENT = 60;
     static final int TARGET_NODES_COMPLETED = 15;
+
     /** "Qualquer ocorrência" — uma única repetição espontânea já é o sinal que interessa. */
     static final int TARGET_QUIZ_RETAKES = 1;
 
@@ -64,11 +65,15 @@ public class MvpMetricsService {
     public MetricsDtos.MvpMetrics metrics(Long userId, LocalDate today, int windowDays) {
         if (windowDays < 1 || windowDays > MAX_WINDOW_DAYS) {
             throw new IllegalArgumentException(
-                    "Janela de medição deve estar entre 1 e " + MAX_WINDOW_DAYS + " dias: " + windowDays);
+                    "Janela de medição deve estar entre 1 e "
+                            + MAX_WINDOW_DAYS
+                            + " dias: "
+                            + windowDays);
         }
 
         LocalDate windowStart = today.minusDays(windowDays - 1L);
-        List<DrillLog> drills = drillLogRepository.findByUserIdAndDrilledOnGreaterThanEqual(userId, windowStart);
+        List<DrillLog> drills =
+                drillLogRepository.findByUserIdAndDrilledOnGreaterThanEqual(userId, windowStart);
 
         return new MetricsDtos.MvpMetrics(
                 windowStart,
@@ -77,8 +82,10 @@ public class MvpMetricsService {
                 windowDays == DEFAULT_WINDOW_DAYS,
                 MetricsDtos.Counted.of(daysWithDrill(drills, today), TARGET_DAYS_WITH_DRILL),
                 srsAdherence(userId, drills, windowStart, today),
-                MetricsDtos.Counted.of(nodesCompleted(userId, windowStart, today), TARGET_NODES_COMPLETED),
-                MetricsDtos.Counted.of(quizRetakes(userId, windowStart, today), TARGET_QUIZ_RETAKES));
+                MetricsDtos.Counted.of(
+                        nodesCompleted(userId, windowStart, today), TARGET_NODES_COMPLETED),
+                MetricsDtos.Counted.of(
+                        quizRetakes(userId, windowStart, today), TARGET_QUIZ_RETAKES));
     }
 
     /** Dias distintos com registro — o hábito sobreviveu à rotina? */
@@ -93,31 +100,34 @@ public class MvpMetricsService {
     /**
      * Aderência à agenda do SRS — a sugestão de "o que drillar" é usada ou ignorada?
      *
-     * <p>Atendida é a revisão que estava vencida e recebeu drill; o mesmo nó drilado várias vezes no
-     * mesmo dia conta uma vez, senão insistir em um nó inflaria a aderência.
+     * <p>Atendida é a revisão que estava vencida e recebeu drill; o mesmo nó drilado várias vezes
+     * no mesmo dia conta uma vez, senão insistir em um nó inflaria a aderência.
      *
-     * <p>Em aberto é o que ainda está vencido na agenda: como atender uma revisão empurra
-     * {@code next_review_on} para frente, o que continua no passado é exatamente o que foi ignorado.
+     * <p>Em aberto é o que ainda está vencido na agenda: como atender uma revisão empurra {@code
+     * next_review_on} para frente, o que continua no passado é exatamente o que foi ignorado.
      *
-     * <p>As duas pontas recortam pela mesma régua — só entra o que <em>venceu</em> dentro da janela.
-     * Sem isso a conta fica assimétrica e mente para cima: limpar parte de um backlog antigo somaria
-     * ao numerador, enquanto o resto do backlog, vencido antes da janela, ficaria de fora do
-     * denominador — e um dia em que se atendeu 1 de 5 atrasadas apareceria como 100%.
+     * <p>As duas pontas recortam pela mesma régua — só entra o que <em>venceu</em> dentro da
+     * janela. Sem isso a conta fica assimétrica e mente para cima: limpar parte de um backlog
+     * antigo somaria ao numerador, enquanto o resto do backlog, vencido antes da janela, ficaria de
+     * fora do denominador — e um dia em que se atendeu 1 de 5 atrasadas apareceria como 100%.
      */
     private MetricsDtos.SrsAdherence srsAdherence(
             Long userId, List<DrillLog> drills, LocalDate windowStart, LocalDate today) {
 
         Set<String> attended = new HashSet<>();
         for (DrillLog drill : drills) {
-            if (drill.isWasDue() && !drill.getDrilledOn().isAfter(today) && dueInWindow(drill, windowStart)) {
+            if (drill.isWasDue()
+                    && !drill.getDrilledOn().isAfter(today)
+                    && dueInWindow(drill, windowStart)) {
                 attended.add(drill.getNodeId() + "@" + drill.getDrilledOn());
             }
         }
 
-        long outstanding = srsRepository.findByIdUserIdAndNextReviewOnLessThanEqual(userId, today).stream()
-                .map(SrsReview::getNextReviewOn)
-                .filter(dueOn -> !dueOn.isBefore(windowStart))
-                .count();
+        long outstanding =
+                srsRepository.findByIdUserIdAndNextReviewOnLessThanEqual(userId, today).stream()
+                        .map(SrsReview::getNextReviewOn)
+                        .filter(dueOn -> !dueOn.isBefore(windowStart))
+                        .count();
 
         return MetricsDtos.SrsAdherence.of(
                 attended.size(), attended.size() + outstanding, TARGET_SRS_ADHERENCE_PERCENT);
@@ -133,7 +143,9 @@ public class MvpMetricsService {
         return progressRepository.findByIdUserId(userId).stream()
                 .filter(progress -> progress.getStatus() == ProgressStatus.COMPLETED)
                 .map(UserProgress::getCompletedAt)
-                .filter(completedAt -> completedAt != null && inWindow(completedAt, windowStart, today))
+                .filter(
+                        completedAt ->
+                                completedAt != null && inWindow(completedAt, windowStart, today))
                 .count();
     }
 
@@ -145,11 +157,12 @@ public class MvpMetricsService {
      * avançando. O que docs/05 chama de espontâneo é voltar a um quiz que já estava resolvido — daí
      * só contar tentativa posterior à primeira aprovação.
      *
-     * <p>O histórico é lido inteiro, e não só a janela, porque a aprovação que torna a tentativa uma
-     * repetição costuma ser bem anterior a ela; a janela recorta a repetição, não a aprovação.
+     * <p>O histórico é lido inteiro, e não só a janela, porque a aprovação que torna a tentativa
+     * uma repetição costuma ser bem anterior a ela; a janela recorta a repetição, não a aprovação.
      */
     private long quizRetakes(Long userId, LocalDate windowStart, LocalDate today) {
-        List<QuizAttempt> attempts = quizAttemptRepository.findByUserIdOrderByAttemptedOnAscIdAsc(userId);
+        List<QuizAttempt> attempts =
+                quizAttemptRepository.findByUserIdOrderByAttemptedOnAscIdAsc(userId);
 
         Set<Long> passedNodes = new HashSet<>();
         Set<Long> retaken = new HashSet<>();

@@ -18,9 +18,9 @@ spring:
 fos:
   # Versão do texto de disclaimer atualmente vigente. Subir quando o texto mudar
   # materialmente — isso força novo aceite (docs/06-disclaimer-responsabilidade.md).
-  disclaimer-version: "2026-08-16"
+  disclaimer-version: '2026-08-16'
   curriculum:
-    index: "classpath:curriculum/modules.json"
+    index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte
     # de verdade é o JSON — o banco é só projeção dele.
     sync-on-startup: true
@@ -58,8 +58,7 @@ spring:
     url: jdbc:h2:mem:fos;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
     driver-class-name: org.h2.Driver
     username: sa
-    password: ""
-
+    password: ''
 ---
 spring:
   config:

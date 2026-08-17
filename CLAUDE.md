@@ -14,7 +14,8 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 4. **Sem login no MVP** (D9). Usuário único, resolvido pelo backend. Não introduzir contas sem revisitar a decisão.
 5. **Disclaimer é requisito de produto**, não enfeite. Textos em `docs/06-disclaimer-responsabilidade.md`; mudança material no texto exige subir a versão do aceite.
 6. **`main` só muda por PR com CI verde** (D18). Nunca commitar direto em `main` — trabalhe em branch e abra PR. As regras são versionadas em `.github/rulesets/main.json`; mudança nelas entra por PR como qualquer outra, e depois roda `./scripts/apply-repo-rules.sh`.
-7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR (`docs/09-regras-repositorio.md`).
+7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/09-regras-repositorio.md`). O caso de renome não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão. Já **acrescentar `paths:` ao `pull_request:`** derruba a proteção do mesmo jeito e a guarda não pega — não introduza (D19).
+8. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 
@@ -31,9 +32,11 @@ docs/      planejamento e log de decisões
 npm install                 # workspaces: web + shared/*
 npm run dev:backend         # Spring Boot em :8080 (perfil dev, H2 em memória)
 npm run dev:web             # Vite em :5173, proxy /api -> :8080
-npm test                    # testes de shared/domain e dos scripts
+npm test                    # shared/domain + scripts + fluxos de UI do web (vitest/jsdom)
+npm run lint                # ESLint + Prettier; lint:fix corrige
 npm run gen:types           # regenera shared/types a partir do OpenAPI
 cd backend && ./mvnw test   # testes do backend
+cd backend && ./mvnw spotless:check   # formatação do Java; spotless:apply corrige
 docker compose up -d db     # só o Postgres local (perfil prod-like)
 docker compose up --build   # stack inteira em container: db + backend + web (nginx) em :8081
 ```

@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Long> {
 
-    @Query("""
+    @Query(
+            """
             select distinct q from QuizQuestion q
             left join fetch q.options
             where q.node.id = :nodeId

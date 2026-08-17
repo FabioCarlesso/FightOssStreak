@@ -18,15 +18,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class SrsScheduler {
 
-    /** Piso do fator de facilidade, como no SM-2 original: abaixo disso o intervalo nunca cresce. */
+    /**
+     * Piso do fator de facilidade, como no SM-2 original: abaixo disso o intervalo nunca cresce.
+     */
     static final double MIN_EASE_FACTOR = 1.3;
 
     /** Fator de facilidade inicial. */
     static final double DEFAULT_EASE_FACTOR = 2.5;
 
     /** Estado do agendamento de um nó. */
-    public record State(int repetitions, int intervalDays, double easeFactor, LocalDate nextReviewOn) {
-    }
+    public record State(
+            int repetitions, int intervalDays, double easeFactor, LocalDate nextReviewOn) {}
 
     /** Primeiro agendamento, feito quando o nó é concluído: revisar no dia seguinte. */
     public State initial(LocalDate today) {
@@ -37,13 +39,11 @@ public class SrsScheduler {
      * Aplica uma revisão e devolve o próximo agendamento.
      *
      * @param current estado atual, ou {@code null} se o nó ainda não estava agendado
-     * @param recall  auto-avaliação do drill
-     * @param today   data da revisão
+     * @param recall auto-avaliação do drill
+     * @param today data da revisão
      */
     public State review(State current, Recall recall, LocalDate today) {
-        State base = current != null
-                ? current
-                : new State(0, 0, DEFAULT_EASE_FACTOR, today);
+        State base = current != null ? current : new State(0, 0, DEFAULT_EASE_FACTOR, today);
 
         int quality = recall.quality();
         double easeFactor = adjustEaseFactor(base.easeFactor(), quality);
@@ -56,11 +56,12 @@ public class SrsScheduler {
             intervalDays = 1;
         } else {
             repetitions = base.repetitions() + 1;
-            intervalDays = switch (repetitions) {
-                case 1 -> 2;
-                case 2 -> 5;
-                default -> (int) Math.max(1, Math.round(base.intervalDays() * easeFactor));
-            };
+            intervalDays =
+                    switch (repetitions) {
+                        case 1 -> 2;
+                        case 2 -> 5;
+                        default -> (int) Math.max(1, Math.round(base.intervalDays() * easeFactor));
+                    };
         }
 
         return new State(repetitions, intervalDays, easeFactor, today.plusDays(intervalDays));

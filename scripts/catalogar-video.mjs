@@ -108,7 +108,9 @@ export function replaceVideoBlock(text, nodeCode, video) {
 async function main() {
   const [nodeCode, urlOrId, ...rest] = process.argv.slice(2);
   if (!nodeCode || !urlOrId) {
-    console.error('uso: node scripts/catalogar-video.mjs <NODE_CODE> <url-ou-id> [--start N] [--dry-run]');
+    console.error(
+      'uso: node scripts/catalogar-video.mjs <NODE_CODE> <url-ou-id> [--start N] [--dry-run]',
+    );
     process.exit(2);
   }
 
@@ -148,7 +150,9 @@ async function main() {
   // apareceria como "Unexpected token 'u'" na releitura do arquivo — mensagem que não ajuda
   // ninguém. O validador do backend também recusa vídeo sem título.
   if (!title) {
-    throw new Error(`O oEmbed não devolveu o título de ${videoId}. Sem título não dá para catalogar.`);
+    throw new Error(
+      `O oEmbed não devolveu o título de ${videoId}. Sem título não dá para catalogar.`,
+    );
   }
 
   const video = {
@@ -171,7 +175,9 @@ async function main() {
   console.log(`nó      : ${nodeCode} — ${node.title}`);
   console.log(`vídeo   : ${title}`);
   console.log(`canal   : ${channel}`);
-  console.log(`embed   : ${embed.known ? (embed.embeddable ? 'permitido' : 'BLOQUEADO') : 'não determinado'}`);
+  console.log(
+    `embed   : ${embed.known ? (embed.embeddable ? 'permitido' : 'BLOQUEADO') : 'não determinado'}`,
+  );
 
   if (dryRun) {
     console.log('\n--dry-run: nada foi gravado.');

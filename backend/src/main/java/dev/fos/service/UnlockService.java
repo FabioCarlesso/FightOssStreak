@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 /**
  * Resolve o estado de cada nó a partir do grafo de pré-requisitos e do progresso persistido.
  *
- * <p>Bloqueio é sempre derivado, nunca gravado: mudar o currículo (que é dado versionado, D11)
- * não deve exigir reescrever linhas de progresso.
+ * <p>Bloqueio é sempre derivado, nunca gravado: mudar o currículo (que é dado versionado, D11) não
+ * deve exigir reescrever linhas de progresso.
  */
 @Service
 public class UnlockService {
@@ -21,17 +21,18 @@ public class UnlockService {
     /**
      * Calcula o estado exibível de cada nó.
      *
-     * @param nodes      todos os nós do currículo
-     * @param persisted  status persistido por id de nó (LOCKED é ignorado se aparecer)
+     * @param nodes todos os nós do currículo
+     * @param persisted status persistido por id de nó (LOCKED é ignorado se aparecer)
      * @return status efetivo por id de nó
      */
     public Map<Long, ProgressStatus> resolveStatuses(
             List<Node> nodes, Map<Long, ProgressStatus> persisted) {
 
-        Set<Long> completed = persisted.entrySet().stream()
-                .filter(e -> e.getValue() == ProgressStatus.COMPLETED)
-                .map(Map.Entry::getKey)
-                .collect(java.util.stream.Collectors.toSet());
+        Set<Long> completed =
+                persisted.entrySet().stream()
+                        .filter(e -> e.getValue() == ProgressStatus.COMPLETED)
+                        .map(Map.Entry::getKey)
+                        .collect(java.util.stream.Collectors.toSet());
 
         Map<Long, ProgressStatus> result = new HashMap<>(nodes.size());
         for (Node node : nodes) {
@@ -42,7 +43,9 @@ public class UnlockService {
             ProgressStatus stored = persisted.get(node.getId());
             result.put(
                     node.getId(),
-                    stored == null || stored == ProgressStatus.LOCKED ? ProgressStatus.AVAILABLE : stored);
+                    stored == null || stored == ProgressStatus.LOCKED
+                            ? ProgressStatus.AVAILABLE
+                            : stored);
         }
         return result;
     }

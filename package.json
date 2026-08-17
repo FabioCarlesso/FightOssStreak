@@ -14,15 +14,26 @@
     "dev:web": "npm run dev --workspace @fos/web",
     "dev:backend": "cd backend && ./mvnw spring-boot:run",
     "build": "npm run build --workspace @fos/domain && npm run build --workspace @fos/api-client && npm run build --workspace @fos/web",
-    "test": "npm run test:domain && npm run test:scripts",
+    "test": "npm run test:domain && npm run test:scripts && npm run test:web",
     "test:domain": "npm run test --workspace @fos/domain",
     "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
+    "test:web": "npm run test --workspace @fos/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings=0 && prettier --check .",
+    "lint:fix": "eslint . --fix; prettier --write .",
     "gen:types": "node scripts/gen-types.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^15.15.0",
     "openapi-typescript": "^7.4.4",
-    "typescript": "^5.6.3"
+    "prettier": "^3.9.6",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.67.0"
   },
   "engines": {
     "node": ">=20"

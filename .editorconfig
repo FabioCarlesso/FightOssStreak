@@ -1,0 +1,34 @@
+# Reflete o que as ferramentas já impõem: Spotless (googleJavaFormat AOSP) no Java e Prettier no
+# resto. Se divergir, o editor desfaz no salvamento o que o CI vai exigir no PR.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.java]
+indent_size = 4
+max_line_length = 100
+
+[*.{ts,tsx,js,jsx,mjs,cjs,json,yml,yaml,css,html,md}]
+indent_size = 2
+
+[*.md]
+# Duas linhas em branco no fim de linha são quebra de linha em Markdown.
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
+
+[*.{sh,bash}]
+indent_size = 2
+
+# O wrapper do Maven é gerado pelo próprio Maven.
+[backend/mvnw*]
+indent_style = unset
+indent_size = unset

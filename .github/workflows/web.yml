@@ -20,6 +20,13 @@ on:
   # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
 
+# Corrigir um typo e empurrar de novo deixava dois runs completos disputando o runner. A
+# mergeabilidade do PR é avaliada no commit mais recente, então um run cancelado por supersessão
+# não trava merge. Vale também para push em `main`, onde nada depende do resultado.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
   # Renomear aqui exige renomear lá.
@@ -28,6 +35,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Primeiro passo do job, antes de qualquer instalação: falha em segundos e não custa nada.
+      # Renomear um job de CI derruba a proteção de `main` em silêncio, porque o contexto do
+      # required check é o nome do job. Só o Node do runner é usado — nada de `npm ci` aqui.
+      - name: Ruleset e jobs de CI batem
+        run: node scripts/verificar-ruleset.mjs
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -35,9 +48,16 @@ jobs:
 
       - run: npm ci
 
-      # Regras puras: streak, SM-2 e desbloqueio. Os casos de SRS são espelhados no backend,
-      # então uma divergência entre as duas implementações quebra aqui ou lá.
-      - name: Testes de shared/domain
+      # Depois do `npm ci` porque as próprias regras vêm de dependências, e antes dos testes
+      # porque falha em segundos. `npm run lint:fix` corrige localmente o que for corrigível.
+      - name: Lint e formatação
+        run: npm run lint
+
+      # Três camadas: as regras puras de shared/domain (streak, SM-2 e desbloqueio — cujos casos
+      # de SRS são espelhados no backend, então divergir entre as duas implementações quebra aqui
+      # ou lá), os scripts de curadoria, e os fluxos de UI que decidem se o produto é usável:
+      # aceite do disclaimer, quiz e drill.
+      - name: Testes
         run: npm test
 
       # shared/types é GERADO. Se o resultado divergir do que está commitado, o front está
@@ -53,3 +73,21 @@ jobs:
 
       - name: Build
         run: npm run build --workspace @fos/web
+
+      # O build acima roda direto no runner; a imagem é outro ambiente, e é ela que a Railway
+      # usa (D22). Este build é especialmente frágil por motivo estrutural: o contexto precisa ser
+      # a raiz do monorepo, porque os workspaces @fos/* exportam TypeScript de src/ sem dist/.
+      # Mudança em package.json, em package-lock.json ou na estrutura de shared/ quebra a imagem
+      # sem quebrar teste nenhum.
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Imagem do web builda
+        uses: docker/build-push-action@v6
+        with:
+          # Contexto é a RAIZ, não web/. `docker build web/` passa a impressão de funcionar até
+          # falhar na resolução dos imports dos workspaces.
+          context: .
+          file: web/Dockerfile
+          push: false
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web,ignore-error=true

@@ -61,7 +61,9 @@ const previous = existsSync(outFile) ? readFileSync(outFile, 'utf8') : null;
 writeFileSync(outFile, next);
 
 if (process.env.CI === 'true' && previous !== null && previous !== next) {
-  console.error('[gen:types] shared/types está desatualizado — rode `npm run gen:types` e commite.');
+  console.error(
+    '[gen:types] shared/types está desatualizado — rode `npm run gen:types` e commite.',
+  );
   process.exit(1);
 }
 console.log(`[gen:types] escrito em ${outFile}`);

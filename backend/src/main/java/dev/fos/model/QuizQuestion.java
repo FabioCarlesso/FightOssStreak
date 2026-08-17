@@ -89,7 +89,7 @@ public class QuizQuestion {
         return options.stream()
                 .filter(QuizOption::isCorrect)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        "Pergunta sem alternativa correta: " + id));
+                .orElseThrow(
+                        () -> new IllegalStateException("Pergunta sem alternativa correta: " + id));
     }
 }

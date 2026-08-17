@@ -19,5 +19,11 @@
     "isolatedModules": true,
     "resolveJsonModule": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  // Os testes ficam fora do projeto da aplicação de propósito. `npm run build` roda `tsc -b`, e é
+  // esse mesmo comando que o web/Dockerfile executa — desde a D22 a imagem é o caminho de
+  // produção. Com os testes aqui dentro, um erro de tipo em arquivo de teste (uma major do
+  // @testing-library mudando a assinatura do `render`, por exemplo) derrubaria o deploy.
+  // A cobertura de tipos deles não se perde: `tsconfig.test.json` os checa no `npm run typecheck`.
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test-setup.ts"]
 }

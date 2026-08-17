@@ -41,7 +41,17 @@ describe('coleta do que há para verificar', () => {
 
     assert.deepEqual(
       modulos.map(({ arquivo }) => arquivo),
-      ['m0.json', 'm1.json', 'm2.json', 'm3.json', 'm4.json', 'm5.json', 'm6.json', 'm7.json', 'm8.json'],
+      [
+        'm0.json',
+        'm1.json',
+        'm2.json',
+        'm3.json',
+        'm4.json',
+        'm5.json',
+        'm6.json',
+        'm7.json',
+        'm8.json',
+      ],
     );
     for (const { code, youtubeId } of coletarVideos(modulos)) {
       assert.match(code, /^M\d+\.\d+$/);

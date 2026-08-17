@@ -14,9 +14,9 @@ import java.time.LocalDate;
 /**
  * Registro de "treinei isso hoje".
  *
- * <p>É a única entrada de dado que alimenta simultaneamente o streak e a agenda de SRS. Fica
- * como log append-only — o histórico é o que permite reavaliar depois se a mecânica funcionou
- * (critério de falha em docs/05-mvp-web-plano.md).
+ * <p>É a única entrada de dado que alimenta simultaneamente o streak e a agenda de SRS. Fica como
+ * log append-only — o histórico é o que permite reavaliar depois se a mecânica funcionou (critério
+ * de falha em docs/05-mvp-web-plano.md).
  */
 @Entity
 @Table(name = "drill_log")
@@ -39,8 +39,7 @@ public class DrillLog {
     @Column(nullable = false)
     private Recall recall;
 
-    @Column
-    private String note;
+    @Column private String note;
 
     /**
      * O nó estava vencido na agenda quando este drill foi registrado?

@@ -11,8 +11,7 @@ import java.time.LocalDate;
 @Table(name = "srs_review")
 public class SrsReview {
 
-    @EmbeddedId
-    private UserNodeKey id;
+    @EmbeddedId private UserNodeKey id;
 
     @Column(name = "next_review_on", nullable = false)
     private LocalDate nextReviewOn;

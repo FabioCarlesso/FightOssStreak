@@ -47,7 +47,11 @@ export function parseVideoId(input) {
 
   if (host === 'youtu.be') {
     candidate = url.pathname.slice(1);
-  } else if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+  } else if (
+    host === 'youtube.com' ||
+    host === 'm.youtube.com' ||
+    host === 'youtube-nocookie.com'
+  ) {
     if (url.pathname === '/watch') {
       candidate = url.searchParams.get('v');
     } else if (url.pathname.startsWith('/shorts/') || url.pathname.startsWith('/embed/')) {

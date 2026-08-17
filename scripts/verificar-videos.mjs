@@ -39,7 +39,10 @@ export function lerModulos(dir = curriculumDir) {
   return readdirSync(dir)
     .filter((nome) => /^m\d+\.json$/.test(nome))
     .sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]))
-    .map((nome) => ({ arquivo: nome, dados: JSON.parse(readFileSync(resolve(dir, nome), 'utf8')) }));
+    .map((nome) => ({
+      arquivo: nome,
+      dados: JSON.parse(readFileSync(resolve(dir, nome), 'utf8')),
+    }));
 }
 
 /**

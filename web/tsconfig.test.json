@@ -1,0 +1,16 @@
+{
+  // Projeto só dos testes de UI. Existe para que eles continuem sendo checados por tipo
+  // (`npm run typecheck`) e enxergados pelo ESLint com informação de tipo, sem entrarem no
+  // `tsc -b` do build — que é o que o web/Dockerfile roda, e portanto o caminho do deploy (D22).
+  // Erro de tipo em teste tem que quebrar o typecheck e o job de CI, nunca a imagem de produção.
+  // Por isso o script de build lista `tsconfig.app.json` e `tsconfig.node.json` explicitamente, em
+  // vez de construir a solução inteira.
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
+    "types": ["@testing-library/jest-dom"]
+  },
+  "include": ["src"],
+  "exclude": []
+}

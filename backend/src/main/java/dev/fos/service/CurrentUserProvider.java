@@ -30,8 +30,10 @@ public class CurrentUserProvider {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .findFirst()
                 .map(AppUser::getId)
-                .orElseGet(() -> userRepository
-                        .save(new AppUser("usuario-local", Instant.now()))
-                        .getId());
+                .orElseGet(
+                        () ->
+                                userRepository
+                                        .save(new AppUser("usuario-local", Instant.now()))
+                                        .getId());
     }
 }

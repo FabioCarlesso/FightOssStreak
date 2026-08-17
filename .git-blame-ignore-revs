@@ -1,0 +1,9 @@
+# Commits que só reformatam. `git blame` os ignora com:
+#
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# (o GitHub lê este arquivo sozinho). Sem isso, a passada inicial de Spotless e Prettier
+# passaria a assinar quase toda linha do repositório.
+
+# style: formatação inicial, sem mudança de comportamento (#11)
+520edce2e2e35aeed2c80706ff7f04475a21a33a

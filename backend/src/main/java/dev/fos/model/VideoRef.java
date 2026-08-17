@@ -6,8 +6,8 @@ import jakarta.persistence.Embeddable;
 /**
  * Referência a um vídeo do YouTube, sempre por embed do player oficial (D7).
  *
- * <p>O canal é obrigatório junto com o id porque crédito visível ao criador é parte da política
- * de uso de vídeo — não é opcional nem cosmético.
+ * <p>O canal é obrigatório junto com o id porque crédito visível ao criador é parte da política de
+ * uso de vídeo — não é opcional nem cosmético.
  */
 @Embeddable
 public class VideoRef {

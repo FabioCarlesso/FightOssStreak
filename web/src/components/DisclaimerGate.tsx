@@ -66,7 +66,7 @@ export function DisclaimerGate({ children }: { children: ReactNode }) {
           ))}
         </div>
         {failure && <p className="gate__error">{failure}</p>}
-        <button type="button" onClick={accept} disabled={accepting}>
+        <button type="button" onClick={() => void accept()} disabled={accepting}>
           {accepting ? 'Registrando…' : 'Li e concordo'}
         </button>
         <p className="gate__version">Versão do texto: {version}</p>

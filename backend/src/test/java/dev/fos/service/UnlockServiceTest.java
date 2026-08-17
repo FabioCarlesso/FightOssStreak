@@ -52,8 +52,9 @@ class UnlockServiceTest {
         Node open = node(1L, UnlockRule.ALL);
         Node gated = node(2L, UnlockRule.ALL, 1L);
 
-        Map<Long, ProgressStatus> resolved = service.resolveStatuses(
-                List.of(open, gated), Map.of(2L, ProgressStatus.IN_PROGRESS));
+        Map<Long, ProgressStatus> resolved =
+                service.resolveStatuses(
+                        List.of(open, gated), Map.of(2L, ProgressStatus.IN_PROGRESS));
 
         assertThat(resolved.get(2L)).isEqualTo(ProgressStatus.LOCKED);
     }
@@ -74,17 +75,25 @@ class UnlockServiceTest {
         Node first = node(1L, UnlockRule.ALL);
         Node second = node(2L, UnlockRule.ALL, 1L);
 
-        Map<Long, ProgressStatus> resolved = service.resolveStatuses(
-                List.of(first, second), Map.of(1L, ProgressStatus.COMPLETED));
+        Map<Long, ProgressStatus> resolved =
+                service.resolveStatuses(
+                        List.of(first, second), Map.of(1L, ProgressStatus.COMPLETED));
 
         assertThat(resolved.get(2L)).isEqualTo(ProgressStatus.AVAILABLE);
     }
 
     private Node node(long id, UnlockRule rule, Long... prereqs) {
         CurriculumModule module = new CurriculumModule("M0", "Fundamentos", "resumo", 0);
-        Node node = new Node(
-                module, "N" + id, "titulo", Belt.BRANCA, "conceito", 1, rule,
-                new VideoRef(null, null, null, null));
+        Node node =
+                new Node(
+                        module,
+                        "N" + id,
+                        "titulo",
+                        Belt.BRANCA,
+                        "conceito",
+                        1,
+                        rule,
+                        new VideoRef(null, null, null, null));
         setId(node, id);
         node.setPrereqNodeIds(new LinkedHashSet<>(List.of(prereqs)));
         return node;

@@ -41,35 +41,43 @@ public class ReviewAgendaService {
 
     @Transactional(readOnly = true)
     public ActivityDtos.ReviewAgenda dueToday(Long userId, LocalDate today) {
-        List<SrsReview> due = srsRepository.findByIdUserIdAndNextReviewOnLessThanEqual(userId, today);
-        Map<Long, Node> nodesById = nodeRepository.findAllOrdered().stream()
-                .collect(Collectors.toMap(Node::getId, Function.identity()));
+        List<SrsReview> due =
+                srsRepository.findByIdUserIdAndNextReviewOnLessThanEqual(userId, today);
+        Map<Long, Node> nodesById =
+                nodeRepository.findAllOrdered().stream()
+                        .collect(Collectors.toMap(Node::getId, Function.identity()));
         Map<Long, UserProgress> progress = curriculumQueryService.progressByNodeId(userId);
 
-        List<ActivityDtos.DueItemView> items = due.stream()
-                .map(review -> {
-                    Node node = nodesById.get(review.getId().getNodeId());
-                    if (node == null) {
-                        return null;
-                    }
-                    UserProgress nodeProgress = progress.get(node.getId());
-                    return new ActivityDtos.DueItemView(
-                            node.getCode(),
-                            node.getTitle(),
-                            node.getBelt(),
-                            node.getModule().getCode(),
-                            review.getNextReviewOn(),
-                            ChronoUnit.DAYS.between(review.getNextReviewOn(), today),
-                            nodeProgress == null ? null : nodeProgress.getLastQuizScore());
-                })
-                .filter(java.util.Objects::nonNull)
-                .sorted(Comparator
-                        .comparingLong(ActivityDtos.DueItemView::daysOverdue).reversed()
-                        .thenComparing(
-                                ActivityDtos.DueItemView::lastQuizScore,
-                                Comparator.nullsFirst(Comparator.naturalOrder()))
-                        .thenComparing(ActivityDtos.DueItemView::nodeCode))
-                .toList();
+        List<ActivityDtos.DueItemView> items =
+                due.stream()
+                        .map(
+                                review -> {
+                                    Node node = nodesById.get(review.getId().getNodeId());
+                                    if (node == null) {
+                                        return null;
+                                    }
+                                    UserProgress nodeProgress = progress.get(node.getId());
+                                    return new ActivityDtos.DueItemView(
+                                            node.getCode(),
+                                            node.getTitle(),
+                                            node.getBelt(),
+                                            node.getModule().getCode(),
+                                            review.getNextReviewOn(),
+                                            ChronoUnit.DAYS.between(
+                                                    review.getNextReviewOn(), today),
+                                            nodeProgress == null
+                                                    ? null
+                                                    : nodeProgress.getLastQuizScore());
+                                })
+                        .filter(java.util.Objects::nonNull)
+                        .sorted(
+                                Comparator.comparingLong(ActivityDtos.DueItemView::daysOverdue)
+                                        .reversed()
+                                        .thenComparing(
+                                                ActivityDtos.DueItemView::lastQuizScore,
+                                                Comparator.nullsFirst(Comparator.naturalOrder()))
+                                        .thenComparing(ActivityDtos.DueItemView::nodeCode))
+                        .toList();
 
         return new ActivityDtos.ReviewAgenda(today, items.size(), items);
     }

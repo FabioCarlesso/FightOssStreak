@@ -30,20 +30,28 @@ public class DisclaimerService {
     public ActivityDtos.DisclaimerStatus status(Long userId) {
         return repository
                 .findFirstByUserIdAndVersionOrderByAcceptedAtDesc(userId, currentVersion)
-                .map(acceptance -> new ActivityDtos.DisclaimerStatus(
-                        true,
-                        acceptance.getVersion(),
-                        currentVersion,
-                        CurriculumQueryService.SHORT_SAFETY_NOTICE))
-                .orElseGet(() -> new ActivityDtos.DisclaimerStatus(
-                        false, null, currentVersion, CurriculumQueryService.SHORT_SAFETY_NOTICE));
+                .map(
+                        acceptance ->
+                                new ActivityDtos.DisclaimerStatus(
+                                        true,
+                                        acceptance.getVersion(),
+                                        currentVersion,
+                                        CurriculumQueryService.SHORT_SAFETY_NOTICE))
+                .orElseGet(
+                        () ->
+                                new ActivityDtos.DisclaimerStatus(
+                                        false,
+                                        null,
+                                        currentVersion,
+                                        CurriculumQueryService.SHORT_SAFETY_NOTICE));
     }
 
     @Transactional
     public ActivityDtos.DisclaimerStatus accept(Long userId, String version) {
         if (!currentVersion.equals(version)) {
             throw new IllegalArgumentException(
-                    "Aceite refere-se a uma versão desatualizada do aviso. Vigente: " + currentVersion);
+                    "Aceite refere-se a uma versão desatualizada do aviso. Vigente: "
+                            + currentVersion);
         }
         repository.save(new DisclaimerAcceptance(userId, version, Instant.now()));
         return status(userId);

@@ -69,9 +69,13 @@ public class QuizService {
             throw new QuizUnavailableException(nodeCode);
         }
 
-        Map<Long, Long> answers = submission.answers().stream()
-                .collect(Collectors.toMap(
-                        QuizDtos.Answer::questionId, QuizDtos.Answer::optionId, (first, second) -> second));
+        Map<Long, Long> answers =
+                submission.answers().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        QuizDtos.Answer::questionId,
+                                        QuizDtos.Answer::optionId,
+                                        (first, second) -> second));
 
         List<QuizDtos.QuestionFeedback> feedback = new ArrayList<>(questions.size());
         int correctCount = 0;
@@ -83,13 +87,14 @@ public class QuizService {
             if (correct) {
                 correctCount++;
             }
-            feedback.add(new QuizDtos.QuestionFeedback(
-                    question.getId(),
-                    question.getPrompt(),
-                    chosen,
-                    correctOption.getId(),
-                    correct,
-                    question.getExplanation()));
+            feedback.add(
+                    new QuizDtos.QuestionFeedback(
+                            question.getId(),
+                            question.getPrompt(),
+                            chosen,
+                            correctOption.getId(),
+                            correct,
+                            question.getExplanation()));
         }
 
         int score = Math.round((correctCount * 100f) / questions.size());
@@ -110,9 +115,13 @@ public class QuizService {
             Long userId, Node node, int score, boolean passed, LocalDate today) {
 
         UserNodeKey key = new UserNodeKey(userId, node.getId());
-        UserProgress progress = progressRepository
-                .findById(key)
-                .orElseGet(() -> new UserProgress(key, ProgressStatus.IN_PROGRESS, clock.instant()));
+        UserProgress progress =
+                progressRepository
+                        .findById(key)
+                        .orElseGet(
+                                () ->
+                                        new UserProgress(
+                                                key, ProgressStatus.IN_PROGRESS, clock.instant()));
 
         boolean firstCompletion = progress.getStatus() != ProgressStatus.COMPLETED && passed;
 
@@ -143,12 +152,18 @@ public class QuizService {
             return;
         }
         SrsScheduler.State state = srsScheduler.initial(today);
-        srsRepository.save(new SrsReview(
-                key, state.nextReviewOn(), state.intervalDays(), state.easeFactor(), state.repetitions()));
+        srsRepository.save(
+                new SrsReview(
+                        key,
+                        state.nextReviewOn(),
+                        state.intervalDays(),
+                        state.easeFactor(),
+                        state.repetitions()));
     }
 
     /** Mapa auxiliar usado em testes e leitura. */
     static Map<Long, QuizQuestion> byId(List<QuizQuestion> questions) {
-        return questions.stream().collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
+        return questions.stream()
+                .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
     }
 }

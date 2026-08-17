@@ -20,8 +20,8 @@ export function TreePage() {
         <p className="tree__summary">
           <strong>{summary?.completedNodes ?? 0}</strong> concluídos ·{' '}
           <strong>{summary?.availableNodes ?? 0}</strong> disponíveis ·{' '}
-          <strong>{summary?.lockedNodes ?? 0}</strong> bloqueados · {summary?.totalNodes ?? 0} nós no
-          total
+          <strong>{summary?.lockedNodes ?? 0}</strong> bloqueados · {summary?.totalNodes ?? 0} nós
+          no total
         </p>
       </section>
 
@@ -35,7 +35,9 @@ export function TreePage() {
           <p className="module__summary">{module.summary}</p>
 
           <ul className="node-list">
-            {module.nodes?.map((node) => <NodeRow key={node.code} node={node} />)}
+            {module.nodes?.map((node) => (
+              <NodeRow key={node.code} node={node} />
+            ))}
           </ul>
         </section>
       ))}

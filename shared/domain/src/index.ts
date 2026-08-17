@@ -4,7 +4,13 @@
  * É o que mais se paga na migração para React Native: streak, agendamento de SRS e lógica de
  * desbloqueio são idênticos em web e mobile (docs/03-estrutura-projeto.md).
  */
-export { addDays, daysBetween, currentStreak, longestStreak, activeDaysInWindow } from './streak.ts';
+export {
+  addDays,
+  daysBetween,
+  currentStreak,
+  longestStreak,
+  activeDaysInWindow,
+} from './streak.ts';
 export type { IsoDate } from './streak.ts';
 
 export {

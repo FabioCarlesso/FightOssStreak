@@ -58,9 +58,13 @@ class StreakServiceTest {
     @Test
     @DisplayName("o recorde considera qualquer janela do histórico, não só a atual")
     void longestStreakLooksAtWholeHistory() {
-        List<LocalDate> days = List.of(
-                TODAY,
-                TODAY.minusDays(10), TODAY.minusDays(11), TODAY.minusDays(12), TODAY.minusDays(13));
+        List<LocalDate> days =
+                List.of(
+                        TODAY,
+                        TODAY.minusDays(10),
+                        TODAY.minusDays(11),
+                        TODAY.minusDays(12),
+                        TODAY.minusDays(13));
 
         assertThat(service.currentStreak(days, TODAY)).isEqualTo(1);
         assertThat(service.longestStreak(days)).isEqualTo(4);
@@ -69,8 +73,8 @@ class StreakServiceTest {
     @Test
     @DisplayName("dias ativos na janela de 30 dias ignoram registros mais antigos")
     void activeDaysWindowIsBounded() {
-        List<LocalDate> days = List.of(
-                TODAY, TODAY.minusDays(29), TODAY.minusDays(30), TODAY.minusDays(60));
+        List<LocalDate> days =
+                List.of(TODAY, TODAY.minusDays(29), TODAY.minusDays(30), TODAY.minusDays(60));
 
         assertThat(service.activeDaysInWindow(days, TODAY, 30)).isEqualTo(2);
     }

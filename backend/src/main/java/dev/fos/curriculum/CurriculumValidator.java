@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 /**
  * Valida a integridade do currículo <em>antes</em> de ele chegar ao banco.
  *
- * <p>Detecção de ciclo acontece aqui, na ingestão, e nunca em runtime
- * (docs/01-stack-tecnica.md): um ciclo tornaria um conjunto de nós permanentemente
- * inalcançável, e o lugar barato de descobrir isso é no build.
+ * <p>Detecção de ciclo acontece aqui, na ingestão, e nunca em runtime (docs/01-stack-tecnica.md):
+ * um ciclo tornaria um conjunto de nós permanentemente inalcançável, e o lugar barato de descobrir
+ * isso é no build.
  */
 @Component
 public class CurriculumValidator {
@@ -43,7 +43,8 @@ public class CurriculumValidator {
         validateNoCycles(byCode);
     }
 
-    private Map<String, CurriculumSource.NodeSpec> indexNodes(List<CurriculumSource.Module> modules) {
+    private Map<String, CurriculumSource.NodeSpec> indexNodes(
+            List<CurriculumSource.Module> modules) {
         Map<String, CurriculumSource.NodeSpec> byCode = new LinkedHashMap<>();
         Set<String> moduleCodes = new HashSet<>();
 
@@ -114,8 +115,8 @@ public class CurriculumValidator {
      *
      * <p>O id é conferido aqui porque um id inválido não quebra nada na ingestão — ele vira um
      * iframe vazio na tela do nó, semanas depois. Crédito ao canal é política de uso de vídeo (D7),
-     * não metadado opcional; e sem título o crédito na tela começa com um travessão solto
-     * ("— canal X"), que parece defeito.
+     * não metadado opcional; e sem título o crédito na tela começa com um travessão solto ("— canal
+     * X"), que parece defeito.
      */
     private void validateVideo(CurriculumSource.VideoSpec video, String where) {
         if (!YOUTUBE_ID.matcher(video.youtubeId()).matches()) {
@@ -123,7 +124,8 @@ public class CurriculumValidator {
                     where + ": id de vídeo fora do formato do YouTube '" + video.youtubeId() + "'");
         }
         requireText(video.title(), where + ": vídeo catalogado sem título");
-        requireText(video.channel(), where + ": vídeo catalogado sem canal creditado (política D7)");
+        requireText(
+                video.channel(), where + ": vídeo catalogado sem canal creditado (política D7)");
         if (video.startSeconds() != null && video.startSeconds() < 0) {
             throw new CurriculumException(
                     where + ": startSeconds negativo (" + video.startSeconds() + ")");
@@ -141,9 +143,10 @@ public class CurriculumValidator {
             if (question.options().size() < 2) {
                 throw new CurriculumException(qWhere + ": precisa de ao menos duas alternativas");
             }
-            long correct = question.options().stream()
-                    .filter(CurriculumSource.OptionSpec::correct)
-                    .count();
+            long correct =
+                    question.options().stream()
+                            .filter(CurriculumSource.OptionSpec::correct)
+                            .count();
             if (correct != 1) {
                 throw new CurriculumException(
                         qWhere + ": precisa de exatamente uma alternativa correta, tem " + correct);
@@ -163,7 +166,8 @@ public class CurriculumValidator {
                             "nó " + node.code() + ": pré-requisito inexistente '" + prereq + "'");
                 }
                 if (prereq.equals(node.code())) {
-                    throw new CurriculumException("nó " + node.code() + ": é pré-requisito de si mesmo");
+                    throw new CurriculumException(
+                            "nó " + node.code() + ": é pré-requisito de si mesmo");
                 }
                 if (!seen.add(prereq)) {
                     throw new CurriculumException(

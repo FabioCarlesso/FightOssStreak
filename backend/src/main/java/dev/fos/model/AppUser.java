@@ -9,8 +9,8 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 
 /**
- * Usuário da aplicação. No MVP existe exatamente um (D9: sem login) — a entidade existe
- * porque o schema de progresso e SRS já é por usuário, evitando migração dolorosa depois.
+ * Usuário da aplicação. No MVP existe exatamente um (D9: sem login) — a entidade existe porque o
+ * schema de progresso e SRS já é por usuário, evitando migração dolorosa depois.
  */
 @Entity
 @Table(name = "app_user")

@@ -1,0 +1,22 @@
+# Gerados (regra 2 do CLAUDE.md) — reformatar aqui só criaria diff que o próximo
+# `npm run gen:types` desfaz. O spec é escrito pelo script com JSON.stringify, e disputar a
+# formatação dele com o Prettier deixaria `gen:types` e `lint` se desfazendo em loop.
+shared/types/generated/
+backend/openapi.json
+
+node_modules/
+dist/
+backend/target/
+
+# O currículo é dado versionado e revisado à mão (D11); a formatação dele é escolha editorial,
+# não de ferramenta.
+backend/src/main/resources/curriculum/
+
+# Markdown fica de fora. O Prettier alinha as colunas das tabelas com espaço, e `docs/` é feito
+# de tabelas cujas células são parágrafos inteiros (07-decisoes.md à frente): o alinhamento
+# produz linhas de milhares de colunas e faz *acrescentar uma linha* reescrever a tabela toda.
+# O que o lint existe para pegar é código morto e estilo divergente, não prosa. O .editorconfig
+# ainda cobre o editor.
+*.md
+
+package-lock.json

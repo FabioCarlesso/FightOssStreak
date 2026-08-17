@@ -15,6 +15,14 @@ on:
   # check que nunca reporta trava o PR em "waiting for status" para sempre.
   pull_request:
 
+# Este job é o caro do repositório: ele sobe a aplicação inteira para diffar o openapi.json contra
+# o spec versionado. Sem isto, dois pushes seguidos rodavam tudo duas vezes em paralelo. A
+# mergeabilidade do PR é avaliada no commit mais recente, então cancelar o run superado não trava
+# merge.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # O nome do job é o contexto usado pela ruleset (.github/rulesets/main.json).
   # Renomear aqui exige renomear lá.
@@ -29,6 +37,12 @@ jobs:
           distribution: temurin
           cache: maven
 
+      # Antes dos testes de propósito: é o passo mais barato do job e o que falha mais rápido.
+      # `./mvnw spotless:apply` corrige localmente o que ele apontar aqui.
+      - name: Formatação (Spotless)
+        working-directory: backend
+        run: ./mvnw -B -q spotless:check
+
       # Cobre os testes de regra (streak, SRS, desbloqueio), a integridade do currículo
       # versionado e o fluxo de ponta a ponta contra a aplicação inteira.
       - name: Testes
@@ -42,6 +56,11 @@ jobs:
         run: |
           set -euo pipefail
           ./mvnw -B -q spring-boot:run > /tmp/backend.log 2>&1 &
+          # O runner não mata processo de fundo entre steps do mesmo job. Sem este trap a JVM
+          # (com H2 em memória) seguiria viva durante o build da imagem logo abaixo, disputando
+          # RAM com o Maven que roda dentro do BuildKit — e a falha apareceria como um build
+          # Docker morto por OOM, sem relação aparente com a mudança que a provocou.
+          trap 'kill %1 2>/dev/null || true' EXIT
           for i in $(seq 1 60); do
             curl -sf http://localhost:8080/v3/api-docs -o /tmp/openapi.json && break
             sleep 2
@@ -57,3 +76,20 @@ jobs:
           python3 -m json.tool openapi.json > /tmp/committed.json
           diff -u /tmp/committed.json /tmp/current.json \
             || { echo "::error::backend/openapi.json desatualizado — rode 'npm run gen:types' e commite"; exit 1; }
+
+      # A imagem é o caminho de produção: a Railway builda a partir do Dockerfile (D22), então
+      # Dockerfile quebrado deixou de ser incômodo local e virou deploy falho. `mvnw verify` acima
+      # roda no runner, que é um ambiente diferente do container — não prova que a imagem sobe.
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Imagem do backend builda
+        uses: docker/build-push-action@v6
+        with:
+          # Contexto é a RAIZ do monorepo, não backend/ — ver o cabeçalho de backend/Dockerfile.
+          context: .
+          file: backend/Dockerfile
+          # Sem push: não há consumidor de imagem publicada hoje, a Railway builda do repositório.
+          push: false
+          # Cache de camadas entre runs, senão o passo baixaria o mundo do Maven toda vez.
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend,ignore-error=true

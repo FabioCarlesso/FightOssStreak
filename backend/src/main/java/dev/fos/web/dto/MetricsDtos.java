@@ -11,14 +11,13 @@ import java.time.LocalDate;
  */
 public final class MetricsDtos {
 
-    private MetricsDtos() {
-    }
+    private MetricsDtos() {}
 
     /**
      * @param windowStart primeiro dia considerado, inclusive
-     * @param windowEnd   último dia considerado, inclusive — o "hoje" do relógio da aplicação
+     * @param windowEnd último dia considerado, inclusive — o "hoje" do relógio da aplicação
      * @param targetsFor30Days as metas valem para a janela de 30 dias de docs/05; janela diferente
-     *                         mede o mesmo, mas a comparação com a meta deixa de fazer sentido
+     *     mede o mesmo, mas a comparação com a meta deixa de fazer sentido
      */
     public record MvpMetrics(
             LocalDate windowStart,
@@ -28,8 +27,7 @@ public final class MetricsDtos {
             Counted daysWithDrill,
             SrsAdherence srsAdherence,
             Counted nodesCompleted,
-            Counted quizRetakes) {
-    }
+            Counted quizRetakes) {}
 
     /** Contagem simples comparada a uma meta. */
     public record Counted(long value, long target, boolean met) {
@@ -42,10 +40,10 @@ public final class MetricsDtos {
     /**
      * Aderência à sugestão do SRS: das revisões que venceram na janela, quantas foram atendidas.
      *
-     * @param attended  revisões vencidas que receberam drill (um nó por dia conta uma vez)
+     * @param attended revisões vencidas que receberam drill (um nó por dia conta uma vez)
      * @param scheduled total de revisões vencidas na janela — atendidas mais em aberto
-     * @param percent   {@code null} quando nada venceu na janela; sem agenda não há aderência a
-     *                  medir, e contar isso como 0% acusaria falha onde não houve cobrança
+     * @param percent {@code null} quando nada venceu na janela; sem agenda não há aderência a
+     *     medir, e contar isso como 0% acusaria falha onde não houve cobrança
      */
     public record SrsAdherence(
             long attended, long scheduled, Integer percent, int targetPercent, boolean met) {
@@ -55,7 +53,8 @@ public final class MetricsDtos {
                 return new SrsAdherence(0, 0, null, targetPercent, false);
             }
             int percent = Math.round((attended * 100f) / scheduled);
-            return new SrsAdherence(attended, scheduled, percent, targetPercent, percent >= targetPercent);
+            return new SrsAdherence(
+                    attended, scheduled, percent, targetPercent, percent >= targetPercent);
         }
     }
 }
