@@ -147,12 +147,33 @@ Detalhes que não são óbvios:
 ## Testes
 
 ```bash
-npm test                    # regras puras de shared/domain (streak, SRS, desbloqueio) + scripts
+npm test                    # regras de shared/domain + scripts + fluxos de UI do web
 cd backend && ./mvnw test   # regras, integridade do currículo e fluxo de ponta a ponta
 npm run typecheck           # todos os workspaces TypeScript
 ```
 
 O teste de integridade do currículo falha se houver ciclo de pré-requisitos, referência quebrada, código duplicado ou quiz malformado — é o que torna seguro editar a árvore em um PR.
+
+Do lado do web, os testes cobrem os três fluxos que decidem se o produto é usável: o aceite do disclaimer, o quiz e o registro de drill. Rodam em jsdom com o cliente de API mockado — nenhum toca a rede. Para iterar em um deles, `npm run test:watch --workspace @fos/web`.
+
+## Lint e formatação
+
+```bash
+npm run lint                       # ESLint + Prettier em web/ e shared/*
+npm run lint:fix                   # corrige o que é corrigível
+cd backend && ./mvnw spotless:check   # formatação e imports do Java
+cd backend && ./mvnw spotless:apply   # corrige
+```
+
+As duas verificações rodam no CI **antes** dos testes, dentro dos jobs `backend` e `web` — falha rápida e barata primeiro. Ficam de fora do lint os arquivos gerados (`shared/types/generated/`, `backend/openapi.json`), o currículo (que é dado editorial, D11) e o Markdown de `docs/`, porque o Prettier alinha colunas de tabela com espaço e as tabelas de `07-decisoes.md` têm células que são parágrafos.
+
+O Java usa `googleJavaFormat` na variante **AOSP** (4 espaços), que é o estilo que o código já tinha; a variante padrão reformataria o backend inteiro para 2 espaços. O `.editorconfig` na raiz reflete o mesmo padrão, para o editor não desfazer no salvamento o que o CI vai cobrar.
+
+A formatação inicial de todo o repositório está em um commit só, registrado em [`.git-blame-ignore-revs`](.git-blame-ignore-revs). Para o `git blame` local ignorá-lo:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
 
 ## Estrutura
 
@@ -211,6 +232,17 @@ gh pr create --fill
 
 As regras são versionadas em [`.github/rulesets/main.json`](.github/rulesets/main.json) — ver
 [`docs/09-regras-repositorio.md`](docs/09-regras-repositorio.md) para aplicá-las ou alterá-las.
+
+Os contextos exigidos pela ruleset são os nomes dos jobs `backend` e `web`. Renomear um deles sem
+atualizar o JSON derrubaria a proteção em silêncio, e por isso o CI verifica:
+
+```bash
+node scripts/verificar-ruleset.mjs
+```
+
+Atualizações de dependência chegam por PR do Dependabot toda segunda-feira, nos três ecossistemas
+(npm, Maven e actions). Patch e minor vêm agrupados; major vem separado, porque exige ler o
+changelog. Nada é mergeado automaticamente.
 
 ## Aviso de responsabilidade
 

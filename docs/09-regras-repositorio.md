@@ -65,20 +65,63 @@ O contexto de um required check do GitHub Actions é o **nome do job**, não o n
 
 | Job | Arquivo | O que cobre |
 |---|---|---|
-| `backend` | [`.github/workflows/backend.yml`](../.github/workflows/backend.yml) | `mvnw verify` (regras, integridade do currículo, fluxo ponta a ponta) e `openapi.json` em dia |
-| `web` | [`.github/workflows/web.yml`](../.github/workflows/web.yml) | testes de `shared/domain`, `shared/types` em dia, typecheck e build |
+| `backend` | [`.github/workflows/backend.yml`](../.github/workflows/backend.yml) | Spotless, `mvnw verify` (regras, integridade do currículo, fluxo ponta a ponta), `openapi.json` em dia e o build da imagem Docker |
+| `web` | [`.github/workflows/web.yml`](../.github/workflows/web.yml) | guarda desta ruleset, lint, testes de `shared/domain` + scripts + UI, `shared/types` em dia, typecheck, build e o build da imagem Docker |
 
 ### Workflows que deliberadamente não são portão
 
-O job `videos` ([`videos.yml`](../.github/workflows/videos.yml)) verifica semanalmente se os vídeos
-catalogados continuam no ar (`08-curadoria-videos.md`). Ele **não** está na ruleset e não deve
-entrar: um vídeo que o autor tirou do ar é problema de curadoria, não defeito do código, e travar o
-merge por causa disso pararia o projeto por algo que ninguém aqui controla. Por isso ele nem roda em
-`pull_request` — o gatilho é a agenda, e o aviso sai por issue.
+Dois workflows rodam fora da ruleset, e devem continuar assim:
 
-**Renomear um desses jobs quebra a proteção em silêncio**: o check exigido deixa de existir e o PR
-fica preso em *"Expected — waiting for status to be reported"*. Renomeou o job? Atualize
-`.github/rulesets/main.json` e rode o script no mesmo PR.
+- **`videos`** ([`videos.yml`](../.github/workflows/videos.yml)) verifica semanalmente se os vídeos
+  catalogados continuam no ar (`08-curadoria-videos.md`). Um vídeo que o autor tirou do ar é
+  problema de curadoria, não defeito do código, e travar o merge por causa disso pararia o projeto
+  por algo que ninguém aqui controla. Por isso ele nem roda em `pull_request` — o gatilho é a
+  agenda, e o aviso sai por issue.
+- **`codeql`** ([`codeql.yml`](../.github/workflows/codeql.yml)) faz análise estática de segurança
+  em PR, em push para `main` e semanalmente. Fora da ruleset porque análise de segurança que trava
+  merge por falso positivo vira coisa que se aprende a ignorar: o valor está no alerta na aba
+  Security, não no portão.
+
+Consequência prática: **acrescentar workflow que não é portão não exige mexer na ruleset.** O
+inverso é que exige, e é onde mora o footgun.
+
+### Renomear um job quebra a proteção — e agora o CI avisa
+
+O check exigido deixa de existir, nenhum job passa a reportá-lo, e o PR fica preso em *"Expected —
+waiting for status to be reported"*. A proteção deixa de valer sem nenhum aviso.
+
+Isso dependia de alguém lembrar. Agora [`scripts/verificar-ruleset.mjs`](../scripts/verificar-ruleset.mjs)
+roda como **primeiro passo do job `web`**, antes de qualquer instalação de dependência, e falha
+apontando qual contexto ficou órfão e o que rodar para corrigir:
+
+```bash
+node scripts/verificar-ruleset.mjs
+```
+
+Ele cobre também o caso do atributo `name:` no job: quando presente, é o `name:` que vira o contexto
+do check, não o id. Hoje nenhum job usa `name:` — e é justamente por isso que o caso precisa estar
+tratado, porque a divergência só apareceria no dia em que alguém adicionasse um.
+
+A guarda vive dentro do job `web` e não em job próprio pelo mesmo motivo que ela existe: job novo só
+vira portão entrando na ruleset, e aí precisaria rodar em `pull_request` sem filtro de path (D19).
+
+Renomeou o job? Atualize `.github/rulesets/main.json` e rode `./scripts/apply-repo-rules.sh` no
+mesmo PR.
+
+## Dependências
+
+[`.github/dependabot.yml`](../.github/dependabot.yml) acompanha os três ecossistemas versionados —
+npm na raiz (que resolve todos os workspaces), Maven em `backend/` e as actions dos workflows —
+com verificação semanal. Patch e minor vêm agrupados em um PR por ecossistema; major vem separado,
+porque exige ler changelog.
+
+Sem automerge, de propósito. Com `required_approving_review_count: 0` seria tecnicamente possível,
+mas mergear sem ninguém olhar o changelog é justamente o que a D18 evita. O PR do bot passa pelos
+mesmos checks `backend` e `web` que qualquer outro.
+
+PRs do Dependabot rodam com `GITHUB_TOKEN` somente-leitura. Nenhum passo dos workflows escreve nada,
+então nada quebra; a escrita do cache de camadas do Docker está marcada com `ignore-error=true` para
+que uma falha de gravação não derrube um build que é válido.
 
 ### Por que os workflows não filtram por caminho em PR
 
