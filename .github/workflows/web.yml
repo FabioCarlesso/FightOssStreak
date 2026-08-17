@@ -79,7 +79,7 @@ jobs:
       # a raiz do monorepo, porque os workspaces @fos/* exportam TypeScript de src/ sem dist/.
       # Mudança em package.json, em package-lock.json ou na estrutura de shared/ quebra a imagem
       # sem quebrar teste nenhum.
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Imagem do web builda
         uses: docker/build-push-action@v6
