@@ -17,6 +17,18 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Web | React + Vite |
 | Mobile | Não iniciado (fase posterior, D4) |
 
+### Modo demonstração
+
+Na árvore (`/arvore`), o botão **Demonstração**, no card *Progresso*, abre os 46 nós de todos os
+módulos para inspeção ignorando os pré-requisitos — serve para revisar conceito, vídeo e redação
+das perguntas sem passar no quiz de cada nó anterior. Com o modo ligado, uma faixa no topo diz
+isso em todas as telas e oferece o desligar.
+
+**A demonstração não grava**: em nó que estaria bloqueado o quiz aparece só para leitura e o
+registro de drill fica fora, então progresso, streak e agenda de revisão ficam intactos, e os
+contadores da árvore continuam mostrando o que está travado de verdade (D31). O estado vive na
+sessão do navegador — sobrevive a um F5, não a uma aba nova.
+
 ## Rodando
 
 Dois modos. **Docker** para usar o app; **dev** para mexer no código.
@@ -154,7 +166,7 @@ npm run typecheck           # todos os workspaces TypeScript
 
 O teste de integridade do currículo falha se houver ciclo de pré-requisitos, referência quebrada, código duplicado ou quiz malformado — é o que torna seguro editar a árvore em um PR.
 
-Do lado do web, os testes cobrem os três fluxos que decidem se o produto é usável: o aceite do disclaimer, o quiz e o registro de drill. Rodam em jsdom com o cliente de API mockado — nenhum toca a rede. Para iterar em um deles, `npm run test:watch --workspace @fos/web`.
+Do lado do web, os testes cobrem os três fluxos que decidem se o produto é usável — o aceite do disclaimer, o quiz e o registro de drill (D29) — mais a árvore em modo demonstração, cujo risco é o modo vazar para o uso normal (D31). Rodam em jsdom com o cliente de API mockado — nenhum toca a rede. Para iterar em um deles, `npm run test:watch --workspace @fos/web`.
 
 ## Lint e formatação
 

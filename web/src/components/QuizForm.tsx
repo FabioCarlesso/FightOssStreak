@@ -7,15 +7,21 @@ import { ApiError, api } from '../api/client.ts';
  *
  * O gabarito só chega no resultado, junto com a explicação de cada pergunta — o valor de retenção
  * está na explicação, não na nota. Por isso o feedback é sempre exibido, inclusive nos acertos.
+ *
+ * `readOnly` é o quiz do modo demonstração (D31): perguntas e alternativas visíveis, envio fora.
+ * A garantia de "a demonstração não grava" mora aqui — `QuizService.submit` não valida bloqueio,
+ * então não há rede de segurança no servidor.
  */
 export function QuizForm({
   nodeCode,
   questions,
   onDone,
+  readOnly = false,
 }: {
   nodeCode: string;
   questions: readonly QuizQuestionView[];
   onDone: () => void;
+  readOnly?: boolean;
 }) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -23,10 +29,14 @@ export function QuizForm({
   const [failure, setFailure] = useState<string | null>(null);
 
   if (questions.length === 0) {
+    // Em modo leitura o registro de drill não é exibido, então apontar para "abaixo" mandaria o
+    // leitor procurar uma seção que não existe.
     return (
       <p className="empty">
-        Quiz ainda não escrito para este nó. A curadoria começou por M0 e M1 — registrar o drill
-        abaixo já conclui nós sem quiz.
+        Quiz ainda não escrito para este nó. A curadoria começou por M0 e M1 —{' '}
+        {readOnly
+          ? 'aqui há só conceito e vídeo para revisar.'
+          : 'registrar o drill abaixo já conclui nós sem quiz.'}
       </p>
     );
   }
@@ -34,6 +44,7 @@ export function QuizForm({
   const allAnswered = questions.every((question) => answers[question.id ?? -1] !== undefined);
 
   async function submit() {
+    if (readOnly) return;
     setSubmitting(true);
     setFailure(null);
     try {
@@ -85,6 +96,7 @@ export function QuizForm({
               <input
                 type="radio"
                 name={`q-${question.id}`}
+                disabled={readOnly}
                 checked={answers[question.id ?? -1] === option.id}
                 onChange={() =>
                   setAnswers((current) => ({
@@ -101,10 +113,17 @@ export function QuizForm({
 
       {failure && <p className="error">{failure}</p>}
 
-      <button type="submit" disabled={!allAnswered || submitting}>
+      <button type="submit" disabled={readOnly || !allAnswered || submitting}>
         {submitting ? 'Corrigindo…' : 'Responder'}
       </button>
-      {!allAnswered && <p className="hint">Responda todas as perguntas para enviar.</p>}
+      {readOnly ? (
+        <p className="hint">
+          Modo demonstração: o quiz deste nó está aberto só para leitura. Responder concluiria o nó
+          e mexeria no progresso, no streak e na agenda de revisão.
+        </p>
+      ) : (
+        !allAnswered && <p className="hint">Responda todas as perguntas para enviar.</p>
+      )}
     </form>
   );
 }

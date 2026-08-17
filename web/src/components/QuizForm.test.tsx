@@ -157,6 +157,22 @@ describe('QuizForm', () => {
     expect(onDone).not.toHaveBeenCalled();
   });
 
+  it('em modo leitura mostra as perguntas e não deixa enviar', async () => {
+    // O quiz da demonstração (D31). O envio precisa morrer aqui: `QuizService.submit` não valida
+    // bloqueio, então uma submissão que escapasse concluiria o nó e mexeria no SRS de verdade.
+    render(<QuizForm nodeCode="M5.1" questions={PERGUNTAS} onDone={vi.fn()} readOnly />);
+
+    expect(screen.getByText(/o que faz a fuga de quadril funcionar/i)).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /criar espaço com o quadril/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /responder/i })).toBeDisabled();
+    expect(screen.getByText(/aberto só para leitura/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('radio', { name: /criar espaço com o quadril/i }));
+    await userEvent.click(screen.getByRole('button', { name: /responder/i }));
+
+    expect(apiMock.submitQuiz).not.toHaveBeenCalled();
+  });
+
   it('refazer o quiz limpa as respostas anteriores', async () => {
     apiMock.submitQuiz.mockResolvedValue({
       score: 50,

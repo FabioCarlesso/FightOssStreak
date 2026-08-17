@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
+import { useDemoMode } from '../state/demoMode.ts';
 import { DrillForm } from '../components/DrillForm.tsx';
 import { QuizForm } from '../components/QuizForm.tsx';
 import { VideoEmbed } from '../components/VideoEmbed.tsx';
@@ -9,6 +10,7 @@ import { VideoEmbed } from '../components/VideoEmbed.tsx';
 export function NodePage() {
   const { code = '' } = useParams();
   const node = useAsync(() => api.getNode(code), [code]);
+  const demo = useDemoMode();
 
   // Só mostra o carregamento na primeira visita: em recargas os dados anteriores continuam na
   // tela, senão o resultado do quiz seria desmontado no instante em que aparece.
@@ -17,7 +19,11 @@ export function NodePage() {
   if (!node.data) return null;
 
   const detail = node.data;
-  const locked = detail.status === 'LOCKED';
+  const lockedByProgress = detail.status === 'LOCKED';
+  // Nó bloqueado aberto em demonstração: o conteúdo aparece, mas em leitura. Deixar gravar aqui
+  // concluiria o nó, destravaria outros de verdade e mexeria em streak e SRS (D20/D31).
+  const preview = lockedByProgress && demo.enabled;
+  const locked = lockedByProgress && !demo.enabled;
 
   return (
     <article className="stack">
@@ -38,6 +44,16 @@ export function NodePage() {
             {detail.unlockRule === 'ANY'
               ? 'Conclua qualquer um dos pré-requisitos abaixo.'
               : 'Conclua todos os pré-requisitos abaixo.'}
+          </p>
+        )}
+
+        {preview && (
+          <p className="node__locked node__demo">
+            Modo demonstração: este nó continua bloqueado no seu progresso.{' '}
+            {detail.unlockRule === 'ANY'
+              ? 'Para destravar de verdade, conclua qualquer um dos pré-requisitos abaixo.'
+              : 'Para destravar de verdade, conclua todos os pré-requisitos abaixo.'}{' '}
+            O quiz aparece só para leitura e o registro de drill fica fora — nada é gravado.
           </p>
         )}
 
@@ -66,21 +82,22 @@ export function NodePage() {
       </section>
 
       {!locked && (
-        <>
-          <section className="card">
-            <h3>Quiz conceitual</h3>
-            <QuizForm
-              nodeCode={detail.code ?? code}
-              questions={detail.quiz ?? []}
-              onDone={node.reload}
-            />
-          </section>
+        <section className="card">
+          <h3>Quiz conceitual</h3>
+          <QuizForm
+            nodeCode={detail.code ?? code}
+            questions={detail.quiz ?? []}
+            onDone={node.reload}
+            readOnly={preview}
+          />
+        </section>
+      )}
 
-          <section className="card">
-            <h3>Registrar drill</h3>
-            <DrillForm nodeCode={detail.code ?? code} srs={detail.srs} onDone={node.reload} />
-          </section>
-        </>
+      {!lockedByProgress && (
+        <section className="card">
+          <h3>Registrar drill</h3>
+          <DrillForm nodeCode={detail.code ?? code} srs={detail.srs} onDone={node.reload} />
+        </section>
       )}
 
       <p className="safety-notice">{detail.safetyNotice}</p>

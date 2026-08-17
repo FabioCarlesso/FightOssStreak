@@ -682,6 +682,60 @@ button:disabled {
   font-size: 0.88rem;
 }
 
+/*
+ * Modo demonstração
+ *
+ * Tudo aqui existe para o modo não passar despercebido: a faixa fica no topo de qualquer tela e o
+ * botão da árvore diz em texto se está ligado. Um modo que ignora a progressão e se parece com o
+ * app normal seria pior que não ter modo nenhum.
+ */
+.demo-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+.demo-banner__text {
+  flex: 1;
+  min-width: 12rem;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.demo-toggle,
+.demo-banner button {
+  flex: none;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.demo-toggle--on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.demo-banner button {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* Mesmo bloco do "Nó bloqueado", com a barra em outra cor: o estado é outro. */
+.node__demo {
+  border-left-color: var(--ok);
+}
+
 /* ==========================================================================
  * Mobile
  *
@@ -702,6 +756,11 @@ button:disabled {
 
   .card {
     padding: 1rem;
+  }
+
+  /* O botão da demonstração divide o cabeçalho com o título; sem quebra ele espremeria os dois. */
+  .card__header {
+    flex-wrap: wrap;
   }
 
   .app__nav a {
