@@ -19,6 +19,9 @@ import dev.fos.repo.QuizQuestionRepository;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +97,39 @@ class ApiIntegrationTest {
         JsonNode option = node.get("quiz").get(0).get("options").get(0);
         assertThat(option.has("correct")).isFalse();
         assertThat(option.has("label")).isTrue();
+    }
+
+    @Test
+    @DisplayName("o embaralhamento de D16 realmente embaralha: o gabarito não fica sempre na frente")
+    void answerKeyIsNotAlwaysServedFirst() throws Exception {
+        Map<Integer, Integer> questionsByCorrectPosition = new TreeMap<>();
+        int total = 0;
+
+        for (String code : nodeCodesWithQuiz()) {
+            for (JsonNode question : getJson("/api/nodes/" + code).get("quiz")) {
+                long correctId = quizQuestionRepository
+                        .findById(question.get("id").asLong())
+                        .orElseThrow()
+                        .correctOption()
+                        .getId();
+
+                ArrayNode options = (ArrayNode) question.get("options");
+                for (int position = 0; position < options.size(); position++) {
+                    if (options.get(position).get("id").asLong() == correctId) {
+                        questionsByCorrectPosition.merge(position, 1, Integer::sum);
+                    }
+                }
+                total++;
+            }
+        }
+
+        assertThat(total).as("o currículo precisa ter quiz para este teste dizer algo").isGreaterThan(50);
+        assertThat(questionsByCorrectPosition.keySet())
+                .as("posições ocupadas pela alternativa correta ao longo do currículo")
+                .containsExactly(0, 1, 2, 3);
+        assertThat(questionsByCorrectPosition.get(0))
+                .as("gabarito servido em primeiro lugar — era 100%% quando o hash não espalhava bits")
+                .isLessThan(total / 2);
     }
 
     @Test
@@ -382,6 +418,19 @@ class ApiIntegrationTest {
             }
         }
         return null;
+    }
+
+    /**
+     * Códigos dos nós que já têm quiz escrito, lidos do banco em vez de fixados.
+     *
+     * <p>O escopo curado cresce a cada issue (hoje M0–M3), e o teste que percorre o quiz inteiro
+     * deve acompanhar esse crescimento sozinho.
+     */
+    private List<String> nodeCodesWithQuiz() {
+        return quizQuestionRepository.findAll().stream()
+                .map(question -> question.getNode().getCode())
+                .distinct()
+                .toList();
     }
 
     /** Procura o status de um nó dentro do payload da árvore. */

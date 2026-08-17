@@ -97,6 +97,22 @@ class CurriculumIntegrityTest {
                 assertThat(node.quiz())
                         .as("quiz de %s", node.code())
                         .hasSizeBetween(3, 5);
+            } else {
+                assertThat(node.quiz())
+                        .as("quiz de %s — M4–M8 entram em issues próprias, e D15 depende disso", node.code())
+                        .isEmpty();
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("M2 e M3 têm quatro perguntas por nó: com três, um erro reprova (D27)")
+    void curatedBatchToleratesOneMistake() {
+        for (CurriculumSource.NodeSpec node : byCode().values()) {
+            if (node.code().startsWith("M2.") || node.code().startsWith("M3.")) {
+                assertThat(node.quiz())
+                        .as("quiz de %s: 3 perguntas dariam 66 em um erro, abaixo do corte de 70", node.code())
+                        .hasSize(4);
             }
         }
     }
