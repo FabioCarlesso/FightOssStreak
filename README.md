@@ -166,7 +166,7 @@ npm run typecheck           # todos os workspaces TypeScript
 
 O teste de integridade do currículo falha se houver ciclo de pré-requisitos, referência quebrada, código duplicado ou quiz malformado — é o que torna seguro editar a árvore em um PR.
 
-Do lado do web, os testes cobrem os três fluxos que decidem se o produto é usável — o aceite do disclaimer, o quiz e o registro de drill (D29) — mais a árvore em modo demonstração, cujo risco é o modo vazar para o uso normal (D31). Rodam em jsdom com o cliente de API mockado — nenhum toca a rede. Para iterar em um deles, `npm run test:watch --workspace @fos/web`.
+Do lado do web, os testes cobrem os três fluxos que decidem se o produto é usável — o aceite do disclaimer, o quiz e o registro de drill (D29) — mais a árvore em modo demonstração e a troca de nó dentro de `/no/:code`, onde o risco é o modo vazar para o uso normal e o estado de um nó aparecer no seguinte (D31). Rodam em jsdom com o cliente de API mockado — nenhum toca a rede. Para iterar em um deles, `npm run test:watch --workspace @fos/web`.
 
 ## Lint e formatação
 

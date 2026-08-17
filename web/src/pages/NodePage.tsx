@@ -12,13 +12,16 @@ export function NodePage() {
   const node = useAsync(() => api.getNode(code), [code]);
   const demo = useDemoMode();
 
-  // Só mostra o carregamento na primeira visita: em recargas os dados anteriores continuam na
-  // tela, senão o resultado do quiz seria desmontado no instante em que aparece.
-  if (node.loading && !node.data) return <p className="empty">Carregando nó…</p>;
-  if (node.error && !node.data) return <p className="error">{node.error.message}</p>;
-  if (!node.data) return null;
+  // O `useAsync` preserva os dados anteriores de propósito: é o que impede o resultado do quiz de
+  // ser desmontado a cada `reload()`. Ao trocar de nó, porém, o dado preservado é de OUTRO nó — e
+  // exibi-lo sob a URL nova não mostraria só o conceito errado: o registro de drill ficaria ligado
+  // ao código anterior, e um clique nessa janela gravaria no nó errado. Enquanto a resposta do nó
+  // atual não chega, a tela volta ao carregamento; em recarga do mesmo nó, nada é desmontado.
+  const detail = node.data?.code === code ? node.data : null;
 
-  const detail = node.data;
+  if (node.error && !detail) return <p className="error">{node.error.message}</p>;
+  if (!detail) return <p className="empty">Carregando nó…</p>;
+
   const lockedByProgress = detail.status === 'LOCKED';
   // Nó bloqueado aberto em demonstração: o conteúdo aparece, mas em leitura. Deixar gravar aqui
   // concluiria o nó, destravaria outros de verdade e mexeria em streak e SRS (D20/D31).
@@ -81,11 +84,20 @@ export function NodePage() {
         <VideoEmbed video={detail.video} title={detail.title} />
       </section>
 
+      {/*
+       * `key` pelo código do nó: os dois formulários guardam estado que só faz sentido para o nó
+       * em que foi produzido — a nota do quiz, a auto-avaliação escolhida, a anotação digitada. Sem
+       * ele o React reaproveita a instância ao trocar de nó (a rota é a mesma, só o parâmetro muda)
+       * e o resultado do nó anterior aparece no seguinte, inclusive num nó bloqueado em
+       * demonstração, onde o "nó concluído" seria o oposto do que a tela promete. Recarregar o mesmo
+       * nó não muda a `key`, então o resultado do quiz continua sobrevivendo ao `reload()`.
+       */}
       {!locked && (
         <section className="card">
           <h3>Quiz conceitual</h3>
           <QuizForm
-            nodeCode={detail.code ?? code}
+            key={code}
+            nodeCode={code}
             questions={detail.quiz ?? []}
             onDone={node.reload}
             readOnly={preview}
@@ -96,7 +108,7 @@ export function NodePage() {
       {!lockedByProgress && (
         <section className="card">
           <h3>Registrar drill</h3>
-          <DrillForm nodeCode={detail.code ?? code} srs={detail.srs} onDone={node.reload} />
+          <DrillForm key={code} nodeCode={code} srs={detail.srs} onDone={node.reload} />
         </section>
       )}
 
