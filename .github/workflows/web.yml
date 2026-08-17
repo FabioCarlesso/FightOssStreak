@@ -35,6 +35,11 @@ jobs:
 
       - run: npm ci
 
+      # Depois do `npm ci` porque as próprias regras vêm de dependências, e antes dos testes
+      # porque falha em segundos. `npm run lint:fix` corrige localmente o que for corrigível.
+      - name: Lint e formatação
+        run: npm run lint
+
       # Regras puras: streak, SM-2 e desbloqueio. Os casos de SRS são espelhados no backend,
       # então uma divergência entre as duas implementações quebra aqui ou lá.
       - name: Testes de shared/domain

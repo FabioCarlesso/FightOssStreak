@@ -1,0 +1,15 @@
+# Gerados (regra 2 do CLAUDE.md) — reformatar aqui só criaria diff que o próximo
+# `npm run gen:types` desfaz. O spec é escrito pelo script com JSON.stringify, e disputar a
+# formatação dele com o Prettier deixaria `gen:types` e `lint` se desfazendo em loop.
+shared/types/generated/
+backend/openapi.json
+
+node_modules/
+dist/
+backend/target/
+
+# O currículo é dado versionado e revisado à mão (D11); a formatação dele é escolha editorial,
+# não de ferramenta.
+backend/src/main/resources/curriculum/
+
+package-lock.json

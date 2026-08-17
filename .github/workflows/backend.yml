@@ -29,6 +29,12 @@ jobs:
           distribution: temurin
           cache: maven
 
+      # Antes dos testes de propósito: é o passo mais barato do job e o que falha mais rápido.
+      # `./mvnw spotless:apply` corrige localmente o que ele apontar aqui.
+      - name: Formatação (Spotless)
+        working-directory: backend
+        run: ./mvnw -B -q spotless:check
+
       # Cobre os testes de regra (streak, SRS, desbloqueio), a integridade do currículo
       # versionado e o fluxo de ponta a ponta contra a aplicação inteira.
       - name: Testes
