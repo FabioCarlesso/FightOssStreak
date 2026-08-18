@@ -13,8 +13,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,6 +60,16 @@ public class Node {
 
     @Embedded private VideoRef video;
 
+    /**
+     * Complementares, na ordem em que o JSON os declara — a ordem é curatorial, então {@link
+     * OrderColumn} não é detalhe: sem ela a lista volta do banco em ordem arbitrária e o clipe que
+     * o curador pôs em primeiro deixa de ser o primeiro da tira.
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "node_extra_video", joinColumns = @JoinColumn(name = "node_id"))
+    @OrderColumn(name = "position")
+    private List<ExtraVideoRef> extraVideos = new ArrayList<>();
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "node_prereq", joinColumns = @JoinColumn(name = "node_id"))
     @Column(name = "prereq_node_id", nullable = false)
@@ -74,7 +87,8 @@ public class Node {
             String concept,
             int orderIndex,
             UnlockRule unlockRule,
-            VideoRef video) {
+            VideoRef video,
+            List<ExtraVideoRef> extraVideos) {
         this.module = module;
         this.code = code;
         this.title = title;
@@ -83,6 +97,7 @@ public class Node {
         this.orderIndex = orderIndex;
         this.unlockRule = unlockRule;
         this.video = video;
+        setExtraVideos(extraVideos);
     }
 
     public Long getId() {
@@ -121,6 +136,10 @@ public class Node {
         return video;
     }
 
+    public List<ExtraVideoRef> getExtraVideos() {
+        return extraVideos;
+    }
+
     public Set<Long> getPrereqNodeIds() {
         return prereqNodeIds;
     }
@@ -137,7 +156,8 @@ public class Node {
             String concept,
             int orderIndex,
             UnlockRule unlockRule,
-            VideoRef video) {
+            VideoRef video,
+            List<ExtraVideoRef> extraVideos) {
         this.module = module;
         this.title = title;
         this.belt = belt;
@@ -145,5 +165,18 @@ public class Node {
         this.orderIndex = orderIndex;
         this.unlockRule = unlockRule;
         this.video = video;
+        setExtraVideos(extraVideos);
+    }
+
+    /**
+     * Substitui o conteúdo da lista em vez de trocar a referência: a coleção é gerenciada pelo JPA,
+     * e atribuir uma lista nova a cada sync do currículo faria o Hibernate descartar e recriar a
+     * coleção inteira de todos os 46 nós, mesmo os que não mudaram.
+     */
+    private void setExtraVideos(List<ExtraVideoRef> replacement) {
+        this.extraVideos.clear();
+        if (replacement != null) {
+            this.extraVideos.addAll(replacement);
+        }
     }
 }

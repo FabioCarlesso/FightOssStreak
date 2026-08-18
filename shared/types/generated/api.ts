@@ -270,6 +270,19 @@ export interface components {
             recall?: string;
             note?: string;
         };
+        ExtraVideoView: {
+            youtubeId?: string;
+            title?: string;
+            channel?: string;
+            /** Format: int32 */
+            startSeconds?: number;
+            /** @enum {string} */
+            orientation?: "HORIZONTAL" | "VERTICAL";
+            note?: string;
+            embedUrl?: string;
+            watchUrl?: string;
+            thumbnailUrl?: string;
+        };
         NodeDetailView: {
             code?: string;
             title?: string;
@@ -284,6 +297,7 @@ export interface components {
             unlockRule?: "ALL" | "ANY";
             prereqs?: components["schemas"]["PrereqView"][];
             video?: components["schemas"]["VideoView"];
+            extraVideos?: components["schemas"]["ExtraVideoView"][];
             quiz?: components["schemas"]["QuestionView"][];
             srs?: components["schemas"]["SrsView"];
             recentDrills?: components["schemas"]["DrillEntryView"][];

@@ -16,6 +16,7 @@ export type NodeDetail = Schemas['NodeDetailView'];
 export type ProgressSummary = Schemas['ProgressSummary'];
 export type PrereqView = Schemas['PrereqView'];
 export type VideoView = Schemas['VideoView'];
+export type ExtraVideoView = Schemas['ExtraVideoView'];
 export type SrsView = Schemas['SrsView'];
 export type DrillEntry = Schemas['DrillEntryView'];
 

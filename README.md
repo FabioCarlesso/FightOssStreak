@@ -13,6 +13,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Currículo (46 nós, 9 módulos) | Transcrito como dado versionado em `backend/src/main/resources/curriculum/` |
 | Quiz conceitual | Escrito para **M0 a M3** (25 nós, 91 perguntas). Os outros 21 nós, de M4 a M8, estão pendentes de curadoria |
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
+| Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
 | Backend | Spring Boot + Flyway, API documentada em OpenAPI |
 | Web | React + Vite |
 | Mobile | Não iniciado (fase posterior, D4) |

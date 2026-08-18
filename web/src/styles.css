@@ -874,3 +874,114 @@ button:disabled {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Clipes complementares — "No tatame" (D32) */
+.clips__intro {
+  margin: 0 0 0.9rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.clips {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 0 0.25rem;
+  list-style: none;
+  /* Tira rolável em vez de grade que quebra linha: em celular, três cards verticais empilhados
+     ocupariam a tela inteira e empurrariam o quiz para fora dela. */
+  overflow-x: auto;
+}
+
+.clip {
+  flex: 0 0 auto;
+  width: 150px;
+}
+
+/* Um clipe de celular é 9:16. Enfiado no frame 16:9 do canônico, vira tarja preta dos dois lados
+   com a imagem espremida no meio — daí a orientação vir no dado, detectada pelo script. */
+.clip--vertical .clip__frame {
+  aspect-ratio: 9 / 16;
+}
+
+.clip--horizontal {
+  width: 240px;
+}
+
+.clip--horizontal .clip__frame {
+  aspect-ratio: 16 / 9;
+}
+
+.clip__frame {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.clip__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.clip__play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* A miniatura do YouTube é sempre 4:3, com o vídeo vertical centralizado e barras nas laterais.
+   Um recorte 9:16 centralizado devolve exatamente a área do vídeo — daí `cover`. */
+.clip__play img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clip__badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  color: #fff;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 70%);
+  background: rgb(0 0 0 / 15%);
+}
+
+.clip__play:hover .clip__badge,
+.clip__play:focus-visible .clip__badge {
+  background: rgb(0 0 0 / 35%);
+}
+
+.clip__title,
+.clip__credit {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* Os títulos são taquigrafia de aula e chegam a quatro linhas ("... aula do dia 04 de abril"),
+   o que deixava cada card com uma altura diferente. Recortar aqui é seguro — o texto inteiro
+   segue no `title` do elemento. O crédito ao canal fica de fora do recorte de propósito: D7 exige
+   que ele esteja visível, então ele não pode ser a parte que some. */
+.clip__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.clip__credit {
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+}

@@ -3,15 +3,18 @@ package dev.fos.curriculum;
 import dev.fos.config.FosProperties;
 import dev.fos.model.Belt;
 import dev.fos.model.CurriculumModule;
+import dev.fos.model.ExtraVideoRef;
 import dev.fos.model.Node;
 import dev.fos.model.QuizOption;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.UnlockRule;
+import dev.fos.model.VideoOrientation;
 import dev.fos.model.VideoRef;
 import dev.fos.repo.ModuleRepository;
 import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizQuestionRepository;
 import jakarta.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -111,6 +114,7 @@ public class CurriculumIngestionService {
 
     private Node upsertNode(CurriculumModule module, CurriculumSource.NodeSpec spec) {
         VideoRef video = toVideoRef(spec.video());
+        List<ExtraVideoRef> extras = toExtraVideoRefs(spec);
         Belt belt = Belt.valueOf(spec.belt());
         UnlockRule rule = UnlockRule.valueOf(spec.unlockRule());
 
@@ -125,7 +129,8 @@ public class CurriculumIngestionService {
                                     spec.concept(),
                                     spec.order(),
                                     rule,
-                                    video);
+                                    video,
+                                    extras);
                             return nodeRepository.save(existing);
                         })
                 .orElseGet(
@@ -139,7 +144,8 @@ public class CurriculumIngestionService {
                                                 spec.concept(),
                                                 spec.order(),
                                                 rule,
-                                                video)));
+                                                video,
+                                                extras)));
     }
 
     private void linkPrereqs(List<CurriculumSource.Module> modules, Map<String, Node> nodesByCode) {
@@ -198,5 +204,22 @@ public class CurriculumIngestionService {
             return new VideoRef(null, null, null, null);
         }
         return new VideoRef(spec.youtubeId(), spec.title(), spec.channel(), spec.startSeconds());
+    }
+
+    private List<ExtraVideoRef> toExtraVideoRefs(CurriculumSource.NodeSpec spec) {
+        List<ExtraVideoRef> refs = new ArrayList<>();
+        for (CurriculumSource.ExtraVideoSpec extra : spec.extraVideos()) {
+            refs.add(
+                    new ExtraVideoRef(
+                            extra.youtubeId(),
+                            extra.title(),
+                            extra.channel(),
+                            extra.startSeconds(),
+                            extra.orientation() == null
+                                    ? VideoOrientation.HORIZONTAL
+                                    : VideoOrientation.valueOf(extra.orientation()),
+                            extra.note()));
+        }
+        return refs;
     }
 }

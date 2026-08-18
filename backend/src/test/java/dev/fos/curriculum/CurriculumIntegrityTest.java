@@ -1,6 +1,7 @@
 package dev.fos.curriculum;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -252,6 +253,7 @@ class CurriculumIntegrityTest {
                                         List.of(),
                                         "conceito",
                                         null,
+                                        List.of(),
                                         List.of(twoCorrect))));
 
         assertThatThrownBy(() -> validator.validate(List.of(broken)))
@@ -305,6 +307,174 @@ class CurriculumIntegrityTest {
                 .hasMessageContaining("startSeconds negativo");
     }
 
+    @Test
+    @DisplayName("complementares hoje só existem nos nós de M1 que já têm canônico (D32)")
+    void extraVideosAreScopedToTheFirstBatch() {
+        Map<String, List<CurriculumSource.ExtraVideoSpec>> comExtras = new java.util.TreeMap<>();
+        for (CurriculumSource.NodeSpec node : byCode().values()) {
+            if (!node.extraVideos().isEmpty()) {
+                comExtras.put(node.code(), node.extraVideos());
+            }
+        }
+
+        assertThat(comExtras.keySet()).containsExactly("M1.3", "M1.5", "M1.6");
+        // O primeiro lote entrou em nó que já tem canônico de propósito: é onde a tela mostra a
+        // hierarquia inteira — o vídeo que ensina em cima, os clipes que lembram embaixo.
+        assertThat(comExtras.keySet())
+                .allSatisfy(code -> assertThat(byCode().get(code).video()).isNotNull());
+    }
+
+    @Test
+    @DisplayName("todo complementar tem id utilizável, título, canal (D7) e cabe no teto")
+    void extraVideosAreUsableAndCredited() {
+        for (CurriculumSource.NodeSpec node : byCode().values()) {
+            List<CurriculumSource.ExtraVideoSpec> extras = node.extraVideos();
+            assertThat(extras.size())
+                    .as("quantidade de complementares de %s", node.code())
+                    .isLessThanOrEqualTo(CurriculumValidator.MAX_EXTRA_VIDEOS);
+
+            for (CurriculumSource.ExtraVideoSpec extra : extras) {
+                assertThat(extra.youtubeId())
+                        .as("id de complementar de %s", node.code())
+                        .matches(CurriculumValidator.YOUTUBE_ID_REGEX);
+                assertThat(extra.title())
+                        .as("título de complementar de %s", node.code())
+                        .isNotBlank();
+                assertThat(extra.channel())
+                        .as("canal de complementar de %s", node.code())
+                        .isNotBlank();
+            }
+            assertThat(extras.stream().map(CurriculumSource.ExtraVideoSpec::youtubeId))
+                    .as("complementares repetidos em %s", node.code())
+                    .doesNotHaveDuplicates();
+        }
+    }
+
+    @Test
+    @DisplayName("o validador exige crédito ao canal também no complementar (D7)")
+    void rejectsExtraVideoWithoutChannelCredit() {
+        CurriculumSource.Module broken =
+                moduleWithExtras(extra("AkQxiCrsGo4", "titulo", null, null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("complementar 1")
+                .hasMessageContaining("canal creditado");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita complementar que repete o vídeo canônico do nó")
+    void rejectsExtraVideoThatRepeatsCanonical() {
+        CurriculumSource.Module broken =
+                moduleWithVideoAndExtras(
+                        new CurriculumSource.VideoSpec("REFdmhRCsSQ", "titulo", "canal", null),
+                        List.of(extra("REFdmhRCsSQ", "titulo", "canal", null)));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("repete o vídeo canônico");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita o mesmo complementar duas vezes no mesmo nó")
+    void rejectsDuplicateExtraVideoInSameNode() {
+        CurriculumSource.Module broken =
+                moduleWithExtras(
+                        extra("AkQxiCrsGo4", "t", "canal", null),
+                        extra("AkQxiCrsGo4", "t", "canal", null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("complementar repetido no mesmo nó");
+    }
+
+    /**
+     * O mesmo clipe servindo a dois nós é intencional, não descuido: uma reposição de guarda contra
+     * joelho na barriga é pista de memória tanto do nó de recuperação quanto do de joelho na
+     * barriga.
+     */
+    @Test
+    @DisplayName("o mesmo complementar pode servir a nós diferentes")
+    void acceptsSameExtraVideoAcrossDifferentNodes() {
+        CurriculumSource.ExtraVideoSpec compartilhado = extra("AkQxiCrsGo4", "t", "canal", null);
+        CurriculumSource.Module module =
+                new CurriculumSource.Module(
+                        "MX",
+                        "Modulo",
+                        "resumo",
+                        List.of(
+                                nodeWith("MX.1", null, List.of(compartilhado)),
+                                nodeWith("MX.2", null, List.of(compartilhado))));
+
+        assertThatCode(() -> validator.validate(List.of(module))).doesNotThrowAnyException();
+    }
+
+    /**
+     * Exigir canônico como pré-condição travaria a catalogação de clipes atrás da curadoria inteira
+     * de M2–M8, e a tela já é honesta nesse caso: o estado vazio do canônico continua aparecendo.
+     */
+    @Test
+    @DisplayName("nó pode ter complementar sem ter vídeo canônico")
+    void acceptsExtraVideosWithoutCanonical() {
+        CurriculumSource.Module module =
+                moduleWithExtras(extra("AkQxiCrsGo4", "titulo", "canal", null));
+
+        assertThatCode(() -> validator.validate(List.of(module))).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("o validador rejeita mais complementares que o teto (D32)")
+    void rejectsTooManyExtraVideos() {
+        CurriculumSource.Module broken =
+                moduleWithExtras(
+                        extra("AkQxiCrsGo4", "t", "canal", null),
+                        extra("9wEhZ1PdoMI", "t", "canal", null),
+                        extra("_sZ--Clk218", "t", "canal", null),
+                        extra("7JozpLcKQvc", "t", "canal", null),
+                        extra("3ZlMiI92TjU", "t", "canal", null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("o máximo é " + CurriculumValidator.MAX_EXTRA_VIDEOS);
+    }
+
+    @Test
+    @DisplayName("o validador rejeita orientação que não existe")
+    void rejectsUnknownOrientation() {
+        CurriculumSource.Module broken =
+                moduleWithExtras(
+                        new CurriculumSource.ExtraVideoSpec(
+                                "AkQxiCrsGo4", "t", "canal", null, "DIAGONAL", null));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("orientação inválida");
+    }
+
+    private CurriculumSource.ExtraVideoSpec extra(
+            String youtubeId, String title, String channel, Integer startSeconds) {
+        return new CurriculumSource.ExtraVideoSpec(
+                youtubeId, title, channel, startSeconds, null, null);
+    }
+
+    private CurriculumSource.Module moduleWithExtras(CurriculumSource.ExtraVideoSpec... extras) {
+        return moduleWithVideoAndExtras(null, List.of(extras));
+    }
+
+    private CurriculumSource.Module moduleWithVideoAndExtras(
+            CurriculumSource.VideoSpec video, List<CurriculumSource.ExtraVideoSpec> extras) {
+        return new CurriculumSource.Module(
+                "MX", "Quebrado", "resumo", List.of(nodeWith("MX.1", video, extras)));
+    }
+
+    private CurriculumSource.NodeSpec nodeWith(
+            String code,
+            CurriculumSource.VideoSpec video,
+            List<CurriculumSource.ExtraVideoSpec> extras) {
+        return new CurriculumSource.NodeSpec(
+                code, "t", "BRANCA", 1, "ALL", List.of(), "conceito", video, extras, List.of());
+    }
+
     private CurriculumSource.Module moduleWithVideo(CurriculumSource.VideoSpec video) {
         return new CurriculumSource.Module(
                 "MX",
@@ -320,6 +490,7 @@ class CurriculumIntegrityTest {
                                 List.of(),
                                 "conceito",
                                 video,
+                                List.of(),
                                 List.of())));
     }
 
@@ -341,7 +512,16 @@ class CurriculumIntegrityTest {
 
     private CurriculumSource.NodeSpec node(String code, List<String> prereqs) {
         return new CurriculumSource.NodeSpec(
-                code, "titulo", "BRANCA", 1, "ALL", prereqs, "conceito", null, List.of());
+                code,
+                "titulo",
+                "BRANCA",
+                1,
+                "ALL",
+                prereqs,
+                "conceito",
+                null,
+                List.of(),
+                List.of());
     }
 
     private Map<String, CurriculumSource.NodeSpec> byCode() {

@@ -93,7 +93,8 @@ class UnlockServiceTest {
                         "conceito",
                         1,
                         rule,
-                        new VideoRef(null, null, null, null));
+                        new VideoRef(null, null, null, null),
+                        List.of());
         setId(node, id);
         node.setPrereqNodeIds(new LinkedHashSet<>(List.of(prereqs)));
         return node;

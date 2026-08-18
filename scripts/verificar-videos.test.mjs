@@ -11,8 +11,42 @@ import {
 const modulo = (arquivo, nodes) => ({ arquivo, dados: { nodes } });
 const comVideo = (code, youtubeId) => ({ code, title: `nó ${code}`, video: { youtubeId } });
 const semVideo = (code) => ({ code, title: `nó ${code}`, video: null });
+const comExtras = (code, youtubeId, ...extras) => ({
+  ...comVideo(code, youtubeId),
+  extraVideos: extras.map((id) => ({ youtubeId: id })),
+});
 
 describe('coleta do que há para verificar', () => {
+  it('verifica também os complementares, e diz de que tipo é cada um', () => {
+    const videos = coletarVideos([
+      modulo('m1.json', [comExtras('M1.3', 'REFdmhRCsSQ', 'AkQxiCrsGo4', '9wEhZ1PdoMI')]),
+    ]);
+
+    assert.deepEqual(
+      videos.map(({ youtubeId, tipo }) => ({ youtubeId, tipo })),
+      [
+        { youtubeId: 'REFdmhRCsSQ', tipo: 'canônico' },
+        { youtubeId: 'AkQxiCrsGo4', tipo: 'complementar' },
+        { youtubeId: '9wEhZ1PdoMI', tipo: 'complementar' },
+      ],
+    );
+  });
+
+  /**
+   * `extraVideos` é opcional e hoje ausente em 46 dos 46 nós. O campo faltando não pode virar
+   * exceção na leitura, senão a verificação semanal quebra em vez de verificar.
+   */
+  it('trata nó sem o campo extraVideos como nó sem complementar', () => {
+    const videos = coletarVideos([
+      modulo('m0.json', [comVideo('M0.1', 'REFdmhRCsSQ'), semVideo('M0.2')]),
+    ]);
+
+    assert.deepEqual(
+      videos.map(({ youtubeId }) => youtubeId),
+      ['REFdmhRCsSQ'],
+    );
+  });
+
   it('pega os nós com vídeo e ignora os que estão com video: null', () => {
     const videos = coletarVideos([
       modulo('m0.json', [comVideo('M0.1', 'REFdmhRCsSQ'), semVideo('M0.2')]),

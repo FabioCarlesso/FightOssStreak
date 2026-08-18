@@ -4,6 +4,7 @@ import { useAsync } from '../state/useAsync.ts';
 import { useDemoMode } from '../state/demoMode.ts';
 import { DrillForm } from '../components/DrillForm.tsx';
 import { QuizForm } from '../components/QuizForm.tsx';
+import { ExtraVideos } from '../components/ExtraVideos.tsx';
 import { VideoEmbed } from '../components/VideoEmbed.tsx';
 
 /** Detalhe do nó: conceito, vídeo, quiz conceitual e registro de drill. */
@@ -83,6 +84,14 @@ export function NodePage() {
         <h3>Vídeo de referência</h3>
         <VideoEmbed video={detail.video} title={detail.title} />
       </section>
+
+      {/*
+       * Fica fora do card do canônico, e depois dele, porque a ordem é a hierarquia (D1/D32): o
+       * vídeo de referência ensina o conceito, os clipes lembram como ele apareceu na aula. Nó sem
+       * clipe não rende seção nenhuma; nó sem canônico continua mostrando o estado vazio acima,
+       * que é honesto — a tira não se disfarça de referência.
+       */}
+      <ExtraVideos videos={detail.extraVideos} />
 
       {/*
        * `key` pelo código do nó: os dois formulários guardam estado que só faz sentido para o nó

@@ -3,6 +3,7 @@ package dev.fos.web.dto;
 import dev.fos.model.Belt;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.UnlockRule;
+import dev.fos.model.VideoOrientation;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public final class CurriculumDtos {
             UnlockRule unlockRule,
             List<PrereqView> prereqs,
             VideoView video,
+            List<ExtraVideoView> extraVideos,
             List<QuizDtos.QuestionView> quiz,
             SrsView srs,
             List<DrillEntryView> recentDrills,
@@ -72,6 +74,31 @@ public final class CurriculumDtos {
             return new VideoView(false, null, null, null, null, null, null);
         }
     }
+
+    /**
+     * Vídeo complementar: ajuda a lembrar a técnica, sem ser a referência dela (D32).
+     *
+     * <p>Tipo próprio, e não {@link VideoView} reaproveitado, porque carrega três coisas que o
+     * canônico não tem. {@code orientation} decide o formato do frame — clipe de celular é 9:16 e
+     * fica torto num frame 16:9. {@code note} é a anotação do curador, o único campo que não vem do
+     * YouTube. E {@code thumbnailUrl} existe porque a tira mostra miniatura em vez de montar
+     * player: é o que permite ver os clipes disponíveis sem carregar um {@code <iframe>} por clipe.
+     *
+     * <p>O {@code embedUrl} já vem com {@code autoplay} e {@code loop} porque o iframe só é montado
+     * quando o usuário clica na miniatura — o clique <em>é</em> o gesto de dar play. Um clipe de
+     * nove segundos em loop é assistido três vezes sem ninguém tocar em nada, que é exatamente o
+     * gesto de revisão.
+     */
+    public record ExtraVideoView(
+            String youtubeId,
+            String title,
+            String channel,
+            Integer startSeconds,
+            VideoOrientation orientation,
+            String note,
+            String embedUrl,
+            String watchUrl,
+            String thumbnailUrl) {}
 
     public record SrsView(
             boolean scheduled,

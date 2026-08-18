@@ -33,10 +33,16 @@ public final class CurriculumSource {
             List<String> prereqs,
             String concept,
             VideoSpec video,
+            List<ExtraVideoSpec> extraVideos,
             List<QuestionSpec> quiz) {
 
         public List<String> prereqs() {
             return prereqs == null ? List.of() : prereqs;
+        }
+
+        /** Campo opcional: a esmagadora maioria dos nós não tem complementar, e isso é normal. */
+        public List<ExtraVideoSpec> extraVideos() {
+            return extraVideos == null ? List.of() : extraVideos;
         }
 
         public List<QuestionSpec> quiz() {
@@ -50,6 +56,20 @@ public final class CurriculumSource {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record VideoSpec(String youtubeId, String title, String channel, Integer startSeconds) {}
+
+    /**
+     * Vídeo complementar. Mesmos campos do canônico mais os dois que só fazem sentido aqui: {@code
+     * orientation}, preenchida pelo script a partir do formato real, e {@code note}, a anotação de
+     * quem catalogou.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ExtraVideoSpec(
+            String youtubeId,
+            String title,
+            String channel,
+            Integer startSeconds,
+            String orientation,
+            String note) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record QuestionSpec(String prompt, String explanation, List<OptionSpec> options) {
