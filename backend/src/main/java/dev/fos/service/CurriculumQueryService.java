@@ -1,5 +1,6 @@
 package dev.fos.service;
 
+import dev.fos.model.ExtraVideoRef;
 import dev.fos.model.Node;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.QuizOption;
@@ -165,6 +166,9 @@ public class CurriculumQueryService {
                 node.getUnlockRule(),
                 prereqs,
                 toVideoView(node.getVideo()),
+                node.getExtraVideos().stream()
+                        .map(CurriculumQueryService::toExtraVideoView)
+                        .toList(),
                 quiz,
                 toSrsView(srsByNodeId(userId).get(node.getId()), today),
                 drills,
@@ -266,6 +270,37 @@ public class CurriculumQueryService {
                 video.getStartSeconds(),
                 "https://www.youtube-nocookie.com/embed/" + video.getYoutubeId() + start,
                 "https://www.youtube.com/watch?v=" + video.getYoutubeId());
+    }
+
+    /**
+     * Monta o complementar já com {@code autoplay} e {@code loop} na URL.
+     *
+     * <p>Os dois parâmetros só são defensáveis juntos com o carregamento tardio da UI: o iframe
+     * nasce no clique da miniatura, então o autoplay nunca dispara sozinho ao abrir a página — ele
+     * atende o clique que acabou de acontecer. Sem ele, o usuário clicaria duas vezes para ver nove
+     * segundos de vídeo. O {@code playlist} com o próprio id é o que faz o {@code loop} funcionar
+     * em vídeo único; é como o player do YouTube expõe isso, não redundância.
+     */
+    static CurriculumDtos.ExtraVideoView toExtraVideoView(ExtraVideoRef extra) {
+        String id = extra.getYoutubeId();
+        String start =
+                extra.getStartSeconds() != null && extra.getStartSeconds() > 0
+                        ? "&start=" + extra.getStartSeconds()
+                        : "";
+        return new CurriculumDtos.ExtraVideoView(
+                id,
+                extra.getTitle(),
+                extra.getChannel(),
+                extra.getStartSeconds(),
+                extra.getOrientation(),
+                extra.getNote(),
+                "https://www.youtube-nocookie.com/embed/"
+                        + id
+                        + "?autoplay=1&loop=1&playlist="
+                        + id
+                        + start,
+                "https://www.youtube.com/watch?v=" + id,
+                "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg");
     }
 
     static CurriculumDtos.SrsView toSrsView(SrsReview review, LocalDate today) {

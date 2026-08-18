@@ -8,9 +8,10 @@
  * de catalogado — risco listado em `docs/07-decisoes.md`. Sem esta checagem, a descoberta é
  * acidental e acontece no pior momento possível: abrindo o nó depois do treino.
  *
- * O que ele faz: lê todos os `m*.json`, pega os nós com `video` preenchido e pergunta ao YouTube,
- * um a um, se cada id ainda está público e incorporável. Não escreve nada — a substituição de um
- * vídeo é curadoria humana (`docs/08-curadoria-videos.md`), não automação.
+ * O que ele faz: lê todos os `m*.json`, pega os vídeos catalogados — o canônico do nó e os
+ * complementares (D32) — e pergunta ao YouTube, um a um, se cada id ainda está público e
+ * incorporável. Não escreve nada — a substituição de um vídeo é curadoria humana
+ * (`docs/08-curadoria-videos.md`), não automação.
  *
  * Códigos de saída, porque quem chama (o workflow `videos.yml`) decide por eles:
  *   0  tudo disponível — inclusive o caso "nenhum vídeo catalogado ainda"
@@ -46,22 +47,28 @@ export function lerModulos(dir = curriculumDir) {
 }
 
 /**
- * Achata os módulos na lista do que há para verificar: só os nós com vídeo catalogado.
+ * Achata os módulos na lista do que há para verificar: canônicos e complementares.
  *
- * `video: null` é estado normal e majoritário hoje (M2–M8 inteiros) — currículo sem vídeo nenhum
- * precisa produzir "nada a verificar", não erro.
+ * `video: null` é estado normal e majoritário hoje (M2–M8 inteiros) e `extraVideos` é campo
+ * opcional — currículo sem vídeo nenhum precisa produzir "nada a verificar", não erro.
+ *
+ * O complementar entra na verificação pelo mesmo motivo que o canônico: ele também sai do ar, e
+ * descobrir isso abrindo o nó depois do treino é o pior momento possível. O `tipo` acompanha cada
+ * item porque a saída importa a quem lê o relatório — canônico quebrado deixa o nó sem referência,
+ * complementar quebrado é uma pista de memória a menos.
  */
 export function coletarVideos(modulos) {
   const videos = [];
   for (const { arquivo, dados } of modulos) {
     for (const node of dados.nodes ?? []) {
-      if (!node.video?.youtubeId) continue;
-      videos.push({
-        code: node.code,
-        titulo: node.title,
-        youtubeId: node.video.youtubeId,
-        arquivo,
-      });
+      const base = { code: node.code, titulo: node.title, arquivo };
+      if (node.video?.youtubeId) {
+        videos.push({ ...base, youtubeId: node.video.youtubeId, tipo: 'canônico' });
+      }
+      for (const extra of node.extraVideos ?? []) {
+        if (!extra?.youtubeId) continue;
+        videos.push({ ...base, youtubeId: extra.youtubeId, tipo: 'complementar' });
+      }
     }
   }
   return videos;
@@ -91,8 +98,9 @@ const ROTULO = {
   indeterminado: 'não verificado',
 };
 
-function linha({ code, youtubeId, status, motivo }) {
-  const base = `  ${code.padEnd(6)} ${youtubeId}  ${ROTULO[status]}`;
+function linha({ code, youtubeId, status, motivo, tipo }) {
+  const marca = tipo === 'complementar' ? '+' : ' ';
+  const base = `  ${marca} ${code.padEnd(6)} ${youtubeId}  ${ROTULO[status]}`;
   return motivo ? `${base} — ${motivo}` : base;
 }
 
@@ -124,7 +132,8 @@ export function formatarRelatorio(resultados) {
       '',
       'A substituição é curadoria humana: escolha o novo vídeo pelos critérios do nó em',
       'docs/08-curadoria-videos.md e recatalogue com',
-      '  node scripts/catalogar-video.mjs <NÓ> <url>',
+      '  node scripts/catalogar-video.mjs <NÓ> <url>            (canônico)',
+      '  node scripts/catalogar-video.mjs <NÓ> --extra <url>    (complementar, marcado com +)',
     );
   }
 

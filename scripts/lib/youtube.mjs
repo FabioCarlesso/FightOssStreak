@@ -85,19 +85,40 @@ export async function fetchOEmbed(videoId, { fetchImpl = fetch } = {}) {
 }
 
 /**
+ * Orientação a partir do primeiro formato de vídeo declarado na página do watch.
+ *
+ * O primeiro par `"width":W,"height":H` do HTML é a maior resolução do próprio vídeo — conferido
+ * contra os canônicos já catalogados (3840x2160) e contra os clipes de celular (720x1280), que é a
+ * separação que interessa. Quadrado conta como horizontal: o frame 16:9 acomoda um vídeo 1:1 sem
+ * espremer, o 9:16 não.
+ *
+ * Devolve `null` quando não deu para saber, e quem chama trata isso como HORIZONTAL — que é o que a
+ * esmagadora maioria dos vídeos do YouTube é.
+ */
+function parseOrientation(html) {
+  const match = html.match(/"width":(\d+),"height":(\d+)/);
+  if (!match) return null;
+  return Number(match[2]) > Number(match[1]) ? 'VERTICAL' : 'HORIZONTAL';
+}
+
+/**
  * Confere se o autor permite incorporação. A política D7 proíbe embutir vídeo marcado como
  * não-incorporável — respeitar isso é obrigação, não detalhe.
+ *
+ * Devolve a orientação junto porque ela sai do mesmo HTML: pedir a página duas vezes para ler dois
+ * campos dela seria desperdício, e quem só quer saber de incorporação ignora o campo.
  */
 export async function checkEmbeddable(videoId, { fetchImpl = fetch } = {}) {
   const response = await fetchImpl(`https://www.youtube.com/watch?v=${videoId}`, {
     headers: { 'accept-language': 'pt-BR,pt;q=0.9,en;q=0.8' },
   });
-  if (!response.ok) return { known: false, embeddable: null };
+  if (!response.ok) return { known: false, embeddable: null, orientation: null };
 
   const html = await response.text();
+  const orientation = parseOrientation(html);
   const match = html.match(/"playableInEmbed":(true|false)/);
-  if (!match) return { known: false, embeddable: null };
-  return { known: true, embeddable: match[1] === 'true' };
+  if (!match) return { known: false, embeddable: null, orientation };
+  return { known: true, embeddable: match[1] === 'true', orientation };
 }
 
 /**
@@ -126,11 +147,11 @@ export async function verificarDisponibilidade(videoId, { fetchImpl = fetch } = 
 
   // Falha aqui não diz nada sobre o vídeo — o oEmbed já respondeu que ele existe. Tratar como
   // "não deu para saber" evita transformar instabilidade de rede em acusação de violação de D7.
-  let embed = { known: false, embeddable: null };
+  let embed = { known: false, embeddable: null, orientation: null };
   try {
     embed = await checkEmbeddable(videoId, { fetchImpl });
   } catch {
-    embed = { known: false, embeddable: null };
+    embed = { known: false, embeddable: null, orientation: null };
   }
 
   if (embed.known && embed.embeddable === false) {

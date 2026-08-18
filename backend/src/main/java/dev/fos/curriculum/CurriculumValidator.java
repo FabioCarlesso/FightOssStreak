@@ -2,6 +2,7 @@ package dev.fos.curriculum;
 
 import dev.fos.model.Belt;
 import dev.fos.model.UnlockRule;
+import dev.fos.model.VideoOrientation;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -34,6 +35,16 @@ public class CurriculumValidator {
     public static final String YOUTUBE_ID_REGEX = "[\\w-]{11}";
 
     private static final Pattern YOUTUBE_ID = Pattern.compile(YOUTUBE_ID_REGEX);
+
+    /**
+     * Teto de complementares por nó.
+     *
+     * <p>Não é limite técnico — é o que impede a faixa de complementares de virar catálogo, que é o
+     * risco central de D1: quanto mais vídeo por tela, menos a tela é ferramenta de revisão. Regra
+     * que mora só em documento é regra que se esquece na hora de catalogar o quinto clipe, então
+     * ela mora aqui.
+     */
+    public static final int MAX_EXTRA_VIDEOS = 4;
 
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
@@ -98,8 +109,15 @@ public class CurriculumValidator {
                 }
 
                 if (node.video() != null && node.video().youtubeId() != null) {
-                    validateVideo(node.video(), where);
+                    validateVideo(
+                            node.video().youtubeId(),
+                            node.video().title(),
+                            node.video().channel(),
+                            node.video().startSeconds(),
+                            where);
                 }
+
+                validateExtraVideos(node, where);
 
                 validateQuiz(node, where);
             }
@@ -118,17 +136,83 @@ public class CurriculumValidator {
      * não metadado opcional; e sem título o crédito na tela começa com um travessão solto ("— canal
      * X"), que parece defeito.
      */
-    private void validateVideo(CurriculumSource.VideoSpec video, String where) {
-        if (!YOUTUBE_ID.matcher(video.youtubeId()).matches()) {
+    private void validateVideo(
+            String youtubeId, String title, String channel, Integer startSeconds, String where) {
+        if (!YOUTUBE_ID.matcher(youtubeId).matches()) {
             throw new CurriculumException(
-                    where + ": id de vídeo fora do formato do YouTube '" + video.youtubeId() + "'");
+                    where + ": id de vídeo fora do formato do YouTube '" + youtubeId + "'");
         }
-        requireText(video.title(), where + ": vídeo catalogado sem título");
-        requireText(
-                video.channel(), where + ": vídeo catalogado sem canal creditado (política D7)");
-        if (video.startSeconds() != null && video.startSeconds() < 0) {
+        requireText(title, where + ": vídeo catalogado sem título");
+        requireText(channel, where + ": vídeo catalogado sem canal creditado (política D7)");
+        if (startSeconds != null && startSeconds < 0) {
+            throw new CurriculumException(where + ": startSeconds negativo (" + startSeconds + ")");
+        }
+    }
+
+    /**
+     * Complementares passam pelas mesmas regras do canônico, mais três que só existem aqui.
+     *
+     * <p><strong>Duplicata dentro do nó</strong> é sempre erro de catalogação: o mesmo id duas
+     * vezes no mesmo nó renderiza o mesmo clipe duas vezes na tira. Já o mesmo id em nós
+     * <em>diferentes</em> é deliberadamente permitido — uma reposição de guarda contra joelho na
+     * barriga é pista de memória tanto do nó de recuperação quanto do de joelho na barriga, e
+     * proibir isso não protegeria nada.
+     *
+     * <p><strong>Teto</strong>: ver {@link #MAX_EXTRA_VIDEOS}.
+     *
+     * <p>Um nó pode ter complementar <em>sem</em> ter canônico. Exigir o canônico como pré-condição
+     * encodaria a hierarquia no dado, mas travaria a catalogação de complementares atrás da
+     * curadoria inteira de M2–M8 — e a tela já é honesta nesse caso, porque o estado vazio do
+     * canônico continua aparecendo acima da tira.
+     */
+    private void validateExtraVideos(CurriculumSource.NodeSpec node, String where) {
+        List<CurriculumSource.ExtraVideoSpec> extras = node.extraVideos();
+        if (extras.size() > MAX_EXTRA_VIDEOS) {
             throw new CurriculumException(
-                    where + ": startSeconds negativo (" + video.startSeconds() + ")");
+                    where
+                            + ": "
+                            + extras.size()
+                            + " vídeos complementares, o máximo é "
+                            + MAX_EXTRA_VIDEOS
+                            + " (D32)");
+        }
+
+        String canonicalId =
+                node.video() == null || node.video().youtubeId() == null
+                        ? null
+                        : node.video().youtubeId();
+        Set<String> seen = new HashSet<>();
+
+        for (int i = 0; i < extras.size(); i++) {
+            CurriculumSource.ExtraVideoSpec extra = extras.get(i);
+            String eWhere = where + ", complementar " + (i + 1);
+
+            if (extra.youtubeId() == null || extra.youtubeId().isBlank()) {
+                throw new CurriculumException(eWhere + ": sem id de vídeo");
+            }
+            validateVideo(
+                    extra.youtubeId(),
+                    extra.title(),
+                    extra.channel(),
+                    extra.startSeconds(),
+                    eWhere);
+
+            if (extra.youtubeId().equals(canonicalId)) {
+                throw new CurriculumException(
+                        eWhere + ": repete o vídeo canônico do nó (" + extra.youtubeId() + ")");
+            }
+            if (!seen.add(extra.youtubeId())) {
+                throw new CurriculumException(
+                        eWhere + ": complementar repetido no mesmo nó (" + extra.youtubeId() + ")");
+            }
+            if (extra.orientation() != null) {
+                try {
+                    VideoOrientation.valueOf(extra.orientation());
+                } catch (IllegalArgumentException e) {
+                    throw new CurriculumException(
+                            eWhere + ": orientação inválida '" + extra.orientation() + "'");
+                }
+            }
         }
     }
 

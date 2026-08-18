@@ -45,7 +45,8 @@ As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .
 e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
 variável de ambiente. Tabela completa no README.
 
-Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga (verifica e credita o canal) e
+Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga o canônico (verifica e credita o
+canal), `... <NÓ> --extra <url>...` acrescenta complementares (D32, teto de 4 por nó) e
 `node scripts/verificar-videos.mjs` reconfere os já catalogados — o workflow `videos` roda esse
 segundo semanalmente e avisa por issue. Ver `docs/08-curadoria-videos.md`.
 

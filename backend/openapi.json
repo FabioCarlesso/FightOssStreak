@@ -572,6 +572,43 @@
           }
         }
       },
+      "ExtraVideoView": {
+        "type": "object",
+        "properties": {
+          "youtubeId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "startSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orientation": {
+            "type": "string",
+            "enum": [
+              "HORIZONTAL",
+              "VERTICAL"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "embedUrl": {
+            "type": "string"
+          },
+          "watchUrl": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          }
+        }
+      },
       "NodeDetailView": {
         "type": "object",
         "properties": {
@@ -622,6 +659,12 @@
           },
           "video": {
             "$ref": "#/components/schemas/VideoView"
+          },
+          "extraVideos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtraVideoView"
+            }
           },
           "quiz": {
             "type": "array",

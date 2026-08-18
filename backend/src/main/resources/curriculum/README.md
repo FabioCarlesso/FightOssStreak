@@ -22,6 +22,7 @@ Um arquivo por módulo (`m0.json` … `m8.json`), mais o índice `modules.json` 
   "prereqs": ["M1.1"],         // arestas do grafo; podem cruzar módulos
   "concept": "...",            // o *porquê* da posição, não o passo a passo
   "video": null,               // null = ainda não catalogado (ver abaixo)
+  "extraVideos": [],           // opcional — clipes complementares (ver abaixo)
   "quiz": []                   // 3–5 perguntas conceituais
 }
 ```
@@ -63,6 +64,44 @@ Critérios de escolha por nó estão em `docs/08-curadoria-videos.md`. O formato
 Antes de incluir, conferir a política de uso de vídeo em `docs/07-decisoes.md`: só embed do player
 oficial, só vídeos públicos e incorporáveis, sempre com crédito ao canal.
 
+### `extraVideos`
+
+Campo **opcional** (**D32**). O `video` do nó é a referência que ensina o conceito; `extraVideos`
+são clipes que ajudam a lembrar dele — hoje, trechos curtos gravados na própria academia. A
+hierarquia é de produto, não de banco: **o canônico ensina, o clipe lembra**. Nó sem o campo, ou
+com ele em `[]`, é o caso normal.
+
+```bash
+node scripts/catalogar-video.mjs M1.3 --extra <url1> <url2>
+node scripts/catalogar-video.mjs M1.3 --extra <url> --note "o giro para o lado da cabeça"
+```
+
+```jsonc
+"extraVideos": [
+  {
+    "youtubeId": "xxxxxxxxxxx",
+    "title": "Título original",       // do YouTube, nunca digitado
+    "channel": "Nome do canal",       // crédito visível é obrigatório (D7)
+    "orientation": "VERTICAL",        // opcional; detectada pelo script, default HORIZONTAL
+    "note": "..."                     // opcional; o único campo escrito por quem cataloga
+  }
+]
+```
+
+Regras que o validador aplica, além das do canônico:
+
+- **No máximo 4 por nó.** Não é limite técnico — é o que impede a tira virar catálogo, que é o
+  risco de diluir a revisão (D1).
+- **Sem repetir** o canônico do nó nem outro complementar do mesmo nó.
+- **O mesmo id pode servir a nós diferentes**, e isso é intencional: uma reposição contra joelho na
+  barriga é pista de memória tanto do nó de recuperação quanto do de joelho na barriga.
+- **Nó pode ter complementar sem ter canônico.** A tela mostra o estado vazio do canônico acima da
+  tira, então o clipe não se disfarça de referência.
+
+`orientation` existe porque clipe de celular é 9:16 e o frame do canônico é 16:9 — vertical em
+frame horizontal vira tarja preta dos dois lados. O script detecta a partir do formato real do
+vídeo; não preencher à mão.
+
 ### `quiz`
 
 Preenchido para **M0 a M3** (25 dos 46 nós). M0 e M1 vieram primeiro por serem fundamento e
@@ -81,5 +120,5 @@ Registrado em **D27**.
 ## Validação
 
 `CurriculumIntegrityTest` roda a cada `./mvnw test` e falha se houver: código duplicado, referência a
-pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida ou quiz sem exatamente
-uma alternativa correta. Detecção de ciclo é feita **na ingestão**, nunca em runtime.
+pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida, quiz sem exatamente
+uma alternativa correta, ou complementar duplicado, sem crédito de canal ou acima do teto. Detecção de ciclo é feita **na ingestão**, nunca em runtime.

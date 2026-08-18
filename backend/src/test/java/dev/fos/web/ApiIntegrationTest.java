@@ -169,6 +169,40 @@ class ApiIntegrationTest {
     }
 
     @Test
+    @DisplayName("complementares vêm na ordem do JSON, com crédito, miniatura e embed em loop")
+    void extraVideosAreServedInCuratedOrder() throws Exception {
+        JsonNode extras = getJson("/api/nodes/M1.3").get("extraVideos");
+
+        assertThat(extras).hasSize(3);
+        assertThat(extras.get(0).get("youtubeId").asText())
+                .as("a ordem é curatorial e vem do JSON versionado, não do banco")
+                .isEqualTo("AkQxiCrsGo4");
+
+        JsonNode primeiro = extras.get(0);
+        assertThat(primeiro.get("channel").asText())
+                .as("crédito ao canal vale para complementar igual (D7)")
+                .isEqualTo("Guiabasicodejiujitsu");
+        assertThat(primeiro.get("orientation").asText()).isEqualTo("VERTICAL");
+        assertThat(primeiro.get("thumbnailUrl").asText())
+                .as("a tira mostra miniatura para não montar um player por clipe")
+                .isEqualTo("https://i.ytimg.com/vi/AkQxiCrsGo4/hqdefault.jpg");
+        assertThat(primeiro.get("embedUrl").asText())
+                .startsWith("https://www.youtube-nocookie.com/embed/AkQxiCrsGo4")
+                .contains("autoplay=1")
+                .as("playlist com o próprio id é o que faz o loop funcionar em vídeo único")
+                .contains("loop=1&playlist=AkQxiCrsGo4");
+    }
+
+    @Test
+    @DisplayName("nó sem complementar traz a lista vazia, não nulo")
+    void nodesWithoutExtraVideosGetAnEmptyList() throws Exception {
+        JsonNode extras = getJson("/api/nodes/M0.1").get("extraVideos");
+
+        assertThat(extras.isArray()).isTrue();
+        assertThat(extras).isEmpty();
+    }
+
+    @Test
     @DisplayName("acertar o quiz conclui o nó e desbloqueia o sucessor")
     void passingQuizUnlocksSuccessor() throws Exception {
         completeNode("M0.3");
