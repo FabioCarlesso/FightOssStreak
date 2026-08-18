@@ -737,6 +737,317 @@ button:disabled {
 }
 
 /* ==========================================================================
+ * Landing pública (rota `/`)
+ *
+ * Container próprio, e não `.app`: a landing não tem o cabeçalho de navegação nem o rodapé do app,
+ * e respira mais largo (1040px contra 860px) porque a página inteira é feita de prints — apertá-los
+ * na medida do app seria mostrar a tela do produto pequena demais para se ver.
+ *
+ * Sem framework, sem fonte externa e sem animação: os tokens do topo do arquivo bastam, e a página
+ * carrega antes de qualquer decisão sobre entrar no app.
+ * ========================================================================== */
+
+.landing {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+.landing__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 2.5rem;
+  align-items: center;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.landing__hero h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 4.4vw, 2.85rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.landing__lead {
+  margin: 1.1rem 0 0;
+  max-width: 48ch;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.landing__lead--small {
+  font-size: 0.95rem;
+}
+
+.landing__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.6rem 0 0;
+}
+
+/*
+ * Texto escuro sobre o accent, e não branco como nos botões do app.
+ *
+ * Branco sobre #e2703a dá ~3.2:1, que em AA só vale como texto grande — e o CTA de uma landing
+ * aparece também em corpo normal no rodapé. Escuro sobre o mesmo accent dá ~5.9:1 e passa em
+ * qualquer tamanho, sem precisar apagar a cor da marca para um tom lavado.
+ */
+.landing__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #150a03;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.landing__button:hover {
+  background: #ef7f47;
+}
+
+.landing__button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+.landing__button--ghost {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.landing__button--ghost:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.landing__note {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Moldura de celular: o alvo real de uso do app é o telefone, e o hero mostra isso em vez de
+   afirmar. A borda é o aparelho, então ela e o fundo são a mesma cor. */
+.landing__phone {
+  justify-self: center;
+  width: min(268px, 100%);
+  border: 8px solid #22262f;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #22262f;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 45%);
+}
+
+.landing__phone img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.landing__section {
+  padding: 2.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing__section > h2 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  line-height: 1.22;
+  max-width: 30ch;
+}
+
+.landing__problem p {
+  margin: 0.7rem 0 0;
+  max-width: 62ch;
+  color: var(--muted);
+}
+
+.landing__problem .landing__punch {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Como funciona */
+.landing__steps {
+  list-style: none;
+  margin: 1.9rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.landing__step {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 1.8rem;
+  align-items: center;
+}
+
+.landing__step-number {
+  margin: 0 0 0.4rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.landing__step h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.landing__step p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.landing__print {
+  margin: 0;
+}
+
+.landing__print img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 35%);
+}
+
+/* O que faz / o que não é */
+.landing__grid {
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.landing__feature {
+  padding: 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.landing__feature h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.landing__feature p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Os limites não são recurso: cartão com fundo os venderia como se fossem. */
+.landing__grid--plain .landing__feature {
+  padding: 0.15rem 0 0.15rem 1rem;
+  background: none;
+  border: 0;
+  border-left: 2px solid var(--border);
+  border-radius: 0;
+}
+
+/* Estado do projeto */
+.landing__status {
+  list-style: none;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.landing__status li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.landing__status-mark {
+  flex: none;
+  font-weight: 700;
+}
+
+.landing__status li.is-done .landing__status-mark {
+  color: var(--ok);
+}
+
+.landing__status li.is-pending .landing__status-mark {
+  color: var(--accent);
+}
+
+/* Aviso */
+.landing__warning > p:first-of-type {
+  margin: 0.8rem 0 0;
+  padding: 0.9rem 1rem;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  color: var(--text);
+}
+
+/* Fechamento */
+.landing__close {
+  border-bottom: 0;
+  text-align: center;
+}
+
+.landing__close h2 {
+  margin: 0 auto;
+  max-width: 32ch;
+  font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  line-height: 1.22;
+}
+
+.landing__close .landing__lead--small {
+  display: block;
+  margin-top: 0.7rem;
+  font-weight: 400;
+}
+
+.landing__close .landing__cta {
+  justify-content: center;
+}
+
+.landing__footer {
+  padding-top: 1.8rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.landing__footer p {
+  margin: 0.45rem 0 0;
+  max-width: 70ch;
+}
+
+/* ==========================================================================
  * Mobile
  *
  * O celular é o alvo principal de uso do MVP, então os ajustes ficam concentrados aqui em vez de
@@ -819,6 +1130,42 @@ button:disabled {
   .gate__text {
     max-height: 52vh;
   }
+
+  /* Landing */
+  .landing {
+    padding: 1.5rem 0.9rem 2.5rem;
+  }
+
+  .landing__hero,
+  .landing__step {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing__hero {
+    gap: 1.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .landing__step {
+    gap: 1rem;
+  }
+
+  .landing__phone {
+    width: min(230px, 72%);
+  }
+
+  /*
+   * Aqui o `<picture>` troca o print de desktop pelo de celular, e com ele a proporção: sem fixar a
+   * nova, o layout salta no instante em que a imagem carrega. O teto de altura é o que impede que
+   * um print de 844px de altura ocupe a tela inteira quatro vezes seguidas — o recorte mostra o
+   * topo, que é onde está o que a seção afirma.
+   */
+  .landing__print img {
+    aspect-ratio: 390 / 844;
+    max-height: 62vh;
+    object-fit: cover;
+    object-position: top center;
+  }
 }
 
 /*
@@ -831,7 +1178,8 @@ button:disabled {
   button,
   .app__nav a,
   .node-row__inner,
-  .due-list__item {
+  .due-list__item,
+  .landing__button {
     min-height: 44px;
   }
 
@@ -872,6 +1220,15 @@ button:disabled {
   /* Empilha as opções de recall: em 320px duas colunas deixariam ~120px por opção. */
   .drill__options {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing {
+    padding: 1.25rem 0.65rem 2rem;
+  }
+
+  /* Os dois botões lado a lado não cabem em 320px sem quebrar o rótulo no meio. */
+  .landing__button {
+    width: 100%;
   }
 }
 
