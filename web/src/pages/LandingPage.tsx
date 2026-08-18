@@ -77,16 +77,21 @@ export function LandingPage() {
         </div>
       </header>
 
-      <section className="landing__section landing__problem" aria-labelledby="problema">
+      <section
+        className="landing__section landing__section--split landing__problem"
+        aria-labelledby="problema"
+      >
         <h2 id="problema">Toda aula tem três técnicas novas. A retenção não acompanha.</h2>
-        <p>
-          Você anota no caderno e não volta. Salva o vídeo e não assiste. Na vez seguinte em que a
-          posição aparece no rolamento, o corpo não lembra do detalhe que o professor repetiu duas
-          vezes.
-        </p>
-        <p className="landing__punch">
-          O problema não é falta de conteúdo. É falta de revisão na hora certa.
-        </p>
+        <div>
+          <p>
+            Você anota no caderno e não volta. Salva o vídeo e não assiste. Na vez seguinte em que a
+            posição aparece no rolamento, o corpo não lembra do detalhe que o professor repetiu duas
+            vezes.
+          </p>
+          <p className="landing__punch">
+            O problema não é falta de conteúdo. É falta de revisão na hora certa.
+          </p>
+        </div>
       </section>
 
       <section className="landing__section" aria-labelledby="como-funciona">
@@ -131,30 +136,37 @@ export function LandingPage() {
         </ul>
       </section>
 
-      <section className="landing__section" aria-labelledby="estado">
+      <section className="landing__section landing__section--split" aria-labelledby="estado">
         <h2 id="estado">Em que pé está</h2>
-        <p className="landing__lead landing__lead--small">
-          Ferramenta de uso pessoal, em uso real e com o inacabado à mostra.
-        </p>
-        <ul className="landing__status">
-          {STATUS.map((item) => (
-            <li key={item.label} className={item.done ? 'is-done' : 'is-pending'}>
-              <span className="landing__status-mark" aria-hidden="true">
-                {item.done ? '✓' : '○'}
-              </span>
-              <span>{item.label}</span>
-            </li>
-          ))}
-        </ul>
+        <div>
+          <p className="landing__lead landing__lead--small">
+            Ferramenta de uso pessoal, em uso real e com o inacabado à mostra.
+          </p>
+          <ul className="landing__status">
+            {STATUS.map((item) => (
+              <li key={item.label} className={item.done ? 'is-done' : 'is-pending'}>
+                <span className="landing__status-mark" aria-hidden="true">
+                  {item.done ? '✓' : '○'}
+                </span>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
-      <section className="landing__section landing__warning" aria-labelledby="aviso">
+      <section
+        className="landing__section landing__section--split landing__warning"
+        aria-labelledby="aviso"
+      >
         <h2 id="aviso">Antes de entrar</h2>
-        <p>⚠️ {SHORT_DISCLAIMER}</p>
-        <p className="landing__note">
-          O <a href={DISCLAIMER_DOC_URL}>aviso completo</a> é exibido com aceite obrigatório na
-          primeira abertura do app.
-        </p>
+        <div>
+          <p>⚠️ {SHORT_DISCLAIMER}</p>
+          <p className="landing__note">
+            O <a href={DISCLAIMER_DOC_URL}>aviso completo</a> é exibido com aceite obrigatório na
+            primeira abertura do app.
+          </p>
+        </div>
       </section>
 
       <section className="landing__section landing__close">
