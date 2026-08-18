@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink, Outlet, Route, Routes } from 'react-router-dom';
+import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 import { DemoModeBanner } from './components/DemoModeBanner.tsx';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { HomePage } from './pages/HomePage.tsx';
@@ -82,7 +82,10 @@ function AppChrome() {
           presencial com professor qualificado. Pratique somente em academia, com supervisão.
         </p>
         <p>
-          <a href="/?ver=apresentacao">Sobre o projeto</a>
+          {/* `Link`, e não `<a href>`: âncora comum descarta o app carregado e recarrega tudo só
+              para mostrar a apresentação. O `?ver` é o que impede a landing de devolver quem já
+              entrou direto para a agenda. */}
+          <Link to="/?ver=apresentacao">Sobre o projeto</Link>
         </p>
       </footer>
     </div>
