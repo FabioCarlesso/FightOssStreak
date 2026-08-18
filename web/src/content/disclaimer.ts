@@ -13,3 +13,14 @@ export const FULL_DISCLAIMER: readonly string[] = [
   'O autor e os colaboradores deste aplicativo não se responsabilizam por qualquer lesão, dano ou prejuízo decorrente do uso das informações aqui contidas. Ao usar este aplicativo, você reconhece que assume integralmente os riscos da prática.',
   'Os vídeos referenciados são conteúdo de terceiros, incorporados a partir do YouTube. Não somos autores desse conteúdo e não temos vínculo com seus criadores.',
 ];
+
+/**
+ * Aviso curto, o mesmo do rodapé de nó em `docs/06-disclaimer-responsabilidade.md`.
+ *
+ * Aparece na landing, que é pública e não passa pelo portão de aceite: quem chega pelo link precisa
+ * ler o limite antes de entrar, mesmo que nunca clique em "Abrir o app". Mora aqui junto do texto
+ * completo de propósito — mudou um, revisar o outro, e mudança material continua exigindo subir
+ * `fos.disclaimer-version` no backend.
+ */
+export const SHORT_DISCLAIMER =
+  'Conteúdo de apoio ao estudo. Não substitui a instrução do seu professor. Pratique somente em academia, com supervisão e parceiro consciente. Respeite o tap sempre.';

@@ -45,6 +45,10 @@ As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .
 e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
 variável de ambiente. Tabela completa no README.
 
+Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os oito prints que a página
+pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
+nó, do drill ou da tela inicial? O print correspondente precisa ser refeito no mesmo PR.
+
 Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga o canônico (verifica e credita o
 canal), `... <NÓ> --extra <url>...` acrescenta complementares (D32, teto de 4 por nó) e
 `node scripts/verificar-videos.mjs` reconfere os já catalogados — o workflow `videos` roda esse

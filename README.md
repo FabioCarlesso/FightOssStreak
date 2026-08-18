@@ -6,7 +6,7 @@ Ferramenta pessoal de revisão e retenção do que é aprendido no tatame, com m
 
 ## O que já funciona
 
-MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real.
+MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real. A raiz (`/`) é a landing pública que apresenta o projeto; o app começa em `/hoje`, atrás do aceite do aviso.
 
 | Camada | Estado |
 |---|---|
@@ -16,6 +16,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
 | Backend | Spring Boot + Flyway, API documentada em OpenAPI |
 | Web | React + Vite |
+| Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |
 | Mobile | Não iniciado (fase posterior, D4) |
 
 ### Modo demonstração
@@ -29,6 +30,20 @@ isso em todas as telas e oferece o desligar.
 registro de drill fica fora, então progresso, streak e agenda de revisão ficam intactos, e os
 contadores da árvore continuam mostrando o que está travado de verdade (D31). O estado vive na
 sessão do navegador — sobrevive a um F5, não a uma aba nova.
+
+### Landing
+
+A raiz (`/`) apresenta o projeto para quem chega pelo link: o que é, como funciona, prints das
+telas reais e o botão de entrar. É **estática** — não chama a API, então aparece inteira mesmo com
+o backend frio, que é o caso comum de cold start.
+
+O aceite do aviso não mudou de lugar: ele continua sendo o primeiro a decidir em `/hoje`,
+`/arvore`, `/no/:code` e `/progresso`. Quem já entrou no app uma vez passa direto da raiz para a
+agenda do dia; `/?ver=apresentacao` traz a apresentação de volta.
+
+Os prints saem de `node scripts/capturar-prints.mjs --semear`, com o app rodando — o procedimento
+está em [`docs/10-prints-da-landing.md`](docs/10-prints-da-landing.md). **PR que mexe na aparência
+da árvore, do nó, do drill ou da tela inicial precisa refazer o print correspondente.**
 
 ## Rodando
 
@@ -134,6 +149,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_DB_PASSWORD` | backend | `fos` | `${{Postgres.PGPASSWORD}}` |
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
+| `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
 
 Detalhes que não são óbvios:
 
@@ -145,6 +161,10 @@ Detalhes que não são óbvios:
   `application.yml` tem `profiles.default: dev`, que é H2 em memória. O deploy fica verde, o
   healthcheck passa, a API responde, e todo progresso some no deploy seguinte. Sinal de que
   o perfil pegou: as migrations do Flyway nos logs da subida.
+- **`VITE_PUBLIC_URL` é de build, não de runtime.** Ela só existe para as tags `og:url` e
+  `og:image` da prévia de link, que exigem URL absoluta. Mudá-la pede um novo deploy do `web`, e
+  sem ela as duas tags simplesmente não são emitidas — o link fica sem imagem de prévia e nada
+  mais quebra (D33).
 - **`DATABASE_URL` não serve.** A Railway a expõe no formato `postgresql://user:pass@host/db`,
   que não é uma URL JDBC e o Spring não aceita. Daí montar `FOS_DB_URL` a partir das variáveis
   de referência do Postgres.
@@ -230,6 +250,7 @@ Toda a documentação de planejamento está em [`docs/`](docs/):
 - [`07-decisoes.md`](docs/07-decisoes.md) — log de decisões
 - [`08-curadoria-videos.md`](docs/08-curadoria-videos.md) — critérios de curadoria dos vídeos
 - [`09-regras-repositorio.md`](docs/09-regras-repositorio.md) — `main` protegida, PR obrigatório, CI como portão
+- [`10-prints-da-landing.md`](docs/10-prints-da-landing.md) — como refazer os prints que a landing exibe
 
 ## Contribuindo
 
