@@ -29,6 +29,47 @@
     }
   ],
   "paths": {
+    "/api/nodes/{code}/note": {
+      "put": {
+        "tags": [
+          "Currículo"
+        ],
+        "summary": "Grava a anotação fixada do nó; nota em branco limpa a anotação",
+        "operationId": "savePinnedNote",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PinnedNoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinnedNoteView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/nodes/{code}/quiz": {
       "post": {
         "tags": [
@@ -294,6 +335,27 @@
   },
   "components": {
     "schemas": {
+      "PinnedNoteRequest": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "maxLength": 1000,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "PinnedNoteView": {
+        "type": "object",
+        "properties": {
+          "nodeCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
       "Answer": {
         "required": [
           "optionId",
@@ -674,6 +736,9 @@
           },
           "srs": {
             "$ref": "#/components/schemas/SrsView"
+          },
+          "pinnedNote": {
+            "type": "string"
           },
           "recentDrills": {
             "type": "array",

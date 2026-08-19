@@ -3,6 +3,8 @@ import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
 import { useDemoMode } from '../state/demoMode.ts';
 import { DrillForm } from '../components/DrillForm.tsx';
+import { DrillHistory } from '../components/DrillHistory.tsx';
+import { PinnedNote } from '../components/PinnedNote.tsx';
 import { QuizForm } from '../components/QuizForm.tsx';
 import { ExtraVideos } from '../components/ExtraVideos.tsx';
 import { VideoEmbed } from '../components/VideoEmbed.tsx';
@@ -64,6 +66,21 @@ export function NodePage() {
         <h3>Conceito</h3>
         <p className="node__concept">{detail.concept}</p>
 
+        {/*
+         * Logo abaixo do conceito, e não no fim da página: o conceito é o que o currículo diz da
+         * técnica, a anotação é o que ela virou no seu treino. Ler os dois juntos é o ponto.
+         * `key` pelo código pelo mesmo motivo dos formulários — o rascunho digitado é de um nó só.
+         */}
+        {!locked && (
+          <PinnedNote
+            key={code}
+            nodeCode={code}
+            note={detail.pinnedNote}
+            readOnly={preview}
+            onSaved={node.reload}
+          />
+        )}
+
         {(detail.prereqs?.length ?? 0) > 0 && (
           <>
             <h3>Pré-requisitos</h3>
@@ -118,6 +135,17 @@ export function NodePage() {
         <section className="card">
           <h3>Registrar drill</h3>
           <DrillForm key={code} nodeCode={code} srs={detail.srs} onDone={node.reload} />
+        </section>
+      )}
+
+      {/*
+       * Depois do registro de drill de propósito: é lá que a anotação nasce, e aqui que ela vira
+       * histórico. Mesma condição do formulário — onde não se pode registrar, não há o que reler.
+       */}
+      {!lockedByProgress && (
+        <section className="card">
+          <h3>Suas anotações</h3>
+          <DrillHistory entries={detail.recentDrills} />
         </section>
       )}
 

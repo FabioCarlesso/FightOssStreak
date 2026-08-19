@@ -4,10 +4,11 @@ import dev.fos.model.Belt;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.UnlockRule;
 import dev.fos.model.VideoOrientation;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-/** Formas de leitura do currículo expostas pela API. */
+/** Formas de leitura do currículo, e da anotação que o usuário fixa em um nó. */
 public final class CurriculumDtos {
 
     private CurriculumDtos() {}
@@ -52,6 +53,7 @@ public final class CurriculumDtos {
             List<ExtraVideoView> extraVideos,
             List<QuizDtos.QuestionView> quiz,
             SrsView srs,
+            String pinnedNote,
             List<DrillEntryView> recentDrills,
             String safetyNotice) {}
 
@@ -113,4 +115,17 @@ public final class CurriculumDtos {
     }
 
     public record DrillEntryView(LocalDate drilledOn, String recall, String note) {}
+
+    /**
+     * Anotação fixada do usuário sobre um nó.
+     *
+     * <p>Limite igual ao da nota de drill ({@code ActivityDtos.DrillRequest}): é o mesmo tipo de
+     * texto, escrito pela mesma pessoa, e divergir aqui só produziria a surpresa de a nota caber em
+     * um campo e não no outro. Nota em branco é pedido de limpeza, não erro de validação — daí não
+     * haver {@code @NotBlank}.
+     */
+    public record PinnedNoteRequest(@Size(max = 1000) String note) {}
+
+    /** Resposta da gravação: só o que mudou, porque a tela já tem o resto do nó carregado. */
+    public record PinnedNoteView(String nodeCode, String note) {}
 }

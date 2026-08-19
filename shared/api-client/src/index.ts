@@ -10,6 +10,7 @@ import type {
   DrillResult,
   MvpMetrics,
   NodeDetail,
+  PinnedNote,
   QuizResult,
   QuizSubmission,
   ReviewAgenda,
@@ -88,6 +89,16 @@ export function createApiClient(options: ApiClientOptions = {}) {
       request<DrillResult>(`/api/nodes/${encodeURIComponent(code)}/drill`, {
         method: 'POST',
         body: JSON.stringify(drill),
+      }),
+
+    /**
+     * Grava a anotação fixada do nó. Nota em branco limpa — o backend normaliza, e o cliente não
+     * duplica essa regra.
+     */
+    savePinnedNote: (code: string, note: string) =>
+      request<PinnedNote>(`/api/nodes/${encodeURIComponent(code)}/note`, {
+        method: 'PUT',
+        body: JSON.stringify({ note }),
       }),
 
     getStreak: () => request<StreakView>('/api/streak'),
