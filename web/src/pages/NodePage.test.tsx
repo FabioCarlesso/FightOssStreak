@@ -199,6 +199,35 @@ describe('NodePage', () => {
     expect(screen.getByText('cotovelo colado')).toBeInTheDocument();
   });
 
+  it('clicar em "Anotar" leva o foco para o campo', async () => {
+    // O botão clicado é substituído pelo campo. Sem mover o foco junto, o que se digita em
+    // seguida vai para o `<body>` e se perde — foi assim que o defeito apareceu na revisão:
+    // 33 caracteres digitados logo após o clique, campo continuou vazio.
+    renderNode();
+    await userEvent.click(await screen.findByRole('button', { name: /^anotar$/i }));
+
+    const campo = screen.getByLabelText(/sua anotação/i);
+    expect(campo).toHaveFocus();
+
+    await userEvent.keyboard('cotovelo colado');
+    expect(campo).toHaveValue('cotovelo colado');
+  });
+
+  it('editar anotação existente deixa o caret no fim do texto', async () => {
+    // `focus()` num textarea preenchido deixa o caret no começo, e aí digitar escreve ao contrário
+    // do esperado. Editar uma anotação quase sempre é acrescentar.
+    apiMock.getNode.mockResolvedValue({ ...DISPONIVEL, pinnedNote: 'joelho antes do pé' });
+
+    renderNode();
+    await userEvent.click(await screen.findByRole('button', { name: /editar anotação/i }));
+
+    const campo = screen.getByLabelText(/sua anotação/i);
+    expect(campo).toHaveFocus();
+
+    await userEvent.keyboard(' e cotovelo colado');
+    expect(campo).toHaveValue('joelho antes do pé e cotovelo colado');
+  });
+
   it('em demonstração a anotação é leitura e nada é gravado', async () => {
     // Mesmo risco que a D31 já pegou no quiz e no drill: a demonstração não grava, e um campo
     // editável aqui contrariaria a faixa que a própria tela acabou de exibir.

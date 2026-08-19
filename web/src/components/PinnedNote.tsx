@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../api/client.ts';
 
 /**
@@ -36,6 +36,22 @@ export function PinnedNote({
   useEffect(() => {
     setJustSaved(undefined);
   }, [note]);
+
+  // Entrar em edição precisa levar o foco junto: o botão que foi clicado desaparece para dar lugar
+  // ao campo, então sem isto o foco volta para o `<body>` e quem navega por teclado fica sem
+  // referência no meio da própria ação que pediu. O `DrillForm` não tem o problema porque o
+  // textarea dele já está na tela — aqui ele nasce do clique.
+  //
+  // O caret vai para o fim do texto, e não para o começo (que é onde `focus()` o deixa num
+  // textarea já preenchido): editar uma anotação existente quase sempre é acrescentar.
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!editing) return;
+    const input = inputRef.current;
+    if (!input) return;
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }, [editing]);
 
   async function save() {
     setSaving(true);
@@ -95,6 +111,7 @@ export function PinnedNote({
         Sua anotação
       </label>
       <textarea
+        ref={inputRef}
         id={`pinned-note-${nodeCode}`}
         className="pinned-note__input"
         value={draft}
