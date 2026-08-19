@@ -2,6 +2,9 @@ spring:
   main:
     # Permite que o teste substitua o bean de Clock por um relógio fixo.
     allow-bean-definition-overriding: true
+    # O banner não diz nada sobre o teste que está rodando. Precisa das aspas: em YAML,
+    # `off` sem elas vira o booleano false e a conversão para Banner.Mode falha.
+    banner-mode: 'off'
   datasource:
     url: jdbc:h2:mem:fos-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -15,3 +18,13 @@ fos:
   disclaimer-version: 'test-1'
   curriculum:
     sync-on-startup: true
+
+# O que sobe o contexto Spring aqui é só o ApiIntegrationTest, e o INFO de partida dele (Hikari,
+# Flyway, Hibernate) não ajuda a entender um teste que quebrou: falha de asserção vem pelo
+# Surefire e falha de contexto vem em ERROR, que continua visível. `dev.fos` fica em INFO de
+# propósito — é o log da própria aplicação (ex.: a sincronização do currículo), esse sim
+# diagnóstico. Para investigar a subida do contexto, suba `root` para info temporariamente.
+logging:
+  level:
+    root: warn
+    dev.fos: info

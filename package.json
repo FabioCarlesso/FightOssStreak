@@ -16,7 +16,7 @@
     "build": "npm run build --workspace @fos/domain && npm run build --workspace @fos/api-client && npm run build --workspace @fos/web",
     "test": "npm run test:domain && npm run test:scripts && npm run test:web",
     "test:domain": "npm run test --workspace @fos/domain",
-    "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
+    "test:scripts": "node --test --test-reporter=dot \"scripts/**/*.test.mjs\"",
     "test:web": "npm run test --workspace @fos/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint . --max-warnings=0 && prettier --check .",
