@@ -59,9 +59,24 @@ const TELAS = [
     alinhar: 'end',
     ajuste: 80,
   },
-  { nome: 'no', rota: '/no/M1.3', esperar: '.node__concept' },
-  // O ajuste sobe o enquadramento: a página do nó termina logo abaixo do formulário, então parar
-  // no fim dela deixaria um quinto do print em fundo vazio.
+  // O único enquadrado de forma diferente em cada largura, e por necessidade. A seção que exibe
+  // este print promete conceito + vídeo com o canal creditado (D7), e em 1280px isso cabe a partir
+  // do topo. Em 390px não cabe mais: desde que a anotação fixada entrou no card do conceito (#45),
+  // o que sobrava de espaço acabou, e a página vista do topo termina antes do player. Ancorar no
+  // vídeo resolve o celular e estragaria o desktop, onde o player tem 442px de altura e empurraria
+  // conceito e título para fora — daí o override em vez de um enquadramento só.
+  {
+    nome: 'no',
+    rota: '/no/M1.3',
+    esperar: '.node__concept',
+    porFormato: {
+      // `end` + `ajuste` passam um pouco do fim do `<figure>`, que é onde vive o crédito ao canal.
+      mobile: { rolarAte: '.video', alinhar: 'end', ajuste: 40 },
+    },
+  },
+  // O ajuste sobe o enquadramento para o formulário não ficar colado na borda de baixo. Abaixo
+  // dele a página segue com o histórico de anotações (#45), que entra no print de brinde: é o
+  // destino do que se escreve no campo fotografado aqui.
   { nome: 'drill', rota: '/no/M1.3', esperar: '.drill', rolarAte: '.drill', ajuste: -160 },
   { nome: 'hoje', rota: '/hoje', esperar: '.due-list__item' },
 ];
@@ -115,6 +130,21 @@ const DRILLS = [
   { no: 'M1.3', diasAtras: 1, recall: 'OK', nota: 'Cotovelo colado antes de girar — funcionou.' },
   { no: 'M0.2', diasAtras: 1, recall: 'EASY' },
   { no: 'M0.3', diasAtras: 0, recall: 'OK' },
+];
+
+/**
+ * Anotação fixada de exemplo (#45).
+ *
+ * Só em M1.3, que é o nó fotografado. O print precisa mostrar o bloco preenchido e não o convite
+ * "Anotar": o estado vazio é honesto no app, mas fotografado vira uma tela que não exercita o
+ * recurso — do mesmo jeito que uma agenda escrita "nada vencido hoje" não serve para ilustrar a
+ * agenda.
+ */
+const NOTAS_FIXADAS = [
+  {
+    no: 'M1.3',
+    nota: 'O professor insiste: joelho passa antes do pé, senão o quadril não acompanha.',
+  },
 ];
 
 /** Um quiz refeito depois de aprovado — é o que acende a quarta métrica de docs/05. */
@@ -235,9 +265,17 @@ async function semear(api) {
     });
   }
 
+  for (const { no, nota } of NOTAS_FIXADAS) {
+    await pedir(api, `/api/nodes/${no}/note`, {
+      method: 'PUT',
+      body: JSON.stringify({ note: nota }),
+    });
+  }
+
   const agenda = await pedir(api, '/api/reviews/today');
   console.log(
-    `semeado: ${NOS_A_CONCLUIR.length} nós concluídos, ${DRILLS.length} drills, ${agenda.dueCount} na agenda de hoje`,
+    `semeado: ${NOS_A_CONCLUIR.length} nós concluídos, ${DRILLS.length} drills, ` +
+      `${NOTAS_FIXADAS.length} anotação fixada, ${agenda.dueCount} na agenda de hoje`,
   );
   if (agenda.dueCount === 0) {
     throw new Error('a agenda ficou vazia — o print de "revise hoje" sairia sem conteúdo');
@@ -339,7 +377,13 @@ async function esperarSeletor(cdp, sessao, seletor, limiteMs = 20000) {
   }
 }
 
-async function capturar(cdp, base, tela, formato, saida) {
+/**
+ * `porFormato` permite que uma tela seja enquadrada de um jeito no desktop e de outro no celular.
+ * Existe porque 1280×800 e 390×844 não cabem a mesma quantidade de página, e forçar um
+ * enquadramento só significaria quebrar a promessa da seção em uma das duas larguras.
+ */
+async function capturar(cdp, base, telaBase, formato, saida) {
+  const tela = { ...telaBase, ...(telaBase.porFormato?.[formato.sufixo] ?? {}) };
   const { targetId } = await cdp.enviar('Target.createTarget', { url: 'about:blank' });
   const { sessionId } = await cdp.enviar('Target.attachToTarget', { targetId, flatten: true });
 

@@ -1,0 +1,14 @@
+-- Anotação fixada do usuário sobre um nó (issue #45).
+--
+-- Por que coluna em `user_progress` e não tabela nova: a chave da anotação é exatamente
+-- (usuário, nó), que já é a chave primária desta tabela. Tabela separada duplicaria a chave e a FK
+-- para ganhar nada — não há mais de uma anotação fixada por nó, por definição.
+--
+-- Isto NÃO substitui `drill_log.note`, e as duas respondem coisas diferentes: a nota do drill é o
+-- que aconteceu num treino ("dia 12/08 o professor mandou fechar o cotovelo") e é histórico
+-- imutável; a fixada é o detalhe que se quer reler TODA vez que o nó abre. Guardá-las na mesma
+-- coluna obrigaria a inventar um "drill que não foi treino" só para anotar.
+--
+-- NULL = sem anotação. Nota em branco limpa a coluna em vez de gravar string vazia, para que
+-- "sem anotação" tenha uma representação só.
+ALTER TABLE user_progress ADD COLUMN pinned_note VARCHAR;

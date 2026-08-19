@@ -57,13 +57,13 @@ export const PRINT_ARVORE: Print = {
 export const PRINT_NO: Print = {
   desktop: '/prints/no-desktop.webp',
   mobile: '/prints/no-mobile.webp',
-  alt: 'Tela de um nó do currículo, com o conceito escrito, o vídeo do YouTube incorporado e o crédito ao canal.',
+  alt: 'Tela de um nó do currículo, com o conceito escrito, a anotação pessoal sobre a técnica, o vídeo do YouTube incorporado e o crédito ao canal.',
 };
 
 export const PRINT_DRILL: Print = {
   desktop: '/prints/drill-desktop.webp',
   mobile: '/prints/drill-mobile.webp',
-  alt: 'Formulário de registro de drill com as quatro opções de recall e a previsão de quando o nó volta para revisão.',
+  alt: 'Formulário de registro de drill com as quatro opções de recall e a previsão de quando o nó volta para revisão, seguido do histórico de anotações do nó.',
 };
 
 export const PRINT_HOJE: Print = {

@@ -6,7 +6,7 @@ Ferramenta pessoal de revisão e retenção do que é aprendido no tatame, com m
 
 ## O que já funciona
 
-MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real. A raiz (`/`) é a landing pública que apresenta o projeto; o app começa em `/hoje`, atrás do aceite do aviso.
+MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, anotações pessoais por nó, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real. A raiz (`/`) é a landing pública que apresenta o projeto; o app começa em `/hoje`, atrás do aceite do aviso.
 
 | Camada | Estado |
 |---|---|
@@ -14,6 +14,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Quiz conceitual | Escrito para **M0 a M3** (25 nós, 91 perguntas). Os outros 21 nós, de M4 a M8, estão pendentes de curadoria |
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
+| Anotações por nó | Anotação fixada junto ao conceito, mais o histórico do que foi anotado a cada drill (#45) |
 | Backend | Spring Boot + Flyway, API documentada em OpenAPI |
 | Web | React + Vite |
 | Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |

@@ -1,4 +1,4 @@
-import type { NodeDetail, QuizResult, QuizSubmission } from '@fos/types';
+import type { NodeDetail, PinnedNote, QuizResult, QuizSubmission } from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -18,6 +18,7 @@ const { apiMock } = vi.hoisted(() => ({
   apiMock: {
     getNode: vi.fn<(code: string) => Promise<NodeDetail>>(),
     submitQuiz: vi.fn<(code: string, submission: QuizSubmission) => Promise<QuizResult>>(),
+    savePinnedNote: vi.fn<(code: string, note: string) => Promise<PinnedNote>>(),
   },
 }));
 
@@ -38,6 +39,10 @@ const DISPONIVEL: NodeDetail = {
   status: 'AVAILABLE',
   concept: 'Distribuir o impacto em vez de concentrá-lo.',
   safetyNotice: 'Pratique somente em academia.',
+  recentDrills: [
+    { drilledOn: '2026-08-16', recall: 'HARD', note: 'entrei com a cabeça baixa' },
+    { drilledOn: '2026-08-12', recall: 'OK' },
+  ],
   quiz: [
     {
       id: 1,
@@ -60,6 +65,7 @@ const BLOQUEADO: NodeDetail = {
   unlockRule: 'ALL',
   concept: 'Tocar cedo é o que permite treinar amanhã.',
   safetyNotice: 'Pratique somente em academia.',
+  pinnedNote: 'anotação de um nó que ficou bloqueado',
   prereqs: [{ code: 'M0.2', title: 'Quedas seguras', completed: false }],
   quiz: [
     {
@@ -96,6 +102,9 @@ beforeEach(() => {
   sessionStorage.clear();
   apiMock.getNode.mockImplementation((code) =>
     Promise.resolve(code === 'M0.2' ? DISPONIVEL : BLOQUEADO),
+  );
+  apiMock.savePinnedNote.mockImplementation((code, note) =>
+    Promise.resolve({ nodeCode: code, note: note.trim() || undefined }),
   );
 });
 
@@ -173,5 +182,76 @@ describe('NodePage', () => {
     expect(await screen.findByText(/nó bloqueado/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /treinei isso hoje/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /responder/i })).not.toBeInTheDocument();
+  });
+
+  it('a anotação fixada é gravada e aparece sem esperar a recarga do nó', async () => {
+    renderNode();
+    await userEvent.click(await screen.findByRole('button', { name: /^anotar$/i }));
+    await userEvent.type(screen.getByLabelText(/sua anotação/i), 'cotovelo colado');
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }));
+
+    expect(apiMock.savePinnedNote).toHaveBeenCalledWith('M0.2', 'cotovelo colado');
+
+    // O nó recarrega, mas a resposta mockada ainda é a antiga (sem `pinnedNote`). O texto tem que
+    // continuar na tela mesmo assim: é a janela em que se olha para conferir se salvou.
+    expect(await screen.findByText('cotovelo colado')).toBeInTheDocument();
+    await waitFor(() => expect(apiMock.getNode).toHaveBeenCalledTimes(2));
+    expect(screen.getByText('cotovelo colado')).toBeInTheDocument();
+  });
+
+  it('clicar em "Anotar" leva o foco para o campo', async () => {
+    // O botão clicado é substituído pelo campo. Sem mover o foco junto, o que se digita em
+    // seguida vai para o `<body>` e se perde — foi assim que o defeito apareceu na revisão:
+    // 33 caracteres digitados logo após o clique, campo continuou vazio.
+    renderNode();
+    await userEvent.click(await screen.findByRole('button', { name: /^anotar$/i }));
+
+    const campo = screen.getByLabelText(/sua anotação/i);
+    expect(campo).toHaveFocus();
+
+    await userEvent.keyboard('cotovelo colado');
+    expect(campo).toHaveValue('cotovelo colado');
+  });
+
+  it('editar anotação existente deixa o caret no fim do texto', async () => {
+    // `focus()` num textarea preenchido deixa o caret no começo, e aí digitar escreve ao contrário
+    // do esperado. Editar uma anotação quase sempre é acrescentar.
+    apiMock.getNode.mockResolvedValue({ ...DISPONIVEL, pinnedNote: 'joelho antes do pé' });
+
+    renderNode();
+    await userEvent.click(await screen.findByRole('button', { name: /editar anotação/i }));
+
+    const campo = screen.getByLabelText(/sua anotação/i);
+    expect(campo).toHaveFocus();
+
+    await userEvent.keyboard(' e cotovelo colado');
+    expect(campo).toHaveValue('joelho antes do pé e cotovelo colado');
+  });
+
+  it('em demonstração a anotação é leitura e nada é gravado', async () => {
+    // Mesmo risco que a D31 já pegou no quiz e no drill: a demonstração não grava, e um campo
+    // editável aqui contrariaria a faixa que a própria tela acabou de exibir.
+    sessionStorage.setItem(CHAVE_DEMO, 'on');
+
+    renderNode();
+    await irParaOProximoNo();
+
+    expect(await screen.findByText(/este nó continua bloqueado/i)).toBeInTheDocument();
+    expect(screen.getByText('anotação de um nó que ficou bloqueado')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^anotar$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /editar anotação/i })).not.toBeInTheDocument();
+    expect(apiMock.savePinnedNote).not.toHaveBeenCalled();
+  });
+
+  it('o histórico de anotações some junto com o registro de drill em nó bloqueado', async () => {
+    renderNode();
+    expect(await screen.findByText('entrei com a cabeça baixa')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /suas anotações/i })).toBeInTheDocument();
+
+    await irParaOProximoNo();
+
+    expect(await screen.findByText(/nó bloqueado/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /suas anotações/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('entrei com a cabeça baixa')).not.toBeInTheDocument();
   });
 });

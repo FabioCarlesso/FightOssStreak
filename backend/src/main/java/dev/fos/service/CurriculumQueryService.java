@@ -6,6 +6,7 @@ import dev.fos.model.ProgressStatus;
 import dev.fos.model.QuizOption;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.SrsReview;
+import dev.fos.model.UserNodeKey;
 import dev.fos.model.UserProgress;
 import dev.fos.model.VideoRef;
 import dev.fos.repo.DrillLogRepository;
@@ -142,6 +143,14 @@ public class CurriculumQueryService {
                                                 shuffleOptions(question)))
                         .toList();
 
+        // Busca por chave primária, e não o mapa inteiro de progresso do usuário: aqui só
+        // interessa a anotação deste nó.
+        String pinnedNote =
+                progressRepository
+                        .findById(new UserNodeKey(userId, node.getId()))
+                        .map(UserProgress::getPinnedNote)
+                        .orElse(null);
+
         List<CurriculumDtos.DrillEntryView> drills =
                 drillLogRepository
                         .findByUserIdAndNodeIdOrderByDrilledOnDesc(userId, node.getId())
@@ -171,6 +180,7 @@ public class CurriculumQueryService {
                         .toList(),
                 quiz,
                 toSrsView(srsByNodeId(userId).get(node.getId()), today),
+                pinnedNote,
                 drills,
                 SHORT_SAFETY_NOTICE);
     }

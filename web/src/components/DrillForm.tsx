@@ -2,13 +2,7 @@ import { useState } from 'react';
 import type { DrillResult, SrsView } from '@fos/types';
 import { type Recall, review } from '@fos/domain';
 import { api } from '../api/client.ts';
-
-const RECALL_LABELS: ReadonlyArray<{ value: Recall; label: string; hint: string }> = [
-  { value: 'FORGOT', label: 'Não lembrava', hint: 'Precisou reaprender do zero' },
-  { value: 'HARD', label: 'Travei', hint: 'Lembrava, mas saiu errado' },
-  { value: 'OK', label: 'Saiu', hint: 'Funcionou, com esforço' },
-  { value: 'EASY', label: 'Saiu limpo', hint: 'Sem pensar' },
-];
+import { RECALL_LABELS } from '../content/recall.ts';
 
 /**
  * Registro de "treinei isso hoje".

@@ -49,7 +49,9 @@ exibe esse print afirma. Então o script popula progresso de exemplo antes de fo
 - conclui oito nós (M0.1–M0.5 e M1.1–M1.3) respondendo o quiz de verdade;
 - registra onze drills em **dias diferentes**, o que rende streak de 8 dias;
 - deixa quatro nós vencidos hoje, com atrasos distintos, para a agenda parecer uma agenda;
-- refaz um quiz já aprovado, que é o que acende a quarta métrica de `05-mvp-web-plano.md`.
+- refaz um quiz já aprovado, que é o que acende a quarta métrica de `05-mvp-web-plano.md`;
+- fixa uma anotação em M1.3, o nó fotografado, para o print do nó mostrar o bloco preenchido em vez
+  do convite "Anotar" — estado vazio é honesto no app e inútil em print.
 
 Tudo pela API pública, sem SQL: o que permite isso é o campo `drilledOn` do `DrillRequest`, que
 aceita data passada. As respostas certas do quiz saem do próprio currículo versionado — a API serve
@@ -69,7 +71,7 @@ imagem precisa sustentar a afirmação:
 | Arquivo | Precisa mostrar |
 |---|---|
 | `arvore-*` | os três estados na mesma tela: concluído, disponível e travado com "Requer: …" — sem o travado, a frase "um nó só abre quando os pré-requisitos fecham" fica sem prova |
-| `no-*` | conceito escrito, vídeo incorporado e **o crédito ao canal** visível (D7) |
+| `no-*` | conceito escrito, a anotação pessoal, vídeo incorporado e **o crédito ao canal** visível (D7) |
 | `drill-*` | as quatro opções de recall e a previsão de quando o nó volta |
 | `hoje-*` | streak e a agenda com mais de um item, com atrasos diferentes |
 | `og.jpg` | o hero da landing em 1200×630 |
@@ -77,6 +79,18 @@ imagem precisa sustentar a afirmação:
 Por isso o script espera por seletor (`.node-row--locked`, `.due-list__item`) em vez de esperar pelo
 `load`: se a tela não chegou ao estado que a seção afirma, é melhor falhar do que gravar um print
 que parece válido.
+
+### Enquadramento diferente por largura
+
+`no` é a única tela com `porFormato` no script, e por necessidade. Em 1280×800 a página do nó cabe a
+partir do topo até o vídeo; em 390×844 não cabe mais desde que a anotação fixada entrou no card do
+conceito (#45) — vista do topo, a tela do celular termina antes do player, e o print deixaria de
+sustentar a linha da tabela acima. Então o celular é ancorado no `.video`, e o desktop segue do
+topo: ancorar os dois no vídeo empurraria título e conceito para fora em 1280px, onde o player tem
+442px de altura.
+
+Se outra tela precisar do mesmo, o campo aceita qualquer chave de enquadramento
+(`rolarAte`, `alinhar`, `ajuste`) por sufixo de formato.
 
 ## Depois de recapturar
 

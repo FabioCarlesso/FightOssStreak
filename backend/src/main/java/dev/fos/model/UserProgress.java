@@ -30,6 +30,17 @@ public class UserProgress {
     @Column(name = "last_quiz_score")
     private Integer lastQuizScore;
 
+    /**
+     * Anotação fixada do usuário sobre este nó — o detalhe que ele quer reler toda vez que o nó
+     * abre.
+     *
+     * <p>Não se confunde com {@code drill_log.note}, que é o que aconteceu em um treino específico
+     * e fica no histórico. {@code null} é o estado "sem anotação"; nota em branco limpa a coluna em
+     * vez de gravar string vazia, para que esse estado tenha uma representação só.
+     */
+    @Column(name = "pinned_note")
+    private String pinnedNote;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -69,6 +80,14 @@ public class UserProgress {
 
     public void setLastQuizScore(Integer lastQuizScore) {
         this.lastQuizScore = lastQuizScore;
+    }
+
+    public String getPinnedNote() {
+        return pinnedNote;
+    }
+
+    public void setPinnedNote(String pinnedNote) {
+        this.pinnedNote = pinnedNote;
     }
 
     public Instant getUpdatedAt() {

@@ -19,6 +19,8 @@ export type VideoView = Schemas['VideoView'];
 export type ExtraVideoView = Schemas['ExtraVideoView'];
 export type SrsView = Schemas['SrsView'];
 export type DrillEntry = Schemas['DrillEntryView'];
+export type PinnedNoteRequest = Schemas['PinnedNoteRequest'];
+export type PinnedNote = Schemas['PinnedNoteView'];
 
 export type QuizQuestionView = Schemas['QuestionView'];
 export type QuizOptionView = Schemas['OptionView'];

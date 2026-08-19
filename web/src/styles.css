@@ -637,6 +637,105 @@ button:disabled {
   margin: 0;
 }
 
+/* Anotação fixada e histórico de anotações do nó (#45) */
+
+/*
+ * Barra lateral em vez de cartão com fundo: a anotação divide o card com o conceito, e um fundo
+ * próprio a faria disputar peso com ele. A barra diz "isto aqui é seu" sem gritar.
+ */
+.pinned-note {
+  margin-top: 0.9rem;
+  border-left: 3px solid var(--accent);
+  padding: 0.1rem 0 0.1rem 0.8rem;
+}
+
+.pinned-note__label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.pinned-note__text {
+  margin: 0;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+}
+
+.pinned-note__empty {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.pinned-note__input {
+  width: 100%;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.pinned-note__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Botão de texto: anotar é ação secundária ao lado de responder o quiz e registrar o drill. */
+.pinned-note__action {
+  background: none;
+  border: none;
+  padding: 0.35rem 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pinned-note .hint {
+  margin: 0.4rem 0 0;
+}
+
+.drill-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.drill-history__item {
+  border-left: 2px solid var(--border);
+  padding-left: 0.7rem;
+}
+
+.drill-history__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* `pre-wrap`: a anotação foi digitada em textarea, e as quebras de linha são do autor. */
+.drill-history__note {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
 /* Portão do disclaimer */
 .gate {
   min-height: 100vh;

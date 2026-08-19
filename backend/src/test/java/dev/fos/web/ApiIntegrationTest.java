@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -312,6 +313,149 @@ class ApiIntegrationTest {
                                 .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"));
+    }
+
+    @Test
+    @DisplayName("a anotação fixada é gravada, sobrescrita e devolvida no detalhe do nó")
+    void pinnedNoteIsStoredAndServed() throws Exception {
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.pinnedNote").value(nullValue()));
+
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"Cotovelo colado antes de virar.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nodeCode").value("M0.1"))
+                .andExpect(jsonPath("$.note").value("Cotovelo colado antes de virar."));
+
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.pinnedNote").value("Cotovelo colado antes de virar."));
+
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"Olhar para o teto, não para o chão.\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.pinnedNote").value("Olhar para o teto, não para o chão."));
+    }
+
+    @Test
+    @DisplayName("nota só com espaços limpa a anotação em vez de gravar string vazia")
+    void blankPinnedNoteClearsIt() throws Exception {
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"algo para lembrar\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"   \"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.note").value(nullValue()));
+
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.pinnedNote").value(nullValue()));
+    }
+
+    @Test
+    @DisplayName("anotar não é treinar: nada de status, streak, SRS ou agenda se move")
+    void pinnedNoteDoesNotTouchProgress() throws Exception {
+        JsonNode summaryBefore = getJson("/api/curriculum/tree").get("summary");
+
+        // M1.1 está travado e M0.1 disponível: os dois estados que a anotação poderia estragar.
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"anotação de um nó nunca treinado\"}"))
+                .andExpect(status().isOk());
+        mockMvc.perform(
+                        put("/api/nodes/M1.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"anotação de um nó travado\"}"))
+                .andExpect(status().isOk());
+
+        JsonNode tree = getJson("/api/curriculum/tree");
+        assertThat(statusOf(tree, "M0.1")).isEqualTo("AVAILABLE");
+        assertThat(statusOf(tree, "M1.1")).isEqualTo("LOCKED");
+
+        // A linha nova em `user_progress` não pode mudar um único número da árvore: é o que
+        // garante que gravar AVAILABLE seja equivalente a não ter linha nenhuma.
+        assertThat(tree.get("summary")).isEqualTo(summaryBefore);
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(0))
+                .andExpect(jsonPath("$.drilledToday").value(false))
+                .andExpect(jsonPath("$.activeDaysLast30").value(0));
+
+        mockMvc.perform(get("/api/reviews/today")).andExpect(jsonPath("$.dueCount").value(0));
+
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.srs.scheduled").value(false))
+                .andExpect(jsonPath("$.recentDrills.length()").value(0));
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.daysWithDrill.value").value(0))
+                .andExpect(jsonPath("$.nodesCompleted.value").value(0));
+    }
+
+    @Test
+    @DisplayName("anotação acima do limite é recusada, não truncada")
+    void oversizedPinnedNoteIsRejected() throws Exception {
+        String tooLong = "a".repeat(1001);
+
+        mockMvc.perform(
+                        put("/api/nodes/M0.1/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(Map.of("note", tooLong))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("invalid_request"));
+
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.pinnedNote").value(nullValue()));
+    }
+
+    @Test
+    @DisplayName("anotar nó inexistente responde 404")
+    void pinnedNoteOnUnknownNodeReturns404() throws Exception {
+        mockMvc.perform(
+                        put("/api/nodes/M9.9/note")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"note\":\"nó que não existe\"}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("node_not_found"));
+    }
+
+    @Test
+    @DisplayName("a nota do drill entra no histórico do nó, junto com data e recall")
+    void drillNotesAppearInNodeHistory() throws Exception {
+        mockMvc.perform(
+                        post("/api/nodes/M8.3/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"recall\":\"HARD\",\"drilledOn\":\"2026-08-10\","
+                                                + "\"note\":\"travei na entrada\"}"))
+                .andExpect(status().isOk());
+
+        // Sem nota: o histórico registra o treino do mesmo jeito, com `note` nulo.
+        mockMvc.perform(
+                        post("/api/nodes/M8.3/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/nodes/M8.3"))
+                .andExpect(jsonPath("$.recentDrills.length()").value(2))
+                .andExpect(jsonPath("$.recentDrills[0].drilledOn").value("2026-08-16"))
+                .andExpect(jsonPath("$.recentDrills[0].recall").value("OK"))
+                .andExpect(jsonPath("$.recentDrills[0].note").value(nullValue()))
+                .andExpect(jsonPath("$.recentDrills[1].drilledOn").value("2026-08-10"))
+                .andExpect(jsonPath("$.recentDrills[1].recall").value("HARD"))
+                .andExpect(jsonPath("$.recentDrills[1].note").value("travei na entrada"));
     }
 
     @Test
