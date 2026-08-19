@@ -10,7 +10,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "test": "node --experimental-strip-types --test --test-reporter=dot src/*.test.ts",
+    "test": "node --experimental-strip-types --test --test-reporter=spec src/*.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit"
   },
