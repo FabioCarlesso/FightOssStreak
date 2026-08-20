@@ -39,4 +39,12 @@ export type MvpMetrics = Schemas['MvpMetrics'];
 export type CountedMetric = Schemas['Counted'];
 export type SrsAdherence = Schemas['SrsAdherence'];
 
+export type AccountView = Schemas['AccountView'];
+/** Estado do acesso da conta: é ele que decide qual tela a web mostra (#24). */
+export type AccessStatus = NonNullable<AccountView['accessStatus']>;
+export type AuthProviderView = Schemas['AuthProviderView'];
+export type AuthProviders = Schemas['AuthProviders'];
+export type AccessRequestView = Schemas['AccessRequestView'];
+export type AccessRequests = Schemas['AccessRequests'];
+
 export type { components, paths } from '../generated/api.ts';

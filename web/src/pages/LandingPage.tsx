@@ -55,15 +55,19 @@ export function LandingPage() {
             hoje. Quem ensina jiu-jitsu é o seu professor — isto aqui é a revisão.
           </p>
           <p className="landing__cta">
+            {/* "Pedir acesso", e não "Abrir o app": desde a #24 o app é de uso pessoal com acesso
+                sob aprovação, e quem chega pelo link não entra sozinho. Copy que promete o que o
+                produto não entrega é o defeito que esta página existe para não ter. */}
             <Link className="landing__button" to={APP_PATH}>
-              Abrir o app
+              Pedir acesso
             </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
               Ver o código
             </a>
           </p>
           <p className="landing__note">
-            Sem cadastro e sem cobrança. O aviso de responsabilidade aparece antes da primeira tela.
+            Acesso sob aprovação e sem cobrança. A entrada é por provedor externo — o app nunca vê
+            sua senha. O aviso de responsabilidade aparece antes da primeira tela.
           </p>
         </div>
 
@@ -179,7 +183,7 @@ export function LandingPage() {
         </h2>
         <p className="landing__cta">
           <Link className="landing__button" to={APP_PATH}>
-            Abrir o app
+            Pedir acesso
           </Link>
         </p>
       </section>
@@ -191,7 +195,7 @@ export function LandingPage() {
         </p>
         <p>
           <a href={REPO_URL}>Repositório</a> · <a href={DOCS_URL}>Planejamento e decisões</a> ·{' '}
-          <Link to={APP_PATH}>Abrir o app</Link>
+          <Link to={APP_PATH}>Entrar no app</Link>
         </p>
       </footer>
     </div>

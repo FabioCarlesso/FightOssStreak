@@ -5,6 +5,9 @@
  * camada de UI é reescrita (docs/03-estrutura-projeto.md).
  */
 import type {
+  AccessRequests,
+  AccountView,
+  AuthProviders,
   DisclaimerStatus,
   DrillRequest,
   DrillResult,
@@ -39,17 +42,56 @@ export class ApiError extends Error {
   get isQuizUnavailable(): boolean {
     return this.code === 'quiz_unavailable';
   }
+
+  /** Sem sessão: a resposta é a tela de login, não uma mensagem de erro. */
+  get isUnauthenticated(): boolean {
+    return this.status === 401;
+  }
+
+  /**
+   * Autenticado, mas a conta ainda não foi liberada.
+   *
+   * É 403 e não 401 de propósito: 401 devolveria a pessoa para o login que ela acabou de fazer.
+   */
+  get isAccessPending(): boolean {
+    return this.code === 'acesso_pendente';
+  }
+
+  get isAccessDenied(): boolean {
+    return this.code === 'acesso_recusado';
+  }
 }
+
+/**
+ * Token de CSRF que o backend deixou no cookie `XSRF-TOKEN`.
+ *
+ * O cookie é legível por script de propósito (`withHttpOnlyFalse` no backend): é assim que o app
+ * prova, em cada escrita, que a requisição partiu dele e não de outra origem com o cookie de
+ * sessão a tiracolo. Fora do browser não há cookie — e nem sessão de navegador para forjar.
+ */
+function csrfToken(): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = /(?:^|;\s*)XSRF-TOKEN=([^;]*)/.exec(document.cookie);
+  return match?.[1] ? decodeURIComponent(match[1]) : null;
+}
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 export function createApiClient(options: ApiClientOptions = {}) {
   const baseUrl = (options.baseUrl ?? '').replace(/\/$/, '');
   const doFetch = options.fetch ?? globalThis.fetch.bind(globalThis);
 
-  async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  async function send(path: string, init?: RequestInit): Promise<Response> {
+    const method = (init?.method ?? 'GET').toUpperCase();
+    const token = SAFE_METHODS.has(method) ? null : csrfToken();
     const response = await doFetch(`${baseUrl}${path}`, {
       ...init,
+      // O cookie de sessão é a autenticação. Explícito porque o default varia entre
+      // implementações de fetch, e sem ele toda requisição voltaria 401.
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'X-XSRF-TOKEN': token } : {}),
         ...(init?.headers ?? {}),
       },
     });
@@ -57,7 +99,16 @@ export function createApiClient(options: ApiClientOptions = {}) {
     if (!response.ok) {
       throw await toApiError(response);
     }
-    return (await response.json()) as T;
+    return response;
+  }
+
+  async function request<T>(path: string, init?: RequestInit): Promise<T> {
+    return (await (await send(path, init)).json()) as T;
+  }
+
+  /** Para 204 sem corpo: `response.json()` num corpo vazio estoura. */
+  async function requestNoContent(path: string, init?: RequestInit): Promise<void> {
+    await send(path, init);
   }
 
   async function toApiError(response: Response): Promise<ApiError> {
@@ -117,6 +168,34 @@ export function createApiClient(options: ApiClientOptions = {}) {
         method: 'POST',
         body: JSON.stringify({ version }),
       }),
+
+    /**
+     * Provedores de login habilitados. Público: é a única chamada que funciona sem sessão.
+     */
+    getAuthProviders: () => request<AuthProviders>('/api/auth/providers'),
+
+    /** Conta autenticada e estado do acesso. Responde também para conta pendente ou recusada. */
+    getAccount: () => request<AccountView>('/api/me'),
+
+    /**
+     * Encerra a sessão.
+     *
+     * Não sai do spec OpenAPI porque quem responde é o filtro de logout do Spring Security, e
+     * não um controller — daí o caminho literal aqui.
+     */
+    logout: () => requestNoContent('/api/logout', { method: 'POST' }),
+
+    /** Exclusão irreversível da conta e de todo o dado dela. */
+    deleteAccount: () => requestNoContent('/api/me', { method: 'DELETE' }),
+
+    /** Fila de solicitações de acesso. Só o dono do app recebe 200 aqui. */
+    getAccessRequests: () => request<AccessRequests>('/api/admin/solicitacoes'),
+
+    approveAccessRequest: (id: number) =>
+      request<AccessRequests>(`/api/admin/solicitacoes/${id}/aprovar`, { method: 'POST' }),
+
+    denyAccessRequest: (id: number) =>
+      request<AccessRequests>(`/api/admin/solicitacoes/${id}/recusar`, { method: 'POST' }),
   };
 }
 

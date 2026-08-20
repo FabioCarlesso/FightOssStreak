@@ -1,5 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import { api } from '../api/client.ts';
+import { useAccountOrNull } from '../state/account.ts';
+import { SignOutButton } from './SignOutButton.tsx';
 import { useAsync } from '../state/useAsync.ts';
 import { FULL_DISCLAIMER } from '../content/disclaimer.ts';
 
@@ -9,8 +11,14 @@ import { FULL_DISCLAIMER } from '../content/disclaimer.ts';
  * O aceite é por *versão de texto*: quando o texto muda materialmente, o backend passa a reportar
  * `accepted: false` e o aviso reaparece. É requisito de produto, não enfeite
  * (docs/06-disclaimer-responsabilidade.md).
+ *
+ * Desde a #24 o aceite é por **conta**, e o portão passou a ficar dentro do `AuthGate`. Daí a saída
+ * no rodapé do card: sem ela, quem entrasse na conta errada ficaria preso no aviso, sem app e sem
+ * como trocar de conta. A sessão é opcional de propósito — este componente também é renderizado
+ * sozinho nos testes.
  */
 export function DisclaimerGate({ children }: { children: ReactNode }) {
+  const session = useAccountOrNull();
   const status = useAsync(() => api.getDisclaimer(), []);
   const [accepting, setAccepting] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -70,6 +78,12 @@ export function DisclaimerGate({ children }: { children: ReactNode }) {
           {accepting ? 'Registrando…' : 'Li e concordo'}
         </button>
         <p className="gate__version">Versão do texto: {version}</p>
+        {session && (
+          <p className="gate__version">
+            Entrou como {session.account.displayName}.{' '}
+            <SignOutButton onSignedOut={session.reload} className="linklike" />
+          </p>
+        )}
       </div>
     </div>
   );

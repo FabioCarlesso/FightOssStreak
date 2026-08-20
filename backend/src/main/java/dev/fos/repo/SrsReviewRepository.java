@@ -12,4 +12,6 @@ public interface SrsReviewRepository extends JpaRepository<SrsReview, UserNodeKe
 
     /** Nós vencidos ou vencendo hoje — a agenda de "o que drillar". */
     List<SrsReview> findByIdUserIdAndNextReviewOnLessThanEqual(Long userId, LocalDate onOrBefore);
+
+    void deleteByIdUserId(Long userId);
 }

@@ -1,8 +1,11 @@
 package dev.fos.web;
 
 import dev.fos.curriculum.CurriculumException;
+import dev.fos.service.AccessNotGrantedException;
 import dev.fos.service.NodeNotFoundException;
+import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.QuizUnavailableException;
+import dev.fos.service.UnauthenticatedException;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,30 @@ class ApiExceptionHandler {
         static ApiError of(String error, String message) {
             return new ApiError(error, message, Instant.now());
         }
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    ResponseEntity<ApiError> handleUnauthenticated(UnauthenticatedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiError.of("nao_autenticado", e.getMessage()));
+    }
+
+    /**
+     * Sessão válida, conta ainda não liberada.
+     *
+     * <p>403 e não 401 de propósito: 401 mandaria a web de volta para o login que a pessoa acabou
+     * de fazer. É o código no corpo que diz qual tela mostrar.
+     */
+    @ExceptionHandler(AccessNotGrantedException.class)
+    ResponseEntity<ApiError> handleAccessNotGranted(AccessNotGrantedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    @ExceptionHandler(OwnerRequiredException.class)
+    ResponseEntity<ApiError> handleOwnerRequired(OwnerRequiredException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiError.of("nao_autorizado", e.getMessage()));
     }
 
     @ExceptionHandler(NodeNotFoundException.class)

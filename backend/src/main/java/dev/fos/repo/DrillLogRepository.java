@@ -20,4 +20,6 @@ public interface DrillLogRepository extends JpaRepository<DrillLog, Long> {
     List<DrillLog> findByUserIdAndDrilledOnGreaterThanEqual(Long userId, LocalDate from);
 
     long countByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }
