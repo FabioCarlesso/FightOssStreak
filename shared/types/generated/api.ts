@@ -77,6 +77,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/solicitacoes/{id}/recusar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Recusa a conta; devolve a fila já sem ela
+         * @description A conta recusada continua recusada nos logins seguintes e só pode se excluir.
+         */
+        post: operations["deny"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/solicitacoes/{id}/aprovar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Libera a conta; devolve a fila já sem ela */
+        post: operations["approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/streak": {
         parameters: {
             query?: never;
@@ -148,6 +185,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Conta autenticada, com o estado do acesso
+         * @description Responde também para conta pendente ou recusada: é o estado que diz para a web qual tela mostrar.
+         */
+        get: operations["me"];
+        put?: never;
+        post?: never;
+        /**
+         * Exclui a conta e todo o dado dela
+         * @description Irreversível. Vale para conta aprovada, pendente ou recusada. A sessão é invalidada junto.
+         */
+        delete: operations["deleteMe"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/disclaimer": {
         parameters: {
             query?: never;
@@ -174,6 +235,43 @@ export interface paths {
         };
         /** Árvore completa com estado de bloqueio resolvido para o usuário */
         get: operations["tree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Provedores de login habilitados
+         * @description Só os que têm credencial configurada. Sem nenhum, a lista vem vazia e a tela de login não mostra botão — a aplicação sobe sem segredo nenhum.
+         */
+        get: operations["providers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/solicitacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Contas aguardando liberação, da mais antiga para a mais nova */
+        get: operations["pending"];
         put?: never;
         post?: never;
         delete?: never;
@@ -267,6 +365,18 @@ export interface components {
             acceptedVersion?: string;
             currentVersion?: string;
             shortNotice?: string;
+        };
+        AccessRequestView: {
+            /** Format: int64 */
+            id?: number;
+            displayName?: string;
+            email?: string;
+            provider?: string;
+            /** Format: date-time */
+            requestedAt?: string;
+        };
+        AccessRequests: {
+            requests?: components["schemas"]["AccessRequestView"][];
         };
         DueItemView: {
             nodeCode?: string;
@@ -395,6 +505,14 @@ export interface components {
             targetPercent?: number;
             met?: boolean;
         };
+        AccountView: {
+            displayName?: string;
+            email?: string;
+            provider?: string;
+            /** @enum {string} */
+            accessStatus?: "PENDENTE" | "APROVADO" | "RECUSADO";
+            owner?: boolean;
+        };
         ModuleView: {
             code?: string;
             title?: string;
@@ -432,6 +550,14 @@ export interface components {
         TreeView: {
             modules?: components["schemas"]["ModuleView"][];
             summary?: components["schemas"]["ProgressSummary"];
+        };
+        AuthProviderView: {
+            id?: string;
+            label?: string;
+            authorizationUrl?: string;
+        };
+        AuthProviders: {
+            providers?: components["schemas"]["AuthProviderView"][];
         };
     };
     responses: never;
@@ -544,6 +670,50 @@ export interface operations {
             };
         };
     };
+    deny: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessRequests"];
+                };
+            };
+        };
+    };
+    approve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessRequests"];
+                };
+            };
+        };
+    };
     streak: {
         parameters: {
             query?: never;
@@ -628,6 +798,44 @@ export interface operations {
             };
         };
     };
+    me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccountView"];
+                };
+            };
+        };
+    };
+    deleteMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     disclaimer: {
         parameters: {
             query?: never;
@@ -664,6 +872,46 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TreeView"];
+                };
+            };
+        };
+    };
+    providers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AuthProviders"];
+                };
+            };
+        };
+    };
+    pending: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessRequests"];
                 };
             };
         };

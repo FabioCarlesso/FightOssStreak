@@ -16,7 +16,8 @@ React e React Native compartilham modelo mental (JSX, hooks, estado). Lógica de
 - Agenda de revisão por SRS na home ("revise hoje: X, Y")
 
 ## O que fica de fora do MVP
-- Login/contas (uso pessoal — usuário único basta)
+- ~~Login/contas (uso pessoal — usuário único basta)~~ — entrou depois pela #24, quando abrir
+  o app para outras pessoas passou a valer mais que a simplicidade do usuário único (D36)
 - Notificações push
 - Perfis, ranking, social
 - Vídeo próprio

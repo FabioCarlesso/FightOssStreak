@@ -17,6 +17,21 @@ espaçamento e de cor — não para texto de conceito ou pergunta de quiz, que o
 
 Refazer é barato (um comando), então na dúvida refaça.
 
+> ⚠️ **Desde a #24 a recaptura está bloqueada, e não por descuido.** O app passou a exigir login e
+> liberação (D36), e o script não tem como se autenticar: ele semeia o progresso pela API com
+> `fetch` sem cookie, e sobe um Chrome com perfil novo, sem sessão. Nos dois casos a resposta agora
+> é `401` — o print sairia da tela de login.
+>
+> **O que isso significa na prática:** os oito arquivos em `web/public/prints/` ficaram com o
+> cabeçalho anterior do app, sem o nome da conta e o botão *Sair* que a #24 acrescentou. É uma
+> defasagem pequena e conhecida, não um print mentindo sobre o produto.
+>
+> **O que resolve**, quando alguém for mexer nisto: ensinar o script a receber uma sessão já obtida
+> — um cookie de sessão por variável de ambiente, aplicado no `fetch` da semeadura e no Chrome via
+> `Network.setCookie` do CDP. É caminho de operador, com login de verdade; **não** vale criar um
+> modo que desliga o portão para capturar tela, que seria uma porta dos fundos permanente para
+> economizar oito imagens.
+
 ## Como refazer
 
 Precisa de `google-chrome` no PATH — o script fala CDP com ele por WebSocket, sem Playwright nem

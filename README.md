@@ -15,7 +15,8 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
 | Anotações por nó | Anotação fixada junto ao conceito, mais o histórico do que foi anotado a cada drill (#45) |
-| Backend | Spring Boot + Flyway, API documentada em OpenAPI |
+| Contas | Login por Google e Facebook, com **acesso sob aprovação do autor** e exclusão de conta (D36). Apple pendente |
+| Backend | Spring Boot + Flyway + Spring Security, API documentada em OpenAPI |
 | Web | React + Vite |
 | Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |
 | Mobile | Não iniciado (fase posterior, D4) |
@@ -56,7 +57,9 @@ Dois modos. **Docker** para usar o app; **dev** para mexer no código.
 docker compose up --build
 ```
 
-Abra <http://localhost:8081>. Na primeira abertura o app pede aceite do aviso de responsabilidade.
+Abra <http://localhost:8081>. O app pede login e liberação do autor antes de qualquer coisa
+(ver [Acesso e contas](#acesso-e-contas)) e, para a conta liberada, o aceite do aviso de
+responsabilidade.
 
 Sobe `db` (Postgres), `backend` e `web`. O browser fala só com o `web`: é o nginx dele que
 encaminha `/api` para o backend — mesma topologia de produção, e por isso nenhuma requisição
@@ -151,6 +154,11 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
 | `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
+| `FOS_OWNER_EMAILS` | backend | vazia | e-mails do dono, separados por vírgula |
+| `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID` | backend | — | id do app no Google |
+| `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET` | backend | — | segredo do app no Google |
+| `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID` | backend | — | id do app no Meta for Developers |
+| `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET` | backend | — | segredo do app no Meta for Developers |
 
 Detalhes que não são óbvios:
 
@@ -176,7 +184,38 @@ Detalhes que não são óbvios:
   Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
+- **`FOS_OWNER_EMAILS` vazia deixa o app sem dono.** Ninguém é aprovado automaticamente, e a
+  fila de solicitações fica sem quem a decida. É ela também que faz a primeira conta do autor
+  adotar o progresso pré-existente (D36) — preencher **antes** do primeiro login.
+- **Provedor sem credencial não é registrado.** Não é uma tela de login com botão que falha: o
+  provedor simplesmente não existe, e a aplicação sobe sem segredo nenhum (é o modo dev e o CI).
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
+
+## Acesso e contas
+
+O app **exige login e liberação do autor**. Entrar é por provedor externo — o app nunca vê senha —
+e a conta nasce na fila: quem chega vê "solicitação registrada" até o dono aprovar. Sem sessão a
+API responde `401`; com sessão e sem liberação, `403` com o motivo (`acesso_pendente` ou
+`acesso_recusado`). A decisão e o porquê estão em [`docs/07-decisoes.md`](docs/07-decisoes.md)
+(D36).
+
+**Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
+
+1. Crie o app no provedor e cadastre o redirect URI
+   `https://<seu-domínio>/api/login/oauth2/code/google` (e o equivalente para `facebook`).
+   O caminho fica sob `/api` porque é o único que o nginx encaminha ao backend (D23/D24).
+2. Defina as variáveis do provedor e `FOS_OWNER_EMAILS` com o seu e-mail.
+3. Suba. Sem credencial nenhuma o app continua subindo — a tela de login é que fica sem botão.
+
+**Aprovar quem pediu**: entre com a conta de dono e abra *Solicitações* no menu. A fila também
+está em `GET /api/admin/solicitacoes`.
+
+**Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, progresso, streak, agenda,
+drills, anotações e aceite — em uma transação, sem volta. Vale para conta pendente e recusada.
+
+Em dev, o fluxo real do OAuth é mais simples pelo Compose (`docker compose up --build`) do que
+pelo Vite: o provedor devolve o browser para a origem que o backend recebeu, e atrás do dev server
+essa origem é a porta do backend, não a do Vite.
 
 ## Testes
 
@@ -252,6 +291,7 @@ Toda a documentação de planejamento está em [`docs/`](docs/):
 - [`08-curadoria-videos.md`](docs/08-curadoria-videos.md) — critérios de curadoria dos vídeos
 - [`09-regras-repositorio.md`](docs/09-regras-repositorio.md) — `main` protegida, PR obrigatório, CI como portão
 - [`10-prints-da-landing.md`](docs/10-prints-da-landing.md) — como refazer os prints que a landing exibe
+- [`11-privacidade.md`](docs/11-privacidade.md) — o que o app guarda de dado pessoal, e como apagar
 
 ## Contribuindo
 

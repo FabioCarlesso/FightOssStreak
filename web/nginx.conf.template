@@ -18,6 +18,17 @@ map "$http_origin@@$http_host" $proxy_origin {
     default                    $http_origin;
 }
 
+# Preserva o esquema original da requisição.
+#
+# O TLS termina na borda da plataforma, então o nginx recebe http e $scheme vale "http".
+# Sobrescrever X-Forwarded-Proto com ele faria o backend montar o redirect URI do OAuth em
+# http://, e o provedor recusaria o login por redirect_uri divergente do cadastrado. Quando
+# ninguém na frente mandou o header (Compose local, curl direto), $scheme é a resposta certa.
+map $http_x_forwarded_proto $forwarded_proto {
+    ""      $scheme;
+    default $http_x_forwarded_proto;
+}
+
 server {
     # A porta vem do ambiente: a Railway injeta a dela em runtime e ignora o EXPOSE.
     listen ${PORT};
@@ -57,7 +68,7 @@ server {
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $forwarded_proto;
 
         # Vazio quando a requisição veio do próprio app; intacto quando veio de fora.
         # Ver o `map` no topo do arquivo.

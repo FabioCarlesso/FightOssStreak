@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -16,22 +18,28 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.fos.curriculum.CurriculumValidator;
 import dev.fos.model.QuizQuestion;
+import dev.fos.model.UserIdentity;
 import dev.fos.repo.QuizQuestionRepository;
+import dev.fos.repo.UserIdentityRepository;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Percorre o fluxo real do MVP contra a aplicação inteira: sobe, ingere o currículo versionado, lê
  * a árvore, responde o quiz, registra drill e confere a agenda de revisão.
+ *
+ * <p>Desde a #24 tudo isso exige sessão. Em vez de espalhar {@code .with(oauth2Login())} por cada
+ * chamada, a autenticação e o token de CSRF entram como requisição padrão do MockMvc — o que estes
+ * testes descrevem é o app funcionando para quem está dentro, e quem fica de fora é assunto do
+ * {@link AuthIntegrationTest}.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,13 +69,69 @@ class ApiIntegrationTest {
         Clock clock() {
             return Clock.fixed(Instant.parse("2026-08-16T10:00:00Z"), ZoneOffset.UTC);
         }
+
+        /** Toda requisição sai autenticada como o usuário aprovado e com token de CSRF. */
+        @Bean
+        MockMvcBuilderCustomizer authenticatedByDefault() {
+            return builder ->
+                    builder.defaultRequest(
+                            get("/").with(
+                                            oauth2Login()
+                                                    .clientRegistration(TEST_REGISTRATION)
+                                                    .attributes(
+                                                            attributes ->
+                                                                    attributes.put(
+                                                                            "sub", TEST_SUBJECT)))
+                                    .with(csrf()));
+        }
     }
+
+    /**
+     * O provedor não precisa existir de verdade: o que o {@code CurrentUserProvider} lê da
+     * autenticação é o par (registrationId, subject), e é ele que a identidade abaixo registra.
+     */
+    static final ClientRegistration TEST_REGISTRATION =
+            ClientRegistration.withRegistrationId("google")
+                    .clientId("test")
+                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                    .redirectUri("{baseUrl}/api/login/oauth2/code/google")
+                    .authorizationUri("https://example.test/authorize")
+                    .tokenUri("https://example.test/token")
+                    .userInfoUri("https://example.test/userinfo")
+                    .userNameAttributeName("sub")
+                    .build();
+
+    static final String TEST_SUBJECT = "autor-de-teste";
+
+    /** A conta semeada pela V2, que a V6 já sobe como APROVADA — o dono do progresso existente. */
+    private static final long SEEDED_USER_ID = 1L;
 
     @Autowired private MockMvc mockMvc;
 
     @Autowired private ObjectMapper objectMapper;
 
     @Autowired private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired private UserIdentityRepository identities;
+
+    /**
+     * Dá uma identidade à conta semeada.
+     *
+     * <p>Sem isto a autenticação padrão não resolve para usuário nenhum e todo teste daqui viraria
+     * 401 — o que é o comportamento correto, e está coberto no {@link AuthIntegrationTest}.
+     */
+    @BeforeEach
+    void identifyTestUser() {
+        identities.save(
+                new UserIdentity(
+                        SEEDED_USER_ID,
+                        TEST_REGISTRATION.getRegistrationId(),
+                        TEST_SUBJECT,
+                        "autor@example.test",
+                        true,
+                        "Autor",
+                        Instant.parse("2026-08-16T10:00:00Z")));
+    }
 
     @Test
     @DisplayName("a árvore sobe com os 46 nós do currículo versionado")

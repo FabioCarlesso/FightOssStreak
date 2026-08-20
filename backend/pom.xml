@@ -37,6 +37,19 @@
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
+    <!-- Login social e sessão (#24). O oauth2-client traz o fluxo de autorização; o security,
+         o filtro que decide quem entra, a sessão e o token de CSRF. Sem credencial de provedor
+         configurada nenhum registration é criado e a aplicação sobe igual — é o que mantém
+         `./mvnw test` e o modo dev sem segredo nenhum. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
     <!-- /actuator/health: é por ele que a Railway decide se o deploy subiu e o Compose
          decide se o backend está pronto. Só o endpoint health fica exposto (application.yml). -->
     <dependency>
@@ -74,6 +87,13 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- oauth2Login() e csrf() nos testes de MockMvc: é como o teste autentica sem subir um
+         provedor de verdade. -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

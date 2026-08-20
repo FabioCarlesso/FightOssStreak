@@ -1,4 +1,4 @@
-import type { DisclaimerStatus, ReviewAgenda, StreakView, TreeView } from '@fos/types';
+import type { AccountView, DisclaimerStatus, ReviewAgenda, StreakView, TreeView } from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,6 +17,7 @@ import { App } from './App.tsx';
  */
 const { apiMock } = vi.hoisted(() => ({
   apiMock: {
+    getAccount: vi.fn<() => Promise<AccountView>>(),
     getDisclaimer: vi.fn<() => Promise<DisclaimerStatus>>(),
     acceptDisclaimer: vi.fn<(version: string) => Promise<DisclaimerStatus>>(),
     getStreak: vi.fn<() => Promise<StreakView>>(),
@@ -44,6 +45,13 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
 
+  apiMock.getAccount.mockResolvedValue({
+    displayName: 'Autor',
+    email: 'autor@example.test',
+    provider: 'google',
+    accessStatus: 'APROVADO',
+    owner: false,
+  });
   apiMock.getDisclaimer.mockResolvedValue({ accepted: false, currentVersion: '2026-08' });
   apiMock.getStreak.mockResolvedValue({
     currentStreak: 3,
@@ -65,14 +73,16 @@ describe('rota pública', () => {
     renderEm('/');
 
     expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
-    // A promessa que faz a página existir: com o backend frio, ela aparece do mesmo jeito.
+    // A promessa que faz a página existir: com o backend frio, ela aparece do mesmo jeito. Vale
+    // também para o portão de autenticação, que entrou depois dela (#24).
     expect(apiMock.getDisclaimer).not.toHaveBeenCalled();
+    expect(apiMock.getAccount).not.toHaveBeenCalled();
   });
 
   it('o botão de entrar aponta para o app, não para dentro do conteúdo', async () => {
     renderEm('/');
 
-    const entrar = await screen.findAllByRole('link', { name: /abrir o app/i });
+    const entrar = await screen.findAllByRole('link', { name: /pedir acesso/i });
     expect(entrar[0]).toHaveAttribute('href', '/hoje');
   });
 });

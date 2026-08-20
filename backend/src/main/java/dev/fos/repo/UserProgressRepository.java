@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserProgressRepository extends JpaRepository<UserProgress, UserNodeKey> {
 
     List<UserProgress> findByIdUserId(Long userId);
+
+    void deleteByIdUserId(Long userId);
 }

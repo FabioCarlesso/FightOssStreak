@@ -1,39 +1,62 @@
 package dev.fos.service;
 
 import dev.fos.model.AppUser;
+import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
-import java.time.Instant;
-import org.springframework.data.domain.Sort;
+import dev.fos.repo.UserIdentityRepository;
+import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Resolve o usuário atual.
+ * Resolve o usuário atual a partir da autenticação.
  *
- * <p>No MVP existe exatamente um (D9: sem login). Esta indireção existe para que introduzir
- * autenticação depois seja trocar esta classe, e não caçar {@code userId} espalhado por serviços.
+ * <p>Esta classe é o ponto de costura que a versão sem login já previa: introduzir autenticação foi
+ * trocá-la, e não caçar {@code userId} espalhado por serviços. O que ela deixou de fazer importa
+ * tanto quanto o que faz — não existe mais criação implícita de usuário. Sem sessão é 401; criar
+ * conta é consequência de um login bem-sucedido (ver {@link AccountService#registerLogin}).
  *
- * <p>Nota para quando houver login: a Apple exige rota de exclusão de conta em apps com conta
- * (docs/01-stack-tecnica.md) — isso precisa existir antes de qualquer publicação iOS.
+ * <p>A identidade é buscada pelo par {@code (provider, subject)} da própria autenticação, o que
+ * mantém a resolução idêntica no fluxo real e em teste.
  */
 @Component
 public class CurrentUserProvider {
 
-    private final AppUserRepository userRepository;
+    private final UserIdentityRepository identities;
+    private final AppUserRepository users;
 
-    public CurrentUserProvider(AppUserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CurrentUserProvider(UserIdentityRepository identities, AppUserRepository users) {
+        this.identities = identities;
+        this.users = users;
     }
 
-    @Transactional
+    /** Id do usuário autenticado. Lança 401 quando não há sessão — nunca cria conta. */
+    @Transactional(readOnly = true)
     public Long currentUserId() {
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .findFirst()
-                .map(AppUser::getId)
-                .orElseGet(
-                        () ->
-                                userRepository
-                                        .save(new AppUser("usuario-local", Instant.now()))
-                                        .getId());
+        return currentUser().getId();
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser currentUser() {
+        return findCurrentUser().orElseThrow(UnauthenticatedException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AppUser> findCurrentUser() {
+        return currentIdentity().flatMap(identity -> users.findById(identity.getUserId()));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserIdentity> currentIdentity() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof OAuth2AuthenticationToken token)
+                || !token.isAuthenticated()) {
+            return Optional.empty();
+        }
+        return identities.findByProviderAndProviderSubject(
+                token.getAuthorizedClientRegistrationId(), token.getPrincipal().getName());
     }
 }

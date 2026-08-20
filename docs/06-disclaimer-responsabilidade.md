@@ -6,7 +6,7 @@
 
 | Local | Texto |
 |---|---|
-| Primeira abertura do app | Aviso completo, com aceite obrigatório |
+| Primeira abertura do app, **por conta** | Aviso completo, com aceite obrigatório |
 | Rodapé de todo nó com técnica | Aviso curto |
 | README do repositório | Aviso completo |
 | Descrição na loja (fase futura) | Aviso curto |
@@ -52,5 +52,9 @@
 ## Aceite: como registrar
 
 - Exibir o aviso completo na primeira abertura, com botão explícito ("Li e concordo")
+- **O aceite é por conta, não por dispositivo** (`disclaimer_acceptance.user_id`): desde a
+  #24 cada conta nova encontra o aviso e registra o próprio aceite, e sair da conta não
+  apaga o que ela já aceitou. O portão fica **depois** do login e da liberação de acesso —
+  pedir aceite de responsabilidade a quem talvez nunca entre não faria sentido (D36)
 - Persistir o aceite localmente (e no banco, quando houver conta) com **data e versão do texto**
 - Reexibir sempre que o texto for materialmente alterado

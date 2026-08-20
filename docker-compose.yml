@@ -38,6 +38,14 @@ services:
       PORT: '8080'
       SERVER_ADDRESS: 0.0.0.0
       TZ: America/Sao_Paulo
+      # Login social (D36). Repassadas do ambiente, nunca versionadas — sem elas o app sobe
+      # igual, só sem botão na tela de login. `FOS_OWNER_EMAILS` é quem decide a fila de
+      # solicitações e adota o progresso pré-existente; preencher antes do primeiro login.
+      FOS_OWNER_EMAILS: '${FOS_OWNER_EMAILS:-}'
+      FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID: '${FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID:-}'
+      FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET: '${FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET:-}'
+      FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID: '${FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID:-}'
+      FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET: '${FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET:-}'
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:

@@ -8,4 +8,6 @@ public interface DisclaimerAcceptanceRepository extends JpaRepository<Disclaimer
 
     Optional<DisclaimerAcceptance> findFirstByUserIdAndVersionOrderByAcceptedAtDesc(
             Long userId, String version);
+
+    void deleteByUserId(Long userId);
 }

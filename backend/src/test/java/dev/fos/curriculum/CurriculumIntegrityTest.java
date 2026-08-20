@@ -32,7 +32,8 @@ class CurriculumIntegrityTest {
         FosProperties properties =
                 new FosProperties(
                         "test",
-                        new FosProperties.Curriculum("classpath:curriculum/modules.json", true));
+                        new FosProperties.Curriculum("classpath:curriculum/modules.json", true),
+                        null);
         CurriculumLoader loader =
                 new CurriculumLoader(new ObjectMapper(), new DefaultResourceLoader(), properties);
         modules = loader.load();

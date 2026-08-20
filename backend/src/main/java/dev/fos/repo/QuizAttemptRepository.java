@@ -15,4 +15,6 @@ public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> 
      * que ocorreram.
      */
     List<QuizAttempt> findByUserIdOrderByAttemptedOnAscIdAsc(Long userId);
+
+    void deleteByUserId(Long userId);
 }
