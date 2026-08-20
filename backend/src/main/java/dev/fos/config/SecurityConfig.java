@@ -56,6 +56,7 @@ class SecurityConfig {
                                 auth.requestMatchers(
                                                 "/actuator/health",
                                                 "/api/auth/providers",
+                                                "/api/auth/email/**",
                                                 "/api/oauth2/**",
                                                 "/api/login/**")
                                         .permitAll()

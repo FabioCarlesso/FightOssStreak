@@ -1,5 +1,5 @@
 import type { AccountView } from '@fos/types';
-import { type ReactNode } from 'react';
+import { type FormEvent, type ReactNode, useState } from 'react';
 import { ApiError, api } from '../api/client.ts';
 import { AccountContext } from '../state/account.ts';
 import { useAsync } from '../state/useAsync.ts';
@@ -66,23 +66,42 @@ export function AuthGate({ children }: { children: ReactNode }) {
 }
 
 /**
- * Um botão por provedor habilitado.
+ * Um botão por provedor habilitado, e a saída por e-mail para quem não tem nenhum.
  *
- * Os botões são âncoras, e não `fetch`: o fluxo OAuth é uma navegação de página inteira para o
- * provedor e de volta. Chamada assíncrona seria bloqueada e não levaria a lugar nenhum.
+ * Os botões de provedor são âncoras, e não `fetch`: o fluxo OAuth é uma navegação de página inteira
+ * para o provedor e de volta. Chamada assíncrona seria bloqueada e não levaria a lugar nenhum.
+ *
+ * Desde a #52 entrar por provedor dá acesso direto — quem chega por ali já teve a identidade
+ * verificada por um terceiro. A aprovação do autor passou a valer para quem entra por e-mail.
  */
 function LoginScreen() {
   const providers = useAsync(() => api.getAuthProviders(), []);
+  const [porEmail, setPorEmail] = useState(false);
   const list = providers.data?.providers ?? [];
+  const emailEnabled = providers.data?.emailEnabled ?? false;
+  // O backend redireciona para cá quando o link do e-mail não vale mais. Sem isto a pessoa
+  // voltaria para a tela de login sem entender por quê.
+  const linkInvalido = new URLSearchParams(window.location.search).get('erro') === 'link_invalido';
+
+  if (porEmail) {
+    return <EmailScreen onBack={() => setPorEmail(false)} />;
+  }
 
   return (
     <div className="gate">
       <div className="gate__card">
         <h2>Entrar no FightOssStreak</h2>
         <p>
-          O app é de uso pessoal e o <strong>acesso é sob aprovação</strong>. Entre por um provedor
-          para registrar sua solicitação — o app nunca vê sua senha.
+          O app é de uso pessoal. Entrar por um provedor dá acesso direto — o app nunca vê sua
+          senha.
         </p>
+
+        {linkInvalido && (
+          <p className="gate__error">
+            Esse link de entrada não vale mais: ele expira em 15 minutos e só funciona uma vez. Peça
+            um novo abaixo.
+          </p>
+        )}
 
         {providers.loading && <p className="empty">Carregando…</p>}
 
@@ -95,10 +114,10 @@ function LoginScreen() {
           </>
         )}
 
-        {!providers.loading && !providers.error && list.length === 0 && (
+        {!providers.loading && !providers.error && list.length === 0 && !emailEnabled && (
           <p className="gate__error">
-            Nenhum provedor de login está configurado neste ambiente. Defina as credenciais
-            descritas no README para habilitar a entrada.
+            Nenhuma forma de entrada está configurada neste ambiente. Defina as credenciais
+            descritas no README para habilitar o login.
           </p>
         )}
 
@@ -109,6 +128,124 @@ function LoginScreen() {
             </a>
           ))}
         </div>
+
+        {emailEnabled && (
+          <p className="login__alternativa">
+            <button type="button" className="linklike" onClick={() => setPorEmail(true)}>
+              Não tenho nenhuma dessas contas
+            </button>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Entrada por e-mail: pedir acesso, ou pedir o link de quem já foi liberado.
+ *
+ * As duas ações mostram a mesma classe de resposta de propósito. O backend responde igual para
+ * endereço inexistente, pendente, recusado e aprovado — dizer mais transformaria a tela em consulta
+ * de quem tem conta no app.
+ */
+function EmailScreen({ onBack }: { onBack: () => void }) {
+  const [email, setEmail] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [pronto, setPronto] = useState<'pedido' | 'link' | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
+
+  async function enviar(event: FormEvent, acao: 'pedido' | 'link') {
+    event.preventDefault();
+    setEnviando(true);
+    setFailure(null);
+    try {
+      await (acao === 'pedido' ? api.requestEmailAccess(email) : api.requestEmailLogin(email));
+      setPronto(acao);
+    } catch (cause) {
+      setFailure(cause instanceof Error ? cause.message : String(cause));
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  if (pronto === 'pedido') {
+    return (
+      <div className="gate">
+        <div className="gate__card">
+          <h2>Pedido registrado</h2>
+          <p>
+            Seu pedido de acesso foi registrado para <strong>{email}</strong>. Falta a liberação do
+            autor do app — quando ela sair, você recebe um link de entrada nesse endereço.
+          </p>
+          <p>Avise pelo mesmo canal por onde você chegou até aqui.</p>
+          <div className="gate__actions">
+            <button type="button" onClick={onBack}>
+              Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (pronto === 'link') {
+    return (
+      <div className="gate">
+        <div className="gate__card">
+          <h2>Confira seu e-mail</h2>
+          <p>
+            Se existe uma conta liberada para <strong>{email}</strong>, o link de entrada acabou de
+            sair. Ele vale por 15 minutos e só funciona uma vez.
+          </p>
+          <div className="gate__actions">
+            <button type="button" onClick={onBack}>
+              Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="gate">
+      <div className="gate__card">
+        <h2>Entrar por e-mail</h2>
+        <p>
+          Sem provedor, o acesso é <strong>sob aprovação do autor</strong>. Peça acesso e, quando
+          for liberado, você entra por um link enviado para o seu e-mail.
+        </p>
+
+        <form className="login__email" onSubmit={(event) => void enviar(event, 'pedido')}>
+          <label htmlFor="email-acesso">Seu e-mail</label>
+          <input
+            id="email-acesso"
+            type="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="voce@exemplo.com"
+          />
+          {failure && <p className="gate__error">{failure}</p>}
+          <div className="gate__actions">
+            <button type="submit" disabled={enviando || !email}>
+              {enviando ? 'Enviando…' : 'Pedir acesso'}
+            </button>
+            <button
+              type="button"
+              disabled={enviando || !email}
+              onClick={(event) => void enviar(event, 'link')}
+            >
+              Já tenho acesso, quero o link
+            </button>
+          </div>
+        </form>
+
+        <p className="login__alternativa">
+          <button type="button" className="linklike" onClick={onBack}>
+            Voltar
+          </button>
+        </p>
       </div>
     </div>
   );

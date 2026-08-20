@@ -57,7 +57,8 @@ class OAuth2ProviderConfigTest {
                 new FosProperties(
                         "test",
                         new FosProperties.Curriculum(null, false),
-                        new FosProperties.Auth(List.of(), new Providers(null, null, credencial())));
+                        new FosProperties.Auth(List.of(), new Providers(null, null, credencial())),
+                        null);
 
         // O silêncio seria pior: credencial aceita e botão que nunca aparece. Ver D36 para por que
         // a Apple ficou de fora desta fatia.
@@ -75,6 +76,7 @@ class OAuth2ProviderConfigTest {
         return new FosProperties(
                 "test",
                 new FosProperties.Curriculum(null, false),
-                new FosProperties.Auth(List.of(), new Providers(google, facebook, null)));
+                new FosProperties.Auth(List.of(), new Providers(google, facebook, null)),
+                null);
     }
 }

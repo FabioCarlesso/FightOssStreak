@@ -4,6 +4,7 @@ import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
+import dev.fos.service.EmailAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * A fila de solicitações de acesso, do lado de quem decide.
@@ -33,10 +35,15 @@ public class AdminController {
 
     private final AccountService accounts;
     private final CurrentUserProvider currentUser;
+    private final EmailAccessService emailAccess;
 
-    public AdminController(AccountService accounts, CurrentUserProvider currentUser) {
+    public AdminController(
+            AccountService accounts,
+            CurrentUserProvider currentUser,
+            EmailAccessService emailAccess) {
         this.accounts = accounts;
         this.currentUser = currentUser;
+        this.emailAccess = emailAccess;
     }
 
     @GetMapping("/solicitacoes")
@@ -46,9 +53,15 @@ public class AdminController {
     }
 
     @PostMapping("/solicitacoes/{id}/aprovar")
-    @Operation(summary = "Libera a conta; devolve a fila já sem ela")
+    @Operation(
+            summary = "Libera a conta; devolve a fila já sem ela",
+            description =
+                    "Quem pediu por e-mail recebe aqui o primeiro link de entrada — é o único"
+                            + " momento em que o app escreve para um endereço que ainda não entrou.")
     public AccountDtos.AccessRequests approve(@PathVariable Long id) {
         accounts.decide(id, true, currentUser.currentUserId());
+        emailAccess.notifyApproved(
+                id, ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString());
         return queue();
     }
 

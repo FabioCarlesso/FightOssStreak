@@ -19,6 +19,8 @@ const { apiMock } = vi.hoisted(() => ({
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     logout: vi.fn<() => Promise<void>>(),
     deleteAccount: vi.fn<() => Promise<void>>(),
+    requestEmailAccess: vi.fn<(email: string) => Promise<void>>(),
+    requestEmailLogin: vi.fn<(email: string) => Promise<void>>(),
   },
 }));
 
@@ -56,7 +58,10 @@ beforeEach(() => {
     providers: [
       { id: 'google', label: 'Google', authorizationUrl: '/api/oauth2/authorization/google' },
     ],
+    emailEnabled: false,
   });
+  apiMock.requestEmailAccess.mockResolvedValue(undefined);
+  apiMock.requestEmailLogin.mockResolvedValue(undefined);
   apiMock.logout.mockResolvedValue(undefined);
   apiMock.deleteAccount.mockResolvedValue(undefined);
 });
@@ -77,13 +82,62 @@ describe('AuthGate', () => {
 
   it('sem provedor configurado, o login diz isso em vez de mostrar tela vazia', async () => {
     apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-    apiMock.getAuthProviders.mockResolvedValue({ providers: [] });
+    apiMock.getAuthProviders.mockResolvedValue({ providers: [], emailEnabled: false });
 
     renderGate();
 
     expect(
-      await screen.findByText(/nenhum provedor de login está configurado/i),
+      await screen.findByText(/nenhuma forma de entrada está configurada/i),
     ).toBeInTheDocument();
+  });
+
+  it('sem entrada por e-mail habilitada, não oferece a alternativa', async () => {
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+
+    renderGate();
+
+    await screen.findByRole('link', { name: /entrar com google/i });
+    expect(screen.queryByRole('button', { name: /não tenho nenhuma dessas contas/i })).toBeNull();
+  });
+
+  it('quem não tem provedor pede acesso e vê o pedido registrado', async () => {
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+    apiMock.getAuthProviders.mockResolvedValue({
+      providers: [
+        { id: 'google', label: 'Google', authorizationUrl: '/api/oauth2/authorization/google' },
+      ],
+      emailEnabled: true,
+    });
+
+    renderGate();
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: /não tenho nenhuma dessas contas/i }),
+    );
+    await userEvent.type(screen.getByLabelText(/seu e-mail/i), 'sem-provedor@example.test');
+    await userEvent.click(screen.getByRole('button', { name: /pedir acesso/i }));
+
+    expect(apiMock.requestEmailAccess).toHaveBeenCalledWith('sem-provedor@example.test');
+    expect(await screen.findByText(/pedido registrado/i)).toBeInTheDocument();
+    // Não promete e-mail agora: o primeiro só sai quando o autor aprova.
+    expect(screen.getByText(/quando ela sair, você recebe um link/i)).toBeInTheDocument();
+  });
+
+  it('quem já tem acesso pede o link, e a tela não revela se a conta existe', async () => {
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+    apiMock.getAuthProviders.mockResolvedValue({ providers: [], emailEnabled: true });
+
+    renderGate();
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: /não tenho nenhuma dessas contas/i }),
+    );
+    await userEvent.type(screen.getByLabelText(/seu e-mail/i), 'ana@example.test');
+    await userEvent.click(screen.getByRole('button', { name: /já tenho acesso/i }));
+
+    expect(apiMock.requestEmailLogin).toHaveBeenCalledWith('ana@example.test');
+    // "Se existe uma conta liberada" — a tela repete a indistinção do backend de propósito.
+    expect(await screen.findByText(/se existe uma conta liberada/i)).toBeInTheDocument();
   });
 
   it('conta na fila vê a solicitação registrada, não o app', async () => {

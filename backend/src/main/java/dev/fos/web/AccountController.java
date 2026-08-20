@@ -4,6 +4,7 @@ import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
+import dev.fos.service.EmailAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,14 +42,17 @@ public class AccountController {
 
     private final CurrentUserProvider currentUser;
     private final AccountService accounts;
+    private final EmailAccessService emailAccess;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrations;
 
     public AccountController(
             CurrentUserProvider currentUser,
             AccountService accounts,
+            EmailAccessService emailAccess,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) {
         this.currentUser = currentUser;
         this.accounts = accounts;
+        this.emailAccess = emailAccess;
         this.clientRegistrations = clientRegistrations;
     }
 
@@ -60,14 +64,13 @@ public class AccountController {
                             + " de login não mostra botão — a aplicação sobe sem segredo nenhum.")
     public AccountDtos.AuthProviders providers() {
         ClientRegistrationRepository repository = clientRegistrations.getIfAvailable();
-        if (!(repository instanceof InMemoryClientRegistrationRepository registrations)) {
-            return new AccountDtos.AuthProviders(List.of());
-        }
         List<AccountDtos.AuthProviderView> enabled =
-                java.util.stream.StreamSupport.stream(registrations.spliterator(), false)
-                        .map(AccountController::toView)
-                        .toList();
-        return new AccountDtos.AuthProviders(enabled);
+                repository instanceof InMemoryClientRegistrationRepository registrations
+                        ? java.util.stream.StreamSupport.stream(registrations.spliterator(), false)
+                                .map(AccountController::toView)
+                                .toList()
+                        : List.of();
+        return new AccountDtos.AuthProviders(enabled, emailAccess.isEnabled());
     }
 
     @GetMapping("/me")

@@ -29,6 +29,11 @@ fos:
     # habilitar, defina as variáveis documentadas no README:
     #   FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID / _CLIENT_SECRET
     #   FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID / _CLIENT_SECRET
+  email:
+    # Envio dos links de entrada (#52). Sem estas duas a aplicação sobe igual e a entrada por
+    # e-mail simplesmente não é oferecida na tela — mesma regra dos provedores de login.
+    api-key: ${FOS_EMAIL_API_KEY:}
+    from: ${FOS_EMAIL_FROM:}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

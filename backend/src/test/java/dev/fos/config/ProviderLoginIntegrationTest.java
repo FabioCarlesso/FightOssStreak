@@ -47,7 +47,7 @@ class ProviderLoginIntegrationTest {
     @Autowired private AppUserRepository users;
 
     @Test
-    @DisplayName("login OIDC (Google) grava a identidade e cria a conta")
+    @DisplayName("login OIDC (Google) grava a identidade e cria a conta já aprovada")
     void oidcLoginCreatesTheAccount() {
         OidcUser user = oidcUserService.loadUser(request("google-sub-1", "novato@example.test"));
 
@@ -65,8 +65,9 @@ class ProviderLoginIntegrationTest {
         assertThat(identity.isEmailVerified()).isTrue();
         assertThat(identity.getDisplayName()).isEqualTo("Novato");
 
+        // Desde a #52 quem entra por provedor não passa pela fila.
         AppUser account = users.findById(identity.getUserId()).orElseThrow();
-        assertThat(account.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        assertThat(account.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
     }
 
     @Test

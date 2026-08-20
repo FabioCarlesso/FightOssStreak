@@ -12,13 +12,33 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param disclaimerVersion versão vigente do texto de disclaimer; subir força novo aceite
  * @param curriculum origem do currículo versionado
  * @param auth donos do app e credenciais de provedor de login (#24)
+ * @param email envio de e-mail para a entrada por link (#52)
  */
 @ConfigurationProperties(prefix = "fos")
-public record FosProperties(String disclaimerVersion, Curriculum curriculum, Auth auth) {
+public record FosProperties(
+        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email) {
 
     public FosProperties {
         if (auth == null) {
             auth = new Auth(null, null);
+        }
+        if (email == null) {
+            email = new Email(null, null);
+        }
+    }
+
+    /**
+     * Envio de e-mail — a credencial que faz a entrada por link existir.
+     *
+     * <p>Opcional pelo mesmo motivo dos provedores de login: sem ela a aplicação sobe igual, a
+     * entrada por e-mail não é oferecida na tela, e dev e CI rodam sem segredo nenhum.
+     *
+     * @param apiKey chave do provedor de envio; nunca versionada
+     * @param from remetente, em domínio verificado no provedor de envio
+     */
+    public record Email(String apiKey, String from) {
+        public boolean isConfigured() {
+            return apiKey != null && !apiKey.isBlank() && from != null && !from.isBlank();
         }
     }
 
