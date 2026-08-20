@@ -40,7 +40,8 @@ class SecurityConfig {
             HttpSecurity http,
             ObjectMapper objectMapper,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations,
-            FosOAuth2UserService oauth2UserService)
+            FosOAuth2UserService oauth2UserService,
+            FosOidcUserService oidcUserService)
             throws Exception {
 
         // Sem isto o Spring 6 adia a geração do token de CSRF, e o cookie só aparece depois que
@@ -131,8 +132,15 @@ class SecurityConfig {
                                     .redirectionEndpoint(
                                             endpoint ->
                                                     endpoint.baseUri("/api/login/oauth2/code/*"))
+                                    // Os DOIS, e não um: o Spring escolhe pelo escopo pedido.
+                                    // `openid` (Google) vai para o oidcUserService; sem ele
+                                    // (Facebook), para o userService. Registrar só um faz o login
+                                    // do outro autenticar sem criar conta — e o app responder 401
+                                    // para sempre, sem erro nenhum no log.
                                     .userInfoEndpoint(
-                                            endpoint -> endpoint.userService(oauth2UserService))
+                                            endpoint ->
+                                                    endpoint.userService(oauth2UserService)
+                                                            .oidcUserService(oidcUserService))
                                     .defaultSuccessUrl(AFTER_LOGIN, true));
         }
 
