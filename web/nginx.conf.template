@@ -70,6 +70,20 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $forwarded_proto;
 
+        # Os outros três headers que o backend usa para montar URL, fixados aqui para que o
+        # cliente não os escolha. O `forward-headers-strategy: framework` honra todos, e sem
+        # estas linhas eles passariam direto de quem chamou: `X-Forwarded-Host: evil.example`
+        # bastava para o redirect URI do OAuth apontar para outro domínio. Diferente do
+        # `X-Forwarded-Proto`, aqui o nginx sabe a resposta certa — é o mesmo `$http_host` que
+        # ele já encaminha como `Host` —, então fixar é melhor que preservar.
+        proxy_set_header X-Forwarded-Host $http_host;
+        # Vazio remove o header. A porta, quando importa, já viaja no `$http_host` acima; deixar
+        # o cliente mandá-la separada só serviria para divergir dele.
+        proxy_set_header X-Forwarded-Port "";
+        # O `Forwarded` da RFC 7239 tem precedência sobre todos os `X-Forwarded-*` no Spring, e
+        # o nginx nunca o gera — se chegar, veio de fora.
+        proxy_set_header Forwarded "";
+
         # Vazio quando a requisição veio do próprio app; intacto quando veio de fora.
         # Ver o `map` no topo do arquivo.
         proxy_set_header Origin $proxy_origin;

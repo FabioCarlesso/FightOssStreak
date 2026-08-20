@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -78,13 +79,35 @@ class SecurityConfig {
                 .exceptionHandling(
                         handling ->
                                 handling.authenticationEntryPoint(
-                                        (request, response, exception) ->
-                                                write(
-                                                        objectMapper,
-                                                        response,
-                                                        HttpServletResponse.SC_UNAUTHORIZED,
-                                                        "nao_autenticado",
-                                                        "Requisição sem sessão autenticada.")))
+                                                (request, response, exception) ->
+                                                        write(
+                                                                objectMapper,
+                                                                response,
+                                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                                "nao_autenticado",
+                                                                "Requisição sem sessão"
+                                                                        + " autenticada."))
+                                        // Sem isto o 403 do filtro de CSRF sai no corpo padrão do
+                                        // Boot ({timestamp, status, error, path}), que não tem
+                                        // `message` e traz "Forbidden" onde o cliente lê o código.
+                                        // A tela mostrava um "403" pelado justamente quando dá
+                                        // para dizer o que fazer: recarregar e repetir.
+                                        .accessDeniedHandler(
+                                                (request, response, exception) ->
+                                                        write(
+                                                                objectMapper,
+                                                                response,
+                                                                HttpServletResponse.SC_FORBIDDEN,
+                                                                exception instanceof CsrfException
+                                                                        ? "csrf_invalido"
+                                                                        : "acesso_negado",
+                                                                exception instanceof CsrfException
+                                                                        ? "Token de proteção contra"
+                                                                                + " CSRF ausente ou"
+                                                                                + " vencido. Recarregue"
+                                                                                + " a página e tente de"
+                                                                                + " novo."
+                                                                        : "Requisição recusada.")))
                 .logout(
                         logout ->
                                 logout.logoutUrl("/api/logout")

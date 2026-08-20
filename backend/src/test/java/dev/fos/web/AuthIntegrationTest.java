@@ -21,6 +21,7 @@ import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.repo.UserProgressRepository;
 import dev.fos.service.AccountService;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -286,8 +287,14 @@ class AuthIntegrationTest {
         assertThat(users.findById(user.getId())).isEmpty();
     }
 
+    /**
+     * @implNote a recusa é conferida também no <em>corpo</em>, e não só no status. Sem um {@code
+     *     accessDeniedHandler} o filtro de CSRF responde no formato padrão do Boot, que não tem
+     *     {@code message} e põe "Forbidden" onde o cliente lê o código — e a tela mostrava um "403"
+     *     pelado no único caso em que dá para dizer o que fazer.
+     */
     @Test
-    @DisplayName("escrita sem token de CSRF é recusada; com token, passa")
+    @DisplayName("escrita sem token de CSRF é recusada, com o motivo no corpo; com token, passa")
     void writesRequireCsrf() throws Exception {
         approved("google", "ana", "ana@example.test", "Ana");
 
@@ -296,7 +303,9 @@ class AuthIntegrationTest {
                                 .with(as("google", "ana"))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"recall\":\"OK\"}"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("csrf_invalido"))
+                .andExpect(jsonPath("$.message").isNotEmpty());
 
         mockMvc.perform(
                         post("/api/nodes/M0.1/drill")
@@ -305,6 +314,40 @@ class AuthIntegrationTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk());
+    }
+
+    /**
+     * O mesmo recurso, escrito com o {@code a} percent-encodado.
+     *
+     * <p>Pela RFC 3986 {@code %61} <em>é</em> a letra {@code a}: as duas formas endereçam a mesma
+     * rota, e o roteamento do Spring decodifica antes de resolver o controller. Quem decidir acesso
+     * comparando o caminho cru da requisição (o que o {@code getRequestURI()} do Tomcat devolve)
+     * discorda do roteamento e deixa a rota do dono aberta para qualquer conta aprovada.
+     *
+     * <p>Este teste existe porque o furo já esteve aqui: a fila vazava e uma conta comum liberava
+     * quem quisesse — o poder que a D36 reserva ao autor, virando transitivo.
+     */
+    @Test
+    @DisplayName("caminho percent-encodado não contorna a checagem de dono")
+    void encodedPathDoesNotBypassTheOwnerCheck() throws Exception {
+        approved("google", "ana", "ana@example.test", "Ana");
+        login("google", "dono", "dono@example.test", "Dono");
+        AppUser novato = login("google", "novato", "novato@example.test", "Novato");
+
+        // URI, e não String: o builder de String reencoda o `%` e o teste passaria por engano.
+        mockMvc.perform(get(URI.create("/api/%61dmin/solicitacoes")).with(as("google", "ana")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("nao_autorizado"));
+
+        mockMvc.perform(
+                        post(URI.create("/api/%61dmin/solicitacoes/" + novato.getId() + "/aprovar"))
+                                .with(as("google", "ana"))
+                                .with(csrf()))
+                .andExpect(status().isForbidden());
+
+        // O que de fato importa: ninguém foi liberado por quem não é dono.
+        assertThat(users.findById(novato.getId()).orElseThrow().getAccessStatus())
+                .isEqualTo(AccessStatus.PENDENTE);
     }
 
     @Test
