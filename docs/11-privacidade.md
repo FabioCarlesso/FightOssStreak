@@ -57,3 +57,20 @@ passou dois meses lesionado, que é justamente quem mais precisa da revisão ao 
 - Política de privacidade **pública**, fora do repositório, com contato do responsável.
 - *Privacy labels* da App Store descrevendo a coleta acima.
 - Revisão jurídica dos dois textos (este e o de responsabilidade).
+
+## Entrada por e-mail (D37)
+
+Quem não tem provedor externo informa o próprio endereço para pedir acesso. Nesse caminho o app
+guarda **o endereço digitado** — e ele é a chave da identidade, do mesmo jeito que `(provider,
+subject)` é para quem entra por provedor.
+
+Duas notas sobre esse dado:
+
+- O endereço nasce **não verificado**: até a pessoa abrir um link enviado para ele, ninguém provou
+  ser dono daquela caixa. É por isso que digitar o e-mail que está em `fos.auth.owner-emails` não
+  torna ninguém dono do app.
+- Os **links de entrada não são guardados**. O que fica na tabela é o hash do token, com validade e
+  marca de uso. Quem tiver leitura do banco não consegue entrar como ninguém.
+
+A exclusão de conta apaga também a identidade de e-mail e os links pendentes, na mesma transação do
+resto.

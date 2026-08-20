@@ -1,6 +1,7 @@
 package dev.fos.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -21,6 +22,8 @@ import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.repo.UserProgressRepository;
 import dev.fos.service.AccountService;
+import dev.fos.service.EmailAccessService;
+import dev.fos.service.EmailAuthenticationToken;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
@@ -75,6 +78,7 @@ class AuthIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private AccountService accounts;
+    @Autowired private EmailAccessService emailAccess;
     @Autowired private AppUserRepository users;
     @Autowired private UserIdentityRepository identities;
     @Autowired private UserProgressRepository progress;
@@ -110,22 +114,39 @@ class AuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("conta nova nasce pendente e recebe 403 com o motivo, sem tocar em progresso")
-    void newAccountIsPending() throws Exception {
+    @DisplayName("conta criada por provedor entra direto, sem passar pela fila")
+    void providerAccountEntersApproved() throws Exception {
         AppUser user = login("google", "novato", "novato@example.test", "Novato");
 
-        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        // A inversão da #52: quem chega por provedor já teve a identidade verificada por um
+        // terceiro, e a fila passou a existir para quem NÃO tem provedor.
+        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
         assertThat(user.getId()).isNotEqualTo(SEEDED_USER_ID);
 
-        mockMvc.perform(get("/api/streak").with(as("google", "novato")))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error").value("acesso_pendente"));
+        mockMvc.perform(get("/api/streak").with(as("google", "novato"))).andExpect(status().isOk());
         mockMvc.perform(
                         post("/api/nodes/M0.1/drill")
                                 .with(as("google", "novato"))
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"recall\":\"OK\"}"))
+                .andExpect(status().isOk());
+
+        // E não é o dono: entrar direto não dá acesso à fila.
+        mockMvc.perform(get("/api/admin/solicitacoes").with(as("google", "novato")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("nao_autorizado"));
+    }
+
+    @Test
+    @DisplayName(
+            "pedido por e-mail nasce pendente e recebe 403 com o motivo, sem tocar em progresso")
+    void emailRequestIsPending() throws Exception {
+        AppUser user = pedidoPorEmail("sem-provedor@example.test");
+
+        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+
+        mockMvc.perform(get("/api/streak").with(asEmail("sem-provedor@example.test")))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("acesso_pendente"));
 
@@ -138,26 +159,26 @@ class AuthIntegrationTest {
     @Test
     @DisplayName("quem está na fila ainda enxerga a própria conta, para saber que está esperando")
     void pendingAccountCanStillSeeItself() throws Exception {
-        login("google", "novato", "novato@example.test", "Novato");
+        pedidoPorEmail("sem-provedor@example.test");
 
-        mockMvc.perform(get("/api/me").with(as("google", "novato")))
+        mockMvc.perform(get("/api/me").with(asEmail("sem-provedor@example.test")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessStatus").value("PENDENTE"))
-                .andExpect(jsonPath("$.displayName").value("Novato"))
-                .andExpect(jsonPath("$.provider").value("google"))
+                .andExpect(jsonPath("$.email").value("sem-provedor@example.test"))
+                .andExpect(jsonPath("$.provider").value("email"))
                 .andExpect(jsonPath("$.owner").value(false));
     }
 
     @Test
     @DisplayName("conta recusada segue recusada no login seguinte")
     void deniedAccountStaysDenied() throws Exception {
-        AppUser user = login("google", "recusado", "recusado@example.test", "Recusado");
+        AppUser user = pedidoPorEmail("recusado@example.test");
         accounts.decide(user.getId(), false, OWNER_DECIDING);
 
-        // Entrar de novo pelo provedor não reabre a porta — a decisão é da conta, não da sessão.
-        login("google", "recusado", "recusado@example.test", "Recusado");
+        // Pedir de novo não reabre a porta — a decisão é da conta, não da tentativa.
+        emailAccess.requestAccess("recusado@example.test");
 
-        mockMvc.perform(get("/api/streak").with(as("google", "recusado")))
+        mockMvc.perform(get("/api/streak").with(asEmail("recusado@example.test")))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("acesso_recusado"));
     }
@@ -165,10 +186,10 @@ class AuthIntegrationTest {
     @Test
     @DisplayName("aprovar libera o acesso da conta que estava na fila")
     void approvingOpensTheApp() throws Exception {
-        AppUser user = login("google", "novato", "novato@example.test", "Novato");
+        AppUser user = pedidoPorEmail("sem-provedor@example.test");
         accounts.decide(user.getId(), true, OWNER_DECIDING);
 
-        mockMvc.perform(get("/api/streak").with(as("google", "novato")))
+        mockMvc.perform(get("/api/streak").with(asEmail("sem-provedor@example.test")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentStreak").value(0));
     }
@@ -204,8 +225,10 @@ class AuthIntegrationTest {
                 accounts.registerLogin(
                         "google", "impostor", "dono@example.test", false, "Impostor");
 
-        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        // Entra (é provedor), mas não vira dono nem adota o progresso semeado.
+        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
         assertThat(user.getId()).isNotEqualTo(SEEDED_USER_ID);
+        assertThat(accounts.isOwner(user)).isFalse();
     }
 
     @Test
@@ -332,7 +355,7 @@ class AuthIntegrationTest {
     void encodedPathDoesNotBypassTheOwnerCheck() throws Exception {
         approved("google", "ana", "ana@example.test", "Ana");
         login("google", "dono", "dono@example.test", "Dono");
-        AppUser novato = login("google", "novato", "novato@example.test", "Novato");
+        AppUser novato = pedidoPorEmail("sem-provedor@example.test");
 
         // URI, e não String: o builder de String reencoda o `%` e o teste passaria por engano.
         mockMvc.perform(get(URI.create("/api/%61dmin/solicitacoes")).with(as("google", "ana")))
@@ -355,7 +378,7 @@ class AuthIntegrationTest {
     void onlyTheOwnerSeesTheQueue() throws Exception {
         approved("google", "ana", "ana@example.test", "Ana");
         login("google", "dono", "dono@example.test", "Dono");
-        AppUser novato = login("google", "novato", "novato@example.test", "Novato");
+        AppUser novato = pedidoPorEmail("sem-provedor@example.test");
 
         mockMvc.perform(get("/api/admin/solicitacoes").with(as("google", "ana")))
                 .andExpect(status().isForbidden())
@@ -365,7 +388,7 @@ class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.requests.length()").value(1))
                 .andExpect(jsonPath("$.requests[0].id").value(novato.getId()))
-                .andExpect(jsonPath("$.requests[0].email").value("novato@example.test"));
+                .andExpect(jsonPath("$.requests[0].email").value("sem-provedor@example.test"));
 
         mockMvc.perform(
                         post("/api/admin/solicitacoes/" + novato.getId() + "/aprovar")
@@ -374,7 +397,8 @@ class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.requests.length()").value(0));
 
-        mockMvc.perform(get("/api/streak").with(as("google", "novato"))).andExpect(status().isOk());
+        mockMvc.perform(get("/api/streak").with(asEmail("sem-provedor@example.test")))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -394,7 +418,8 @@ class AuthIntegrationTest {
         // vazia, que é o default documentado, ou quando o e-mail ainda não estava verificado.
         AppUser antes =
                 accounts.registerLogin("google", "dono", "dono@example.test", false, "Dono");
-        assertThat(antes.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        assertThat(antes.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
+        assertThat(accounts.isOwner(antes)).isFalse();
         assertThat(antes.getId()).isNotEqualTo(SEEDED_USER_ID);
 
         AppUser depois = login("google", "dono", "dono@example.test", "Dono");
@@ -442,7 +467,7 @@ class AuthIntegrationTest {
     @DisplayName("solicitação já decidida não é decidida de novo por uma aba velha")
     void decidingTwiceIsRefused() throws Exception {
         login("google", "dono", "dono@example.test", "Dono");
-        AppUser novato = login("google", "novato", "novato@example.test", "Novato");
+        AppUser novato = pedidoPorEmail("sem-provedor@example.test");
         accounts.decide(novato.getId(), false, SEEDED_USER_ID);
 
         mockMvc.perform(
@@ -453,7 +478,7 @@ class AuthIntegrationTest {
 
         // A recusa continua valendo: reabrir acesso a quem foi recusado é o defeito que o guarda
         // existe para impedir.
-        mockMvc.perform(get("/api/streak").with(as("google", "novato")))
+        mockMvc.perform(get("/api/streak").with(asEmail("sem-provedor@example.test")))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("acesso_recusado"));
     }
@@ -480,6 +505,23 @@ class AuthIntegrationTest {
                                 .header("Origin", "https://site-de-terceiro.example")
                                 .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isForbidden());
+    }
+
+    /** Sessão de quem entrou por link de e-mail — o outro método de autenticação (#52). */
+    private static RequestPostProcessor asEmail(String email) {
+        return authentication(new EmailAuthenticationToken(email));
+    }
+
+    /** Pedido de acesso sem provedor: é o único caminho que ainda cria conta pendente. */
+    private AppUser pedidoPorEmail(String email) {
+        emailAccess.requestAccess(email);
+        return users.findById(
+                        identities
+                                .findByProviderAndProviderSubject(
+                                        EmailAuthenticationToken.PROVIDER, email)
+                                .orElseThrow()
+                                .getUserId())
+                .orElseThrow();
     }
 
     private AppUser login(String provider, String subject, String email, String name) {

@@ -188,6 +188,31 @@ export function createApiClient(options: ApiClientOptions = {}) {
     /** Exclusão irreversível da conta e de todo o dado dela. */
     deleteAccount: () => requestNoContent('/api/me', { method: 'DELETE' }),
 
+    /**
+     * Registra um pedido de acesso para quem não tem provedor externo (#52).
+     *
+     * Nenhum e-mail sai daqui: o primeiro é enviado quando o dono aprova. Enviar no pedido faria de
+     * um endpoint público um canal de spam com o domínio do app no remetente.
+     */
+    requestEmailAccess: (email: string) =>
+      requestNoContent('/api/auth/email/solicitar', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+
+    /**
+     * Pede o link de entrada.
+     *
+     * A resposta é a mesma para endereço inexistente, pendente, recusado e aprovado — de propósito,
+     * para não virar consulta de quem tem conta no app. A tela diz "se existe conta, o link foi
+     * enviado", e é a verdade.
+     */
+    requestEmailLogin: (email: string) =>
+      requestNoContent('/api/auth/email/entrar', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+
     /** Fila de solicitações de acesso. Só o dono do app recebe 200 aqui. */
     getAccessRequests: () => request<AccessRequests>('/api/admin/solicitacoes'),
 

@@ -77,6 +77,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/email/solicitar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Registra um pedido de acesso
+         * @description A conta nasce pendente e aparece na fila do dono. Nenhum e-mail sai aqui: o primeiro é enviado quando o pedido é aprovado.
+         */
+        post: operations["solicitar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/email/entrar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pede o link de entrada
+         * @description Responde igual para endereço inexistente, pendente, recusado e aprovado — do contrário viraria consulta de quem tem conta no app.
+         */
+        post: operations["entrar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/solicitacoes/{id}/recusar": {
         parameters: {
             query?: never;
@@ -106,7 +146,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Libera a conta; devolve a fila já sem ela */
+        /**
+         * Libera a conta; devolve a fila já sem ela
+         * @description Quem pediu por e-mail recebe aqui o primeiro link de entrada — é o único momento em que o app escreve para um endereço que ainda não entrou.
+         */
         post: operations["approve"];
         delete?: never;
         options?: never;
@@ -204,6 +247,23 @@ export interface paths {
          * @description Irreversível. Vale para conta aprovada, pendente ou recusada. A sessão é invalidada junto.
          */
         delete: operations["deleteMe"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/login/email/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Consome o link e abre a sessão */
+        get: operations["consumir"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -365,6 +425,9 @@ export interface components {
             acceptedVersion?: string;
             currentVersion?: string;
             shortNotice?: string;
+        };
+        EmailRequest: {
+            email: string;
         };
         AccessRequestView: {
             /** Format: int64 */
@@ -558,6 +621,7 @@ export interface components {
         };
         AuthProviders: {
             providers?: components["schemas"]["AuthProviderView"][];
+            emailEnabled?: boolean;
         };
     };
     responses: never;
@@ -667,6 +731,50 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["DisclaimerStatus"];
                 };
+            };
+        };
+    };
+    solicitar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    entrar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -823,6 +931,26 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    consumir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

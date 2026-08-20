@@ -839,6 +839,29 @@ button.danger {
 }
 
 /* Botão que se comporta como link: usado onde a ação é secundária e o espaço, curto. */
+/* Entrada por e-mail (#52): alternativa discreta, não concorrente do provedor. */
+.login__alternativa {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.login__email {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.login__email input {
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--borda, #2a2f3a);
+  background: var(--fundo-campo, #0f1218);
+  color: inherit;
+  font: inherit;
+}
+
 .linklike {
   padding: 0;
   border: none;

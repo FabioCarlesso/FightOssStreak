@@ -7,6 +7,7 @@ import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
+import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserIdentityRepository;
@@ -45,6 +46,7 @@ public class AccountService {
     private final UserProgressRepository progress;
     private final SrsReviewRepository reviews;
     private final DrillLogRepository drills;
+    private final LoginTokenRepository loginTokens;
     private final QuizAttemptRepository quizAttempts;
     private final DisclaimerAcceptanceRepository disclaimers;
     private final FosProperties.Auth auth;
@@ -56,6 +58,7 @@ public class AccountService {
             UserProgressRepository progress,
             SrsReviewRepository reviews,
             DrillLogRepository drills,
+            LoginTokenRepository loginTokens,
             QuizAttemptRepository quizAttempts,
             DisclaimerAcceptanceRepository disclaimers,
             FosProperties properties,
@@ -65,6 +68,7 @@ public class AccountService {
         this.progress = progress;
         this.reviews = reviews;
         this.drills = drills;
+        this.loginTokens = loginTokens;
         this.quizAttempts = quizAttempts;
         this.disclaimers = disclaimers;
         this.auth = properties.auth();
@@ -74,10 +78,11 @@ public class AccountService {
     /**
      * Registra um login bem-sucedido no provedor.
      *
-     * <p>Primeira vez daquela identidade: cria a conta — {@code PENDENTE}, ou {@code APROVADO} se o
-     * e-mail verificado estiver em {@code fos.auth.owner-emails}. Vezes seguintes: só atualiza
-     * {@code last_login_at}. Nada de progresso, SRS, drill ou aceite é criado aqui: quem ainda não
-     * foi liberado não tem estado no app.
+     * <p>Primeira vez daquela identidade: cria a conta já {@code APROVADO}. Entrar por provedor
+     * externo é acesso direto desde a #52 — quem chega por ali já teve a identidade verificada por
+     * um terceiro, e a fila passou a existir para quem <em>não</em> tem provedor. Vezes seguintes:
+     * só atualiza {@code last_login_at}. Nada de progresso, SRS, drill ou aceite é criado aqui:
+     * quem ainda não foi liberado não tem estado no app.
      */
     @Transactional
     public AppUser registerLogin(
@@ -98,7 +103,7 @@ public class AccountService {
         }
 
         boolean owner = emailVerified && auth.isOwnerEmail(email);
-        AppUser user = owner ? ownerAccount(label, now) : users.save(AppUser.pending(label, now));
+        AppUser user = owner ? ownerAccount(label, now) : users.save(AppUser.approved(label, now));
         identities.save(
                 new UserIdentity(
                         user.getId(), provider, subject, email, emailVerified, displayName, now));
@@ -143,16 +148,24 @@ public class AccountService {
     private AppUser promoteIfOwner(UserIdentity identity, String label, Instant now) {
         AppUser user =
                 users.findById(identity.getUserId()).orElseThrow(UnauthenticatedException::new);
-        if (user.isApproved()
-                || !(identity.isEmailVerified() && auth.isOwnerEmail(identity.getEmail()))) {
+        if (!(identity.isEmailVerified() && auth.isOwnerEmail(identity.getEmail()))) {
             return user;
+        }
+        if (!user.isApproved()) {
+            user.approve(now);
+            log.info("Conta {} aprovada por estar em fos.auth.owner-emails", user.getId());
         }
 
         Optional<AppUser> seeded =
-                unclaimedSeededAccount().filter(seed -> !seed.getId().equals(user.getId()));
+                unclaimedSeededAccount()
+                        .filter(seed -> !seed.getId().equals(user.getId()))
+                        // A adoção apaga a conta que a identidade tinha antes. Isso era seguro
+                        // quando ela nascia pendente e não podia escrever nada; desde a #52 ela
+                        // nasce aprovada e pode ter usado o app antes de `owner-emails` ser
+                        // preenchida. Sem esta guarda, configurar a lista depois apagaria o
+                        // progresso do próprio autor.
+                        .filter(seed -> isEmpty(user.getId()));
         if (seeded.isEmpty()) {
-            user.approve(now);
-            log.info("Conta {} aprovada por estar em fos.auth.owner-emails", user.getId());
             return user;
         }
 
@@ -169,6 +182,13 @@ public class AccountService {
                 user.getId(),
                 target.getId());
         return target;
+    }
+
+    /** Conta sem nada escrito: só ela pode ser trocada pela linha semeada sem perder dado. */
+    private boolean isEmpty(Long userId) {
+        return progress.findByIdUserId(userId).isEmpty()
+                && reviews.findByIdUserId(userId).isEmpty()
+                && drills.countByUserId(userId) == 0;
     }
 
     /** A linha semeada pela V2, enquanto nenhuma identidade a tiver reivindicado. */
@@ -245,8 +265,8 @@ public class AccountService {
     /**
      * Apaga a conta e tudo que é dela, em uma transação.
      *
-     * <p>São seis tabelas com {@code user_id}, não cinco: {@code quiz_attempt} entrou depois
-     * (V3__metrics.sql). Esquecer uma delas não dá erro silencioso — dá violação de FK ao apagar
+     * <p>São sete tabelas com {@code user_id}: {@code quiz_attempt} entrou na V3 e {@code
+     * login_token} na V7. Esquecer uma delas não dá erro silencioso — dá violação de FK ao apagar
      * {@code app_user} —, mas a ordem importa e por isso está explícita.
      *
      * <p>Vale para conta pendente e recusada: quem pediu acesso e não entrou tem o mesmo direito de
@@ -254,6 +274,7 @@ public class AccountService {
      */
     @Transactional
     public void delete(Long userId) {
+        loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);
         reviews.deleteByIdUserId(userId);

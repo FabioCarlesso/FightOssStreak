@@ -32,6 +32,10 @@
       "description": "Árvore de currículo, nós, quiz e registro de drill"
     },
     {
+      "name": "Acesso por e-mail",
+      "description": "Pedido de acesso e entrada por link"
+    },
+    {
       "name": "Conta",
       "description": "Login social, identidade da conta e exclusão"
     }
@@ -191,6 +195,56 @@
         }
       }
     },
+    "/api/auth/email/solicitar": {
+      "post": {
+        "tags": [
+          "Acesso por e-mail"
+        ],
+        "summary": "Registra um pedido de acesso",
+        "description": "A conta nasce pendente e aparece na fila do dono. Nenhum e-mail sai aqui: o primeiro é enviado quando o pedido é aprovado.",
+        "operationId": "solicitar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/email/entrar": {
+      "post": {
+        "tags": [
+          "Acesso por e-mail"
+        ],
+        "summary": "Pede o link de entrada",
+        "description": "Responde igual para endereço inexistente, pendente, recusado e aprovado — do contrário viraria consulta de quem tem conta no app.",
+        "operationId": "entrar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/admin/solicitacoes/{id}/recusar": {
       "post": {
         "tags": [
@@ -230,6 +284,7 @@
           "Solicitações"
         ],
         "summary": "Libera a conta; devolve a fila já sem ela",
+        "description": "Quem pediu por e-mail recebe aqui o primeiro link de entrada — é o único momento em que o app escreve para um endereço que ainda não entrou.",
         "operationId": "approve",
         "parameters": [
           {
@@ -391,6 +446,30 @@
         "summary": "Exclui a conta e todo o dado dela",
         "description": "Irreversível. Vale para conta aprovada, pendente ou recusada. A sessão é invalidada junto.",
         "operationId": "deleteMe",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/login/email/{token}": {
+      "get": {
+        "tags": [
+          "Acesso por e-mail"
+        ],
+        "summary": "Consome o link e abre a sessão",
+        "operationId": "consumir",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -713,6 +792,17 @@
             "type": "string"
           },
           "shortNotice": {
+            "type": "string"
+          }
+        }
+      },
+      "EmailRequest": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
             "type": "string"
           }
         }
@@ -1259,6 +1349,9 @@
             "items": {
               "$ref": "#/components/schemas/AuthProviderView"
             }
+          },
+          "emailEnabled": {
+            "type": "boolean"
           }
         }
       }

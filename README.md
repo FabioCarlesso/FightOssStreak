@@ -159,6 +159,8 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET` | backend | — | segredo do app no Google |
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID` | backend | — | id do app no Meta for Developers |
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET` | backend | — | segredo do app no Meta for Developers |
+| `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
+| `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
 
 Detalhes que não são óbvios:
 
@@ -194,11 +196,21 @@ Detalhes que não são óbvios:
 
 ## Acesso e contas
 
-O app **exige login e liberação do autor**. Entrar é por provedor externo — o app nunca vê senha —
-e a conta nasce na fila: quem chega vê "solicitação registrada" até o dono aprovar. Sem sessão a
-API responde `401`; com sessão e sem liberação, `403` com o motivo (`acesso_pendente` ou
-`acesso_recusado`). A decisão e o porquê estão em [`docs/07-decisoes.md`](docs/07-decisoes.md)
-(D36).
+O app **exige login**, e há dois caminhos (D37):
+
+- **Por provedor externo** (Google; Facebook se configurado): entra **direto**, sem fila. Quem
+  chega por ali já teve a identidade verificada por um terceiro, e o app nunca vê senha.
+- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente** e o autor libera
+  pela fila. Só então sai o primeiro e-mail, com um **link de entrada** que vale 15 minutos e
+  funciona uma vez.
+
+Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o motivo
+(`acesso_pendente` ou `acesso_recusado`). A decisão e o porquê estão em
+[`docs/07-decisoes.md`](docs/07-decisoes.md) (D36 e D37).
+
+**Habilitar a entrada por e-mail**: crie a chave no provedor de envio, verifique o domínio do
+remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual e a
+alternativa não aparece na tela de login.
 
 **Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
 

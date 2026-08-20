@@ -46,6 +46,9 @@ services:
       FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET: '${FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET:-}'
       FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID: '${FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID:-}'
       FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET: '${FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET:-}'
+      # Entrada por e-mail (#52). Sem elas, quem não tem provedor não consegue pedir acesso.
+      FOS_EMAIL_API_KEY: '${FOS_EMAIL_API_KEY:-}'
+      FOS_EMAIL_FROM: '${FOS_EMAIL_FROM:-}'
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:

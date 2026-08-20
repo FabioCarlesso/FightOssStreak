@@ -33,7 +33,11 @@ public final class AccountDtos {
      */
     public record AuthProviderView(String id, String label, String authorizationUrl) {}
 
-    public record AuthProviders(List<AuthProviderView> providers) {}
+    /**
+     * @param emailEnabled se a entrada por e-mail está disponível neste ambiente. Sem credencial de
+     *     envio ela não aparece na tela, em vez de aparecer e falhar no envio
+     */
+    public record AuthProviders(List<AuthProviderView> providers, boolean emailEnabled) {}
 
     /**
      * Uma solicitação de acesso na fila do dono.
