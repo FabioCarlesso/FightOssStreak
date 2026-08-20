@@ -3,6 +3,7 @@ package dev.fos.web;
 import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
+import dev.fos.service.CurrentUserProvider;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,9 +32,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     private final AccountService accounts;
+    private final CurrentUserProvider currentUser;
 
-    public AdminController(AccountService accounts) {
+    public AdminController(AccountService accounts, CurrentUserProvider currentUser) {
         this.accounts = accounts;
+        this.currentUser = currentUser;
     }
 
     @GetMapping("/solicitacoes")
@@ -45,7 +48,7 @@ public class AdminController {
     @PostMapping("/solicitacoes/{id}/aprovar")
     @Operation(summary = "Libera a conta; devolve a fila já sem ela")
     public AccountDtos.AccessRequests approve(@PathVariable Long id) {
-        accounts.decide(id, true);
+        accounts.decide(id, true, currentUser.currentUserId());
         return queue();
     }
 
@@ -55,7 +58,7 @@ public class AdminController {
             description =
                     "A conta recusada continua recusada nos logins seguintes e só pode se excluir.")
     public AccountDtos.AccessRequests deny(@PathVariable Long id) {
-        accounts.decide(id, false);
+        accounts.decide(id, false, currentUser.currentUserId());
         return queue();
     }
 

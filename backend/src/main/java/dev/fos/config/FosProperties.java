@@ -49,7 +49,7 @@ public record FosProperties(String disclaimerVersion, Curriculum curriculum, Aut
                                     .filter(email -> email != null && !email.isBlank())
                                     .map(email -> email.trim().toLowerCase(Locale.ROOT))
                                     .toList();
-            providers = providers == null ? new Providers(null, null) : providers;
+            providers = providers == null ? new Providers(null, null, null) : providers;
         }
 
         /** E-mail verificado do dono — a comparação é sempre em minúsculas. */
@@ -67,13 +67,20 @@ public record FosProperties(String disclaimerVersion, Curriculum curriculum, Aut
      * a leitura é direta, e a lista de provedores suportados já é fechada de qualquer jeito (ver
      * {@code OAuth2ProviderConfig}).
      */
-    public record Providers(Provider google, Provider facebook) {
+    public record Providers(Provider google, Provider facebook, Provider apple) {
         public Providers {
             google = google == null ? new Provider(null, null) : google;
             facebook = facebook == null ? new Provider(null, null) : facebook;
+            apple = apple == null ? new Provider(null, null) : apple;
         }
 
-        /** Só os que têm credencial. É esta lista que vira registration e botão na tela. */
+        /**
+         * Só os que têm credencial. É esta lista que vira registration e botão na tela.
+         *
+         * <p>A Apple entra aqui de propósito, mesmo ainda não sendo suportada: quem preencher as
+         * credenciais dela recebe uma falha explícita na subida, dizendo isso. Deixá-la fora daria
+         * o pior dos dois mundos — configuração aceita em silêncio e login que nunca aparece.
+         */
         public Map<String, Provider> configured() {
             Map<String, Provider> configured = new LinkedHashMap<>();
             if (google.isConfigured()) {
@@ -81,6 +88,9 @@ public record FosProperties(String disclaimerVersion, Curriculum curriculum, Aut
             }
             if (facebook.isConfigured()) {
                 configured.put("facebook", facebook);
+            }
+            if (apple.isConfigured()) {
+                configured.put("apple", apple);
             }
             return configured;
         }

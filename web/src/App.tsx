@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
-import { AuthGate, SignOutButton } from './components/AuthGate.tsx';
+import { AuthGate } from './components/AuthGate.tsx';
 import { DemoModeBanner } from './components/DemoModeBanner.tsx';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
+import { SignOutButton } from './components/SignOutButton.tsx';
 import { AccessRequestsPage } from './pages/AccessRequestsPage.tsx';
 import { AccountPage } from './pages/AccountPage.tsx';
 import { HomePage } from './pages/HomePage.tsx';

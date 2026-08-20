@@ -5,7 +5,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +66,11 @@ class AuthIntegrationTest {
     }
 
     private static final long SEEDED_USER_ID = 1L;
+
+    /**
+     * Nos testes quem decide é sempre outra conta que não a decidida — ver o guarda em decide().
+     */
+    private static final long OWNER_DECIDING = -1L;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private AccountService accounts;
@@ -144,7 +151,7 @@ class AuthIntegrationTest {
     @DisplayName("conta recusada segue recusada no login seguinte")
     void deniedAccountStaysDenied() throws Exception {
         AppUser user = login("google", "recusado", "recusado@example.test", "Recusado");
-        accounts.decide(user.getId(), false);
+        accounts.decide(user.getId(), false, OWNER_DECIDING);
 
         // Entrar de novo pelo provedor não reabre a porta — a decisão é da conta, não da sessão.
         login("google", "recusado", "recusado@example.test", "Recusado");
@@ -158,7 +165,7 @@ class AuthIntegrationTest {
     @DisplayName("aprovar libera o acesso da conta que estava na fila")
     void approvingOpensTheApp() throws Exception {
         AppUser user = login("google", "novato", "novato@example.test", "Novato");
-        accounts.decide(user.getId(), true);
+        accounts.decide(user.getId(), true, OWNER_DECIDING);
 
         mockMvc.perform(get("/api/streak").with(as("google", "novato")))
                 .andExpect(status().isOk())
@@ -337,13 +344,108 @@ class AuthIntegrationTest {
         mockMvc.perform(get("/api/streak")).andExpect(status().isUnauthorized());
     }
 
+    @Test
+    @DisplayName("dono que só passou a bater com a lista entra aprovado no login seguinte")
+    void ownerRuleAppliesOnLaterLogins() throws Exception {
+        // O primeiro login não casa com a lista — é o que acontece quando `owner-emails` ainda está
+        // vazia, que é o default documentado, ou quando o e-mail ainda não estava verificado.
+        AppUser antes =
+                accounts.registerLogin("google", "dono", "dono@example.test", false, "Dono");
+        assertThat(antes.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        assertThat(antes.getId()).isNotEqualTo(SEEDED_USER_ID);
+
+        AppUser depois = login("google", "dono", "dono@example.test", "Dono");
+
+        // Sem isto a conta do autor ficaria pendente para sempre, sem ninguém para aprová-la, e o
+        // progresso semeado ficaria órfão.
+        assertThat(depois.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
+        assertThat(depois.getId()).isEqualTo(SEEDED_USER_ID);
+        assertThat(users.findById(antes.getId())).isEmpty();
+
+        mockMvc.perform(get("/api/streak").with(as("google", "dono"))).andExpect(status().isOk());
+        mockMvc.perform(get("/api/admin/solicitacoes").with(as("google", "dono")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("conta comum aprovada não é migrada nem rebaixada em logins seguintes")
+    void approvedAccountIsNotTouchedOnLogin() {
+        AppUser ana = approved("google", "ana", "ana@example.test", "Ana");
+
+        AppUser denovo = login("google", "ana", "ana@example.test", "Ana");
+
+        assertThat(denovo.getId()).isEqualTo(ana.getId());
+        assertThat(denovo.getAccessStatus()).isEqualTo(AccessStatus.APROVADO);
+    }
+
+    @Test
+    @DisplayName("o dono não consegue recusar a própria conta")
+    void ownerCannotLockItselfOut() throws Exception {
+        AppUser dono = login("google", "dono", "dono@example.test", "Dono");
+
+        mockMvc.perform(
+                        post("/api/admin/solicitacoes/" + dono.getId() + "/recusar")
+                                .with(as("google", "dono"))
+                                .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("invalid_request"));
+
+        // Continua dentro: sem o guarda, a recuperação seria pelo banco.
+        mockMvc.perform(get("/api/admin/solicitacoes").with(as("google", "dono")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("solicitação já decidida não é decidida de novo por uma aba velha")
+    void decidingTwiceIsRefused() throws Exception {
+        login("google", "dono", "dono@example.test", "Dono");
+        AppUser novato = login("google", "novato", "novato@example.test", "Novato");
+        accounts.decide(novato.getId(), false, SEEDED_USER_ID);
+
+        mockMvc.perform(
+                        post("/api/admin/solicitacoes/" + novato.getId() + "/aprovar")
+                                .with(as("google", "dono"))
+                                .with(csrf()))
+                .andExpect(status().isBadRequest());
+
+        // A recusa continua valendo: reabrir acesso a quem foi recusado é o defeito que o guarda
+        // existe para impedir.
+        mockMvc.perform(get("/api/streak").with(as("google", "novato")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("acesso_recusado"));
+    }
+
+    @Test
+    @DisplayName("o preflight do dev server passa pelo filtro de segurança")
+    void devServerPreflightIsAnswered() throws Exception {
+        // Preflight não carrega cookie. Com o CORS fora da cadeia de segurança ele morria em 401
+        // antes de o MVC ver a requisição — e o dev server não tinha como falar com a API.
+        mockMvc.perform(
+                        options("/api/streak")
+                                .header("Origin", "http://localhost:5173")
+                                .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
+    @Test
+    @DisplayName("origem de fora não ganha permissão de CORS")
+    void unknownOriginIsRefused() throws Exception {
+        mockMvc.perform(
+                        options("/api/streak")
+                                .header("Origin", "https://site-de-terceiro.example")
+                                .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isForbidden());
+    }
+
     private AppUser login(String provider, String subject, String email, String name) {
         return accounts.registerLogin(provider, subject, email, true, name);
     }
 
     private AppUser approved(String provider, String subject, String email, String name) {
         AppUser user = login(provider, subject, email, name);
-        return user.isApproved() ? user : accounts.decide(user.getId(), true);
+        return user.isApproved() ? user : accounts.decide(user.getId(), true, OWNER_DECIDING);
     }
 
     /** Sessão do par (provedor, subject) — o mesmo que o fluxo real deixa na autenticação. */

@@ -141,6 +141,18 @@ describe('AuthGate', () => {
     expect(await screen.findByRole('link', { name: /entrar com google/i })).toBeInTheDocument();
   });
 
+  it('sair que falha diz isso, em vez de fingir que a sessão acabou', async () => {
+    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'PENDENTE' }));
+    apiMock.logout.mockRejectedValue(new Error('502 Bad Gateway'));
+
+    renderGate();
+    await userEvent.click(await screen.findByRole('button', { name: /^sair$/i }));
+
+    // A sessão continua viva no servidor: recarregar a conta faria a pessoa achar que saiu.
+    expect(await screen.findByText(/não foi possível sair.*502/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /solicitação registrada/i })).toBeInTheDocument();
+  });
+
   it('excluir a conta pede confirmação e só então apaga', async () => {
     apiMock.getAccount
       .mockResolvedValueOnce(conta({ accessStatus: 'PENDENTE' }))

@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import { api } from '../api/client.ts';
 import { useAccountOrNull } from '../state/account.ts';
+import { SignOutButton } from './SignOutButton.tsx';
 import { useAsync } from '../state/useAsync.ts';
 import { FULL_DISCLAIMER } from '../content/disclaimer.ts';
 
@@ -80,15 +81,7 @@ export function DisclaimerGate({ children }: { children: ReactNode }) {
         {session && (
           <p className="gate__version">
             Entrou como {session.account.displayName}.{' '}
-            <button
-              type="button"
-              className="linklike"
-              onClick={() => {
-                void api.logout().finally(session.reload);
-              }}
-            >
-              Sair
-            </button>
+            <SignOutButton onSignedOut={session.reload} className="linklike" />
           </p>
         )}
       </div>

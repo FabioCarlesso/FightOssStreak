@@ -185,8 +185,9 @@ Detalhes que não são óbvios:
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
 - **`FOS_OWNER_EMAILS` vazia deixa o app sem dono.** Ninguém é aprovado automaticamente, e a
-  fila de solicitações fica sem quem a decida. É ela também que faz a primeira conta do autor
-  adotar o progresso pré-existente (D36) — preencher **antes** do primeiro login.
+  fila de solicitações fica sem quem a decida. É ela também que faz a conta do autor adotar o
+  progresso pré-existente (D36). Preenchê-la **depois** de já ter entrado uma vez funciona: a
+  regra vale em todo login, então o login seguinte aprova a conta e adota o progresso.
 - **Provedor sem credencial não é registrado.** Não é uma tela de login com botão que falha: o
   provedor simplesmente não existe, e a aplicação sobe sem segredo nenhum (é o modo dev e o CI).
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.

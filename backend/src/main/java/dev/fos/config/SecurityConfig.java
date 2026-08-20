@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,9 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Quem entra, como a sessão é protegida e por onde o login passa.
@@ -44,7 +48,8 @@ class SecurityConfig {
         CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
         csrfHandler.setCsrfRequestAttributeName(null);
 
-        http.authorizeHttpRequests(
+        http.cors(org.springframework.security.config.Customizer.withDefaults())
+                .authorizeHttpRequests(
                         auth ->
                                 auth.requestMatchers(
                                                 "/actuator/health",
@@ -109,6 +114,28 @@ class SecurityConfig {
         }
 
         return http.build();
+    }
+
+    /**
+     * CORS do dev server do Vite.
+     *
+     * <p>Precisa ser um bean lido pela cadeia de segurança, e não `addCorsMappings` de um
+     * `WebMvcConfigurer`: desde que existe autenticação, é o filtro que responde primeiro, e o
+     * preflight (que não carrega cookie) morria em 401 antes de o MVC ver a requisição. Restrito a
+     * localhost de propósito — em produção web e API são a mesma origem, e um curinga aqui viraria
+     * um esquecimento permanente.
+     */
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        // Sem credencial não há sessão do outro lado, e toda chamada voltaria 401.
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", configuration);
+        return source;
     }
 
     private static void write(

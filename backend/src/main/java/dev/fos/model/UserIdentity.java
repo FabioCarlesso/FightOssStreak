@@ -71,14 +71,32 @@ public class UserIdentity {
         this.lastLoginAt = now;
     }
 
-    /**
-     * Login seguinte da mesma identidade: só a data muda.
-     *
-     * <p>Nome e e-mail não são reescritos de propósito — a Apple só os envia no primeiro
-     * consentimento, então sobrescrever com o que veio depois apagaria o que se sabe da pessoa.
-     */
+    /** Login seguinte da mesma identidade. */
     public void registerLogin(Instant now) {
         this.lastLoginAt = now;
+    }
+
+    /**
+     * Atualiza nome e e-mail, mas nunca os apaga.
+     *
+     * <p>A assimetria é a regra inteira: a Apple só envia nome e e-mail no primeiro consentimento,
+     * então sobrescrever com o vazio que vem depois apagaria o que se sabe da pessoa. Já um valor
+     * novo precisa entrar — sem isso, e-mail que o provedor passou a verificar ficaria eternamente
+     * desatualizado aqui, e é por ele que a regra do dono decide.
+     */
+    public void refresh(String email, boolean emailVerified, String displayName) {
+        if (email != null && !email.isBlank()) {
+            this.email = email;
+            this.emailVerified = emailVerified;
+        }
+        if (displayName != null && !displayName.isBlank()) {
+            this.displayName = displayName;
+        }
+    }
+
+    /** Repõe a identidade em outra conta — ver {@code AccountService.promoteIfOwner}. */
+    public void moveTo(Long userId) {
+        this.userId = userId;
     }
 
     public Long getId() {

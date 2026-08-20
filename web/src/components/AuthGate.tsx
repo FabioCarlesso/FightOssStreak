@@ -4,6 +4,7 @@ import { ApiError, api } from '../api/client.ts';
 import { AccountContext } from '../state/account.ts';
 import { useAsync } from '../state/useAsync.ts';
 import { DeleteAccount } from './DeleteAccount.tsx';
+import { SignOutButton } from './SignOutButton.tsx';
 
 /**
  * Portão de autenticação e de aprovação — o primeiro a decidir, antes do aviso de responsabilidade.
@@ -159,19 +160,5 @@ function DeniedScreen({ onChange }: { onChange: () => void }) {
         </div>
       </div>
     </div>
-  );
-}
-
-/** Sair derruba a sessão no servidor; a releitura de `/api/me` é que leva de volta ao login. */
-export function SignOutButton({ onSignedOut }: { onSignedOut: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        void api.logout().finally(onSignedOut);
-      }}
-    >
-      Sair
-    </button>
   );
 }
