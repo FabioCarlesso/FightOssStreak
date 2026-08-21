@@ -1,5 +1,6 @@
 package dev.fos.service;
 
+import dev.fos.config.FosProperties;
 import dev.fos.email.EmailSender;
 import dev.fos.model.AppUser;
 import dev.fos.model.LoginToken;
@@ -14,6 +15,8 @@ import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Locale;
@@ -34,6 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Consequência boa da ordem: pedir acesso com o endereço de outra pessoa não dá acesso a
  * ninguém, porque o link vai para a caixa do dono do endereço, não para quem preencheu o
  * formulário.
+ *
+ * <p>O pedido avisa <b>o dono</b> (#54), e só ele: o destinatário vem de {@code
+ * fos.auth.owner-emails}, nunca do formulário. É por isso que o aviso não reabre o buraco que a
+ * ordem acima fecha — {@code /solicitar} continua sem servir para escrever a endereço arbitrário.
  */
 @Service
 public class EmailAccessService {
@@ -45,10 +52,15 @@ public class EmailAccessService {
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
+    /** UTC e explícito: o aviso pode ser lido de qualquer fuso, e a hora crua confundiria. */
+    private static final DateTimeFormatter QUANDO =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'").withZone(ZoneOffset.UTC);
+
     private final AppUserRepository users;
     private final UserIdentityRepository identities;
     private final LoginTokenRepository tokens;
     private final ObjectProvider<EmailSender> emailSender;
+    private final FosProperties.Auth auth;
     private final Clock clock;
 
     public EmailAccessService(
@@ -56,11 +68,13 @@ public class EmailAccessService {
             UserIdentityRepository identities,
             LoginTokenRepository tokens,
             ObjectProvider<EmailSender> emailSender,
+            FosProperties properties,
             Clock clock) {
         this.users = users;
         this.identities = identities;
         this.tokens = tokens;
         this.emailSender = emailSender;
+        this.auth = properties.auth();
         this.clock = clock;
     }
 
@@ -72,14 +86,18 @@ public class EmailAccessService {
     /**
      * Registra um pedido de acesso. Idempotente: pedir de novo não cria outra conta nem reabre uma
      * decisão já tomada.
+     *
+     * @return verdadeiro só quando a fila realmente cresceu. É o que faz o aviso ao dono herdar a
+     *     idempotência daqui em vez de repeti-la: quem insiste no formulário não vira uma caixa de
+     *     entrada cheia do mesmo pedido.
      */
     @Transactional
-    public void requestAccess(String rawEmail) {
+    public boolean requestAccess(String rawEmail) {
         String email = normalize(rawEmail);
         if (identities
                 .findByProviderAndProviderSubject(EmailAuthenticationToken.PROVIDER, email)
                 .isPresent()) {
-            return;
+            return false;
         }
         Instant now = Instant.now(clock);
         AppUser user = users.save(AppUser.pending(email, now));
@@ -96,6 +114,50 @@ public class EmailAccessService {
                         null,
                         now));
         log.info("Pedido de acesso por e-mail registrado — conta {}", user.getId());
+        return true;
+    }
+
+    /**
+     * Avisa o dono de que alguém entrou na fila (#54).
+     *
+     * <p>Fora da transação de propósito, e por isso um método separado em vez de duas linhas no fim
+     * do {@link #requestAccess}: {@code EmailSender.send} propaga a falha do provedor de envio, e
+     * lá dentro isso reverteria a conta pendente recém-criada e devolveria 500 num endpoint público
+     * — o pedido sumiria por causa do aviso sobre ele. Aqui a falha é só log.
+     *
+     * <p>Um envio por endereço, e um {@code catch} por envio: endereço inválido na configuração não
+     * pode calar os outros donos. Lista vazia — o default — não tenta nada.
+     */
+    public void notifyOwnersOfRequest(String rawEmail, String baseUrl) {
+        EmailSender sender = emailSender.getIfAvailable();
+        if (sender == null || auth.ownerEmails().isEmpty()) {
+            return;
+        }
+        String corpo =
+                """
+                Alguém pediu acesso ao FightOssStreak.
+
+                Endereço: %s
+                Quando: %s
+
+                Para liberar ou recusar, abra a fila de solicitações:
+                %s
+
+                Quem pediu não recebe nada até você decidir.
+                """
+                        .formatted(
+                                normalize(rawEmail),
+                                QUANDO.format(Instant.now(clock)),
+                                baseUrl + "/solicitacoes");
+        for (String owner : auth.ownerEmails()) {
+            try {
+                sender.send(owner, "Novo pedido de acesso ao FightOssStreak", corpo);
+            } catch (RuntimeException e) {
+                // Sem o endereço na mensagem: quem pediu é dado pessoal (docs/11-privacidade.md),
+                // e para depurar basta saber que o aviso não saiu.
+                log.warn("Aviso de pedido de acesso não pôde ser enviado ao dono", e);
+            }
+        }
     }
 
     /**

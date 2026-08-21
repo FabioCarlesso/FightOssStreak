@@ -200,17 +200,18 @@ O app **exige login**, e há dois caminhos (D37):
 
 - **Por provedor externo** (Google; Facebook se configurado): entra **direto**, sem fila. Quem
   chega por ali já teve a identidade verificada por um terceiro, e o app nunca vê senha.
-- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente** e o autor libera
-  pela fila. Só então sai o primeiro e-mail, com um **link de entrada** que vale 15 minutos e
-  funciona uma vez.
+- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente**, o autor é
+  **avisado por e-mail** (D38) e libera pela fila. Só então sai o primeiro e-mail para quem pediu,
+  com um **link de entrada** que vale 15 minutos e funciona uma vez.
 
 Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o motivo
 (`acesso_pendente` ou `acesso_recusado`). A decisão e o porquê estão em
-[`docs/07-decisoes.md`](docs/07-decisoes.md) (D36 e D37).
+[`docs/07-decisoes.md`](docs/07-decisoes.md) (D36, D37 e D38).
 
 **Habilitar a entrada por e-mail**: crie a chave no provedor de envio, verifique o domínio do
 remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual e a
-alternativa não aparece na tela de login.
+alternativa não aparece na tela de login. O aviso de fila usa as mesmas variáveis mais
+`FOS_OWNER_EMAILS`: sem alguma das três ninguém é avisado, e o pedido entra na fila do mesmo jeito.
 
 **Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
 
@@ -220,8 +221,9 @@ alternativa não aparece na tela de login.
 2. Defina as variáveis do provedor e `FOS_OWNER_EMAILS` com o seu e-mail.
 3. Suba. Sem credencial nenhuma o app continua subindo — a tela de login é que fica sem botão.
 
-**Aprovar quem pediu**: entre com a conta de dono e abra *Solicitações* no menu. A fila também
-está em `GET /api/admin/solicitacoes`.
+**Aprovar quem pediu**: o aviso de pedido chega nos endereços de `FOS_OWNER_EMAILS` com o link da
+fila. Para decidir, entre com a conta de dono e abra *Solicitações* no menu. A fila também está em
+`GET /api/admin/solicitacoes`.
 
 **Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, progresso, streak, agenda,
 drills, anotações e aceite — em uma transação, sem volta. Vale para conta pendente e recusada.

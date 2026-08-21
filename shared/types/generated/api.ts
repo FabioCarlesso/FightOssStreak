@@ -88,7 +88,7 @@ export interface paths {
         put?: never;
         /**
          * Registra um pedido de acesso
-         * @description A conta nasce pendente e aparece na fila do dono. Nenhum e-mail sai aqui: o primeiro é enviado quando o pedido é aprovado.
+         * @description A conta nasce pendente e aparece na fila do dono, que é avisado por e-mail. Quem pediu não recebe nada aqui: o primeiro e-mail para ele é o link enviado na aprovação.
          */
         post: operations["solicitar"];
         delete?: never;

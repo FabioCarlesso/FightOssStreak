@@ -71,6 +71,8 @@ Duas notas sobre esse dado:
   torna ninguém dono do app.
 - Os **links de entrada não são guardados**. O que fica na tabela é o hash do token, com validade e
   marca de uso. Quem tiver leitura do banco não consegue entrar como ninguém.
+- O endereço **vai para a caixa do dono** no aviso de fila (D38), porque decidir sem saber quem
+  pediu é impossível. Ele continua fora do log: o que se registra é a conta, não o endereço.
 
 A exclusão de conta apaga também a identidade de e-mail e os links pendentes, na mesma transação do
 resto.
