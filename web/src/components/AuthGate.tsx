@@ -276,9 +276,13 @@ function DemoEndedScreen({ onChange }: { onChange: () => void }) {
     <div className="gate">
       <div className="gate__card">
         <h2>A demonstração terminou</h2>
+        {/* "Encerrada", e não "apagada": a varredura é preguiçosa e roda quando alguém abre a
+            próxima demonstração, então neste instante a conta ainda pode estar no banco. A frase
+            precisa ser verdadeira nos dois momentos. */}
         <p>
-          Ela dura duas horas e some sozinha — a conta temporária e tudo que foi feito nela já foram
-          apagados. Nada disso era seu, e é por isso que dá para recomeçar sem perder nada.
+          Ela dura duas horas e some sozinha — a conta temporária foi encerrada e é apagada em
+          seguida, com tudo que foi feito nela. Nada disso era seu, e é por isso que dá para
+          recomeçar sem perder nada.
         </p>
         {demo.failure && <p className="gate__error">{demo.failure}</p>}
         <div className="gate__actions">

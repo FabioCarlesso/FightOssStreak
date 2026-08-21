@@ -2,6 +2,7 @@ package dev.fos.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -367,6 +368,57 @@ class DemoAccessIntegrationTest {
                 .andExpect(jsonPath("$.error").value("demo_lotado"));
 
         assertThat(users.count()).isEqualTo(antes);
+    }
+
+    @Test
+    @DisplayName("quem já está logado não tem a sessão trocada por uma demonstração")
+    void anExistingRealSessionIsNotSwappedForADemo() throws Exception {
+        long antes = users.count();
+
+        // O caminho existe de verdade: o rodapé do app leva à apresentação, e o botão está lá.
+        // Trocar em silêncio seria pior que recusar — a demonstração é cópia da conta-modelo, e
+        // pareceria o app de quem clicou.
+        mockMvc.perform(
+                        post("/api/demo/sessao")
+                                .with(
+                                        oauth2Login()
+                                                // A registration precisa casar com o provedor da
+                                                // identidade: é o par (registrationId, subject)
+                                                // que o CurrentUserProvider lê.
+                                                .clientRegistration(
+                                                        ApiIntegrationTest.TEST_REGISTRATION)
+                                                .attributes(
+                                                        attributes ->
+                                                                attributes.put(
+                                                                        "sub", "modelo-sub")))
+                                .with(csrf()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("sessao_existente"));
+
+        assertThat(users.count()).isEqualTo(antes);
+    }
+
+    @Test
+    @DisplayName("mas quem já está numa demonstração pode começar outra")
+    void aDemoSessionCanStartAnother() throws Exception {
+        MockHttpSession primeira = abrirDemo();
+        // Lido antes: o MockMvc devolve a MESMA instância de sessão, e depois da segunda chamada
+        // ela já aponta para a conta nova.
+        Long contaAnterior = contaDaSessao(primeira);
+
+        MockHttpSession segunda =
+                (MockHttpSession)
+                        mockMvc.perform(
+                                        post("/api/demo/sessao")
+                                                .session(primeira)
+                                                .with(deOutroIp("10.0.0.9"))
+                                                .with(csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn()
+                                .getRequest()
+                                .getSession(false);
+
+        assertThat(contaDaSessao(segunda)).isNotEqualTo(contaAnterior);
     }
 
     @Test

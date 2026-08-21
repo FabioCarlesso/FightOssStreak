@@ -22,7 +22,9 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -174,7 +176,7 @@ public class DemoAccessService {
                         false,
                         ROTULO,
                         agora));
-        copiar(modelo.getId(), visitante.getId(), agora);
+        copiar(modelo.getId(), visitante.getId());
 
         log.info(
                 "Demonstração {} criada a partir da conta-modelo {}, válida até {}",
@@ -187,10 +189,16 @@ public class DemoAccessService {
     /**
      * A conta-modelo, quando ela existe.
      *
-     * <p>Três filtros, e cada um fecha um buraco: <b>e-mail verificado</b> (na consulta) impede que
-     * alguém aponte a cópia para outra conta digitando este endereço na tela de pedido de acesso,
-     * que grava identidade não verificada; <b>aprovada</b> porque conta na fila não tem estado
-     * nenhum para copiar; e <b>não-demonstração</b> para que uma cópia jamais vire molde de outra.
+     * <p><b>E-mail verificado</b> (na consulta) é o filtro que importa: pedir acesso digitando o
+     * endereço da conta-modelo grava uma identidade <em>não</em> verificada, e se o dono aprovar
+     * esse pedido — plausível, já que ele vê o próprio endereço na fila — passam a existir duas
+     * contas aprovadas com o mesmo e-mail. Sem a verificação, qual delas vira molde depende da
+     * ordem que o banco devolver. Há teste para esse cenário exato.
+     *
+     * <p><b>Aprovada</b> porque conta na fila não tem estado nenhum para copiar. E
+     * <b>não-demonstração</b> é defesa em profundidade, hoje inalcançável: a identidade de
+     * demonstração nasce sem e-mail, então a consulta nunca a devolve. Fica para o dia em que
+     * alguém resolver copiar o e-mail junto.
      */
     private Optional<AppUser> template() {
         if (!demo.isConfigured()) {
@@ -226,10 +234,13 @@ public class DemoAccessService {
      * <p><b>O aceite do disclaimer não entra</b>: é declaração de quem está lendo, não estado de
      * progresso. O visitante passa pelo {@code DisclaimerGate} como qualquer um.
      */
-    private void copiar(Long modelo, Long visitante, Instant agora) {
-        long delta = delta(modelo);
+    private void copiar(Long modelo, Long visitante) {
+        // Lido uma vez, e não duas: o cálculo do delta precisa das mesmas quatro coleções que a
+        // cópia percorre logo abaixo.
+        Estado estado = ler(modelo);
+        long delta = delta(estado);
 
-        for (UserProgress origem : progress.findByIdUserId(modelo)) {
+        for (UserProgress origem : estado.progresso()) {
             UserProgress copia =
                     new UserProgress(
                             new UserNodeKey(visitante, origem.getId().getNodeId()),
@@ -241,7 +252,7 @@ public class DemoAccessService {
             progress.save(copia);
         }
 
-        for (SrsReview origem : reviews.findByIdUserId(modelo)) {
+        for (SrsReview origem : estado.revisoes()) {
             SrsReview copia =
                     new SrsReview(
                             new UserNodeKey(visitante, origem.getId().getNodeId()),
@@ -253,7 +264,7 @@ public class DemoAccessService {
             reviews.save(copia);
         }
 
-        for (DrillLog origem : drills.findByUserId(modelo)) {
+        for (DrillLog origem : estado.drills()) {
             drills.save(
                     new DrillLog(
                             visitante,
@@ -266,7 +277,7 @@ public class DemoAccessService {
                             desloca(origem.getCreatedAt(), delta)));
         }
 
-        for (QuizAttempt origem : quizAttempts.findByUserIdOrderByAttemptedOnAscIdAsc(modelo)) {
+        for (QuizAttempt origem : estado.tentativas()) {
             quizAttempts.save(
                     new QuizAttempt(
                             visitante,
@@ -277,11 +288,25 @@ public class DemoAccessService {
                             desloca(origem.getCreatedAt(), delta)));
         }
         log.debug(
-                "Cópia da conta-modelo {} para a demonstração {} com delta de {} dia(s) em {}",
+                "Cópia da conta-modelo {} para a demonstração {} com delta de {} dia(s)",
                 modelo,
                 visitante,
-                delta,
-                agora);
+                delta);
+    }
+
+    /** O que há para copiar de uma conta. Existe para as quatro consultas acontecerem uma vez. */
+    private record Estado(
+            List<UserProgress> progresso,
+            List<SrsReview> revisoes,
+            List<DrillLog> drills,
+            List<QuizAttempt> tentativas) {}
+
+    private Estado ler(Long modelo) {
+        return new Estado(
+                progress.findByIdUserId(modelo),
+                reviews.findByIdUserId(modelo),
+                drills.findByUserId(modelo),
+                quizAttempts.findByUserIdOrderByAttemptedOnAscIdAsc(modelo));
     }
 
     /**
@@ -292,24 +317,23 @@ public class DemoAccessService {
      * futura venha junto na mesma distância. Conta-modelo sem atividade nenhuma não desloca nada —
      * não há o que ancorar, e a demonstração já vai sair vazia de qualquer jeito.
      */
-    private long delta(Long modelo) {
+    private long delta(Estado estado) {
         LocalDate hoje = LocalDate.now(clock);
-        return ultimaAtividade(modelo)
+        return ultimaAtividade(estado)
                 .map(ancora -> ChronoUnit.DAYS.between(ancora, hoje))
                 .orElse(0L);
     }
 
-    private Optional<LocalDate> ultimaAtividade(Long modelo) {
-        return java.util.stream.Stream.of(
-                        drills.findByUserId(modelo).stream().map(DrillLog::getDrilledOn),
-                        quizAttempts.findByUserIdOrderByAttemptedOnAscIdAsc(modelo).stream()
-                                .map(QuizAttempt::getAttemptedOn),
-                        reviews.findByIdUserId(modelo).stream()
+    private Optional<LocalDate> ultimaAtividade(Estado estado) {
+        return Stream.of(
+                        estado.drills().stream().map(DrillLog::getDrilledOn),
+                        estado.tentativas().stream().map(QuizAttempt::getAttemptedOn),
+                        estado.revisoes().stream()
                                 .map(SrsReview::getLastReviewedOn)
-                                .filter(java.util.Objects::nonNull),
-                        progress.findByIdUserId(modelo).stream()
+                                .filter(Objects::nonNull),
+                        estado.progresso().stream()
                                 .map(UserProgress::getCompletedAt)
-                                .filter(java.util.Objects::nonNull)
+                                .filter(Objects::nonNull)
                                 .map(instante -> LocalDate.ofInstant(instante, clock.getZone())))
                 .flatMap(stream -> stream)
                 .max(LocalDate::compareTo);

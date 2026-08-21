@@ -191,6 +191,32 @@ describe('acesso demonstrativo (#62)', () => {
     expect(screen.queryByText(/nada é gravado no progresso/i)).not.toBeInTheDocument();
   });
 
+  it('quem só viu a demonstração continua achando a landing na raiz', async () => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+    apiMock.getAccount.mockResolvedValue({
+      displayName: 'Visitante',
+      email: undefined,
+      provider: 'demo',
+      accessStatus: 'APROVADO',
+      owner: false,
+      demoExpiresAt: '2026-08-18T12:00:00Z',
+    });
+
+    const { unmount } = renderEm('/hoje');
+    await screen.findByText(/você está numa demonstração/i);
+    unmount();
+
+    renderEm('/');
+
+    // A apresentação é o que existe para convencer alguém a pedir acesso. Escondê-la de quem
+    // acabou de experimentar — e que por definição ainda não tem conta — inverte a intenção.
+    expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
+  });
+
   it('conta comum não vê faixa nenhuma', async () => {
     apiMock.getDisclaimer.mockResolvedValue({
       accepted: true,

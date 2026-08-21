@@ -1,41 +1,73 @@
 package dev.fos.service;
 
 /**
- * A demonstração não existe neste ambiente, ou não cabe mais uma agora.
+ * A demonstração não pode ser aberta agora — e o motivo muda o que a tela faz.
  *
- * <p>Dois motivos, dois códigos, e a diferença importa para a tela: {@code demo_indisponivel} é
- * "este ambiente não tem conta-modelo configurada" — permanente até alguém configurar; {@code
- * demo_lotado} é "tente de novo daqui a pouco", que é o teto de demonstrações vivas e o freio por
- * IP. Nenhum dos dois cria conta.
+ * <p>Três motivos, três respostas HTTP, e a diferença importa: <b>não configurada</b> é "este
+ * ambiente não tem conta-modelo", permanente até alguém configurar; <b>lotada</b> é "tente de novo
+ * daqui a pouco", que é o teto de simultâneas e o freio por IP; <b>sessão existente</b> é "você já
+ * está logado", e trocar essa sessão por uma descartável em silêncio seria pior que recusar. Nenhum
+ * dos três cria conta.
+ *
+ * <p>O motivo é um enum, e não um par de booleanos, porque quem traduz para status HTTP é o {@code
+ * ApiExceptionHandler} — a camada de serviço não conhece código de resposta.
  */
 public class DemoUnavailableException extends RuntimeException {
 
-    private final String code;
-    private final boolean temporary;
+    public enum Motivo {
+        /** Sem {@code fos.demo.template-email} (ou apontando para conta inexistente). */
+        NAO_CONFIGURADA("demo_indisponivel"),
+        /** Teto de demonstrações vivas, ou freio por IP. */
+        LOTADA("demo_lotado"),
+        /** Já existe sessão de uma conta de verdade neste navegador. */
+        SESSAO_EXISTENTE("sessao_existente");
 
-    private DemoUnavailableException(String code, boolean temporary, String message) {
-        super(message);
-        this.code = code;
-        this.temporary = temporary;
+        private final String code;
+
+        Motivo(String code) {
+            this.code = code;
+        }
+
+        public String code() {
+            return code;
+        }
     }
 
-    /** Sem {@code fos.demo.template-email} configurado (ou apontando para conta inexistente). */
+    private final Motivo motivo;
+
+    private DemoUnavailableException(Motivo motivo, String message) {
+        super(message);
+        this.motivo = motivo;
+    }
+
     public static DemoUnavailableException notConfigured() {
         return new DemoUnavailableException(
-                "demo_indisponivel", false, "Este ambiente não tem demonstração configurada.");
+                Motivo.NAO_CONFIGURADA, "Este ambiente não tem demonstração configurada.");
     }
 
-    /** Teto de demonstrações vivas, ou freio por IP. */
     public static DemoUnavailableException busy(String message) {
-        return new DemoUnavailableException("demo_lotado", true, message);
+        return new DemoUnavailableException(Motivo.LOTADA, message);
+    }
+
+    /**
+     * Sessão de gente de verdade não vira demonstração sem aviso.
+     *
+     * <p>O caso real: o autor, logado, abre a apresentação pelo rodapé e clica no botão. Como a
+     * demonstração é cópia da conta-modelo — que pode ser a conta dele —, ela se parece com o app
+     * dele, e o que for registrado ali morre no prazo.
+     */
+    public static DemoUnavailableException alreadySignedIn() {
+        return new DemoUnavailableException(
+                Motivo.SESSAO_EXISTENTE,
+                "Você já está com uma sessão aberta neste navegador. Saia dela antes de abrir uma"
+                        + " demonstração.");
+    }
+
+    public Motivo motivo() {
+        return motivo;
     }
 
     public String code() {
-        return code;
-    }
-
-    /** Verdadeiro quando faz sentido tentar de novo mais tarde — é o que separa 429 de 404. */
-    public boolean isTemporary() {
-        return temporary;
+        return motivo.code();
     }
 }

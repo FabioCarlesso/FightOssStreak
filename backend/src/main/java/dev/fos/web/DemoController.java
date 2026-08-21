@@ -1,7 +1,9 @@
 package dev.fos.web;
 
+import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
 import dev.fos.service.DemoAuthenticationToken;
+import dev.fos.service.DemoUnavailableException;
 import dev.fos.web.dto.DemoDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,11 +36,13 @@ public class DemoController {
     private static final String DESTINO = "/hoje";
 
     private final DemoAccessService demo;
+    private final CurrentUserProvider currentUser;
     private final SecurityContextRepository contextRepository =
             new HttpSessionSecurityContextRepository();
 
-    public DemoController(DemoAccessService demo) {
+    public DemoController(DemoAccessService demo, CurrentUserProvider currentUser) {
         this.demo = demo;
+        this.currentUser = currentUser;
     }
 
     @PostMapping("/sessao")
@@ -50,6 +54,19 @@ public class DemoController {
                             + " prazo vence.")
     public DemoDtos.DemoSessionView abrir(
             HttpServletRequest request, HttpServletResponse response) {
+        // Quem já está logado de verdade não tem a sessão trocada por uma descartável em silêncio.
+        // O caminho existe: o rodapé do app leva à apresentação, e lá está o botão. Como a
+        // demonstração é cópia da conta-modelo, ela se PARECE com o app de quem clicou — e o que
+        // for registrado nela morre no prazo. Demonstração já aberta (ou vencida) segue podendo
+        // abrir outra: é o "começar de novo" da tela de fim.
+        currentUser
+                .findCurrentUser()
+                .filter(usuario -> !usuario.isDemo())
+                .ifPresent(
+                        usuario -> {
+                            throw DemoUnavailableException.alreadySignedIn();
+                        });
+
         DemoAccessService.DemoSession sessao = demo.create(request.getRemoteAddr());
         SecurityContextHolder.getContext()
                 .setAuthentication(new DemoAuthenticationToken(sessao.subject()));

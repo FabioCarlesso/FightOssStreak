@@ -55,15 +55,20 @@ class ApiExceptionHandler {
     /**
      * Demonstração indisponível (#62).
      *
-     * <p>404 quando o ambiente não tem conta-modelo — o recurso não existe aqui — e 429 quando é o
-     * teto de simultâneas ou o freio por IP, que passa. A tela lê o código para saber se oferece
-     * "tentar de novo" ou some com o botão.
+     * <p>Um status por motivo: <b>404</b> quando o ambiente não tem conta-modelo — o recurso não
+     * existe aqui —, <b>429</b> no teto de simultâneas e no freio por IP, que passam, e <b>409</b>
+     * quando já há sessão de uma conta de verdade, que é conflito com o estado atual, não falta de
+     * recurso.
      */
     @ExceptionHandler(DemoUnavailableException.class)
     ResponseEntity<ApiError> handleDemoUnavailable(DemoUnavailableException e) {
-        return ResponseEntity.status(
-                        e.isTemporary() ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.NOT_FOUND)
-                .body(ApiError.of(e.code(), e.getMessage()));
+        HttpStatus status =
+                switch (e.motivo()) {
+                    case NAO_CONFIGURADA -> HttpStatus.NOT_FOUND;
+                    case LOTADA -> HttpStatus.TOO_MANY_REQUESTS;
+                    case SESSAO_EXISTENTE -> HttpStatus.CONFLICT;
+                };
+        return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
     }
 
     @ExceptionHandler(NodeNotFoundException.class)

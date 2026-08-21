@@ -248,6 +248,11 @@ trazer o link de *Solicitações* — o agendador não tem requisição de onde 
 1. Entre no app com a conta que vai servir de molde e **cure a demonstração usando o próprio app**:
    conclua nós, registre drills nos dias que fizerem sentido, escreva as anotações fixadas que o
    visitante vai ler. Não há script para isso — o estado é o que o app grava.
+
+   > ⚠️ **Tudo que você escrever nessa conta vira público.** Anotação fixada e nota de drill são
+   > copiadas para cada demonstração, então qualquer visitante lê o que está ali. É a única
+   > superfície do app onde texto seu é publicado sem que você publique nada — escreva pensando
+   > em quem vai receber o link, e prefira uma conta separada se a sua for também a de uso real.
 2. Defina `FOS_DEMO_TEMPLATE_EMAIL` com o e-mail **verificado** dessa conta e suba.
 
 Cada visita passa a receber uma **cópia** desse estado, numa conta descartável, com as datas

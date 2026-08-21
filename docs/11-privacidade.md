@@ -102,3 +102,11 @@ comum, sem cópia lógica nem lixeira. Quem quiser encerrar antes tem o botão e
 
 O aceite do aviso de responsabilidade **não** é copiado da conta-modelo: quem entra pela
 demonstração passa pelo aviso como qualquer um, e o aceite morre junto com a conta.
+
+### Um aviso para quem cura a conta-modelo
+
+O que vale para o visitante vale ao contrário para o autor: **anotação fixada e nota de drill da
+conta-modelo são lidas por qualquer pessoa que abra a demonstração.** É a única superfície do app
+onde texto do autor é publicado sem um ato de publicar — não há botão de "tornar público", basta a
+conta estar em `FOS_DEMO_TEMPLATE_EMAIL`. Nome, e-mail e identidade do autor não são copiados; o
+texto é.

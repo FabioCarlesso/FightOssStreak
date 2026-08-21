@@ -60,11 +60,18 @@ function AppLayout() {
 
 function AppChrome() {
   const { account, reload } = useAccount();
+  const demo = account.demoExpiresAt != null;
 
   // Marcado aqui dentro, e não no clique do botão da landing: o que interessa é ter entrado no app
   // de verdade — quem parou no aviso e desistiu não entrou, e quem chegou direto em `/arvore` por
   // link salvo entrou. É essa marca que faz `/` virar atalho para a agenda em vez de apresentação.
-  useEffect(() => markAppVisited(), []);
+  //
+  // Demonstração não marca (#62). Quem só experimentou ainda **não tem conta**, e é justamente a
+  // apresentação que existe para convencê-lo a pedir uma: esconder a landing da raiz de quem está
+  // decidindo inverte a intenção da página.
+  useEffect(() => {
+    if (!demo) markAppVisited();
+  }, [demo]);
 
   return (
     <div className="app">
