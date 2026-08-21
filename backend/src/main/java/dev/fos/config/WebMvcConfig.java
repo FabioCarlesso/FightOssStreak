@@ -37,7 +37,10 @@ class WebMvcConfig implements WebMvcConfigurer {
                 // O que a conta pendente ainda pode: saber em que estado está, sair e se excluir.
                 // Sem estas exceções a tela de "solicitação registrada" não teria o que mostrar, e
                 // quem pediu acesso e não entrou ficaria sem como sumir do banco (LGPD).
-                .excludePathPatterns("/api/me", "/api/logout", "/api/auth/**", "/api/login/**");
+                // `/api/demo/**` abre a sessão: exigir sessão nele seria pedir conta a quem vem
+                // pedir uma conta.
+                .excludePathPatterns(
+                        "/api/me", "/api/logout", "/api/auth/**", "/api/login/**", "/api/demo/**");
 
         // Depois do portão de aprovação, e não antes: a ordem de registro é a de execução, e
         // "esta conta está liberada?" precisa ser respondida antes de "esta conta é a dona?".

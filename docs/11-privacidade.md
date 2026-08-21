@@ -76,3 +76,37 @@ Duas notas sobre esse dado:
 
 A exclusão de conta apaga também a identidade de e-mail e os links pendentes, na mesma transação do
 resto.
+
+## Conta de demonstração (D39)
+
+O botão *Ver o app funcionando*, na página inicial, abre uma **conta temporária** — não pede
+e-mail, não pede login, não pergunta nada. É a única forma de usar o app sem informar quem você é,
+e é assim de propósito: ela existe para quem ainda está decidindo se quer uma conta.
+
+O que essa conta guarda:
+
+| Dado | De onde vem |
+|---|---|
+| Um identificador aleatório, sem relação com você | sorteado na criação |
+| Progresso, agenda, drills e anotações **de exemplo** | copiados da conta-modelo do autor |
+| O que você fizer durante a demonstração | do seu uso |
+
+O que ela **não** guarda: e-mail, nome, provedor de login, endereço de IP. O IP é usado no momento
+do pedido, para o freio que impede abrir demonstrações em série, e vive em memória — não é gravado
+em tabela nenhuma.
+
+**Ela some sozinha em duas horas.** Passado o prazo, a sessão deixa de autenticar e a conta é
+apagada por inteiro na próxima demonstração que alguém abrir — as mesmas sete tabelas da exclusão
+comum, sem cópia lógica nem lixeira. Quem quiser encerrar antes tem o botão em *Sua conta* →
+**Encerrar demonstração**, que é a mesma `DELETE /api/me`.
+
+O aceite do aviso de responsabilidade **não** é copiado da conta-modelo: quem entra pela
+demonstração passa pelo aviso como qualquer um, e o aceite morre junto com a conta.
+
+### Um aviso para quem cura a conta-modelo
+
+O que vale para o visitante vale ao contrário para o autor: **anotação fixada e nota de drill da
+conta-modelo são lidas por qualquer pessoa que abra a demonstração.** É a única superfície do app
+onde texto do autor é publicado sem um ato de publicar — não há botão de "tornar público", basta a
+conta estar em `FOS_DEMO_TEMPLATE_EMAIL`. Nome, e-mail e identidade do autor não são copiados; o
+texto é.

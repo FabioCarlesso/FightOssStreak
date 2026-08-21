@@ -993,6 +993,43 @@ button.danger {
   color: var(--text);
 }
 
+/*
+ * Conta de demonstração (#62)
+ *
+ * Outra faixa, outro aviso: a de cima diz que a árvore está aberta para inspeção e nada é gravado;
+ * esta diz o contrário — grava, sim, numa conta que não é sua e que expira. Cor diferente de
+ * propósito, para as duas não se confundirem quando aparecem juntas.
+ */
+.demo-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--surface);
+  border: 1px dashed var(--muted);
+  border-radius: var(--radius);
+}
+
+.demo-account__text {
+  flex: 1;
+  min-width: 12rem;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.demo-account button {
+  flex: none;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
 /* Mesmo bloco do "Nó bloqueado", com a barra em outra cor: o estado é outro. */
 .node__demo {
   border-left-color: var(--ok);
@@ -1082,6 +1119,20 @@ button.danger {
   font-size: 1.05rem;
   font-weight: 700;
   text-decoration: none;
+}
+
+/* O CTA da demonstração é um <button>, não um link: ele chama a API antes de navegar. Sem isto
+   ele herdaria o botão global (outro raio, outro peso) e destoaria do vizinho. */
+button.landing__button {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.landing__erro {
+  margin: 0.9rem 0 0;
+  color: var(--warn);
+  font-size: 0.9rem;
 }
 
 .landing__button:hover {

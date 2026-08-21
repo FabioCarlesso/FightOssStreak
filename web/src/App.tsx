@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 import { AuthGate } from './components/AuthGate.tsx';
+import { DemoAccountBanner } from './components/DemoAccountBanner.tsx';
 import { DemoModeBanner } from './components/DemoModeBanner.tsx';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { SignOutButton } from './components/SignOutButton.tsx';
@@ -59,14 +60,25 @@ function AppLayout() {
 
 function AppChrome() {
   const { account, reload } = useAccount();
+  const demo = account.demoExpiresAt != null;
 
   // Marcado aqui dentro, e não no clique do botão da landing: o que interessa é ter entrado no app
   // de verdade — quem parou no aviso e desistiu não entrou, e quem chegou direto em `/arvore` por
   // link salvo entrou. É essa marca que faz `/` virar atalho para a agenda em vez de apresentação.
-  useEffect(() => markAppVisited(), []);
+  //
+  // Demonstração não marca (#62). Quem só experimentou ainda **não tem conta**, e é justamente a
+  // apresentação que existe para convencê-lo a pedir uma: esconder a landing da raiz de quem está
+  // decidindo inverte a intenção da página.
+  useEffect(() => {
+    if (!demo) markAppVisited();
+  }, [demo]);
 
   return (
     <div className="app">
+      {/* Duas faixas, dois avisos opostos, e a ordem diz qual manda: a da conta de demonstração
+          (#62) fala sobre QUEM você é aqui, e a do modo de inspeção (D31) sobre o que a árvore
+          está mostrando. Ver as duas ao mesmo tempo é possível e não é contradição. */}
+      <DemoAccountBanner />
       <DemoModeBanner />
 
       <header className="app__header">

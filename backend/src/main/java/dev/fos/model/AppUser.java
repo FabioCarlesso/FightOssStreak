@@ -51,6 +51,16 @@ public class AppUser {
     @Column(name = "queue_notice_sent_at")
     private Instant queueNoticeSentAt;
 
+    /**
+     * Prazo de vida de uma conta de demonstração (#62); nulo em toda conta de gente de verdade.
+     *
+     * <p>É a conta que expira, não uma sessão dela: passado o prazo não sobra progresso, identidade
+     * nem sessão para guardar. Enquanto vale, a conta é comum em tudo o mais — grava de verdade, e
+     * o que a distingue é ser descartável, não ser limitada.
+     */
+    @Column(name = "demo_expires_at")
+    private Instant demoExpiresAt;
+
     protected AppUser() {
         // JPA
     }
@@ -71,6 +81,19 @@ public class AppUser {
     /** Conta do dono (e-mail verificado em {@code fos.auth.owner-emails}): já entra liberada. */
     public static AppUser approved(String label, Instant now) {
         return new AppUser(label, now, AccessStatus.APROVADO, now);
+    }
+
+    /**
+     * Conta de demonstração: nasce liberada e já com prazo para morrer (#62).
+     *
+     * <p>Nascer {@code APROVADO} sem aprovação nenhuma contraria a letra da D37, e é exceção
+     * consciente: o que a sustenta é o prazo — mais a conta não ter identidade de ninguém, não ser
+     * dona de nada e ser apagada por inteiro quando vence.
+     */
+    public static AppUser demo(String label, Instant now, Instant expiresAt) {
+        AppUser user = new AppUser(label, now, AccessStatus.APROVADO, now);
+        user.demoExpiresAt = expiresAt;
+        return user;
     }
 
     public void approve(Instant now) {
@@ -102,6 +125,22 @@ public class AppUser {
         return accessStatus == AccessStatus.APROVADO;
     }
 
+    /** Conta descartável de demonstração — nunca uma conta de gente de verdade. */
+    public boolean isDemo() {
+        return demoExpiresAt != null;
+    }
+
+    /**
+     * Demonstração cujo prazo passou.
+     *
+     * <p>Quem responde com isto trata a sessão como inexistente (401), e não como acesso negado: a
+     * conta ainda está no banco só porque a varredura é preguiçosa, e para quem está do outro lado
+     * ela já não existe.
+     */
+    public boolean isDemoExpired(Instant now) {
+        return demoExpiresAt != null && !now.isBefore(demoExpiresAt);
+    }
+
     public Long getId() {
         return id;
     }
@@ -128,5 +167,9 @@ public class AppUser {
 
     public Instant getQueueNoticeSentAt() {
         return queueNoticeSentAt;
+    }
+
+    public Instant getDemoExpiresAt() {
+        return demoExpiresAt;
     }
 }

@@ -1,4 +1,4 @@
-import type { AccountView, AuthProviders } from '@fos/types';
+import type { AccountView, AuthProviders, DemoSession } from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -21,6 +21,7 @@ const { apiMock } = vi.hoisted(() => ({
     deleteAccount: vi.fn<() => Promise<void>>(),
     requestEmailAccess: vi.fn<(email: string) => Promise<void>>(),
     requestEmailLogin: vi.fn<(email: string) => Promise<void>>(),
+    startDemo: vi.fn<() => Promise<DemoSession>>(),
   },
 }));
 
@@ -54,12 +55,15 @@ function conta(overrides: Partial<AccountView> = {}): AccountView {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  sessionStorage.clear();
   apiMock.getAuthProviders.mockResolvedValue({
     providers: [
       { id: 'google', label: 'Google', authorizationUrl: '/api/oauth2/authorization/google' },
     ],
     emailEnabled: false,
+    demoEnabled: false,
   });
+  apiMock.startDemo.mockResolvedValue({ destino: '/hoje', expiraEm: '2026-08-18T12:00:00Z' });
   apiMock.requestEmailAccess.mockResolvedValue(undefined);
   apiMock.requestEmailLogin.mockResolvedValue(undefined);
   apiMock.logout.mockResolvedValue(undefined);
@@ -239,5 +243,73 @@ describe('AuthGate', () => {
     await userEvent.click(screen.getByRole('button', { name: /tentar de novo/i }));
 
     expect(await screen.findByText(APP)).toBeInTheDocument();
+  });
+});
+
+/**
+ * Demonstração vencida (#62).
+ *
+ * O servidor responde 401, igual a quem nunca entrou — e é a resposta certa: passado o prazo a
+ * conta não existe mais para quem está do outro lado. Quem sabe que havia uma demonstração é o
+ * navegador, e é isso que separa "faça login" de "a demonstração acabou".
+ */
+describe('AuthGate com demonstração vencida', () => {
+  const MARCA = 'fos.demo-conta';
+
+  it('sem marca de demonstração, 401 continua sendo a tela de login', async () => {
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+
+    renderGate();
+
+    expect(
+      await screen.findByRole('heading', { name: /entrar no fightossstreak/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('com marca, a tela explica o que aconteceu em vez de pedir login', async () => {
+    sessionStorage.setItem(MARCA, 'sim');
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+
+    renderGate();
+
+    expect(
+      await screen.findByRole('heading', { name: /a demonstração terminou/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: /entrar no fightossstreak/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('recomeçar abre outra demonstração e volta para o app', async () => {
+    sessionStorage.setItem(MARCA, 'sim');
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+
+    renderGate();
+    await screen.findByRole('heading', { name: /a demonstração terminou/i });
+
+    apiMock.getAccount.mockResolvedValue(
+      conta({ provider: 'demo', email: undefined, demoExpiresAt: '2026-08-18T12:00:00Z' }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: /começar outra demonstração/i }));
+
+    expect(apiMock.startDemo).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText(APP)).toBeInTheDocument();
+  });
+
+  it('quem quer conta de verdade limpa a marca e cai no login', async () => {
+    sessionStorage.setItem(MARCA, 'sim');
+    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
+
+    renderGate();
+    await screen.findByRole('heading', { name: /a demonstração terminou/i });
+
+    await userEvent.click(screen.getByRole('button', { name: /entrar na minha conta/i }));
+
+    // Sem limpar a marca, o 401 seguinte cairia de novo nesta mesma tela — e a pessoa ficaria
+    // presa num loop de demonstração sem nunca ver o login.
+    expect(
+      await screen.findByRole('heading', { name: /entrar no fightossstreak/i }),
+    ).toBeInTheDocument();
+    expect(sessionStorage.getItem(MARCA)).toBeNull();
   });
 });

@@ -13,18 +13,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param curriculum origem do currículo versionado
  * @param auth donos do app e credenciais de provedor de login (#24)
  * @param email envio de e-mail para a entrada por link (#52)
+ * @param demo conta-modelo do acesso demonstrativo (#62)
  * @param publicUrl URL pública do app, sem barra final. Só o resumo da fila (#54) precisa dela:
  *     e-mail disparado por agendador não tem requisição de onde deduzir o endereço, ao contrário do
  *     link de entrada. Opcional — sem ela o resumo sai sem link, e nada mais muda
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
-        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email, String publicUrl) {
+        String disclaimerVersion,
+        Curriculum curriculum,
+        Auth auth,
+        Email email,
+        Demo demo,
+        String publicUrl) {
 
     public FosProperties {
         publicUrl = publicUrl == null ? "" : publicUrl.trim().replaceAll("/+$", "");
         if (auth == null) {
             auth = new Auth(null, null);
+        }
+        if (demo == null) {
+            demo = new Demo(null);
         }
         if (email == null) {
             email = new Email(null, null);
@@ -43,6 +52,30 @@ public record FosProperties(
     public record Email(String apiKey, String from) {
         public boolean isConfigured() {
             return apiKey != null && !apiKey.isBlank() && from != null && !from.isBlank();
+        }
+    }
+
+    /**
+     * A conta-modelo do acesso demonstrativo (#62).
+     *
+     * <p>Opcional pela mesma regra dos provedores de login e do envio de e-mail: sem ela a
+     * aplicação sobe igual, o botão não aparece na landing e o endpoint responde que a demonstração
+     * não existe neste ambiente.
+     *
+     * <p>É um <b>e-mail</b>, e não um id de conta, porque quem cura a demonstração cura pelo app —
+     * entra com a própria conta, conclui nós, registra drills, escreve as anotações — e um id de
+     * linha do banco não é coisa que se configure em variável de ambiente sem consultar o banco.
+     *
+     * @param templateEmail e-mail verificado da conta que serve de molde. Vazio desliga o recurso
+     */
+    public record Demo(String templateEmail) {
+        public Demo {
+            templateEmail =
+                    templateEmail == null ? "" : templateEmail.trim().toLowerCase(Locale.ROOT);
+        }
+
+        public boolean isConfigured() {
+            return !templateEmail.isBlank();
         }
     }
 

@@ -34,6 +34,7 @@ export type DrillResult = Schemas['DrillResult'];
 export type ReviewAgenda = Schemas['ReviewAgenda'];
 export type DueItem = Schemas['DueItemView'];
 export type DisclaimerStatus = Schemas['DisclaimerStatus'];
+export type DemoSession = Schemas['DemoSessionView'];
 
 export type MvpMetrics = Schemas['MvpMetrics'];
 export type CountedMetric = Schemas['Counted'];

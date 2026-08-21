@@ -8,6 +8,7 @@ import type {
   AccessRequests,
   AccountView,
   AuthProviders,
+  DemoSession,
   DisclaimerStatus,
   DrillRequest,
   DrillResult,
@@ -46,6 +47,16 @@ export class ApiError extends Error {
   /** Sem sessão: a resposta é a tela de login, não uma mensagem de erro. */
   get isUnauthenticated(): boolean {
     return this.status === 401;
+  }
+
+  /** Não há demonstração configurada neste ambiente — o botão nem devia estar na tela. */
+  get isDemoUnavailable(): boolean {
+    return this.code === 'demo_indisponivel';
+  }
+
+  /** Teto de demonstrações vivas, ou freio por IP: passa, e a tela pode oferecer tentar de novo. */
+  get isDemoBusy(): boolean {
+    return this.code === 'demo_lotado';
   }
 
   /**
@@ -212,6 +223,14 @@ export function createApiClient(options: ApiClientOptions = {}) {
         method: 'POST',
         body: JSON.stringify({ email }),
       }),
+
+    /**
+     * Abre uma demonstração: conta descartável, cópia da conta-modelo, sessão de verdade (#62).
+     *
+     * Público, como as duas rotas de e-mail. O destino vem na resposta em vez de fixo aqui: quem
+     * sabe o que a sessão recém-aberta já pode ver é quem a abriu.
+     */
+    startDemo: () => request<DemoSession>('/api/demo/sessao', { method: 'POST' }),
 
     /** Fila de solicitações de acesso. Só o dono do app recebe 200 aqui. */
     getAccessRequests: () => request<AccessRequests>('/api/admin/solicitacoes'),

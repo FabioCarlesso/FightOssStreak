@@ -15,13 +15,17 @@ public final class AccountDtos {
      * @param accessStatus é ele que diz para a web mostrar o app, a tela de solicitação registrada
      *     ou a de recusa
      * @param owner conta do dono: só ela enxerga a fila de solicitações
+     * @param demoExpiresAt prazo da conta de demonstração (#62), nulo em conta de gente de verdade.
+     *     É por ele que a faixa do topo sabe quanto tempo resta — e é o único lugar onde a web
+     *     descobre que está numa demonstração, porque em tudo o mais a conta é comum
      */
     public record AccountView(
             String displayName,
             String email,
             String provider,
             AccessStatus accessStatus,
-            boolean owner) {}
+            boolean owner,
+            Instant demoExpiresAt) {}
 
     /**
      * Provedor com credencial configurada.
@@ -36,8 +40,11 @@ public final class AccountDtos {
     /**
      * @param emailEnabled se a entrada por e-mail está disponível neste ambiente. Sem credencial de
      *     envio ela não aparece na tela, em vez de aparecer e falhar no envio
+     * @param demoEnabled se há conta-modelo configurada (#62). Mesma regra: sem ela o botão da
+     *     landing não aparece, em vez de aparecer e falhar no clique
      */
-    public record AuthProviders(List<AuthProviderView> providers, boolean emailEnabled) {}
+    public record AuthProviders(
+            List<AuthProviderView> providers, boolean emailEnabled, boolean demoEnabled) {}
 
     /**
      * Uma solicitação de acesso na fila do dono.

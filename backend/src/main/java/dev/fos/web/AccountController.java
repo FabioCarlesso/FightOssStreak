@@ -4,6 +4,7 @@ import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
+import dev.fos.service.DemoAccessService;
 import dev.fos.service.EmailAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,16 +44,19 @@ public class AccountController {
     private final CurrentUserProvider currentUser;
     private final AccountService accounts;
     private final EmailAccessService emailAccess;
+    private final DemoAccessService demoAccess;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrations;
 
     public AccountController(
             CurrentUserProvider currentUser,
             AccountService accounts,
             EmailAccessService emailAccess,
+            DemoAccessService demoAccess,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) {
         this.currentUser = currentUser;
         this.accounts = accounts;
         this.emailAccess = emailAccess;
+        this.demoAccess = demoAccess;
         this.clientRegistrations = clientRegistrations;
     }
 
@@ -70,7 +74,8 @@ public class AccountController {
                                 .map(AccountController::toView)
                                 .toList()
                         : List.of();
-        return new AccountDtos.AuthProviders(enabled, emailAccess.isEnabled());
+        return new AccountDtos.AuthProviders(
+                enabled, emailAccess.isEnabled(), demoAccess.isEnabled());
     }
 
     @GetMapping("/me")
@@ -87,7 +92,8 @@ public class AccountController {
                 identity.map(UserIdentity::getEmail).orElse(null),
                 identity.map(UserIdentity::getProvider).orElse(null),
                 user.getAccessStatus(),
-                accounts.isOwner(user));
+                accounts.isOwner(user),
+                user.getDemoExpiresAt());
     }
 
     @DeleteMapping("/me")

@@ -1,7 +1,9 @@
-import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { api } from '../api/client.ts';
 import { SHORT_DISCLAIMER } from '../content/disclaimer.ts';
 import {
   APP_PATH,
+  DEMO,
   DISCLAIMER_DOC_URL,
   DOCS_URL,
   FEATURES,
@@ -16,20 +18,34 @@ import {
   STEPS,
 } from '../content/landing.ts';
 import { hasVisitedApp } from '../state/appVisit.ts';
+import { useStartDemo } from '../state/demoAccount.ts';
+import { useAsync } from '../state/useAsync.ts';
 
 /**
  * Apresentação pública do projeto — a única tela fora do portão de aceite.
  *
- * Duas coisas a página não pode fazer, e as duas são estruturais. **Não chama a API**: era o
- * `DisclaimerGate` que decidia a raiz, e ele depende de `GET /api/disclaimer` para renderizar, então
- * com o backend frio a primeira tela de quem recebia o link era "não foi possível falar com a API".
- * E **não é caminho para dentro do app**: o botão leva a `/hoje`, que continua atrás do aceite.
+ * Duas coisas a página não pode fazer, e as duas são estruturais. **Não depende da API para
+ * renderizar**: era o `DisclaimerGate` que decidia a raiz, e ele depende de `GET /api/disclaimer`
+ * para aparecer, então com o backend frio a primeira tela de quem recebia o link era "não foi
+ * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de pedir
+ * acesso leva a `/hoje`, que continua atrás do aviso.
+ *
+ * A regra que mudou com a #62 é a primeira, e mudou para melhor definida: a página *pergunta* se
+ * este ambiente tem demonstração, mas nada nela espera a resposta. Backend frio, offline ou sem
+ * conta-modelo dão o mesmo resultado — a página inteira, sem o botão de demonstração. O que a
+ * regra proíbe é a tela depender da API para existir, não trocar uma palavra com ela.
  *
  * O aviso curto aparece aqui mesmo, e não só depois do clique, porque quem lê a página e não entra
  * também precisa saber o que o app não é (D1).
  */
 export function LandingPage() {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
+  // Sem `await` em nada que a página renderize: enquanto (ou se) isto não responde, a landing é
+  // exatamente a de antes.
+  const ambiente = useAsync(() => api.getAuthProviders(), []);
+  const demo = useStartDemo((destino) => navigate(destino));
+  const demoDisponivel = ambiente.data?.demoEnabled ?? false;
 
   // Quem já entrou no app uma vez tem `/` como atalho para a agenda do dia — a apresentação já
   // cumpriu o papel dela. `?ver` traz a página de volta, para o link continuar compartilhável e
@@ -55,17 +71,35 @@ export function LandingPage() {
             hoje. Quem ensina jiu-jitsu é o seu professor — isto aqui é a revisão.
           </p>
           <p className="landing__cta">
+            {/* A demonstração vem primeiro quando existe: é o degrau que a pessoa consegue subir
+                agora, sem pedir nada a ninguém, e é decidindo aqui que ela vai saber se vale
+                pedir acesso. */}
+            {demoDisponivel && (
+              <button
+                type="button"
+                className="landing__button"
+                onClick={demo.start}
+                disabled={demo.starting}
+              >
+                {demo.starting ? DEMO.ctaCarregando : DEMO.cta}
+              </button>
+            )}
             {/* "Pedir acesso", e não "Abrir o app": desde a #24 o app é de uso pessoal com acesso
                 sob aprovação, e quem chega pelo link não entra sozinho. Copy que promete o que o
                 produto não entrega é o defeito que esta página existe para não ter. */}
-            <Link className="landing__button" to={APP_PATH}>
+            <Link
+              className={`landing__button${demoDisponivel ? ' landing__button--ghost' : ''}`}
+              to={APP_PATH}
+            >
               Pedir acesso
             </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
               Ver o código
             </a>
           </p>
+          {demo.failure && <p className="landing__erro">{demo.failure}</p>}
           <p className="landing__note">
+            {demoDisponivel && `${DEMO.nota} `}
             Acesso sob aprovação e sem cobrança. A entrada é por provedor externo — o app nunca vê
             sua senha. O aviso de responsabilidade aparece antes da primeira tela.
           </p>

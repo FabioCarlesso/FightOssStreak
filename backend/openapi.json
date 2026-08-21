@@ -20,6 +20,10 @@
       "description": "Critérios de sucesso do MVP medidos sobre o uso real"
     },
     {
+      "name": "Demonstração",
+      "description": "Sessão de demonstração descartável"
+    },
+    {
       "name": "Solicitações",
       "description": "Fila de acesso; restrita ao dono do app"
     },
@@ -188,6 +192,28 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/DisclaimerStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/demo/sessao": {
+      "post": {
+        "tags": [
+          "Demonstração"
+        ],
+        "summary": "Abre uma demonstração",
+        "description": "Cria uma conta descartável, copia o estado da conta-modelo com as datas rebaseadas e abre sessão. A conta é apagada por completo quando o prazo vence.",
+        "operationId": "abrir",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemoSessionView"
                 }
               }
             }
@@ -796,6 +822,18 @@
           }
         }
       },
+      "DemoSessionView": {
+        "type": "object",
+        "properties": {
+          "destino": {
+            "type": "string"
+          },
+          "expiraEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "EmailRequest": {
         "required": [
           "email"
@@ -1213,6 +1251,10 @@
           },
           "owner": {
             "type": "boolean"
+          },
+          "demoExpiresAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -1351,6 +1393,9 @@
             }
           },
           "emailEnabled": {
+            "type": "boolean"
+          },
+          "demoEnabled": {
             "type": "boolean"
           }
         }

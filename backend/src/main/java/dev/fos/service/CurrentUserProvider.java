@@ -4,6 +4,8 @@ import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.UserIdentityRepository;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,19 +25,28 @@ import org.springframework.transaction.annotation.Transactional;
  * mantém a resolução idêntica no fluxo real e em teste.
  *
  * <p><b>Todo método de autenticação novo passa por aqui.</b> Quando a entrada por link de e-mail
- * (#52) chegou, foi este {@code instanceof} que precisou crescer — e é o mesmo ponto que, esquecido
- * na #51, fez o login por Google autenticar e o app responder 401 para sempre. Tipo de autenticação
- * que este método não reconhece vira usuário inexistente, em silêncio.
+ * (#52) chegou, foi este {@code instanceof} que precisou crescer — e de novo com a demonstração
+ * pública (#62). É o mesmo ponto que, esquecido na #51, fez o login por Google autenticar e o app
+ * responder 401 para sempre. Tipo de autenticação que este método não reconhece vira usuário
+ * inexistente, em silêncio.
+ *
+ * <p>É também aqui que a demonstração vencida deixa de existir: sessão de conta com prazo vencido
+ * não resolve usuário nenhum, e o app responde 401 como responderia a quem nunca entrou. Tratar
+ * como acesso negado seria mentira — a conta só ainda está no banco porque a varredura é
+ * preguiçosa.
  */
 @Component
 public class CurrentUserProvider {
 
     private final UserIdentityRepository identities;
     private final AppUserRepository users;
+    private final Clock clock;
 
-    public CurrentUserProvider(UserIdentityRepository identities, AppUserRepository users) {
+    public CurrentUserProvider(
+            UserIdentityRepository identities, AppUserRepository users, Clock clock) {
         this.identities = identities;
         this.users = users;
+        this.clock = clock;
     }
 
     /** Id do usuário autenticado. Lança 401 quando não há sessão — nunca cria conta. */
@@ -51,7 +62,9 @@ public class CurrentUserProvider {
 
     @Transactional(readOnly = true)
     public Optional<AppUser> findCurrentUser() {
-        return currentIdentity().flatMap(identity -> users.findById(identity.getUserId()));
+        return currentIdentity()
+                .flatMap(identity -> users.findById(identity.getUserId()))
+                .filter(user -> !user.isDemoExpired(Instant.now(clock)));
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +80,10 @@ public class CurrentUserProvider {
         if (authentication instanceof EmailAuthenticationToken token) {
             return identities.findByProviderAndProviderSubject(
                     EmailAuthenticationToken.PROVIDER, token.getName());
+        }
+        if (authentication instanceof DemoAuthenticationToken token) {
+            return identities.findByProviderAndProviderSubject(
+                    DemoAuthenticationToken.PROVIDER, token.getName());
         }
         return Optional.empty();
     }
