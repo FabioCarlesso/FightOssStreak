@@ -9,6 +9,17 @@ import { QuizForm } from '../components/QuizForm.tsx';
 import { ExtraVideos } from '../components/ExtraVideos.tsx';
 import { VideoEmbed } from '../components/VideoEmbed.tsx';
 
+/**
+ * Linha em branco no `concept` vira parágrafo novo na tela (issue #58); texto sem linha em
+ * branco continua um `<p>` só, como sempre foi.
+ */
+function paragraphsOf(concept: string | undefined): string[] {
+  return (concept ?? '')
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter((paragraph) => paragraph.length > 0);
+}
+
 /** Detalhe do nó: conceito, vídeo, quiz conceitual e registro de drill. */
 export function NodePage() {
   const { code = '' } = useParams();
@@ -64,7 +75,11 @@ export function NodePage() {
         )}
 
         <h3>Conceito</h3>
-        <p className="node__concept">{detail.concept}</p>
+        {paragraphsOf(detail.concept).map((paragraph, index) => (
+          <p key={index} className="node__concept">
+            {paragraph}
+          </p>
+        ))}
 
         {/*
          * Logo abaixo do conceito, e não no fim da página: o conceito é o que o currículo diz da
