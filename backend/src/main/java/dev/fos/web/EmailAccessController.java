@@ -30,9 +30,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 /**
  * Acesso para quem não tem provedor externo (#52).
  *
- * <p>São as únicas rotas de escrita que qualquer um alcança sem sessão, e as duas disparam e-mail —
- * {@code /entrar} para quem pediu, {@code /solicitar} para o dono — daí o freio em todas e a
- * resposta indistinta em {@code /entrar}.
+ * <p>São as únicas rotas de escrita que qualquer um alcança sem sessão, e uma delas dispara e-mail
+ * — daí o freio em todas e a resposta indistinta em {@code /entrar}.
  */
 @RestController
 @RequestMapping("/api")
@@ -68,20 +67,15 @@ public class EmailAccessController {
     @Operation(
             summary = "Registra um pedido de acesso",
             description =
-                    "A conta nasce pendente e aparece na fila do dono, que é avisado por e-mail."
-                            + " Quem pediu não recebe nada aqui: o primeiro e-mail para ele é o"
-                            + " link enviado na aprovação.")
+                    "A conta nasce pendente e entra na fila do dono. Nenhum e-mail sai aqui: o dono"
+                            + " recebe o resumo da fila na próxima janela do dia (10h às 22h), e"
+                            + " quem pediu só recebe algo quando for aprovado.")
     public ResponseEntity<Void> solicitar(
             @Valid @RequestBody EmailRequest body, HttpServletRequest request) {
         if (!freiar(request, body.email())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        // Só avisa quando a fila cresceu, e só depois de o pedido estar gravado: o serviço é
-        // transacional, então a transação já fechou quando a chamada volta. Avisar antes arriscaria
-        // e-mail sobre um pedido que o commit ainda podia perder.
-        if (acesso.requestAccess(body.email())) {
-            acesso.notifyOwnersOfRequest(body.email(), baseUrl());
-        }
+        acesso.requestAccess(body.email());
         return ResponseEntity.accepted().build();
     }
 

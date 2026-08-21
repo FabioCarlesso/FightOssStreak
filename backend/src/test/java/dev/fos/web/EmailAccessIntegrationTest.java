@@ -61,6 +61,9 @@ class EmailAccessIntegrationTest {
 
     static final String ENDERECO = "sem-provedor@example.test";
 
+    /** Não pode conter {@link #ENDERECO} como substring: o resumo é conferido por `contains`. */
+    static final String OUTRO = "segundo-pedido@example.test";
+
     /** O mesmo de {@code fos.auth.owner-emails}, logo acima. */
     static final String DONO = "dono@example.test";
 
@@ -126,43 +129,77 @@ class EmailAccessIntegrationTest {
     }
 
     @Test
-    @DisplayName("pedir acesso cria conta pendente, avisa o dono e não escreve para quem pediu")
-    void requestingAccessNotifiesTheOwnerOnly() throws Exception {
-        pedir(ENDERECO).andExpect(status().isAccepted());
-
-        AppUser user = contaDe(ENDERECO);
-        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
-
-        // Escrever para quem pediu transformaria um endpoint público em canal de spam com o
-        // domínio do app no remetente. O primeiro e-mail para ele sai na aprovação.
-        assertThat(mensagensPara(ENDERECO)).isEmpty();
-
-        // Para o dono, sim: o destinatário vem da configuração, não do formulário (#54).
-        assertThat(mensagensPara(DONO)).hasSize(1);
-        CaixaDeSaida.Mensagem aviso = mensagensPara(DONO).getFirst();
-        assertThat(aviso.corpo()).contains(ENDERECO).contains("/solicitacoes");
-    }
-
-    @Test
-    @DisplayName("insistir no formulário não enche a caixa do dono")
-    void repeatingTheRequestDoesNotNotifyAgain() throws Exception {
-        pedir(ENDERECO).andExpect(status().isAccepted());
-        pedir(ENDERECO).andExpect(status().isAccepted());
-        pedir(ENDERECO).andExpect(status().isAccepted());
-
-        assertThat(mensagensPara(DONO)).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("provedor de envio fora do ar não derruba o pedido")
-    void aFailingSenderDoesNotLoseTheRequest() throws Exception {
-        CaixaDeSaida.falhar = true;
-
-        // O aviso é sobre o pedido; não pode ser o que apaga o pedido. Sem o catch, a falha do
-        // provedor subiria pelo endpoint público e viraria 500 em cima de quem só pediu acesso.
+    @DisplayName("pedir acesso cria conta pendente e NÃO dispara e-mail nenhum")
+    void requestingAccessSendsNothing() throws Exception {
         pedir(ENDERECO).andExpect(status().isAccepted());
 
         assertThat(contaDe(ENDERECO).getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        // Nem para quem pediu — seria canal de spam com o domínio do app no remetente — nem para
+        // o dono: desde a #54 ele fica sabendo pelo resumo da janela seguinte.
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+    }
+
+    @Test
+    @DisplayName("o resumo lista a fila inteira, e só sai quando há pedido novo")
+    void theDigestCoversTheWholeQueueAndOnlyWhenSomethingIsNew() throws Exception {
+        pedir(ENDERECO);
+
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(ENDERECO);
+        assertThat(mensagensPara(DONO).getFirst().assunto()).contains("1 solicitação");
+
+        // Nada mudou: a janela seguinte fica calada, em vez de repetir o mesmo e-mail treze
+        // vezes por dia até alguém decidir.
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+
+        // Chegou um pedido novo: sai o segundo resumo, e ele traz também o que continua pendente.
+        pedir(OUTRO);
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(2);
+        CaixaDeSaida.Mensagem segundo = mensagensPara(DONO).get(1);
+        assertThat(segundo.corpo()).contains(ENDERECO).contains(OUTRO);
+        assertThat(segundo.assunto()).contains("2 solicitações");
+    }
+
+    @Test
+    @DisplayName("o resumo ignora quem já foi decidido")
+    void theDigestSkipsDecidedRequests() throws Exception {
+        pedir(ENDERECO);
+        accounts.decide(contaDe(ENDERECO).getId(), true, -1L);
+        CaixaDeSaida.ENVIADOS.clear();
+
+        pedir(OUTRO);
+        emailAccess.notifyOwnersOfQueue();
+
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(OUTRO).doesNotContain(ENDERECO);
+    }
+
+    @Test
+    @DisplayName("fila vazia não gera resumo")
+    void anEmptyQueueSendsNothing() {
+        emailAccess.notifyOwnersOfQueue();
+
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+    }
+
+    @Test
+    @DisplayName("provedor fora do ar não dá o pedido por avisado: a janela seguinte reenvia")
+    void aFailingSenderLeavesTheQueueUnannounced() throws Exception {
+        pedir(ENDERECO);
+
+        CaixaDeSaida.falhar = true;
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+
+        // Marcar antes de entregar perderia o pedido em silêncio — o esquecimento que a #54
+        // existe para evitar.
+        CaixaDeSaida.falhar = false;
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(ENDERECO);
     }
 
     @Test

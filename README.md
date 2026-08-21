@@ -200,9 +200,13 @@ O app **exige login**, e há dois caminhos (D37):
 
 - **Por provedor externo** (Google; Facebook se configurado): entra **direto**, sem fila. Quem
   chega por ali já teve a identidade verificada por um terceiro, e o app nunca vê senha.
-- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente**, o autor é
-  **avisado por e-mail** (D38) e libera pela fila. Só então sai o primeiro e-mail para quem pediu,
-  com um **link de entrada** que vale 15 minutos e funciona uma vez.
+- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente** e o autor libera
+  pela fila. Só então sai o primeiro e-mail para quem pediu, com um **link de entrada** que vale
+  15 minutos e funciona uma vez.
+
+O pedido em si não dispara e-mail nenhum. Quem decide recebe um **resumo da fila** de hora em hora
+entre **10h e 22h** (horário de Brasília), e só numa janela em que apareceu pedido novo — o e-mail
+lista tudo que ainda espera decisão, não só o que chegou agora (D38).
 
 Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o motivo
 (`acesso_pendente` ou `acesso_recusado`). A decisão e o porquê estão em
@@ -210,8 +214,10 @@ Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o mot
 
 **Habilitar a entrada por e-mail**: crie a chave no provedor de envio, verifique o domínio do
 remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual e a
-alternativa não aparece na tela de login. O aviso de fila usa as mesmas variáveis mais
-`FOS_OWNER_EMAILS`: sem alguma das três ninguém é avisado, e o pedido entra na fila do mesmo jeito.
+alternativa não aparece na tela de login. O resumo da fila usa as mesmas variáveis mais
+`FOS_OWNER_EMAILS`: sem alguma das três nada é agendado nem enviado, e o pedido entra na fila do
+mesmo jeito. `FOS_PUBLIC_URL` (ex.: `https://seu-dominio`) é opcional e só serve para o resumo
+trazer o link de *Solicitações* — o agendador não tem requisição de onde deduzir o endereço.
 
 **Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
 
@@ -221,8 +227,8 @@ alternativa não aparece na tela de login. O aviso de fila usa as mesmas variáv
 2. Defina as variáveis do provedor e `FOS_OWNER_EMAILS` com o seu e-mail.
 3. Suba. Sem credencial nenhuma o app continua subindo — a tela de login é que fica sem botão.
 
-**Aprovar quem pediu**: o aviso de pedido chega nos endereços de `FOS_OWNER_EMAILS` com o link da
-fila. Para decidir, entre com a conta de dono e abra *Solicitações* no menu. A fila também está em
+**Aprovar quem pediu**: o resumo da fila chega nos endereços de `FOS_OWNER_EMAILS`. Para decidir,
+entre com a conta de dono e abra *Solicitações* no menu. A fila também está em
 `GET /api/admin/solicitacoes`.
 
 **Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, progresso, streak, agenda,

@@ -9,6 +9,7 @@ import dev.fos.email.EmailSender;
 import dev.fos.model.AccessStatus;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.UserIdentityRepository;
+import dev.fos.service.EmailAccessService;
 import dev.fos.service.EmailAuthenticationToken;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +27,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * O aviso de fila (#54) com {@code fos.auth.owner-emails} vazia — que é o <em>default</em>.
+ * O resumo da fila (#54) com {@code fos.auth.owner-emails} vazia — que é o <em>default</em>.
  *
  * <p>Contexto próprio porque a lista de donos é lida na construção do serviço: não dá para
  * esvaziá-la no meio do {@code EmailAccessIntegrationTest}. Vale o custo do segundo contexto porque
  * este é o estado em que a aplicação sobe sem configuração nenhuma — dev e CI incluídos —, e um
- * aviso que explodisse aqui quebraria o pedido de acesso justamente onde ninguém configurou nada.
+ * resumo que explodisse aqui quebraria a fila justamente onde ninguém configurou nada.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(PedidoSemDonoIntegrationTest.CaixaDeSaida.class)
+@Import(ResumoSemDonoIntegrationTest.CaixaDeSaida.class)
 @Transactional
-class PedidoSemDonoIntegrationTest {
+class ResumoSemDonoIntegrationTest {
 
     private static final String ENDERECO = "sem-dono@example.test";
 
@@ -54,11 +55,12 @@ class PedidoSemDonoIntegrationTest {
     }
 
     @Autowired private MockMvc mockMvc;
+    @Autowired private EmailAccessService emailAccess;
     @Autowired private AppUserRepository users;
     @Autowired private UserIdentityRepository identities;
 
     @Test
-    @DisplayName("sem dono configurado o pedido entra na fila e nenhum e-mail é tentado")
+    @DisplayName("sem dono configurado o pedido entra na fila e nenhum resumo é tentado")
     void withoutOwnersNothingIsSent() throws Exception {
         CaixaDeSaida.ENVIADOS.clear();
 
@@ -69,16 +71,22 @@ class PedidoSemDonoIntegrationTest {
                                 .content("{\"email\":\"" + ENDERECO + "\"}"))
                 .andExpect(status().isAccepted());
 
+        emailAccess.notifyOwnersOfQueue();
+
         assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
-        assertThat(
-                        users.findById(
-                                        identities
-                                                .findByProviderAndProviderSubject(
-                                                        EmailAuthenticationToken.PROVIDER, ENDERECO)
-                                                .orElseThrow()
-                                                .getUserId())
+        assertThat(conta().getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        // E o pedido segue "não anunciado": configurar um dono depois faz o primeiro resumo
+        // trazer o que já estava na fila, em vez de perdê-lo.
+        assertThat(conta().isQueueNoticePending()).isTrue();
+    }
+
+    private dev.fos.model.AppUser conta() {
+        return users.findById(
+                        identities
+                                .findByProviderAndProviderSubject(
+                                        EmailAuthenticationToken.PROVIDER, ENDERECO)
                                 .orElseThrow()
-                                .getAccessStatus())
-                .isEqualTo(AccessStatus.PENDENTE);
+                                .getUserId())
+                .orElseThrow();
     }
 }

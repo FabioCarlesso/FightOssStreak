@@ -34,6 +34,10 @@ fos:
     # e-mail simplesmente não é oferecida na tela — mesma regra dos provedores de login.
     api-key: ${FOS_EMAIL_API_KEY:}
     from: ${FOS_EMAIL_FROM:}
+  # URL pública do app, para o resumo da fila (#54) conseguir montar o link de Solicitações.
+  # O agendador não tem requisição de onde deduzi-la, ao contrário do link de entrada. Vazia
+  # por default: o resumo sai sem link e o resto funciona igual.
+  public-url: ${FOS_PUBLIC_URL:}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

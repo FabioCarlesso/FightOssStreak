@@ -4,10 +4,7 @@ import dev.fos.config.FosProperties;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -21,26 +18,8 @@ import org.springframework.web.client.RestClient;
  * <p>O bean só existe com chave <em>e</em> remetente preenchidos — ver {@link EmailSender}.
  */
 @Component
-@Conditional(ResendEmailSender.EmailConfigured.class)
+@Conditional(EmailConfigured.class)
 class ResendEmailSender implements EmailSender {
-
-    /**
-     * Verdadeiro só com os dois valores preenchidos.
-     *
-     * <p>Precisa ser {@link Condition} e não {@code @ConditionalOnProperty}: a variável de ambiente
-     * ausente vira string <em>vazia</em> pelo default do {@code application.yml}, e para o
-     * {@code @ConditionalOnProperty} vazio é "presente". O bean nascia sem credencial e tentava
-     * falar com a API de verdade — inclusive de dentro do teste, que foi como isto apareceu.
-     */
-    static class EmailConfigured implements Condition {
-        @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return new FosProperties.Email(
-                            context.getEnvironment().getProperty("fos.email.api-key"),
-                            context.getEnvironment().getProperty("fos.email.from"))
-                    .isConfigured();
-        }
-    }
 
     private static final Logger log = LoggerFactory.getLogger(ResendEmailSender.class);
     private static final String ENDPOINT = "https://api.resend.com/emails";
