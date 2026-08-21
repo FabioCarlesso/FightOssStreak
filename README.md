@@ -161,6 +161,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET` | backend | — | segredo do app no Meta for Developers |
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
+| `FOS_PUBLIC_URL` | backend | vazia | URL pública do app para o link no resumo da fila; mesmo valor de `VITE_PUBLIC_URL` |
 
 Detalhes que não são óbvios:
 
