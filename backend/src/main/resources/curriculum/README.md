@@ -54,11 +54,11 @@ nó a outro nó do currículo pelo código — a árvore existe justamente para 
 voltando pela porta dos fundos. Sem markdown: negrito, lista e link abrem a porta para o texto que
 este padrão proíbe.
 
-`CurriculumValidator` recusa conceito com mais de 3 parágrafos. A faixa de 450–900 caracteres
-**ainda não está ligada em `validate()`** — o método existe e tem teste próprio
-(`CurriculumIntegrityTest`), mas ativá-lo hoje reprovaria a maior parte de M2–M8, que segue com o
-texto curto anterior ao padrão. Ela entra em vigor módulo a módulo, junto com o PR que reescreve
-cada bloco (issue #58); ver **D41** em `docs/07-decisoes.md`.
+`CurriculumValidator` recusa conceito com mais de 3 parágrafos, para o currículo inteiro. A faixa
+de 450–900 caracteres só vale para os módulos já reescritos (`CONCEPT_LENGTH_CURATED_MODULES`,
+hoje `M0` e `M1`) — ativá-la para o currículo inteiro reprovaria M2–M8, que seguem com o texto
+curto anterior ao padrão. A lista cresce um módulo por vez, junto com o PR que reescreve cada
+bloco (issue #58); ver **D41** em `docs/07-decisoes.md`.
 
 Se "não é passo a passo" não é automatizável por heurística de palavra — fica como item de revisão
 humana do PR, não do validador.
@@ -157,5 +157,6 @@ Registrado em **D27**.
 
 `CurriculumIntegrityTest` roda a cada `./mvnw test` e falha se houver: código duplicado, referência a
 pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida, quiz sem exatamente
-uma alternativa correta, conceito com mais de 3 parágrafos, ou complementar duplicado, sem crédito
-de canal ou acima do teto. Detecção de ciclo é feita **na ingestão**, nunca em runtime.
+uma alternativa correta, conceito com mais de 3 parágrafos ou fora da faixa de tamanho nos módulos
+já cobertos, ou complementar duplicado, sem crédito de canal ou acima do teto. Detecção de ciclo é
+feita **na ingestão**, nunca em runtime.

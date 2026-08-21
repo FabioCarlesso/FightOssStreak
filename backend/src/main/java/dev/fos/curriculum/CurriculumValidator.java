@@ -58,14 +58,25 @@ public class CurriculumValidator {
      * padrão de três movimentos (problema, mecanismo, erro comum); o teto é o que ainda cabe numa
      * tela de celular sem rolagem longa.
      *
-     * <p><strong>Não está ligada em {@link #validate}</strong> — M2 a M8 seguem com o texto curto
-     * anterior ao padrão, e reprovariam o build hoje. Entra módulo a módulo, junto com o PR que
-     * reescreve cada bloco (issue #58, D41 em {@code docs/07-decisoes.md}). O método existe, com
-     * teste próprio, para não nascer do zero quando for a vez de ligar.
+     * <p>A checagem só roda para os módulos em {@link #CONCEPT_LENGTH_CURATED_MODULES} — ver o
+     * javadoc de lá para o porquê de não valer para o currículo inteiro ainda (issue #58, D41 em
+     * {@code docs/07-decisoes.md}).
      */
     public static final int MIN_CONCEPT_LENGTH = 450;
 
     public static final int MAX_CONCEPT_LENGTH = 900;
+
+    /**
+     * Módulos cujo {@code concept} já foi reescrito no padrão de três movimentos e cabe na faixa de
+     * {@link #MIN_CONCEPT_LENGTH}–{@link #MAX_CONCEPT_LENGTH}. M2 a M8 seguem com o texto curto
+     * anterior ao padrão, e ligar a faixa para o currículo inteiro hoje reprovaria o build.
+     *
+     * <p>Cresce um módulo por vez, junto com o PR de conteúdo que o reescreve — mesmo desenho que
+     * {@code hasCuratedQuiz}/{@code hasCuratedVideo} já usam em {@code CurriculumIntegrityTest}
+     * para quiz e vídeo: cobertura declarada por módulo, e não a allowlist de nó por nó que a D41
+     * rejeitou como dívida técnica.
+     */
+    private static final Set<String> CONCEPT_LENGTH_CURATED_MODULES = Set.of("M0", "M1");
 
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
@@ -111,6 +122,9 @@ public class CurriculumValidator {
                 requireText(node.title(), where + ": título vazio");
                 requireText(node.concept(), where + ": conceito vazio");
                 validateConceptParagraphs(node.concept(), where);
+                if (isConceptLengthCurated(node.code())) {
+                    validateConceptLength(node.concept(), where);
+                }
 
                 try {
                     Belt.valueOf(node.belt());
@@ -342,8 +356,8 @@ public class CurriculumValidator {
     }
 
     /**
-     * Faixa de tamanho do conceito. Ver o javadoc de {@link #MIN_CONCEPT_LENGTH}: método pronto,
-     * ainda não chamado por {@link #validate}.
+     * Faixa de tamanho do conceito. Só chamado para módulos em {@link
+     * #CONCEPT_LENGTH_CURATED_MODULES}.
      */
     void validateConceptLength(String concept, String where) {
         int length = concept.strip().length();
@@ -357,6 +371,16 @@ public class CurriculumValidator {
                             + " a "
                             + MAX_CONCEPT_LENGTH);
         }
+    }
+
+    /**
+     * Módulo de um código de nó ("M1.2" → "M1"), para checar {@link
+     * #CONCEPT_LENGTH_CURATED_MODULES}.
+     */
+    private boolean isConceptLengthCurated(String nodeCode) {
+        int dot = nodeCode.indexOf('.');
+        String moduleCode = dot < 0 ? nodeCode : nodeCode.substring(0, dot);
+        return CONCEPT_LENGTH_CURATED_MODULES.contains(moduleCode);
     }
 
     private int countParagraphs(String concept) {
