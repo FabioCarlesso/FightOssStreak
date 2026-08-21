@@ -243,6 +243,32 @@ describe('NodePage', () => {
     expect(apiMock.savePinnedNote).not.toHaveBeenCalled();
   });
 
+  it('conceito de parágrafo único continua um só bloco de texto', async () => {
+    renderNode();
+
+    const conceito = await screen.findByText('Distribuir o impacto em vez de concentrá-lo.');
+    expect(conceito.tagName).toBe('P');
+    expect(screen.getAllByText(/./, { selector: '.node__concept' })).toHaveLength(1);
+  });
+
+  it('linha em branco no conceito vira parágrafo separado na tela', async () => {
+    apiMock.getNode.mockResolvedValue({
+      ...DISPONIVEL,
+      concept:
+        'A primeira habilidade não é escapar.\n\nO mecanismo é a hierarquia: pescoço, cotovelos, ar.\n\nO erro comum é explodir cedo.',
+    });
+
+    renderNode();
+
+    const paragrafos = await screen.findAllByText(/./, { selector: '.node__concept' });
+    expect(paragrafos).toHaveLength(3);
+    expect(paragrafos[0]).toHaveTextContent('A primeira habilidade não é escapar.');
+    expect(paragrafos[1]).toHaveTextContent('O mecanismo é a hierarquia: pescoço, cotovelos, ar.');
+    expect(paragrafos[2]).toHaveTextContent('O erro comum é explodir cedo.');
+    // A linha em branco em si não deve sobrar como texto literal em nenhum parágrafo.
+    paragrafos.forEach((paragrafo) => expect(paragrafo.textContent).not.toMatch(/\n/));
+  });
+
   it('o histórico de anotações some junto com o registro de drill em nó bloqueado', async () => {
     renderNode();
     expect(await screen.findByText('entrei com a cabeça baixa')).toBeInTheDocument();

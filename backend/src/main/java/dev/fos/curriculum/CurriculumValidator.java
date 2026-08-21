@@ -46,6 +46,27 @@ public class CurriculumValidator {
      */
     public static final int MAX_EXTRA_VIDEOS = 4;
 
+    /**
+     * Teto de parágrafos do {@code concept}. Linha em branco vira parágrafo na tela do nó
+     * (`NodePage.tsx`); mais que isso é o passo a passo voltando pela porta dos fundos (D1, issue
+     * #58).
+     */
+    public static final int MAX_CONCEPT_PARAGRAPHS = 3;
+
+    /**
+     * Faixa de tamanho do {@code concept}, em caracteres. O piso é o que M0/M1 já entregam com o
+     * padrão de três movimentos (problema, mecanismo, erro comum); o teto é o que ainda cabe numa
+     * tela de celular sem rolagem longa.
+     *
+     * <p><strong>Não está ligada em {@link #validate}</strong> — M2 a M8 seguem com o texto curto
+     * anterior ao padrão, e reprovariam o build hoje. Entra módulo a módulo, junto com o PR que
+     * reescreve cada bloco (issue #58, D41 em {@code docs/07-decisoes.md}). O método existe, com
+     * teste próprio, para não nascer do zero quando for a vez de ligar.
+     */
+    public static final int MIN_CONCEPT_LENGTH = 450;
+
+    public static final int MAX_CONCEPT_LENGTH = 900;
+
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
         Map<String, CurriculumSource.NodeSpec> byCode = indexNodes(modules);
@@ -89,6 +110,7 @@ public class CurriculumValidator {
 
                 requireText(node.title(), where + ": título vazio");
                 requireText(node.concept(), where + ": conceito vazio");
+                validateConceptParagraphs(node.concept(), where);
 
                 try {
                     Belt.valueOf(node.belt());
@@ -300,6 +322,52 @@ public class CurriculumValidator {
         if (value == null || value.isBlank()) {
             throw new CurriculumException(message);
         }
+    }
+
+    /**
+     * No máximo {@link #MAX_CONCEPT_PARAGRAPHS} parágrafos, separados por linha em branco. Regra
+     * ativa desde já: nenhum conceito hoje usa linha em branco, então não há currículo existente
+     * para quebrar.
+     */
+    private void validateConceptParagraphs(String concept, String where) {
+        int paragraphs = countParagraphs(concept);
+        if (paragraphs > MAX_CONCEPT_PARAGRAPHS) {
+            throw new CurriculumException(
+                    where
+                            + ": conceito com "
+                            + paragraphs
+                            + " parágrafos, o máximo é "
+                            + MAX_CONCEPT_PARAGRAPHS);
+        }
+    }
+
+    /**
+     * Faixa de tamanho do conceito. Ver o javadoc de {@link #MIN_CONCEPT_LENGTH}: método pronto,
+     * ainda não chamado por {@link #validate}.
+     */
+    void validateConceptLength(String concept, String where) {
+        int length = concept.strip().length();
+        if (length < MIN_CONCEPT_LENGTH || length > MAX_CONCEPT_LENGTH) {
+            throw new CurriculumException(
+                    where
+                            + ": conceito com "
+                            + length
+                            + " caracteres, fora da faixa de "
+                            + MIN_CONCEPT_LENGTH
+                            + " a "
+                            + MAX_CONCEPT_LENGTH);
+        }
+    }
+
+    private int countParagraphs(String concept) {
+        String[] parts = concept.strip().split("\\n\\s*\\n+");
+        int count = 0;
+        for (String part : parts) {
+            if (!part.isBlank()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private enum Mark {

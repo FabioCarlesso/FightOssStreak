@@ -232,6 +232,77 @@ class CurriculumIntegrityTest {
     }
 
     @Test
+    @DisplayName("o validador rejeita conceito com mais de 3 parágrafos")
+    void rejectsConceptWithTooManyParagraphs() {
+        CurriculumSource.Module broken =
+                moduleWithConcept("primeiro\n\nsegundo\n\nterceiro\n\nquarto");
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("4 parágrafos")
+                .hasMessageContaining("o máximo é 3");
+    }
+
+    @Test
+    @DisplayName("o validador aceita conceito com até 3 parágrafos, e conceito de bloco único")
+    void acceptsConceptWithUpToThreeParagraphs() {
+        assertThatCode(
+                        () ->
+                                validator.validate(
+                                        List.of(
+                                                moduleWithConcept(
+                                                        "primeiro\n\nsegundo\n\nterceiro"))))
+                .doesNotThrowAnyException();
+
+        assertThatCode(
+                        () ->
+                                validator.validate(
+                                        List.of(moduleWithConcept("bloco único, sem quebra"))))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName(
+            "a faixa de tamanho do conceito (450-900) tem método pronto, mas não roda em validate() "
+                    + "ainda (D41): M2-M8 ainda não foram reescritos")
+    void conceptLengthGuardExistsButIsNotWiredIntoValidateYet() {
+        // Currículo real de M2-M8 tem conceito abaixo de 450 caracteres hoje, e validate() precisa
+        // continuar aceitando isso até o PR de conteúdo do módulo correspondente religar a regra.
+        assertThatCode(
+                        () ->
+                                validator.validate(
+                                        List.of(moduleWithConcept("curto demais, de propósito"))))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("o método de faixa de tamanho rejeita conceito curto demais")
+    void validateConceptLengthRejectsTooShort() {
+        assertThatThrownBy(() -> validator.validateConceptLength("curto", "nó MX.1"))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de 450 a 900");
+    }
+
+    @Test
+    @DisplayName("o método de faixa de tamanho rejeita conceito longo demais")
+    void validateConceptLengthRejectsTooLong() {
+        String longo = "a".repeat(901);
+
+        assertThatThrownBy(() -> validator.validateConceptLength(longo, "nó MX.1"))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de 450 a 900");
+    }
+
+    @Test
+    @DisplayName("o método de faixa de tamanho aceita conceito dentro de 450-900 caracteres")
+    void validateConceptLengthAcceptsWithinRange() {
+        String valido = "a".repeat(450);
+
+        assertThatCode(() -> validator.validateConceptLength(valido, "nó MX.1"))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
     @DisplayName("o validador rejeita quiz sem exatamente uma alternativa correta")
     void rejectsQuizWithoutSingleCorrectOption() {
         CurriculumSource.QuestionSpec twoCorrect =
@@ -477,6 +548,17 @@ class CurriculumIntegrityTest {
             List<CurriculumSource.ExtraVideoSpec> extras) {
         return new CurriculumSource.NodeSpec(
                 code, "t", "BRANCA", 1, "ALL", List.of(), "conceito", video, extras, List.of());
+    }
+
+    private CurriculumSource.Module moduleWithConcept(String concept) {
+        return new CurriculumSource.Module(
+                "MX",
+                "Quebrado",
+                "resumo",
+                List.of(
+                        new CurriculumSource.NodeSpec(
+                                "MX.1", "t", "BRANCA", 1, "ALL", List.of(), concept, null,
+                                List.of(), List.of())));
     }
 
     private CurriculumSource.Module moduleWithVideo(CurriculumSource.VideoSpec video) {

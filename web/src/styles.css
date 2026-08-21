@@ -454,6 +454,10 @@ button:disabled {
   font-size: 1rem;
 }
 
+.node__concept + .node__concept {
+  margin-top: 0.75rem;
+}
+
 .node__locked {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);
