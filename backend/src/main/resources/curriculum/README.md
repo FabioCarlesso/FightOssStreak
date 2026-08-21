@@ -58,7 +58,8 @@ este padrão proíbe.
 faixa de 450–900 caracteres para os módulos em `CONCEPT_LENGTH_CURATED_MODULES` — hoje os 9
 módulos, porque os 46 nós foram reescritos juntos. A constante continua existindo, e não virou um
 booleano: um módulo novo (`M9` em diante) nasce fora dela por padrão, até ser escrito no padrão e
-entrar no conjunto. Ver **D41** e **D42** em `docs/07-decisoes.md`.
+entrar no conjunto. Ver **D41**, **D42** e **D43** em `docs/07-decisoes.md` — a última é quem explica
+por que M2–M8 entraram juntos, num PR só, em vez do rollout módulo a módulo que a D42 previa.
 
 Se "não é passo a passo" não é automatizável por heurística de palavra — fica como item de revisão
 humana do PR, não do validador.

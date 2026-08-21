@@ -121,7 +121,7 @@ public class CurriculumValidator {
                 requireText(node.title(), where + ": título vazio");
                 requireText(node.concept(), where + ": conceito vazio");
                 validateConceptParagraphs(node.concept(), where);
-                if (isConceptLengthCurated(node.code())) {
+                if (CONCEPT_LENGTH_CURATED_MODULES.contains(module.code())) {
                     validateConceptLength(node.concept(), where);
                 }
 
@@ -370,16 +370,6 @@ public class CurriculumValidator {
                             + " a "
                             + MAX_CONCEPT_LENGTH);
         }
-    }
-
-    /**
-     * Módulo de um código de nó ("M1.2" → "M1"), para checar {@link
-     * #CONCEPT_LENGTH_CURATED_MODULES}.
-     */
-    private boolean isConceptLengthCurated(String nodeCode) {
-        int dot = nodeCode.indexOf('.');
-        String moduleCode = dot < 0 ? nodeCode : nodeCode.substring(0, dot);
-        return CONCEPT_LENGTH_CURATED_MODULES.contains(moduleCode);
     }
 
     private int countParagraphs(String concept) {
