@@ -111,9 +111,14 @@ aqui sem isso seria exatamente o que este documento existe para impedir.
 
 ## Tabela: nó → fontes consultadas
 
-Preenchida à medida que B e C (escrita de conceito e de quiz) avançarem. Nasce vazia de M2 a M8, e
-isso é estado normal — igual a `video: null`. Ao escrever ou revisar um nó, adicione a fonte
-efetivamente consultada nesta linha; "nenhuma além do professor" também é um registro válido.
+Preenchida à medida que B e C (escrita de conceito e de quiz) avançarem. Ao escrever ou revisar um
+nó, adicione a fonte efetivamente consultada nesta linha; "nenhuma além do professor" também é um
+registro válido.
+
+M2–M8 não têm vídeo canônico catalogado ainda (`docs/08-curadoria-videos.md`), então a reescrita de
+#58 não teve canal instrucional para citar como fonte. A linha registra isso com honestidade — texto
+reestruturado a partir do conceito que já estava no currículo, sem pesquisa nova por trás (D43) —
+em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
 
 ### M0 — Fundamentos e Segurança
 
@@ -140,68 +145,68 @@ efetivamente consultada nesta linha; "nenhuma além do professor" também é um 
 
 | Nó | Fontes consultadas |
 |---|---|
-| M2.1 | — |
-| M2.2 | — |
-| M2.3 | — |
-| M2.4 | — |
-| M2.5 | — |
-| M2.6 | — |
-| M2.7 | — |
+| M2.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M3 — Guarda Aberta e Passagem
 
 | Nó | Fontes consultadas |
 |---|---|
-| M3.1 | — |
-| M3.2 | — |
-| M3.3 | — |
-| M3.4 | — |
-| M3.5 | — |
-| M3.6 | — |
-| M3.7 | — |
+| M3.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M4 — Controle Superior
 
 | Nó | Fontes consultadas |
 |---|---|
-| M4.1 | — |
-| M4.2 | — |
-| M4.3 | — |
-| M4.4 | — |
-| M4.5 | — |
-| M4.6 | — |
+| M4.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M5 — Costas (Back Control)
 
 | Nó | Fontes consultadas |
 |---|---|
-| M5.1 | — |
-| M5.2 | — |
-| M5.3 | — |
-| M5.4 | — |
+| M5.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M5.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M5.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M5.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M6 — Quedas e Entrada em Combate
 
 | Nó | Fontes consultadas |
 |---|---|
-| M6.1 | — |
-| M6.2 | — |
-| M6.3 | — |
-| M6.4 | — |
+| M6.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M6.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M6.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M6.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M7 — Finalizações Encadeadas
 
 | Nó | Fontes consultadas |
 |---|---|
-| M7.1 | — |
-| M7.2 | — |
-| M7.3 | — |
-| M7.4 | — |
+| M7.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M7.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M7.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M7.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
 
 ### M8 — Jogo Integrado
 
 | Nó | Fontes consultadas |
 |---|---|
-| M8.1 | — |
-| M8.2 | — |
-| M8.3 | — |
+| M8.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M8.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M8.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |

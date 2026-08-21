@@ -68,15 +68,14 @@ public class CurriculumValidator {
 
     /**
      * Módulos cujo {@code concept} já foi reescrito no padrão de três movimentos e cabe na faixa de
-     * {@link #MIN_CONCEPT_LENGTH}–{@link #MAX_CONCEPT_LENGTH}. M2 a M8 seguem com o texto curto
-     * anterior ao padrão, e ligar a faixa para o currículo inteiro hoje reprovaria o build.
-     *
-     * <p>Cresce um módulo por vez, junto com o PR de conteúdo que o reescreve — mesmo desenho que
-     * {@code hasCuratedQuiz}/{@code hasCuratedVideo} já usam em {@code CurriculumIntegrityTest}
-     * para quiz e vídeo: cobertura declarada por módulo, e não a allowlist de nó por nó que a D41
-     * rejeitou como dívida técnica.
+     * {@link #MIN_CONCEPT_LENGTH}–{@link #MAX_CONCEPT_LENGTH}. Os 9 módulos (46 nós) foram
+     * reescritos juntos (issue #58, D42 em {@code docs/07-decisoes.md}), então o conjunto cobre o
+     * currículo inteiro — mas o desenho por módulo continua aqui, e não uma constante booleana,
+     * porque um nó novo em módulo futuro (ex.: um M9) nasceria fora da faixa por padrão, e é assim
+     * que deve ser até ser escrito no padrão e o módulo entrar no conjunto.
      */
-    private static final Set<String> CONCEPT_LENGTH_CURATED_MODULES = Set.of("M0", "M1");
+    private static final Set<String> CONCEPT_LENGTH_CURATED_MODULES =
+            Set.of("M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8");
 
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {

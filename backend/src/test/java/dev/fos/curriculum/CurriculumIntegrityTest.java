@@ -264,10 +264,11 @@ class CurriculumIntegrityTest {
     @Test
     @DisplayName(
             "a faixa de tamanho do conceito (450-900) só vale para módulos já reescritos "
-                    + "(D41): módulo fora de CONCEPT_LENGTH_CURATED_MODULES continua livre")
+                    + "(D42): módulo fora de CONCEPT_LENGTH_CURATED_MODULES continua livre")
     void conceptLengthGuardOnlyAppliesToCuratedModules() {
-        // "MX" não está em CONCEPT_LENGTH_CURATED_MODULES (hoje só M0 e M1), então um conceito
-        // curto demais nesse módulo não quebra validate() — é o estado real de M2-M8.
+        // "MX" não está em CONCEPT_LENGTH_CURATED_MODULES (hoje M0-M8, o currículo inteiro), então
+        // um conceito curto demais nesse módulo sintético não quebra validate() — é o
+        // comportamento esperado para um módulo futuro ainda não escrito no padrão.
         assertThatCode(
                         () ->
                                 validator.validate(
@@ -276,7 +277,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("a faixa de tamanho do conceito é aplicada de verdade para M0 e M1 (D41)")
+    @DisplayName("a faixa de tamanho do conceito é aplicada de verdade para M0 e M1 (D42)")
     void conceptLengthGuardAppliesToCuratedModules() {
         assertThatThrownBy(
                         () ->

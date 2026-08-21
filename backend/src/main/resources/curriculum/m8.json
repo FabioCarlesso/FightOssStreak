@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
-      "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona — o que funciona é a segunda. Encadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma seja a entrada da outra. É o mesmo raciocínio de M2.2 e M2.3, agora aplicado deliberadamente em vez de por acidente.",
+      "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona de verdade — o que funciona é a segunda, encadeada a partir da defesa da primeira.\n\nEncadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma já seja a entrada da outra. É o mesmo raciocínio de tesoura e pêndulo em M2.2 e M2.3, agora aplicado deliberadamente em vez de descoberto por acidente.\n\nO erro comum é insistir na mesma raspagem depois que ela já foi defendida: repetir o que já não funciona ignora que a própria defesa do oponente é a informação que aponta para a próxima tentativa.",
       "video": null,
       "quiz": []
     },
@@ -21,7 +21,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
-      "concept": "A partir de certo ponto, o ganho não vem de saber mais técnicas, e sim de perceber mais cedo o que o oponente vai fazer. Ler direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação consumada — é a diferença entre reagir e antecipar, e é o que faz um jogo parecer sem esforço.",
+      "concept": "A partir de certo ponto do currículo, o ganho não vem mais de saber mais técnicas — vem de perceber mais cedo o que o oponente está prestes a fazer.\n\nLer direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação já consumada. É a diferença entre reagir e antecipar, e é o que faz um jogo de alto nível parecer sem esforço, mesmo sendo o oposto disso.\n\nO erro comum é continuar jogando por reação mesmo depois de acumular técnica suficiente: esperar a ação terminar para responder desperdiça a informação que a pressão e o peso já davam um instante antes.",
       "video": null,
       "quiz": []
     },
@@ -32,7 +32,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M8.1", "M8.2"],
-      "concept": "Jogo pessoal é escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis: uma posição de partida, uma sequência principal e uma alternativa para quando ela é defendida. O nó final do currículo é justamente o que não se pode copiar de um vídeo — ele depende do seu corpo, do seu tempo de treino e do que já funcionou para você.",
+      "concept": "Jogo pessoal é escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis: uma posição de partida, uma sequência principal e uma alternativa para quando essa sequência é defendida.\n\nÉ o nó final do currículo, e por um motivo específico: ele é justamente o que não se pode copiar de um vídeo, porque depende do seu corpo, do seu tempo de treino e do que já funcionou de verdade para você nos módulos anteriores.\n\nO erro comum é copiar o jogo pessoal de outra pessoa em vez de construir o próprio: um game plan pensado para o corpo e o ritmo de outro atleta raramente encaixa no seu, e o app não tem como decidir isso por você — só apontar de onde partir.",
       "video": null,
       "quiz": []
     }

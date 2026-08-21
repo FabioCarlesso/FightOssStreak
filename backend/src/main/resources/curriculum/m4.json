@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ANY",
       "prereqs": ["M3.2", "M3.3"],
-      "concept": "Manter o 100kg é um problema de peso, não de força: o peso precisa cair sobre o oponente e não sobre seus próprios joelhos e mãos. Quem se apoia no tatame carrega o próprio corpo e deixa o adversário livre para enquadrar. A referência prática é o espelho de M1.3 — tudo o que você aprendeu a fazer para escapar é exatamente o que precisa negar aqui.",
+      "concept": "Manter o 100kg é um problema de peso, não de força: o seu peso precisa cair sobre o oponente, não sobre os seus próprios joelhos e mãos.\n\nA referência prática é o espelho de M1.3: tudo o que você aprendeu a fazer para escapar do 100kg é exatamente o que precisa negar aqui, do outro lado da posição — negar enquadramento, negar espaço, negar respiro.\n\nO erro comum é apoiar-se no próprio tatame em vez de no oponente: quem carrega o próprio corpo com os braços deixa o adversário livre para enquadrar e, mais cedo ou mais tarde, escapar.",
       "video": null,
       "quiz": []
     },
@@ -21,7 +21,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
-      "concept": "O joelho na barriga troca estabilidade por mobilidade: concentra pressão numa área pequena e desconfortável, e ao mesmo tempo te deixa alto e livre para girar. É a posição que melhor ilustra que controle superior não significa ficar parado — a pressão desconfortável é o que força a reação de onde nascem montada e costas.",
+      "concept": "O joelho na barriga troca estabilidade por mobilidade: concentra pressão numa área pequena e desconfortável do oponente, e ao mesmo tempo deixa você alto e livre para girar.\n\nÉ a posição que melhor ilustra que controle superior não significa ficar parado — a pressão desconfortável é o que força a reação do oponente, e é dessa reação que nascem montada e costas.\n\nO erro comum é tratar o joelho na barriga como posição de descanso: ficar parado sem acompanhar a reação que a própria pressão provoca desperdiça exatamente o que a posição existe para criar.",
       "video": null,
       "quiz": []
     },
@@ -32,7 +32,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
-      "concept": "Toda transição tem um instante em que o controle diminui — é nele que as fugas acontecem. Passar do 100kg para a montada é, portanto, um exercício de reduzir esse instante: bloquear o quadril do oponente antes de mover a perna, para que ele não tenha para onde inserir o joelho enquanto você atravessa.",
+      "concept": "Toda transição de posição tem um instante em que o controle diminui — é nesse instante que as fugas acontecem.\n\nPassar do 100kg para a montada é, portanto, um exercício de reduzir esse instante: bloquear o quadril do oponente antes de mover a própria perna, para que ele não tenha onde inserir o joelho enquanto você atravessa.\n\nO erro comum é inverter a ordem — mover a perna antes de bloquear o quadril. É exatamente nesse intervalo, com o controle momentaneamente reduzido, que o joelho dele entra e a fuga se abre.",
       "video": null,
       "quiz": []
     },
@@ -43,7 +43,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": ["M4.3"],
-      "concept": "A montada é dominante e instável ao mesmo tempo: você está acima do centro de gravidade dele, e o que impede a ponte é a sua base. O princípio é manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha. É o outro lado exato de M1.4.",
+      "concept": "A montada é dominante e instável ao mesmo tempo: você está acima do centro de gravidade do oponente, e o que impede a ponte dele é só a sua base.\n\nO princípio é manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha — é o outro lado exato do que M1.4 ensina a fazer para escapar.\n\nO erro comum é deixar os joelhos abrirem ou o peso cair para trás: o espaço lateral que sobra é exatamente o que o elbow escape precisa para recuperar a guarda, o mesmo mecanismo que você aprendeu a explorar embaixo.",
       "video": null,
       "quiz": []
     },
@@ -54,7 +54,7 @@
       "order": 5,
       "unlockRule": "ALL",
       "prereqs": ["M4.1", "M4.4"],
-      "concept": "Duas finalizações que nascem de posições que você já mantém, sem abrir mão do controle — e é essa a lição. A americana pune o braço que o oponente deixa no chão em ângulo; o ezequiel usa a própria manga do gi e funciona justamente porque exige pouquíssimo espaço. Ataques que custam a posição são ruins no início; estes custam pouco.",
+      "concept": "A americana e o ezequiel são duas finalizações que nascem de posições que você já mantém, sem exigir abrir mão do controle — essa é a lição comum às duas.\n\nA americana pune o braço que o oponente deixa apoiado no chão em ângulo; o ezequiel usa a própria manga do gi e funciona bem justamente porque exige pouquíssimo espaço para ser armado.\n\nO erro comum é caçar finalizações que custam a posição: ataques que exigem abrir mão do 100kg ou da montada para tentar são ruins neste estágio, porque perder o controle devolve tudo o que a manutenção da posição já custou para conquistar.",
       "video": null,
       "quiz": []
     },
@@ -65,7 +65,7 @@
       "order": 6,
       "unlockRule": "ALL",
       "prereqs": ["M4.4"],
-      "concept": "O armlock da montada aparece quando o oponente empurra para tirar o peso — ou seja, é a punição da defesa mais instintiva embaixo da montada. Reaproveita o mecanismo de M2.5, mas com uma diferença cara: aqui você troca a montada pela posição de ataque, e errar significa perder o controle inteiro. Por isso vem depois da manutenção, nunca antes.",
+      "concept": "O armlock da montada aparece quando o oponente empurra para tirar o seu peso de cima — é a punição da defesa mais instintiva de quem está embaixo da montada.\n\nReaproveita o mesmo mecanismo de ângulo e giro de quadril de M2.5, mas com uma diferença cara: aqui você troca a montada, que já é uma posição de ataque, pela tentativa de finalização, e errar significa perder o controle inteiro.\n\nO erro comum é buscar o armlock antes de o oponente empurrar de verdade: sem esse gatilho, a montada consolidada dá lugar a uma tentativa sem o mecanismo que a sustenta — e um armlock perdido da montada custa a posição inteira, não só a finalização.",
       "video": null,
       "quiz": []
     }

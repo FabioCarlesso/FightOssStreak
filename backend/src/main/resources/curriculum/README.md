@@ -37,11 +37,11 @@ proíbe. O padrão de escrita tem três movimentos, na ordem:
 2. **O mecanismo** — por que funciona; qual troca o oponente é obrigado a fazer.
 3. **O erro comum** — o que costuma dar errado e por quê.
 
-M0 e M1 usam essa estrutura sem ter nome para ela; é o padrão a seguir ao escrever ou revisar
-qualquer nó (issue #58).
+Os 46 nós seguem essa estrutura (issue #58) — é o padrão a seguir ao escrever ou revisar qualquer
+nó novo.
 
-**Faixa de tamanho: 450 a 900 caracteres.** O piso é o que M0/M1 já entregam; o teto é o que ainda
-cabe numa tela de celular sem rolagem longa.
+**Faixa de tamanho: 450 a 900 caracteres.** O piso é o que M0/M1 já entregavam antes da reescrita
+de #58; o teto é o que ainda cabe numa tela de celular sem rolagem longa.
 
 **Proibido**: enumeração de passos, imperativo de execução ("coloque", "gire", "puxe" descrevendo
 a sequência), contagem de tempo, e qualquer coisa que só faça sentido com o vídeo aberto.
@@ -54,11 +54,11 @@ nó a outro nó do currículo pelo código — a árvore existe justamente para 
 voltando pela porta dos fundos. Sem markdown: negrito, lista e link abrem a porta para o texto que
 este padrão proíbe.
 
-`CurriculumValidator` recusa conceito com mais de 3 parágrafos, para o currículo inteiro. A faixa
-de 450–900 caracteres só vale para os módulos já reescritos (`CONCEPT_LENGTH_CURATED_MODULES`,
-hoje `M0` e `M1`) — ativá-la para o currículo inteiro reprovaria M2–M8, que seguem com o texto
-curto anterior ao padrão. A lista cresce um módulo por vez, junto com o PR que reescreve cada
-bloco (issue #58); ver **D41** em `docs/07-decisoes.md`.
+`CurriculumValidator` recusa conceito com mais de 3 parágrafos, para o currículo inteiro, e fora da
+faixa de 450–900 caracteres para os módulos em `CONCEPT_LENGTH_CURATED_MODULES` — hoje os 9
+módulos, porque os 46 nós foram reescritos juntos. A constante continua existindo, e não virou um
+booleano: um módulo novo (`M9` em diante) nasce fora dela por padrão, até ser escrito no padrão e
+entrar no conjunto. Ver **D41** e **D42** em `docs/07-decisoes.md`.
 
 Se "não é passo a passo" não é automatizável por heurística de palavra — fica como item de revisão
 humana do PR, não do validador.

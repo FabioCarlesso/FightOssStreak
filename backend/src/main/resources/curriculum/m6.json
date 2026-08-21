@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
-      "concept": "Puxar guarda é uma decisão legítima, mas é onde muita gente se machuca por pressa: soltar o corpo sem controlar o oponente entrega uma queda por cima de você. O princípio é ter pegada antes de sentar e descer controlando o próprio peso — puxar guarda é levar o oponente junto, não simplesmente cair sentado.",
+      "concept": "Puxar guarda é uma decisão legítima em jiu-jitsu, mas é onde muita gente se machuca por pressa.\n\nO princípio é ter a pegada firme antes de sentar, e descer controlando o próprio peso — puxar guarda é levar o oponente junto com você, não simplesmente cair sentado no chão.\n\nO erro comum é soltar o corpo sem controlar o oponente antes: isso entrega uma queda por cima de você, exatamente o oposto da posição inferior segura que puxar guarda deveria criar.",
       "video": null,
       "quiz": []
     },
@@ -21,7 +21,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
-      "concept": "O single leg reduz o problema da queda a uma ideia: tirar um dos dois apoios do oponente. Ele exige entrada com o nível baixo — quem se abaixa curvando a coluna em vez de flexionar os joelhos perde a postura e a força ao mesmo tempo. É a queda mais acessível para quem começa porque tolera erro de distância melhor que o double.",
+      "concept": "O single leg reduz o problema da queda a uma ideia só: tirar um dos dois apoios do oponente do chão.\n\nEle exige entrada com o nível do corpo baixo — é a queda mais acessível para quem começa, porque tolera erro de distância melhor que o double leg.\n\nO erro comum é baixar o nível curvando a coluna em vez de flexionar os joelhos: isso rouba postura e força ao mesmo tempo, e a entrada chega fraca e desalinhada bem no momento em que precisaria de mais estrutura.",
       "video": null,
       "quiz": []
     },
@@ -32,7 +32,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
-      "concept": "O double leg ataca os dois apoios de uma vez, e por isso é mais decisivo e menos tolerante: sem mudança de nível e sem penetração real com o passo, vira um empurrão de tronco que o oponente defende com um sprawl simples. É também a queda que mais exige responsabilidade de quem aplica — levar o parceiro ao chão com controle, nunca projetá-lo.",
+      "concept": "O double leg ataca os dois apoios do oponente de uma vez, e por isso é mais decisivo e menos tolerante a erro do que o single leg.\n\nSem mudança de nível e sem penetração real com o passo, o ataque vira apenas um empurrão de tronco — e um empurrão de tronco qualquer sprawl simples já defende.\n\nO erro comum, além da entrada fraca, é de responsabilidade: é a queda que mais exige levar o parceiro ao chão com controle, nunca projetá-lo — o risco de lesão de uma queda mal controlada recai sobre quem está embaixo, não sobre quem aplica.",
       "video": null,
       "quiz": []
     },
@@ -43,7 +43,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": ["M6.2", "M6.3"],
-      "concept": "O sprawl é a resposta simétrica à entrada de queda: jogar o quadril para baixo e as pernas para trás tira exatamente aquilo que o oponente veio buscar. Vale como nó de currículo não só pela defesa — é dele que nasce o front headlock, e por isso M7.2 depende deste nó, e não de guarda aberta.",
+      "concept": "O sprawl é a resposta simétrica à entrada de queda: jogar o quadril para baixo e as pernas para trás tira exatamente aquilo que o oponente veio buscar — os seus apoios.\n\nEle vale como nó de currículo não só pela defesa: é do sprawl que nasce o front headlock, e é por isso que M7.2 depende deste nó, e não de guarda aberta.\n\nO erro comum é reagir à entrada recuando ou levantando o quadril, em vez de baixá-lo: isso mantém os apoios ao alcance do oponente exatamente onde ele já os está buscando, e a queda completa do jeito que começou.",
       "video": null,
       "quiz": []
     }

@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M2.1", "M4.1"],
-      "concept": "A kimura é o melhor exemplo de que jiu-jitsu se organiza por mecanismo, e não por posição: a mesma figura-quatro no braço funciona da guarda, do 100kg e das costas. Estudá-la em três posições de uma vez ensina a reconhecer o mecanismo em vez de decorar três técnicas distintas — e é também um controle poderoso, não só uma finalização.",
+      "concept": "A kimura é o melhor exemplo de que o jiu-jitsu se organiza por mecanismo, e não por posição: a mesma figura-quatro no braço funciona da guarda, do 100kg e das costas.\n\nEstudá-la nas três posições de uma vez ensina a reconhecer o mecanismo comum, em vez de decorar três técnicas separadas que por acaso têm o mesmo nome. Ela também vale como controle poderoso, não só como finalização.\n\nO erro comum é tratá-la só como finalização e soltá-la assim que não fecha de primeira: a figura-quatro sustentada continua controlando o braço e a postura do oponente mesmo sem a torção completa — abandoná-la cedo joga fora metade do valor da posição.",
       "video": null,
       "quiz": []
     },
@@ -21,7 +21,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M6.4"],
-      "concept": "O front headlock é o que sobra depois de um sprawl bem-sucedido: o oponente está com a cabeça baixa e à sua frente, e daí nascem tanto o controle quanto a guilhotina. Encadear os dois é o ponto — a guilhotina isolada é uma finalização de sorte; a partir do front headlock, é a conclusão de uma sequência que começou na defesa de queda.",
+      "concept": "O front headlock é o que sobra depois de um sprawl bem-sucedido: o oponente fica com a cabeça baixa, à sua frente, e daí nascem tanto o controle quanto a guilhotina.\n\nEncadear defesa de queda, front headlock e guilhotina é o ponto do nó — cada etapa entrega a seguinte, em vez de serem três técnicas que por acaso aparecem perto umas das outras.\n\nO erro comum é tratar a guilhotina como finalização isolada, buscada do zero contra qualquer postura: sem o front headlock que a antecede, ela vira uma finalização de sorte, tentada contra um oponente que ainda tem estrutura para defender.",
       "video": null,
       "quiz": []
     },
@@ -32,7 +32,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M7.2"],
-      "concept": "Defender a guilhotina é urgente porque a posição aperta enquanto você pensa. A lógica é a de sempre em defesa de estrangulamento: aliviar a pressão no pescoço antes de tentar sair, tipicamente ganhando o lado correto e tirando a cabeça do eixo. Vir logo depois do ataque é proposital — entender como se aplica é o que revela onde a defesa entra.",
+      "concept": "Defender a guilhotina é urgente porque a posição aperta enquanto você ainda está pensando no que fazer.\n\nA lógica é a mesma de qualquer defesa de estrangulamento: aliviar a pressão no pescoço antes de tentar sair, tipicamente ganhando o lado correto e tirando a cabeça do eixo do estrangulamento. Vir logo depois do nó de ataque é proposital — entender como a guilhotina se aplica é o que revela por onde a defesa entra.\n\nO erro comum é tentar puxar a cabeça para fora antes de aliviar a pressão: sem o alívio primeiro, o puxão só aperta mais o próprio pescoço contra o braço que estrangula.",
       "video": null,
       "quiz": []
     },
@@ -43,7 +43,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": ["M2.5", "M2.6", "M2.7"],
-      "concept": "As três finalizações da guarda fechada compartilham controle e ângulo, e cada defesa do oponente abre exatamente uma das outras duas. Tratá-las como um sistema — em vez de três técnicas — é o salto conceitual do módulo: você deixa de tentar impor uma finalização e passa a seguir para onde a defesa dele aponta.",
+      "concept": "As três finalizações da guarda fechada — triângulo, armlock e omoplata — compartilham controle e ângulo, e cada defesa do oponente abre exatamente uma das outras duas.\n\nTratá-las como um sistema, em vez de três técnicas separadas, é o salto conceitual do módulo: você deixa de tentar impor uma finalização específica e passa a seguir para onde a defesa dele aponta.\n\nO erro comum é insistir numa das três mesmo depois que a defesa do oponente já abriu outra: forçar o triângulo contra quem já defendeu para o armlock gasta tempo e força numa porta que já fechou, enquanto a que está aberta espera do lado.",
       "video": null,
       "quiz": []
     }
