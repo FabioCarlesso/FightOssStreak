@@ -270,10 +270,9 @@ class EmailAccessIntegrationTest {
         accounts.decide(recusado.getId(), false, -1L);
         entrar(ENDERECO).andExpect(status().isAccepted());
 
-        // Mesma resposta nos três — e nenhum link saiu, porque nenhuma conta estava liberada.
-        // (O único e-mail da caixa é o aviso de fila que o `pedir` mandou para o dono.)
-        assertThat(mensagensPara(ENDERECO)).isEmpty();
-        assertThat(mensagensPara("nao-existe@example.test")).isEmpty();
+        // Mesma resposta nos três — e a caixa inteira vazia, não só a de quem pediu: nenhuma
+        // conta estava liberada, e nada nestes endpoints escreve para ninguém.
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
     }
 
     @Test

@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Entrada por e-mail, para quem não tem provedor externo (#52).
@@ -74,6 +76,7 @@ public class EmailAccessService {
     private final ObjectProvider<EmailSender> emailSender;
     private final FosProperties.Auth auth;
     private final String publicUrl;
+    private final TransactionTemplate transacao;
     private final Clock clock;
 
     public EmailAccessService(
@@ -82,6 +85,7 @@ public class EmailAccessService {
             LoginTokenRepository tokens,
             ObjectProvider<EmailSender> emailSender,
             FosProperties properties,
+            PlatformTransactionManager transactionManager,
             Clock clock) {
         this.users = users;
         this.identities = identities;
@@ -89,6 +93,7 @@ public class EmailAccessService {
         this.emailSender = emailSender;
         this.auth = properties.auth();
         this.publicUrl = properties.publicUrl();
+        this.transacao = new TransactionTemplate(transactionManager);
         this.clock = clock;
     }
 
@@ -143,29 +148,30 @@ public class EmailAccessService {
      * só o que chegou agora: quem abre precisa ver o que ainda deve, não o delta desde a última
      * vez.
      *
+     * <p><b>Três passos, e a fronteira entre eles é a decisão.</b> Ler e marcar são transações
+     * curtas e separadas; o envio fica <em>fora</em> das duas. Chamada de rede dentro de transação
+     * segura a conexão do banco pelo tempo que o outro lado quiser — e aqui o outro lado é uma API
+     * externa num agendador de uma thread só. O {@code TransactionTemplate} explícito existe para
+     * isso: método anotado se estenderia por cima do envio, e {@code @Transactional} em chamada
+     * interna nem passaria pelo proxy.
+     *
      * <p><b>A marca só é gravada se pelo menos um envio passou.</b> Provedor fora do ar deixa tudo
      * como estava, e a janela seguinte tenta de novo — marcar antes de entregar perderia o pedido
      * em silêncio, que é exatamente o esquecimento que este método existe para evitar.
      */
-    @Transactional
     public void notifyOwnersOfQueue() {
         EmailSender sender = emailSender.getIfAvailable();
         if (sender == null || auth.ownerEmails().isEmpty()) {
             return;
         }
-        List<AppUser> fila = users.findByAccessStatusOrderByRequestedAtAsc(AccessStatus.PENDENTE);
-        if (fila.stream().noneMatch(AppUser::isQueueNoticePending)) {
+        Resumo resumo = transacao.execute(status -> montarResumo());
+        if (resumo == null) {
             return;
         }
-        String assunto =
-                fila.size() == 1
-                        ? "1 solicitação de acesso esperando no FightOssStreak"
-                        : fila.size() + " solicitações de acesso esperando no FightOssStreak";
-        String corpo = resumo(fila);
         boolean entregue = false;
         for (String owner : auth.ownerEmails()) {
             try {
-                sender.send(owner, assunto, corpo);
+                sender.send(owner, resumo.assunto(), resumo.corpo());
                 entregue = true;
             } catch (RuntimeException e) {
                 // Sem endereço na mensagem: quem pediu é dado pessoal (docs/11-privacidade.md).
@@ -175,13 +181,36 @@ public class EmailAccessService {
         if (!entregue) {
             return;
         }
+        transacao.executeWithoutResult(status -> marcarAnunciadas(resumo.ids()));
+        log.info("Resumo da fila enviado — {} solicitação(ões) pendente(s)", resumo.ids().size());
+    }
+
+    /** O que vai no e-mail, e de quem. Nulo quando não há novidade para anunciar. */
+    private record Resumo(List<Long> ids, String assunto, String corpo) {}
+
+    private Resumo montarResumo() {
+        List<AppUser> fila = users.findByAccessStatusOrderByRequestedAtAsc(AccessStatus.PENDENTE);
+        if (fila.stream().noneMatch(AppUser::isQueueNoticePending)) {
+            return null;
+        }
+        String quantas = fila.size() == 1 ? "1 solicitação" : fila.size() + " solicitações";
+        return new Resumo(
+                fila.stream().map(AppUser::getId).toList(),
+                quantas + " de acesso esperando no FightOssStreak",
+                corpo(fila, quantas));
+    }
+
+    /**
+     * Marca por id, e não pelas instâncias lidas antes: entre ler e marcar a fila pode ter sido
+     * decidida, e marcar uma conta já aprovada é inofensivo — a coluna só é consultada em pendente.
+     */
+    private void marcarAnunciadas(List<Long> ids) {
         Instant now = Instant.now(clock);
-        fila.forEach(user -> user.markQueueNoticeSent(now));
-        log.info("Resumo da fila enviado — {} solicitação(ões) pendente(s)", fila.size());
+        users.findAllById(ids).forEach(user -> user.markQueueNoticeSent(now));
     }
 
     /** Uma consulta de identidades para a fila inteira, e não uma por linha. */
-    private String resumo(List<AppUser> fila) {
+    private String corpo(List<AppUser> fila, String quantas) {
         Map<Long, UserIdentity> porUsuario =
                 identities.findByUserIdIn(fila.stream().map(AppUser::getId).toList()).stream()
                         .collect(
@@ -217,10 +246,7 @@ public class EmailAccessService {
 
                 Quem pediu não recebe nada até você decidir.
                 """
-                .formatted(
-                        fila.size() == 1 ? "1 solicitação" : fila.size() + " solicitações",
-                        linhas,
-                        link);
+                .formatted(quantas, linhas, link);
     }
 
     /**
