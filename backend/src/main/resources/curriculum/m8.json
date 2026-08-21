@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
-      "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona de verdade — o que funciona é a segunda, encadeada a partir da defesa da primeira.\n\nEncadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma já seja a entrada da outra. É o mesmo raciocínio de tesoura e pêndulo em M2.2 e M2.3, agora aplicado deliberadamente em vez de descoberto por acidente.\n\nO erro comum é insistir na mesma raspagem depois que ela já foi defendida: repetir o que já não funciona ignora que a própria defesa do oponente é a informação que aponta para a próxima tentativa.",
+      "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona de verdade — o que funciona é a segunda, encadeada a partir da defesa da primeira.\n\nEncadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma já seja a entrada da outra. É o mesmo raciocínio de tesoura e pêndulo em M2.2 e M2.3, agora aplicado deliberadamente em vez de descoberto por acidente.\n\nO erro comum é insistir na mesma raspagem depois que ela já foi defendida: repetir o que já não funciona ignora que a própria defesa do oponente é a informação que aponta para a próxima tentativa. Montar essas cadeias com antecedência, sabendo de cor qual raspagem segue a defesa de qual, é o que separa quem improvisa de quem já treinou a sequência.",
       "video": null,
       "quiz": []
     },
@@ -21,7 +21,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
-      "concept": "A partir de certo ponto do currículo, o ganho não vem mais de saber mais técnicas — vem de perceber mais cedo o que o oponente está prestes a fazer.\n\nLer direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação já consumada. É a diferença entre reagir e antecipar, e é o que faz um jogo de alto nível parecer sem esforço, mesmo sendo o oposto disso.\n\nO erro comum é continuar jogando por reação mesmo depois de acumular técnica suficiente: esperar a ação terminar para responder desperdiça a informação que a pressão e o peso já davam um instante antes.",
+      "concept": "A partir de certo ponto do currículo, o ganho não vem mais de saber mais técnicas — vem de perceber mais cedo o que o oponente está prestes a fazer.\n\nLer direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação já consumada. É a diferença entre reagir e antecipar, e é o que faz um jogo de alto nível parecer sem esforço, mesmo sendo o oposto disso.\n\nO erro comum é continuar jogando por reação mesmo depois de acumular técnica suficiente: esperar a ação terminar para responder desperdiça a informação que a pressão e o peso já davam um instante antes. É uma habilidade que amadurece com repetição, não com mais um vídeo assistido — a leitura de pressão só se refina no contato de verdade.",
       "video": null,
       "quiz": []
     },
