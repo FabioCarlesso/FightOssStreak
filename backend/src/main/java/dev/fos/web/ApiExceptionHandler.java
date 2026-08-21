@@ -2,6 +2,7 @@ package dev.fos.web;
 
 import dev.fos.curriculum.CurriculumException;
 import dev.fos.service.AccessNotGrantedException;
+import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.NodeNotFoundException;
 import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.QuizUnavailableException;
@@ -49,6 +50,20 @@ class ApiExceptionHandler {
     ResponseEntity<ApiError> handleOwnerRequired(OwnerRequiredException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiError.of("nao_autorizado", e.getMessage()));
+    }
+
+    /**
+     * Demonstração indisponível (#62).
+     *
+     * <p>404 quando o ambiente não tem conta-modelo — o recurso não existe aqui — e 429 quando é o
+     * teto de simultâneas ou o freio por IP, que passa. A tela lê o código para saber se oferece
+     * "tentar de novo" ou some com o botão.
+     */
+    @ExceptionHandler(DemoUnavailableException.class)
+    ResponseEntity<ApiError> handleDemoUnavailable(DemoUnavailableException e) {
+        return ResponseEntity.status(
+                        e.isTemporary() ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.NOT_FOUND)
+                .body(ApiError.of(e.code(), e.getMessage()));
     }
 
     @ExceptionHandler(NodeNotFoundException.class)

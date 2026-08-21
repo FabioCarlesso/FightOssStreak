@@ -1,5 +1,14 @@
-import type { AccountView, DisclaimerStatus, ReviewAgenda, StreakView, TreeView } from '@fos/types';
+import type {
+  AccountView,
+  AuthProviders,
+  DemoSession,
+  DisclaimerStatus,
+  ReviewAgenda,
+  StreakView,
+  TreeView,
+} from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App.tsx';
@@ -23,6 +32,8 @@ const { apiMock } = vi.hoisted(() => ({
     getStreak: vi.fn<() => Promise<StreakView>>(),
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
+    getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
+    startDemo: vi.fn<() => Promise<DemoSession>>(),
   },
 }));
 
@@ -44,6 +55,14 @@ function renderEm(rota: string) {
 beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
+  sessionStorage.clear();
+
+  apiMock.getAuthProviders.mockResolvedValue({
+    providers: [],
+    emailEnabled: false,
+    demoEnabled: false,
+  });
+  apiMock.startDemo.mockResolvedValue({ destino: '/hoje', expiraEm: '2026-08-18T12:00:00Z' });
 
   apiMock.getAccount.mockResolvedValue({
     displayName: 'Autor',
@@ -69,7 +88,7 @@ beforeEach(() => {
 });
 
 describe('rota pública', () => {
-  it('a landing abre sem aceite e sem tocar na API', async () => {
+  it('a landing abre sem aceite e sem depender da API', async () => {
     renderEm('/');
 
     expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
@@ -79,11 +98,110 @@ describe('rota pública', () => {
     expect(apiMock.getAccount).not.toHaveBeenCalled();
   });
 
+  it('com a API fora do ar, a página aparece inteira — só sem o botão de demonstração', async () => {
+    // O caso de cold start, que é o comum para quem recebe o link. A #62 acrescentou uma pergunta
+    // à API; se a resposta dela virasse requisito, a landing voltaria a quebrar com backend frio.
+    apiMock.getAuthProviders.mockRejectedValue(new Error('backend frio'));
+
+    renderEm('/');
+
+    expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /ver o app funcionando/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it('o botão de entrar aponta para o app, não para dentro do conteúdo', async () => {
     renderEm('/');
 
     const entrar = await screen.findAllByRole('link', { name: /pedir acesso/i });
     expect(entrar[0]).toHaveAttribute('href', '/hoje');
+  });
+});
+
+describe('acesso demonstrativo (#62)', () => {
+  it('sem conta-modelo configurada, o botão não aparece', async () => {
+    renderEm('/');
+
+    await screen.findByRole('heading', { level: 1, name: MANCHETE });
+    expect(
+      screen.queryByRole('button', { name: /ver o app funcionando/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('com conta-modelo, o botão abre a sessão e entra no app', async () => {
+    apiMock.getAuthProviders.mockResolvedValue({
+      providers: [],
+      emailEnabled: false,
+      demoEnabled: true,
+    });
+
+    renderEm('/');
+    const botao = await screen.findByRole('button', { name: /ver o app funcionando/i });
+    await userEvent.click(botao);
+
+    expect(apiMock.startDemo).toHaveBeenCalledTimes(1);
+    // O destino vem do servidor, e leva para dentro do app — que continua atrás do aviso, como
+    // para qualquer um: o aceite do disclaimer não é copiado da conta-modelo.
+    expect(await screen.findByRole('button', { name: /li e concordo/i })).toBeInTheDocument();
+  });
+
+  it('a demonstração não pula o aviso de responsabilidade', async () => {
+    apiMock.getAuthProviders.mockResolvedValue({
+      providers: [],
+      emailEnabled: false,
+      demoEnabled: true,
+    });
+    apiMock.getAccount.mockResolvedValue({
+      displayName: 'Visitante',
+      email: undefined,
+      provider: 'demo',
+      accessStatus: 'APROVADO',
+      owner: false,
+      demoExpiresAt: '2026-08-18T12:00:00Z',
+    });
+
+    renderEm('/');
+    await userEvent.click(await screen.findByRole('button', { name: /ver o app funcionando/i }));
+
+    expect(await screen.findByRole('button', { name: /li e concordo/i })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  it('dentro do app, a faixa diz que a conta é temporária e some sozinha', async () => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+    apiMock.getAccount.mockResolvedValue({
+      displayName: 'Visitante',
+      email: undefined,
+      provider: 'demo',
+      accessStatus: 'APROVADO',
+      owner: false,
+      demoExpiresAt: '2026-08-18T12:00:00Z',
+    });
+
+    renderEm('/hoje');
+
+    expect(await screen.findByText(/você está numa demonstração/i)).toBeInTheDocument();
+    // A outra faixa de "demonstração" (D31) fala o contrário — que nada é gravado. Elas não podem
+    // se confundir, e é por isso que este teste procura o texto, não a classe.
+    expect(screen.queryByText(/nada é gravado no progresso/i)).not.toBeInTheDocument();
+  });
+
+  it('conta comum não vê faixa nenhuma', async () => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+
+    renderEm('/hoje');
+
+    await screen.findByRole('heading', { level: 2, name: /revise hoje/i });
+    expect(screen.queryByText(/você está numa demonstração/i)).not.toBeInTheDocument();
   });
 });
 

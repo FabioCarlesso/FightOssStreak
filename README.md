@@ -16,12 +16,17 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
 | Anotações por nó | Anotação fixada junto ao conceito, mais o histórico do que foi anotado a cada drill (#45) |
 | Contas | Login por Google e Facebook, com **acesso sob aprovação do autor** e exclusão de conta (D36). Apple pendente |
+| Demonstração pública | Um botão na landing abre o app numa **conta temporária** com dados de exemplo, que grava de verdade e some em duas horas (D39). Depende de `FOS_DEMO_TEMPLATE_EMAIL` |
 | Backend | Spring Boot + Flyway + Spring Security, API documentada em OpenAPI |
 | Web | React + Vite |
 | Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |
 | Mobile | Não iniciado (fase posterior, D4) |
 
 ### Modo demonstração
+
+> Não confundir com a **conta de demonstração** (D39), que é outra coisa e fica do outro lado do
+> portão: aquela é um link público que abre o app numa conta temporária e **grava de verdade**;
+> esta é inspeção do autor, já logado, e **não grava nada**.
 
 Na árvore (`/arvore`), o botão **Demonstração**, no card *Progresso*, abre os 46 nós de todos os
 módulos para inspeção ignorando os pré-requisitos — serve para revisar conceito, vídeo e redação
@@ -36,8 +41,10 @@ sessão do navegador — sobrevive a um F5, não a uma aba nova.
 ### Landing
 
 A raiz (`/`) apresenta o projeto para quem chega pelo link: o que é, como funciona, prints das
-telas reais e o botão de entrar. É **estática** — não chama a API, então aparece inteira mesmo com
-o backend frio, que é o caso comum de cold start.
+telas reais e os botões de entrar. Ela **não depende da API para renderizar**: aparece inteira mesmo
+com o backend frio, que é o caso comum de cold start. A única coisa que ela pergunta ao servidor é
+se este ambiente tem demonstração configurada (D39) — sem resposta, a página é exatamente a mesma,
+só sem aquele botão.
 
 O aceite do aviso não mudou de lugar: ele continua sendo o primeiro a decidir em `/hoje`,
 `/arvore`, `/no/:code` e `/progresso`. Quem já entrou no app uma vez passa direto da raiz para a
@@ -161,6 +168,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET` | backend | — | segredo do app no Meta for Developers |
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
+| `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
 | `FOS_PUBLIC_URL` | backend | vazia | URL pública do app para o link no resumo da fila; mesmo valor de `VITE_PUBLIC_URL` |
 
 Detalhes que não são óbvios:
@@ -191,6 +199,10 @@ Detalhes que não são óbvios:
   fila de solicitações fica sem quem a decida. É ela também que faz a conta do autor adotar o
   progresso pré-existente (D36). Preenchê-la **depois** de já ter entrado uma vez funciona: a
   regra vale em todo login, então o login seguinte aprova a conta e adota o progresso.
+- **`FOS_DEMO_TEMPLATE_EMAIL` vazia desliga a demonstração.** O botão não aparece na landing e
+  `POST /api/demo/sessao` responde 404 — a aplicação sobe igual. Se ela apontar para um endereço
+  que não tem identidade com **e-mail verificado**, o efeito é o mesmo: o recurso simplesmente não
+  existe naquele ambiente, em vez de aparecer e falhar no clique.
 - **Provedor sem credencial não é registrado.** Não é uma tela de login com botão que falha: o
   provedor simplesmente não existe, e a aplicação sobe sem segredo nenhum (é o modo dev e o CI).
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
@@ -208,6 +220,9 @@ O app **exige login**, e há dois caminhos (D37):
 O pedido em si não dispara e-mail nenhum. Quem decide recebe um **resumo da fila** de hora em hora
 entre **10h e 22h** (horário de Brasília), e só numa janela em que apareceu pedido novo — o e-mail
 lista tudo que ainda espera decisão, não só o que chegou agora (D38).
+
+E um degrau **antes** dos dois (D39): a landing oferece *Ver o app funcionando*, que abre uma
+conta de demonstração temporária, já com progresso de exemplo, sem pedir nada a ninguém.
 
 Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o motivo
 (`acesso_pendente` ou `acesso_recusado`). A decisão e o porquê estão em
@@ -227,6 +242,18 @@ trazer o link de *Solicitações* — o agendador não tem requisição de onde 
    O caminho fica sob `/api` porque é o único que o nginx encaminha ao backend (D23/D24).
 2. Defina as variáveis do provedor e `FOS_OWNER_EMAILS` com o seu e-mail.
 3. Suba. Sem credencial nenhuma o app continua subindo — a tela de login é que fica sem botão.
+
+**Habilitar a demonstração pública**:
+
+1. Entre no app com a conta que vai servir de molde e **cure a demonstração usando o próprio app**:
+   conclua nós, registre drills nos dias que fizerem sentido, escreva as anotações fixadas que o
+   visitante vai ler. Não há script para isso — o estado é o que o app grava.
+2. Defina `FOS_DEMO_TEMPLATE_EMAIL` com o e-mail **verificado** dessa conta e suba.
+
+Cada visita passa a receber uma **cópia** desse estado, numa conta descartável, com as datas
+deslocadas para que a agenda caia em torno de hoje. A conta-modelo nunca recebe visitante: ela pode
+ser inclusive a sua conta de dono, que a cópia não herda poder nenhum. As demonstrações vencidas
+são apagadas quando alguém abre a próxima.
 
 **Aprovar quem pediu**: o resumo da fila chega nos endereços de `FOS_OWNER_EMAILS`. Para decidir,
 entre com a conta de dono e abra *Solicitações* no menu. A fila também está em

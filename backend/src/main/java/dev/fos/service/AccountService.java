@@ -255,6 +255,13 @@ public class AccountService {
      * usuário viraria caminho para a fila de aprovação.
      */
     public boolean isOwner(AppUser user) {
+        // Guarda explícita, mesmo com a identidade de demonstração nascendo sem e-mail: a cópia
+        // pode vir de uma conta-modelo que ESTÁ em `owner-emails`, e um dia alguém pode achar boa
+        // ideia copiar a identidade junto. Se isso acontecer, o defeito é a fila de solicitações
+        // aberta para um link público (#62).
+        if (user.isDemo()) {
+            return false;
+        }
         return identities.findByUserId(user.getId()).stream()
                 .anyMatch(
                         identity ->
@@ -282,7 +289,9 @@ public class AccountService {
         disclaimers.deleteByUserId(userId);
         identities.deleteByUserId(userId);
         users.deleteById(userId);
-        log.info("Conta {} excluída a pedido do próprio usuário", userId);
+        // Sem "a pedido do próprio usuário": desde a #62 este mesmo caminho apaga demonstração
+        // vencida na varredura, e o log não pode afirmar o que não sabe.
+        log.info("Conta {} excluída, com tudo que era dela", userId);
     }
 
     private static String label(String provider, String subject, String email, String displayName) {

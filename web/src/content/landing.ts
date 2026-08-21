@@ -16,6 +16,25 @@ export const DISCLAIMER_DOC_URL = `${REPO_URL}/blob/main/docs/06-disclaimer-resp
 export const APP_PATH = '/hoje';
 
 /**
+ * Acesso demonstrativo (#62): o degrau que faltava antes do portão.
+ *
+ * Print não mostra o que o app faz — o produto é o loop de revisão, e isso não cabe em imagem.
+ * Este botão abre o app carregado, numa conta temporária onde dá para gravar de verdade.
+ *
+ * O texto diz as três coisas que a pessoa precisa saber antes de clicar, e nessa ordem: é
+ * temporária, os dados são de exemplo, e some sozinha. As duas horas são o `VALIDADE` do
+ * `DemoAccessService` — mexeu lá, mexa aqui.
+ */
+export const DEMO = {
+  cta: 'Ver o app funcionando',
+  ctaCarregando: 'Abrindo…',
+  nota:
+    'A demonstração abre uma conta temporária com progresso de exemplo: dá para responder o' +
+    ' quiz, registrar drill e ver a revisão ser reagendada, gravando de verdade. Ela não pede' +
+    ' e-mail nenhum e some sozinha em duas horas.',
+} as const;
+
+/**
  * Números citados na copy. Todos verificáveis no currículo — ver o teste ao lado.
  *
  * `quizModules` e `videoModules` são a parte incômoda e ficam à mostra de propósito: dizer "91

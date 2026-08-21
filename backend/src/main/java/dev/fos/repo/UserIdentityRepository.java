@@ -13,6 +13,15 @@ public interface UserIdentityRepository extends JpaRepository<UserIdentity, Long
 
     List<UserIdentity> findByUserId(Long userId);
 
+    /**
+     * Identidades com este e-mail, já verificado.
+     *
+     * <p>Só serve para achar a conta-modelo da demonstração por configuração (#62), e a exigência
+     * de verificação é o que impede que digitar o endereço da conta-modelo na tela de pedido de
+     * acesso — que grava identidade não verificada — passe a apontar a cópia para a conta errada.
+     */
+    List<UserIdentity> findByEmailIgnoreCaseAndEmailVerifiedTrue(String email);
+
     List<UserIdentity> findByUserIdIn(List<Long> userIds);
 
     void deleteByUserId(Long userId);

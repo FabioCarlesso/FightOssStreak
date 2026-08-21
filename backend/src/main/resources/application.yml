@@ -34,6 +34,12 @@ fos:
     # e-mail simplesmente não é oferecida na tela — mesma regra dos provedores de login.
     api-key: ${FOS_EMAIL_API_KEY:}
     from: ${FOS_EMAIL_FROM:}
+  demo:
+    # Conta-modelo do acesso demonstrativo (#62): o e-mail VERIFICADO da conta que o autor cura
+    # pelo próprio app e que cada visita recebe copiada. Vazio por default — sem ela a aplicação
+    # sobe igual, o botão não aparece na landing e o endpoint responde que não há demonstração
+    # neste ambiente. Mesma regra dos provedores de login e do envio de e-mail.
+    template-email: ${FOS_DEMO_TEMPLATE_EMAIL:}
   # URL pública do app, para o resumo da fila (#54) conseguir montar o link de Solicitações.
   # O agendador não tem requisição de onde deduzi-la, ao contrário do link de entrada. Vazia
   # por default: o resumo sai sem link e o resto funciona igual.

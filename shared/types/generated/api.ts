@@ -77,6 +77,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/demo/sessao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Abre uma demonstração
+         * @description Cria uma conta descartável, copia o estado da conta-modelo com as datas rebaseadas e abre sessão. A conta é apagada por completo quando o prazo vence.
+         */
+        post: operations["abrir"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/email/solicitar": {
         parameters: {
             query?: never;
@@ -426,6 +446,11 @@ export interface components {
             currentVersion?: string;
             shortNotice?: string;
         };
+        DemoSessionView: {
+            destino?: string;
+            /** Format: date-time */
+            expiraEm?: string;
+        };
         EmailRequest: {
             email: string;
         };
@@ -575,6 +600,8 @@ export interface components {
             /** @enum {string} */
             accessStatus?: "PENDENTE" | "APROVADO" | "RECUSADO";
             owner?: boolean;
+            /** Format: date-time */
+            demoExpiresAt?: string;
         };
         ModuleView: {
             code?: string;
@@ -622,6 +649,7 @@ export interface components {
         AuthProviders: {
             providers?: components["schemas"]["AuthProviderView"][];
             emailEnabled?: boolean;
+            demoEnabled?: boolean;
         };
     };
     responses: never;
@@ -730,6 +758,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DisclaimerStatus"];
+                };
+            };
+        };
+    };
+    abrir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DemoSessionView"];
                 };
             };
         };

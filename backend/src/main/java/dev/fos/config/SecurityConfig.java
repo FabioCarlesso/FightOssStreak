@@ -57,6 +57,10 @@ class SecurityConfig {
                                                 "/actuator/health",
                                                 "/api/auth/providers",
                                                 "/api/auth/email/**",
+                                                // A demonstração é degrau ANTES do portão: quem
+                                                // ainda não tem conta é justamente quem a abre
+                                                // (#62).
+                                                "/api/demo/**",
                                                 "/api/oauth2/**",
                                                 "/api/login/**")
                                         .permitAll()

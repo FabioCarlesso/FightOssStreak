@@ -53,6 +53,9 @@ services:
       # agendador não tem requisição de onde deduzi-la, ao contrário do link de entrada. Mesmo
       # valor de `VITE_PUBLIC_URL`, que é a versão de build da imagem do web.
       FOS_PUBLIC_URL: '${FOS_PUBLIC_URL:-}'
+      # Conta-modelo do acesso demonstrativo (#62). Vazia desliga o recurso: o botão não aparece
+      # na landing e a aplicação sobe igual.
+      FOS_DEMO_TEMPLATE_EMAIL: '${FOS_DEMO_TEMPLATE_EMAIL:-}'
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:

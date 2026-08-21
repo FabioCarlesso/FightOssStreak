@@ -76,3 +76,29 @@ Duas notas sobre esse dado:
 
 A exclusão de conta apaga também a identidade de e-mail e os links pendentes, na mesma transação do
 resto.
+
+## Conta de demonstração (D39)
+
+O botão *Ver o app funcionando*, na página inicial, abre uma **conta temporária** — não pede
+e-mail, não pede login, não pergunta nada. É a única forma de usar o app sem informar quem você é,
+e é assim de propósito: ela existe para quem ainda está decidindo se quer uma conta.
+
+O que essa conta guarda:
+
+| Dado | De onde vem |
+|---|---|
+| Um identificador aleatório, sem relação com você | sorteado na criação |
+| Progresso, agenda, drills e anotações **de exemplo** | copiados da conta-modelo do autor |
+| O que você fizer durante a demonstração | do seu uso |
+
+O que ela **não** guarda: e-mail, nome, provedor de login, endereço de IP. O IP é usado no momento
+do pedido, para o freio que impede abrir demonstrações em série, e vive em memória — não é gravado
+em tabela nenhuma.
+
+**Ela some sozinha em duas horas.** Passado o prazo, a sessão deixa de autenticar e a conta é
+apagada por inteiro na próxima demonstração que alguém abrir — as mesmas sete tabelas da exclusão
+comum, sem cópia lógica nem lixeira. Quem quiser encerrar antes tem o botão em *Sua conta* →
+**Encerrar demonstração**, que é a mesma `DELETE /api/me`.
+
+O aceite do aviso de responsabilidade **não** é copiado da conta-modelo: quem entra pela
+demonstração passa pelo aviso como qualquer um, e o aceite morre junto com a conta.

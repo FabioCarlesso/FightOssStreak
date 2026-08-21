@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 import { AuthGate } from './components/AuthGate.tsx';
+import { DemoAccountBanner } from './components/DemoAccountBanner.tsx';
 import { DemoModeBanner } from './components/DemoModeBanner.tsx';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { SignOutButton } from './components/SignOutButton.tsx';
@@ -67,6 +68,10 @@ function AppChrome() {
 
   return (
     <div className="app">
+      {/* Duas faixas, dois avisos opostos, e a ordem diz qual manda: a da conta de demonstração
+          (#62) fala sobre QUEM você é aqui, e a do modo de inspeção (D31) sobre o que a árvore
+          está mostrando. Ver as duas ao mesmo tempo é possível e não é contradição. */}
+      <DemoAccountBanner />
       <DemoModeBanner />
 
       <header className="app__header">

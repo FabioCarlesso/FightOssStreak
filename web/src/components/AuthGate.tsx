@@ -2,6 +2,7 @@ import type { AccountView } from '@fos/types';
 import { type FormEvent, type ReactNode, useState } from 'react';
 import { ApiError, api } from '../api/client.ts';
 import { AccountContext } from '../state/account.ts';
+import { clearDemoSession, hadDemoSession, useStartDemo } from '../state/demoAccount.ts';
 import { useAsync } from '../state/useAsync.ts';
 import { DeleteAccount } from './DeleteAccount.tsx';
 import { SignOutButton } from './SignOutButton.tsx';
@@ -16,6 +17,11 @@ import { SignOutButton } from './SignOutButton.tsx';
  *
  * O 403 com motivo de acesso não passa por aqui: `GET /api/me` responde 200 para conta pendente ou
  * recusada, justamente para esta tela ter o que mostrar. O 403 é o que o resto da API devolve.
+ *
+ * Há um quarto caso desde a #62, e ele é uma leitura do 401, não um estado novo do servidor:
+ * demonstração vencida responde **como sessão inexistente**, porque é isso que ela é. Quem sabe
+ * que havia uma demonstração em curso é o navegador (`hadDemoSession`), e é só por isso que a tela
+ * consegue explicar o que aconteceu em vez de mostrar "entrar" para quem estava no meio do app.
  */
 export function AuthGate({ children }: { children: ReactNode }) {
   const session = useAsync(() => api.getAccount(), []);
@@ -27,7 +33,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (session.error) {
     // Sem sessão é o caso comum, não uma falha: é assim que todo mundo chega na primeira vez.
     if (session.error instanceof ApiError && session.error.isUnauthenticated) {
-      return <LoginScreen />;
+      return hadDemoSession() ? <DemoEndedScreen onChange={session.reload} /> : <LoginScreen />;
     }
     return (
       <div className="gate">
@@ -246,6 +252,43 @@ function EmailScreen({ onBack }: { onBack: () => void }) {
             Voltar
           </button>
         </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A demonstração acabou.
+ *
+ * Duas saídas, e as duas são honestas: começar outra (que é outra conta, do zero — o que foi feito
+ * na anterior não volta, porque foi apagado) ou entrar de verdade. A segunda limpa a marca antes
+ * de recarregar, senão o 401 seguinte cairia de novo nesta tela.
+ */
+function DemoEndedScreen({ onChange }: { onChange: () => void }) {
+  const demo = useStartDemo(() => onChange());
+
+  function entrarDeVerdade() {
+    clearDemoSession();
+    onChange();
+  }
+
+  return (
+    <div className="gate">
+      <div className="gate__card">
+        <h2>A demonstração terminou</h2>
+        <p>
+          Ela dura duas horas e some sozinha — a conta temporária e tudo que foi feito nela já foram
+          apagados. Nada disso era seu, e é por isso que dá para recomeçar sem perder nada.
+        </p>
+        {demo.failure && <p className="gate__error">{demo.failure}</p>}
+        <div className="gate__actions">
+          <button type="button" onClick={demo.start} disabled={demo.starting}>
+            {demo.starting ? 'Abrindo…' : 'Começar outra demonstração'}
+          </button>
+          <button type="button" onClick={entrarDeVerdade}>
+            Entrar na minha conta
+          </button>
+        </div>
       </div>
     </div>
   );
