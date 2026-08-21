@@ -177,7 +177,7 @@ function EmailScreen({ onBack }: { onBack: () => void }) {
             Seu pedido de acesso foi registrado para <strong>{email}</strong>. Falta a liberação do
             autor do app — quando ela sair, você recebe um link de entrada nesse endereço.
           </p>
-          <p>Avise pelo mesmo canal por onde você chegou até aqui.</p>
+          <p>O autor é avisado automaticamente — não precisa cobrar por fora.</p>
           <div className="gate__actions">
             <button type="button" onClick={onBack}>
               Voltar
@@ -262,10 +262,7 @@ function PendingScreen({ account, onChange }: { account: AccountView; onChange: 
           {account.provider ? `, pelo ${account.provider}` : ''}. Falta a liberação do autor do app
           — até lá não há árvore, progresso nem agenda.
         </p>
-        <p>
-          Avise pelo mesmo canal por onde você chegou até aqui. Quando o acesso sair, é só entrar de
-          novo.
-        </p>
+        <p>O autor é avisado automaticamente. Quando o acesso sair, é só entrar de novo.</p>
         <div className="gate__actions">
           <button type="button" onClick={onChange}>
             Verificar de novo

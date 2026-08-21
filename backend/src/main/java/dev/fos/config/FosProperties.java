@@ -13,12 +13,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param curriculum origem do currículo versionado
  * @param auth donos do app e credenciais de provedor de login (#24)
  * @param email envio de e-mail para a entrada por link (#52)
+ * @param publicUrl URL pública do app, sem barra final. Só o resumo da fila (#54) precisa dela:
+ *     e-mail disparado por agendador não tem requisição de onde deduzir o endereço, ao contrário do
+ *     link de entrada. Opcional — sem ela o resumo sai sem link, e nada mais muda
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
-        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email) {
+        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email, String publicUrl) {
 
     public FosProperties {
+        publicUrl = publicUrl == null ? "" : publicUrl.trim().replaceAll("/+$", "");
         if (auth == null) {
             auth = new Auth(null, null);
         }

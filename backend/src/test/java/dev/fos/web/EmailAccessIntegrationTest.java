@@ -61,15 +61,31 @@ class EmailAccessIntegrationTest {
 
     static final String ENDERECO = "sem-provedor@example.test";
 
+    /** Não pode conter {@link #ENDERECO} como substring: o resumo é conferido por `contains`. */
+    static final String OUTRO = "segundo-pedido@example.test";
+
+    /** O mesmo de {@code fos.auth.owner-emails}, logo acima. */
+    static final String DONO = "dono@example.test";
+
     @TestConfiguration
     static class CaixaDeSaida {
 
-        static final List<String> ENVIADOS = new ArrayList<>();
+        record Mensagem(String para, String assunto, String corpo) {}
+
+        static final List<Mensagem> ENVIADOS = new ArrayList<>();
         static Instant agora = Instant.parse("2026-08-16T10:00:00Z");
+
+        /** Ligado, o provedor de envio "cai" — é assim que o teste chega no caminho de falha. */
+        static boolean falhar = false;
 
         @Bean
         EmailSender emailSender() {
-            return (to, subject, body) -> ENVIADOS.add(to + "|" + body);
+            return (to, subject, body) -> {
+                if (falhar) {
+                    throw new IllegalStateException("provedor de envio fora do ar");
+                }
+                ENVIADOS.add(new Mensagem(to, subject, body));
+            };
         }
 
         /** Relógio que anda, para o teste de expiração não depender de esperar de verdade. */
@@ -105,6 +121,7 @@ class EmailAccessIntegrationTest {
     @BeforeEach
     void limpar() {
         CaixaDeSaida.ENVIADOS.clear();
+        CaixaDeSaida.falhar = false;
         CaixaDeSaida.agora = Instant.parse("2026-08-16T10:00:00Z");
         // O freio é singleton e todos os testes vêm do mesmo IP; sem zerar, o segundo já bateria
         // no limite. Janela zero remove tudo que é passado.
@@ -112,15 +129,77 @@ class EmailAccessIntegrationTest {
     }
 
     @Test
-    @DisplayName("pedir acesso cria conta pendente e NÃO dispara e-mail")
+    @DisplayName("pedir acesso cria conta pendente e NÃO dispara e-mail nenhum")
     void requestingAccessSendsNothing() throws Exception {
         pedir(ENDERECO).andExpect(status().isAccepted());
 
-        AppUser user = contaDe(ENDERECO);
-        assertThat(user.getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
-        // Enviar aqui transformaria um endpoint público em canal de spam com o domínio do app no
-        // remetente. O primeiro e-mail sai na aprovação.
+        assertThat(contaDe(ENDERECO).getAccessStatus()).isEqualTo(AccessStatus.PENDENTE);
+        // Nem para quem pediu — seria canal de spam com o domínio do app no remetente — nem para
+        // o dono: desde a #54 ele fica sabendo pelo resumo da janela seguinte.
         assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+    }
+
+    @Test
+    @DisplayName("o resumo lista a fila inteira, e só sai quando há pedido novo")
+    void theDigestCoversTheWholeQueueAndOnlyWhenSomethingIsNew() throws Exception {
+        pedir(ENDERECO);
+
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(ENDERECO);
+        assertThat(mensagensPara(DONO).getFirst().assunto()).contains("1 solicitação");
+
+        // Nada mudou: a janela seguinte fica calada, em vez de repetir o mesmo e-mail treze
+        // vezes por dia até alguém decidir.
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+
+        // Chegou um pedido novo: sai o segundo resumo, e ele traz também o que continua pendente.
+        pedir(OUTRO);
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(2);
+        CaixaDeSaida.Mensagem segundo = mensagensPara(DONO).get(1);
+        assertThat(segundo.corpo()).contains(ENDERECO).contains(OUTRO);
+        assertThat(segundo.assunto()).contains("2 solicitações");
+    }
+
+    @Test
+    @DisplayName("o resumo ignora quem já foi decidido")
+    void theDigestSkipsDecidedRequests() throws Exception {
+        pedir(ENDERECO);
+        accounts.decide(contaDe(ENDERECO).getId(), true, -1L);
+        CaixaDeSaida.ENVIADOS.clear();
+
+        pedir(OUTRO);
+        emailAccess.notifyOwnersOfQueue();
+
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(OUTRO).doesNotContain(ENDERECO);
+    }
+
+    @Test
+    @DisplayName("fila vazia não gera resumo")
+    void anEmptyQueueSendsNothing() {
+        emailAccess.notifyOwnersOfQueue();
+
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+    }
+
+    @Test
+    @DisplayName("provedor fora do ar não dá o pedido por avisado: a janela seguinte reenvia")
+    void aFailingSenderLeavesTheQueueUnannounced() throws Exception {
+        pedir(ENDERECO);
+
+        CaixaDeSaida.falhar = true;
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
+
+        // Marcar antes de entregar perderia o pedido em silêncio — o esquecimento que a #54
+        // existe para evitar.
+        CaixaDeSaida.falhar = false;
+        emailAccess.notifyOwnersOfQueue();
+        assertThat(mensagensPara(DONO)).hasSize(1);
+        assertThat(mensagensPara(DONO).getFirst().corpo()).contains(ENDERECO);
     }
 
     @Test
@@ -131,8 +210,7 @@ class EmailAccessIntegrationTest {
         accounts.decide(user.getId(), true, -1L);
         emailAccess.notifyApproved(user.getId(), "https://fos.example");
 
-        assertThat(CaixaDeSaida.ENVIADOS).hasSize(1);
-        assertThat(CaixaDeSaida.ENVIADOS.getFirst()).startsWith(ENDERECO + "|");
+        assertThat(mensagensPara(ENDERECO)).hasSize(1);
 
         MvcResult entrada =
                 mockMvc.perform(get(caminhoDoLink()))
@@ -192,7 +270,8 @@ class EmailAccessIntegrationTest {
         accounts.decide(recusado.getId(), false, -1L);
         entrar(ENDERECO).andExpect(status().isAccepted());
 
-        // Mesma resposta nos três — e nenhum e-mail saiu, porque nenhuma conta estava liberada.
+        // Mesma resposta nos três — e a caixa inteira vazia, não só a de quem pediu: nenhuma
+        // conta estava liberada, e nada nestes endpoints escreve para ninguém.
         assertThat(CaixaDeSaida.ENVIADOS).isEmpty();
     }
 
@@ -236,11 +315,16 @@ class EmailAccessIntegrationTest {
         return caminhoDoLink();
     }
 
+    /** O link é o que foi para quem pediu — o aviso ao dono também cita uma URL. */
     private String caminhoDoLink() {
-        String corpo = CaixaDeSaida.ENVIADOS.getFirst();
+        String corpo = mensagensPara(ENDERECO).getFirst().corpo();
         int inicio = corpo.indexOf("https://fos.example");
         String url = corpo.substring(inicio).split("\\s+")[0];
         return url.substring("https://fos.example".length());
+    }
+
+    private static List<CaixaDeSaida.Mensagem> mensagensPara(String email) {
+        return CaixaDeSaida.ENVIADOS.stream().filter(m -> m.para().equals(email)).toList();
     }
 
     private AppUser contaDe(String email) {

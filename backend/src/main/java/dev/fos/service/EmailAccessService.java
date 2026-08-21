@@ -1,6 +1,8 @@
 package dev.fos.service;
 
+import dev.fos.config.FosProperties;
 import dev.fos.email.EmailSender;
+import dev.fos.model.AccessStatus;
 import dev.fos.model.AppUser;
 import dev.fos.model.LoginToken;
 import dev.fos.model.UserIdentity;
@@ -14,15 +16,23 @@ import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Entrada por e-mail, para quem não tem provedor externo (#52).
@@ -34,6 +44,11 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Consequência boa da ordem: pedir acesso com o endereço de outra pessoa não dá acesso a
  * ninguém, porque o link vai para a caixa do dono do endereço, não para quem preencheu o
  * formulário.
+ *
+ * <p>O dono é avisado por um <b>resumo horário</b> da fila (#54), não a cada pedido: ver {@link
+ * #notifyOwnersOfQueue()}. O destinatário vem de {@code fos.auth.owner-emails}, nunca do formulário
+ * — é por isso que o aviso não reabre o buraco que a ordem acima fecha, e {@code /solicitar}
+ * continua sem servir para escrever a endereço arbitrário.
  */
 @Service
 public class EmailAccessService {
@@ -45,10 +60,23 @@ public class EmailAccessService {
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
+    /**
+     * O fuso do resumo, e a razão de ele existir como constante pública: o agendador dispara em
+     * horário de Brasília e o e-mail mostra as horas no mesmo fuso. Separados, um resumo das 10h
+     * listaria pedidos com hora que não bate com a janela que o mandou.
+     */
+    public static final String FUSO_BRASIL = "America/Sao_Paulo";
+
+    private static final DateTimeFormatter QUANDO =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.of(FUSO_BRASIL));
+
     private final AppUserRepository users;
     private final UserIdentityRepository identities;
     private final LoginTokenRepository tokens;
     private final ObjectProvider<EmailSender> emailSender;
+    private final FosProperties.Auth auth;
+    private final String publicUrl;
+    private final TransactionTemplate transacao;
     private final Clock clock;
 
     public EmailAccessService(
@@ -56,11 +84,16 @@ public class EmailAccessService {
             UserIdentityRepository identities,
             LoginTokenRepository tokens,
             ObjectProvider<EmailSender> emailSender,
+            FosProperties properties,
+            PlatformTransactionManager transactionManager,
             Clock clock) {
         this.users = users;
         this.identities = identities;
         this.tokens = tokens;
         this.emailSender = emailSender;
+        this.auth = properties.auth();
+        this.publicUrl = properties.publicUrl();
+        this.transacao = new TransactionTemplate(transactionManager);
         this.clock = clock;
     }
 
@@ -72,6 +105,9 @@ public class EmailAccessService {
     /**
      * Registra um pedido de acesso. Idempotente: pedir de novo não cria outra conta nem reabre uma
      * decisão já tomada.
+     *
+     * <p>Não dispara e-mail nenhum — nem para quem pediu, nem para o dono. O dono fica sabendo pelo
+     * resumo da hora seguinte ({@link #notifyOwnersOfQueue()}).
      */
     @Transactional
     public void requestAccess(String rawEmail) {
@@ -96,6 +132,121 @@ public class EmailAccessService {
                         null,
                         now));
         log.info("Pedido de acesso por e-mail registrado — conta {}", user.getId());
+    }
+
+    /**
+     * Resumo da fila para quem decide (#54) — uma vez por janela, das 10h às 22h de Brasília.
+     *
+     * <p><b>Por que resumo e não aviso por pedido.</b> O que faltava era o dono saber que a fila
+     * andou; um e-mail por clique dava isso e trazia junto um canal de ruído no horário que
+     * quisesse. A janela horária resolve os dois: o atraso máximo é de uma hora dentro do dia, e
+     * nada chega de madrugada.
+     *
+     * <p><b>Só sai quando há novidade.</b> A guarda é {@code queue_notice_sent_at} nulo em alguma
+     * pendente. Sem ela, uma fila parada geraria treze e-mails idênticos por dia até alguém decidir
+     * — o oposto do problema que isto veio resolver. E o e-mail lista a fila <em>inteira</em>, não
+     * só o que chegou agora: quem abre precisa ver o que ainda deve, não o delta desde a última
+     * vez.
+     *
+     * <p><b>Três passos, e a fronteira entre eles é a decisão.</b> Ler e marcar são transações
+     * curtas e separadas; o envio fica <em>fora</em> das duas. Chamada de rede dentro de transação
+     * segura a conexão do banco pelo tempo que o outro lado quiser — e aqui o outro lado é uma API
+     * externa num agendador de uma thread só. O {@code TransactionTemplate} explícito existe para
+     * isso: método anotado se estenderia por cima do envio, e {@code @Transactional} em chamada
+     * interna nem passaria pelo proxy.
+     *
+     * <p><b>A marca só é gravada se pelo menos um envio passou.</b> Provedor fora do ar deixa tudo
+     * como estava, e a janela seguinte tenta de novo — marcar antes de entregar perderia o pedido
+     * em silêncio, que é exatamente o esquecimento que este método existe para evitar.
+     */
+    public void notifyOwnersOfQueue() {
+        EmailSender sender = emailSender.getIfAvailable();
+        if (sender == null || auth.ownerEmails().isEmpty()) {
+            return;
+        }
+        Resumo resumo = transacao.execute(status -> montarResumo());
+        if (resumo == null) {
+            return;
+        }
+        boolean entregue = false;
+        for (String owner : auth.ownerEmails()) {
+            try {
+                sender.send(owner, resumo.assunto(), resumo.corpo());
+                entregue = true;
+            } catch (RuntimeException e) {
+                // Sem endereço na mensagem: quem pediu é dado pessoal (docs/11-privacidade.md).
+                log.warn("Resumo da fila não pôde ser enviado a um dos donos", e);
+            }
+        }
+        if (!entregue) {
+            return;
+        }
+        transacao.executeWithoutResult(status -> marcarAnunciadas(resumo.ids()));
+        log.info("Resumo da fila enviado — {} solicitação(ões) pendente(s)", resumo.ids().size());
+    }
+
+    /** O que vai no e-mail, e de quem. Nulo quando não há novidade para anunciar. */
+    private record Resumo(List<Long> ids, String assunto, String corpo) {}
+
+    private Resumo montarResumo() {
+        List<AppUser> fila = users.findByAccessStatusOrderByRequestedAtAsc(AccessStatus.PENDENTE);
+        if (fila.stream().noneMatch(AppUser::isQueueNoticePending)) {
+            return null;
+        }
+        String quantas = fila.size() == 1 ? "1 solicitação" : fila.size() + " solicitações";
+        return new Resumo(
+                fila.stream().map(AppUser::getId).toList(),
+                quantas + " de acesso esperando no FightOssStreak",
+                corpo(fila, quantas));
+    }
+
+    /**
+     * Marca por id, e não pelas instâncias lidas antes: entre ler e marcar a fila pode ter sido
+     * decidida, e marcar uma conta já aprovada é inofensivo — a coluna só é consultada em pendente.
+     */
+    private void marcarAnunciadas(List<Long> ids) {
+        Instant now = Instant.now(clock);
+        users.findAllById(ids).forEach(user -> user.markQueueNoticeSent(now));
+    }
+
+    /** Uma consulta de identidades para a fila inteira, e não uma por linha. */
+    private String corpo(List<AppUser> fila, String quantas) {
+        Map<Long, UserIdentity> porUsuario =
+                identities.findByUserIdIn(fila.stream().map(AppUser::getId).toList()).stream()
+                        .collect(
+                                Collectors.toMap(
+                                        UserIdentity::getUserId,
+                                        Function.identity(),
+                                        (primeiro, segundo) -> primeiro));
+        String linhas =
+                fila.stream()
+                        .map(
+                                user ->
+                                        "- %s — %s"
+                                                .formatted(
+                                                        Optional.ofNullable(
+                                                                        porUsuario.get(
+                                                                                user.getId()))
+                                                                .map(UserIdentity::getEmail)
+                                                                .orElseGet(user::getLabel),
+                                                        QUANDO.format(user.getRequestedAt())))
+                        .collect(Collectors.joining("\n"));
+        String link =
+                publicUrl.isEmpty()
+                        ? "Para liberar ou recusar, abra Solicitações no app."
+                        : "Para liberar ou recusar:\n" + publicUrl + "/solicitacoes";
+        return """
+                %s aguardando sua decisão no FightOssStreak:
+
+                %s
+
+                Horários em horário de Brasília.
+
+                %s
+
+                Quem pediu não recebe nada até você decidir.
+                """
+                .formatted(quantas, linhas, link);
     }
 
     /**

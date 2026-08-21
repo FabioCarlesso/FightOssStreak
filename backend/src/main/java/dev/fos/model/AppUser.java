@@ -41,6 +41,16 @@ public class AppUser {
     @Column(name = "decided_at")
     private Instant decidedAt;
 
+    /**
+     * Quando esta conta pendente entrou num resumo já enviado ao dono (#54).
+     *
+     * <p>Nulo é "ainda não anunciada", e é o que faz a janela da hora ter ou não novidade. Fica
+     * aqui, junto do pedido, em vez de num relógio global: assim o estado do aviso sobrevive a
+     * reinício e a deploy sem depender de o agendador ter rodado.
+     */
+    @Column(name = "queue_notice_sent_at")
+    private Instant queueNoticeSentAt;
+
     protected AppUser() {
         // JPA
     }
@@ -78,6 +88,16 @@ public class AppUser {
         this.label = label;
     }
 
+    /** Registra que esta conta já saiu num resumo da fila. */
+    public void markQueueNoticeSent(Instant now) {
+        this.queueNoticeSentAt = now;
+    }
+
+    /** Pendente que o dono ainda não viu em nenhum resumo. */
+    public boolean isQueueNoticePending() {
+        return queueNoticeSentAt == null;
+    }
+
     public boolean isApproved() {
         return accessStatus == AccessStatus.APROVADO;
     }
@@ -104,5 +124,9 @@ public class AppUser {
 
     public Instant getDecidedAt() {
         return decidedAt;
+    }
+
+    public Instant getQueueNoticeSentAt() {
+        return queueNoticeSentAt;
     }
 }

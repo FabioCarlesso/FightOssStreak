@@ -49,6 +49,10 @@ services:
       # Entrada por e-mail (#52). Sem elas, quem não tem provedor não consegue pedir acesso.
       FOS_EMAIL_API_KEY: '${FOS_EMAIL_API_KEY:-}'
       FOS_EMAIL_FROM: '${FOS_EMAIL_FROM:-}'
+      # URL pública do app, para o resumo da fila (#54) trazer o link de Solicitações. O
+      # agendador não tem requisição de onde deduzi-la, ao contrário do link de entrada. Mesmo
+      # valor de `VITE_PUBLIC_URL`, que é a versão de build da imagem do web.
+      FOS_PUBLIC_URL: '${FOS_PUBLIC_URL:-}'
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:

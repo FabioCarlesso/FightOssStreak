@@ -58,6 +58,7 @@ class OAuth2ProviderConfigTest {
                         "test",
                         new FosProperties.Curriculum(null, false),
                         new FosProperties.Auth(List.of(), new Providers(null, null, credencial())),
+                        null,
                         null);
 
         // O silêncio seria pior: credencial aceita e botão que nunca aparece. Ver D36 para por que
@@ -77,6 +78,7 @@ class OAuth2ProviderConfigTest {
                 "test",
                 new FosProperties.Curriculum(null, false),
                 new FosProperties.Auth(List.of(), new Providers(google, facebook, null)),
+                null,
                 null);
     }
 }

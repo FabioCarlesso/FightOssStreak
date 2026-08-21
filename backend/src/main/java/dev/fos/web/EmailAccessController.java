@@ -67,8 +67,9 @@ public class EmailAccessController {
     @Operation(
             summary = "Registra um pedido de acesso",
             description =
-                    "A conta nasce pendente e aparece na fila do dono. Nenhum e-mail sai aqui: o"
-                            + " primeiro é enviado quando o pedido é aprovado.")
+                    "A conta nasce pendente e entra na fila do dono. Nenhum e-mail sai aqui: o dono"
+                            + " recebe o resumo da fila na próxima janela do dia (10h às 22h), e"
+                            + " quem pediu só recebe algo quando for aprovado.")
     public ResponseEntity<Void> solicitar(
             @Valid @RequestBody EmailRequest body, HttpServletRequest request) {
         if (!freiar(request, body.email())) {
