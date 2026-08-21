@@ -58,6 +58,10 @@ segundo semanalmente e avisa por issue. Ver `docs/08-curadoria-videos.md`.
 
 Editar o JSON, rodar `cd backend && ./mvnw test` — há teste que valida integridade do grafo (referências, ciclos, códigos duplicados). Registrar mudança pedagógica relevante em `docs/07-decisoes.md`.
 
+Escrever ou revisar conceito e quiz de um nó? `docs/12-fontes-de-conteudo.md` é a régua de fonte —
+o que conta, o que não conta, e como texto de terceiro pode ser usado — e traz a tabela `nó →
+fontes consultadas` para registrar de onde veio o que foi escrito.
+
 ## Ao tomar decisão estrutural
 
 Anotar em `docs/07-decisoes.md` com justificativa e critério de revisão. O log existe para que reversões futuras sejam conscientes.
