@@ -11,7 +11,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.4"],
       "concept": "Pegar as costas raramente é um ataque de verdade — na maior parte das vezes, é a colheita de uma defesa que o próprio oponente tentou.\n\nQuando ele vira de lado para tentar escapar da montada, ele mesmo entrega as costas na tentativa. O seu trabalho é reconhecer esse instante e acompanhar o giro dele, sem se adiantar nem forçá-lo a acontecer antes da hora.\n\nO erro comum é tentar obrigar a virada por conta própria: forçar o oponente a virar de lado, em vez de esperar que a defesa dele crie a abertura sozinha, costuma custar a montada inteira sem entregar as costas em troca — ele sente a força e simplesmente não vira.",
-      "video": null,
+      "video": {
+        "youtubeId": "OTrhkegvAmA",
+        "title": "Sua Pegada de Costas Nunca Mais Vai Ser a Mesma Depois Dessa Aula",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Pegar as costas a partir da montada é descrito, na maior parte das vezes, como o quê?",
@@ -103,7 +107,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M5.1"],
       "concept": "O controle de costas se sustenta em dois elementos independentes: os ganchos, que impedem o oponente de deslizar para fora, e o seat belt, que impede que ele gire de frente para você.\n\nPerder um dos dois normalmente ainda dá para recuperar; perder os dois ao mesmo tempo acaba a posição. Entender essa divisão é o que transforma costas de posição instável em posição dominante.\n\nO erro comum é tratar os dois como se fossem a mesma coisa — reagir à perda de um copiando a resposta do outro. Cada elemento falha e se recupera de um jeito diferente, e confundir os dois é o que costuma transformar a perda de um no colapso da posição inteira.",
-      "video": null,
+      "video": {
+        "youtubeId": "iYMTFKedkKE",
+        "title": "FP CLASS #5 - ESTABILIZAÇÃO DAS COSTAS!",
+        "channel": "Felipe Pena Preguiça"
+      },
       "quiz": [
         {
           "prompt": "Em quantos elementos independentes o controle de costas se sustenta?",
@@ -195,7 +203,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M5.2"],
       "concept": "O mata-leão é a finalização mais confiável do jiu-jitsu porque não depende do gi nem de erro do oponente — depende só de o controle de costas estar mantido.\n\nO trabalho real acontece antes do estrangulamento em si: neutralizar as mãos que defendem o pescoço. Só depois disso o braço tem caminho livre até o pescoço.\n\nO erro comum é atacar o pescoço direto, ignorando as mãos que o defendem — o braço trava na barreira e a posição se desgasta à toa. E por interromper circulação, é a técnica que menos tolera demora no tap (M0.3): o apagão pode chegar sem o aviso de dor de uma torção articular. Paciência para neutralizar a defesa primeiro custa alguns segundos a mais, mas é o que transforma uma tentativa travada numa finalização de verdade.",
-      "video": null,
+      "video": {
+        "youtubeId": "ILbYoXajt94",
+        "title": "TRÊS MANEIRAS DE APLICAR O MATA LEÃO  FEU BJJ",
+        "channel": "FEU BJJ"
+      },
       "quiz": [
         {
           "prompt": "Por que o mata-leão é descrito como a finalização mais confiável do jiu-jitsu?",
@@ -287,7 +299,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M5.2"],
       "concept": "Contra alguém que sabe defender, manter as costas vira um jogo de deslocamento contínuo, não uma posição parada.\n\nEle leva os ombros ao chão e tenta girar para escapar; você precisa acompanhar o giro mantendo o peito colado ao dele, trocando de lado sem nunca soltar o seat belt.\n\nO erro comum é tentar travar a posição parado, como se costas fosse algo que se segura sem se mover: contra defesa de verdade, quem trava perde o encaixe assim que o oponente completa o giro que você não acompanhou. Manter o contato de tronco durante a troca de lado é o que garante que a posição nunca fique, nem por um instante, sem controle nenhum sobre o oponente.",
-      "video": null,
+      "video": {
+        "youtubeId": "vtbz6B7hA6o",
+        "title": "Nunca Mais Perca as Costas no Jiu Jitsu | Drills Essenciais",
+        "channel": "Fabio Gurgel"
+      },
       "quiz": [
         {
           "prompt": "O que a manutenção de costas vira contra alguém que sabe defender?",

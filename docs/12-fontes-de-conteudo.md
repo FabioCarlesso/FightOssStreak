@@ -87,27 +87,53 @@ módulos não têm:
   tap como segurança do parceiro e uma que o trata como "desistência", a primeira vence mesmo que
   a segunda seja mais completa. Foi o critério que já escolheu Ritchie Yip para o vídeo deste nó.
 
-## Fontes por módulo — M2 a M8
+## Fontes por módulo — M8
 
-Nenhum destes módulos tem vídeo catalogado ainda (`08-curadoria-videos.md`, estado atual restrito a
-M0 e M1) — logo, nenhum tem canal instrucional julgado. Isto é estado normal, o mesmo que
-`video: null`: a linha existe para ser preenchida quando alguém escolher, pelos critérios acima, não
-para ficar em branco por descuido.
+M8 ainda não tem vídeo catalogado (`08-curadoria-videos.md`, estado atual cobre M0 a M7) — logo, não
+tem canal instrucional julgado. Isto é estado normal, o mesmo que `video: null`: M8.2 e M8.3 têm
+motivo estrutural (o próprio `concept` diz que a habilidade não vem de vídeo assistido); M8.1 ficou
+sem candidato à altura apesar da busca — ver a nota em `08-curadoria-videos.md`.
 
 | Módulo | Fonte instrucional |
 |---|---|
-| M2 — Guarda Fechada | nenhuma catalogada ainda |
-| M3 — Guarda Aberta e Passagem | nenhuma catalogada ainda |
-| M4 — Controle Superior | nenhuma catalogada ainda |
-| M5 — Costas (Back Control) | nenhuma catalogada ainda |
-| M6 — Quedas e Entrada em Combate | nenhuma catalogada ainda |
-| M7 — Finalizações Encadeadas | nenhuma catalogada ainda |
 | M8 — Jogo Integrado | nenhuma catalogada ainda |
 
-**Três leads levantados na abertura do épico #55 — candidatos a triar, não escolhas:** Jiu Jitsu
-Channel, FEU BJJ e o "Curso Completo da Faixa Branca de Jiu-jitsu" de @lawluna. Nenhum foi assistido.
-Eles só entram nesta lista depois de passar pelos critérios de `08-curadoria-videos.md` — citá-los
-aqui sem isso seria exatamente o que este documento existe para impedir.
+## Canais usados nos canônicos de M2 a M7
+
+Treze canais, triados pela régua acima (Gi, instrucional, canal estabelecido, ensina o conceito) e
+pelo critério de idioma da D45, ao catalogar os blocos M2–M7 pela #61. Dois já vinham aprovados da
+lista de leads do épico #55 e só foram **usados** agora — **FEU BJJ** e **Lawrence Luna**, ambos
+triados na D45/#60. Os outros onze surgiram da busca dirigida por técnica, nó a nó.
+
+| Canal | Cobre bem | Já usado em |
+|---|---|---|
+| [Cientistas do Jiu Jitsu](https://www.youtube.com/@Cientistasdojiujitsu) | Fundamentos com professor identificado (Cristiano Carvalho); canal de porte modesto (~29 mil inscritos) | M2.1 |
+| [Muito Mais Ação Jiu Jitsu](https://www.youtube.com/@muitomaisacaojiujitsu) | Técnicas fundamentais em vídeos capitulados, um por golpe, com estrutura de introdução → princípio → passo a passo → recapitulação | M2.2, M2.5, M2.6, M7.4 |
+| [Felipe Siqueira Jiu Jitsu](https://www.youtube.com/@FelipeSiqueiraJiuJitsu) | Professor identificado (faixa-preta 3º grau, Gracie Barra), catálogo amplo de técnicas isoladas | M2.3, M3.3, M3.4, M3.6, M4.4, M6.1 |
+| [Manual do Jiu-Jitsu](https://www.youtube.com/@ManualdoJiuJitsu) | Aulas completas por posição, capituladas, com foco declarado em conceito antes de execução | M2.4, M2.7, M3.2, M3.5, M4.1, M4.5, M5.1, M6.2 |
+| [Marcelo Galdino](https://www.youtube.com/@MarceloGaldinoBJJ) | Professor identificado, 215 mil inscritos, catálogo extenso organizado por curso (faixa branca/azul/roxa) | M3.1, M4.2 |
+| [Micael Galvão](https://www.youtube.com/@micagalvaobjj) | Atleta faixa-preta competidor; canal mistura competição e instrução — só os vídeos claramente instrucionais entram como canônico | M3.7 |
+| [FEU BJJ](https://www.youtube.com/@FEUBJJ) | 936 mil inscritos, mais de uma década de aulas em vídeo (já triado na D45/#60) | M4.3, M4.6, M5.3 |
+| [Felipe Pena Preguiça](https://www.youtube.com/@FelipePenaPreguiça) | Multicampeão mundial ADCC, série instrucional própria "FP CLASS" | M5.2 |
+| [Fabio Gurgel](https://www.youtube.com/@FabioGurgel) | Faixa coral, cofundador da Alliance Jiu-Jitsu, um dos treinadores mais respeitados do Brasil | M5.4 |
+| [Lawrence Luna (@lawluna)](https://www.youtube.com/@lawluna) | Curso completo faixa branca (já triado na D45/#60); primeiro uso em vídeo canônico | M6.3 |
+| [André Machado BJJ](https://www.youtube.com/@AndréMachadoBJJ) | Professor faixa-preta identificado, canal modesto (~19,5 mil inscritos), sem equivalente melhor achado | M6.4 |
+| [Voūk Brasil](https://www.youtube.com/@voukbrasil) | Canal oficial de marca de kimono, 125 mil inscritos, conteúdo instrucional com instrutor identificado (Gabriel) | M7.1, M7.2 |
+| [Dojjo Confere](https://www.youtube.com/@Dojjo_tv) | Ex-programa de TV (Canal Combate), 61 mil inscritos; vídeo usado é Roger Gracie ensinando diretamente | M7.3 |
+
+**Três leads foram levantados na abertura do épico #55.** Triados pelos critérios de
+`08-curadoria-videos.md` (Gi, instrucional, canal estabelecido, ensina o conceito) mais o critério de
+idioma da D45 — sem assistir aos vídeos por inteiro, mesma ressalva da D21 e do restante deste
+documento:
+
+| Canal | Cobre bem | Situação |
+|---|---|---|
+| [FEU BJJ](https://www.youtube.com/@FEUBJJ) | 936 mil inscritos, mais de uma década de aulas em vídeo além dos podcasts recentes — ex.: "3 Raspagens e 3 Finalizações para Iniciantes", 503 mil visualizações, descrito como aula básica | **Aprovado** — candidato a canal instrucional para M2–M8 |
+| [Lawrence Luna (@lawluna)](https://www.youtube.com/@lawluna) | 34 mil inscritos, 505 vídeos; curso "Curso Completo da Faixa Branca de Jiu-jitsu" em vídeo-aulas encadeadas por capítulo (posicionamento, rolamento, ...), formato que casa com "ensinar o conceito antes da execução" | **Aprovado** — candidato a canal instrucional para M2–M8 |
+| [Jiu Jitsu Channel (@jiu-jitsu)](https://www.youtube.com/@jiu-jitsu) | — | **Reprovado**: descrição do canal em inglês ("BJJ & No-Gi Training"), uploads recentes são clipe de competição/reação ("Tiago vs Lincoln REMATCH", "Kid celebrates like a champion") — falha em instrucional-não-highlight e mistura no-gi (D6); não é efetivamente canal em português apesar do nome ter sido sugerido como lead |
+
+Aprovação aqui é "passou no crivo do canal", não "vídeo já escolhido": qual vídeo específico de FEU
+BJJ ou de @lawluna vira canônico de qual nó de M2–M8 é trabalho da #61, nó a nó.
 
 ## Tabela: nó → fontes consultadas
 
@@ -115,10 +141,12 @@ Preenchida à medida que B e C (escrita de conceito e de quiz) avançarem. Ao es
 nó, adicione a fonte efetivamente consultada nesta linha; "nenhuma além do professor" também é um
 registro válido.
 
-M2–M8 não têm vídeo canônico catalogado ainda (`docs/08-curadoria-videos.md`), então a reescrita de
-#58 não teve canal instrucional para citar como fonte. A linha registra isso com honestidade — texto
-reestruturado a partir do conceito que já estava no currículo, sem pesquisa nova por trás (D43) —
-em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
+Quando #58 reescreveu M2–M8, nenhum desses módulos tinha vídeo canônico catalogado
+(`docs/08-curadoria-videos.md`), então o texto não teve canal instrucional para citar como fonte. As
+linhas registram isso com honestidade — texto reestruturado a partir do conceito que já estava no
+currículo, sem pesquisa nova por trás (D43) — em vez de fingir uma fonte que não existiu ou deixar a
+linha em branco. M2 ganhou vídeo depois, pela #61 — a fonte do texto continua sendo D43 (não mudou
+retroativamente), e a linha de cada nó passou a citar também o canal do vídeo, separadamente.
 
 ### M0 — Fundamentos e Segurança
 
@@ -145,63 +173,63 @@ em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
 
 | Nó | Fontes consultadas |
 |---|---|
-| M2.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Cientistas do Jiu Jitsu (#61) |
+| M2.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M2.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M2.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.7 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
 
 ### M3 — Guarda Aberta e Passagem
 
 | Nó | Fontes consultadas |
 |---|---|
-| M3.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M3.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Marcelo Galdino (#61) |
+| M3.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M3.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M3.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M3.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M3.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M3.7 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Micael Galvão (#61) |
 
 ### M4 — Controle Superior
 
 | Nó | Fontes consultadas |
 |---|---|
-| M4.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M4.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M4.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M4.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M4.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M4.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M4.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Marcelo Galdino (#61) |
+| M4.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal FEU BJJ (#61) |
+| M4.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M4.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M4.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal FEU BJJ (#61) |
 
 ### M5 — Costas (Back Control)
 
 | Nó | Fontes consultadas |
 |---|---|
-| M5.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M5.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M5.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M5.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M5.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M5.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Felipe Pena Preguiça (#61) |
+| M5.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal FEU BJJ (#61) |
+| M5.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Fabio Gurgel (#61) |
 
 ### M6 — Quedas e Entrada em Combate
 
 | Nó | Fontes consultadas |
 |---|---|
-| M6.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M6.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M6.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M6.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M6.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M6.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M6.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Lawrence Luna (#61) |
+| M6.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal André Machado BJJ (#61) |
 
 ### M7 — Finalizações Encadeadas
 
 | Nó | Fontes consultadas |
 |---|---|
-| M7.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M7.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M7.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
-| M7.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M7.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Voūk Brasil (#61) |
+| M7.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Voūk Brasil (#61) |
+| M7.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Dojjo Confere (#61) |
+| M7.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
 
 ### M8 — Jogo Integrado
 

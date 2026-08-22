@@ -37,9 +37,10 @@ export const DEMO = {
 /**
  * Números citados na copy. Todos verificáveis no currículo — ver o teste ao lado.
  *
- * `videoModules` é a parte incômoda e fica à mostra de propósito: dizer "11 vídeos" sem dizer que
- * eles cobrem só 2 dos 9 módulos seria escolher o número que favorece. `quizModules` já cobre o
- * currículo inteiro desde a #59 (D44) — banco de 8 perguntas por nó, com rotação a cada revisão.
+ * `videoModules` é a parte incômoda e fica à mostra de propósito: dizer "43 vídeos" sem dizer que
+ * eles cobrem 8 dos 9 módulos seria escolher o número que favorece — M8 segue sem vídeo, e o item
+ * de roadmap continua `done: false` por isso. `quizModules` já cobre o currículo inteiro desde a
+ * #59 (D44) — banco de 8 perguntas por nó, com rotação a cada revisão.
  */
 export const NUMEROS = {
   nodes: 46,
@@ -47,8 +48,8 @@ export const NUMEROS = {
   quizQuestions: 368,
   quizNodes: 46,
   quizModules: 'M0 a M8',
-  canonicalVideos: 11,
-  videoModules: 'M0 e M1',
+  canonicalVideos: 43,
+  videoModules: 'M0 a M7',
   extraClips: 7,
 } as const;
 

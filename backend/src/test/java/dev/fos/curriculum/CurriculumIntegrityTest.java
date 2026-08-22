@@ -129,14 +129,14 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("M0 e M1 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
+    @DisplayName("M0–M7 têm vídeo catalogado; M8 segue pendente de curadoria")
     void videoCoverageMatchesCuratedScope() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
             if (hasCuratedVideo(node)) {
                 assertThat(node.video()).as("vídeo de %s", node.code()).isNotNull();
             } else {
                 assertThat(node.video())
-                        .as("vídeo de %s — M2–M8 entram em issues próprias", node.code())
+                        .as("vídeo de %s — bloco ainda não catalogado pela #61", node.code())
                         .isNull();
             }
         }
@@ -654,9 +654,21 @@ class CurriculumIntegrityTest {
                                 List.of())));
     }
 
-    /** Catalogar vídeo exige assistir (D21); M2–M8 entram em issues próprias. */
+    /**
+     * Catalogar vídeo exige assistir (D21); M8 segue pendente — três nós conceituais de faixa roxa
+     * (M8.2 e M8.3 por definição do próprio `concept`; M8.1 por não ter sido encontrado candidato à
+     * altura apesar da busca) onde `video: null` é o resultado esperado, não uma lacuna. M2–M7
+     * entraram pela #61, bloco a bloco.
+     */
     private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
-        return node.code().startsWith("M0.") || node.code().startsWith("M1.");
+        return node.code().startsWith("M0.")
+                || node.code().startsWith("M1.")
+                || node.code().startsWith("M2.")
+                || node.code().startsWith("M3.")
+                || node.code().startsWith("M4.")
+                || node.code().startsWith("M5.")
+                || node.code().startsWith("M6.")
+                || node.code().startsWith("M7.");
     }
 
     private CurriculumSource.NodeSpec node(String code, List<String> prereqs) {

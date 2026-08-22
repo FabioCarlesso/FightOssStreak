@@ -46,6 +46,11 @@ campo continua `null`, que é estado normal.
   trecho útil começa em 3:10, use `--start 190`.
 - **O vídeo precisa ensinar o *conceito* do nó**, não só executar a técnica. O posicionamento do
   produto é retenção do porquê (D1).
+- **Entre candidatos equivalentes, ganha o em português** (D45). Desempate, não passe livre: idioma
+  não promove vídeo que falha em outro critério acima — vídeo em português que é highlight, que é
+  no-gi (D6) ou que não ensina o conceito continua descartado. Onde não existir vídeo em português à
+  altura, cataloga-se o em inglês e o nó fica marcado como **candidato a revisita** na tabela de
+  estado atual, em vez de ficar vazio: nó sem vídeo é pior que nó com vídeo em inglês.
 
 ## O que cada nó precisa mostrar
 
@@ -73,6 +78,86 @@ campo continua `null`, que é estado normal.
 | **M1.4** Fuga de montada | Upa **com o braço bloqueado** (senão ele posta a mão); elbow escape; as duas como par | Ensinar upa sem explicar por que o braço precisa estar preso |
 | **M1.5** Recuperação de guarda | Reconstruir a barreira de pernas e retomar a distância | Tratar como "voltar à guarda fechada" apenas |
 | **M1.6** Fuga de costas | Pescoço primeiro; ombros ao chão **do lado do braço que estrangula** | Ensinar a tirar os ganchos antes de defender o pescoço |
+
+### Módulo 2 — Guarda Fechada
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M2.1** Guarda fechada: postura, controle e quebra | As pegadas que impedem a postura de voltar a subir; por que atacar antes de quebrar a postura é o erro central do nó | Ensinar raspagem ou estrangulamento contra oponente ainda ereto, sem mostrar a quebra de postura primeiro |
+| **M2.2** Raspagem de tesoura | Joelho atravessado no peito e a perna varrendo; o desequilíbrio criado antes do movimento, não força das pernas | Tratar a tesoura como técnica de força, sem mostrar o momento de desequilíbrio que a antecede |
+| **M2.3** Raspagem pêndulo | Prender o braço do oponente do lado do giro antes de sentar; usar o balanço do quadril | Sentar para o pêndulo sem bloquear o braço do lado do giro |
+| **M2.4** Estrangulamento cruzado | Profundidade da pegada de gola como o que dá alavanca; a ameaça constante abrindo espaço de raspagem | Ensinar o aperto com pegada rasa, sem mostrar a profundidade necessária |
+| **M2.5** Armlock da guarda | Controle de postura e ângulo *antes* de puxar o braço | Pular direto para puxar o braço sem controle de postura/ângulo primeiro |
+| **M2.6** Triângulo | Exigência de um braço dentro e outro fora; girar o quadril para criar o ângulo | Mostrar o aperto de frente, sem o giro de quadril que cria o ângulo |
+| **M2.7** Omoplata | A perna como alavanca no ombro; como o rolamento de fuga do oponente vira raspagem | Tratar como sequência decorada, sem explicar o ângulo compartilhado com o triângulo |
+
+### Módulo 3 — Guarda Aberta e Passagem
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M3.1** Guarda aberta: grips, distância, enquadramento | A regra longe-o-bastante/perto-o-bastante; pegadas e enquadramento com pés e joelhos | Não tratar a distância intermediária como o erro central a evitar |
+| **M3.2** Passagem torreando | Deslocar as pernas do oponente para o lado e correr para o espaço livre; controle de calça; mudança de direção | Mostrar passagem em linha reta, sem trocar de ângulo |
+| **M3.3** Passagem por cima (over-under/smash) | Pressão contínua — nunca as duas mãos livres ao mesmo tempo; avanço gradual sem devolver espaço | Mostrar troca de pegada que solta a pressão por completo |
+| **M3.4** Guarda de gancho (butterfly) | Conexão de tronco com o oponente perto; ganchos como alavanca de elevação, não barreira | Butterfly sentada longe do oponente, sem contato de tronco |
+| **M3.5** Raspagem de butterfly | Inclinar o próprio tronco para o lado, não só empurrar com a perna | Ensinar a raspagem com tronco ereto, como "força de perna" |
+| **M3.6** Meia-guarda: conceito e enquadramento | O enquadramento do tronco (antebraço) como o que importa, não a perna presa | Tratar meia-guarda como só "perna presa", sem enquadramento de tronco |
+| **M3.7** Raspagem de meia-guarda (old school) | Ombro por baixo do oponente **e** controle do tornozelo ao mesmo tempo | Controlar o tornozelo com o ombro ainda ao lado do oponente, não embaixo |
+
+### Módulo 4 — Controle Superior
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M4.1** 100kg: manutenção e pressão | Peso projetado sobre o oponente, não sobre os próprios braços/joelhos; ajuste contínuo ao movimento dele | Ensinar postura fixa de 100kg, sem ajuste ao movimento do oponente |
+| **M4.2** Joelho na barriga | Pressão desconfortável que provoca reação; girar e trocar ângulo continuamente | Tratar a posição como descanso, parada |
+| **M4.3** Transição 100kg → montada | Bloquear o quadril do oponente *antes* de mover a própria perna | Mostrar a perna se movendo antes do quadril estar bloqueado |
+| **M4.4** Montada: manutenção e base | Peso alto, joelhos apertados nas axilas, negar o espaço lateral | Joelhos abertos ou peso caindo para trás, sem correção |
+| **M4.5** Americana e Ezequiel | Finalizações que nascem da posição já mantida, sem abrir mão do controle | Ensinar como se exigisse abrir mão do 100kg/montada para armar o ataque |
+| **M4.6** Armlock da montada | O gatilho é o oponente empurrando para tirar o peso de cima | Buscar o armlock sem esse gatilho, sem mostrar o risco de perder a montada ao errar |
+
+### Módulo 5 — Costas (Back Control)
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M5.1** Pegar as costas a partir da montada | Acompanhar o giro que o oponente já inicia tentando escapar, sem forçar | Ensinar como forçar a virada do oponente por conta própria |
+| **M5.2** Controle de costas: hooks e seat belt | Ganchos e seat belt como elementos independentes, cada um falhando de um jeito diferente | Tratar os dois como a mesma coisa, com a mesma resposta de recuperação |
+| **M5.3** Mata-leão ⚠️ | Neutralizar as mãos de defesa *antes* de atacar o pescoço; por que este estrangulamento tolera menos demora no tap (D-M0.3) | Atacar o pescoço direto, ignorando a defesa das mãos |
+| **M5.4** Manutenção de costas contra defesa | Acompanhar o giro trocando de lado, mantendo contato de tronco, sem travar parado | Ensinar a travar a posição parada contra defesa de verdade |
+
+> **M5.3 herda a sensibilidade da M0.3**: é estrangulamento sem aviso de dor. Mesma regra — na dúvida
+> entre dois vídeos, o mais conservador quanto ao tap.
+
+### Módulo 6 — Quedas e Entrada em Combate
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M6.1** Puxar guarda com segurança | Pegada firme antes de sentar; descer controlando o peso do oponente junto, não caindo sozinho | Soltar o corpo/sentar sem controlar o oponente antes — entrega queda por cima |
+| **M6.2** Queda de mão única (single leg) | Nível baixo por flexão de joelho, não por curvar a coluna | Ensinar a entrada curvando a coluna em vez de flexionar os joelhos |
+| **M6.3** Queda de dois pés (double leg) | Mudança de nível e penetração real com o passo; levar o parceiro ao chão com controle, nunca projetar | Mostrar projeção sem controle do parceiro na queda — risco de lesão |
+| **M6.4** Sprawl e defesa de queda | Jogar o quadril para baixo e as pernas para trás | Ensinar a reagir à entrada recuando ou levantando o quadril |
+
+### Módulo 7 — Finalizações Encadeadas
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M7.1** Kimura: da guarda, do 100kg e das costas | A mesma figura-quatro funcionando nas três posições; valor como controle mesmo sem a torção completa | Mostrar só uma das três posições, ou soltar a figura-quatro assim que não finaliza de primeira |
+| **M7.2** Front headlock e guilhotina | O front headlock como o que antecede a guilhotina, nascendo do sprawl — encadeamento, não técnica isolada | Ensinar a guilhotina do zero, contra qualquer postura, sem o front headlock antes |
+| **M7.3** Defesa de guilhotina | Aliviar a pressão no pescoço antes de tentar sair; ganhar o lado correto | Ensinar a puxar a cabeça para fora antes de aliviar a pressão |
+| **M7.4** Encadeamento triângulo → armlock → omoplata | As três como sistema — a defesa de uma abre exatamente uma das outras duas | Ensinar as três como técnicas isoladas, sem mostrar a transição entre elas |
+
+### Módulo 8 — Jogo Integrado
+
+| Nó | O vídeo precisa cobrir | Descarte se |
+|---|---|---|
+| **M8.1** Encadeamento de raspagens | A segunda raspagem nascendo da defesa da primeira (ex.: tesoura → pêndulo), não duas técnicas soltas | Mostrar raspagens isoladas sem encadeamento, ou insistir na mesma já defendida |
+| **M8.2** Leitura de pressão e antecipação de reação ⚠️ | Agir na intenção/pressão do oponente antes da ação estar completa | Conteúdo que só ensina reagir à ação já consumada, sem tratar leitura antecipada |
+| **M8.3** Construção de jogo A-B-C (game plan pessoal) ⚠️ | — | — |
+
+> **M8 é o bloco mais difícil, e M8.2 e M8.3 são os nós mais prováveis de ficar sem candidato à
+> altura.** O próprio `concept` de M8.2 diz que a leitura de pressão "amadurece com repetição, não
+> com mais um vídeo assistido", e o de M8.3 diz que jogo pessoal "não se pode copiar de um vídeo,
+> porque depende do seu corpo". Um vídeo genérico de "como ler pressão" ou "como montar seu jogo" que
+> não reconheça isso está vendendo o que o próprio nó nega — `video: null` nesses dois é o resultado
+> esperado, não uma lacuna a forçar.
 
 ## Complementares: outros critérios, de propósito
 
@@ -117,25 +202,89 @@ A `note` é o único campo que você escreve: título e canal continuam vindo do
 `orientation` é detectada pelo script. Vale a pena preenchê-la — os títulos são taquigrafia de aula
 ("aula do dia 09/05") e não dizem por que aquele clipe importa para aquele nó.
 
-## Estado atual (M0 e M1)
+## Estado atual (M0 a M7)
 
 Os 11 nós estão catalogados. O que foi verificado e o que não foi está em D21 de
 `07-decisoes.md` — em resumo: id, título, canal e permissão de incorporação vieram do YouTube;
 o encaixe pedagógico foi julgado sem assistir aos vídeos por inteiro.
 
-| Nó | Canal | Duração | Observação |
-|---|---|---|---|
-| M0.1 | Keenan Cornelius | 23:04 | O mais longo da leva; formato de lista, mas merece um `--start` depois de assistir |
-| M0.2 | Knight Jiu-Jitsu | 6:36 | — |
-| M0.3 ⚠️ | Ritchie Yip | 1:41 | Enquadra o tap como segurança do parceiro e cita o tap verbal; escolhido por ser o mais conservador |
-| M0.4 | SBG PDX (Matt Thornton) | 3:42 | Base e postura como conceito; não confirmado que percorre as três bases do nó |
-| M0.5 | RVV BJJ | 8:05 | Gola, manga e calça em capítulos |
-| M1.1 | Jordan Teaches Jiujitsu | 5:32 | "T-rex arms" = cotovelos colados; o exemplo é meia-guarda |
-| M1.2 | Ritchie Yip | 4:36 | — |
-| M1.3 | Stephan Kesting | 8:11 | — |
-| M1.4 | Stephan Kesting | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
-| M1.5 | Jordan Teaches Jiujitsu | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
-| M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
+Os onze são, sem exceção, de canal em inglês — o critério de idioma (D45) chegou depois desta leva,
+e nenhum foi trocado retroativamente (troca por troca não é ganho). **M0.3** é o candidato a
+revisita de maior prioridade se aparecer equivalente em português claramente melhor: é o nó mais
+sensível do currículo, e é onde a barreira do idioma mais pesa.
+
+| Nó | Canal | Idioma | Duração | Observação |
+|---|---|---|---|---|
+| M0.1 | Keenan Cornelius | Inglês | 23:04 | O mais longo da leva; formato de lista, mas merece um `--start` depois de assistir |
+| M0.2 | Knight Jiu-Jitsu | Inglês | 6:36 | — |
+| M0.3 ⚠️ | Ritchie Yip | Inglês | 1:41 | Enquadra o tap como segurança do parceiro e cita o tap verbal; escolhido por ser o mais conservador. Candidato a revisita (D45) se surgir equivalente em português à altura |
+| M0.4 | SBG PDX (Matt Thornton) | Inglês | 3:42 | Base e postura como conceito; não confirmado que percorre as três bases do nó |
+| M0.5 | RVV BJJ | Inglês | 8:05 | Gola, manga e calça em capítulos |
+| M1.1 | Jordan Teaches Jiujitsu | Inglês | 5:32 | "T-rex arms" = cotovelos colados; o exemplo é meia-guarda |
+| M1.2 | Ritchie Yip | Inglês | 4:36 | — |
+| M1.3 | Stephan Kesting | Inglês | 8:11 | — |
+| M1.4 | Stephan Kesting | Inglês | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
+| M1.5 | Jordan Teaches Jiujitsu | Inglês | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
+| M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | Inglês | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
+| M2.1 | Cientistas do Jiu Jitsu | Português | 3:02 | Título casa exatamente com o nó (postura, distância, ataques); canal de porte modesto (~29 mil inscritos), sem equivalente melhor achado num canal maior |
+| M2.2 | Muito Mais Ação Jiu Jitsu | Português | 4:06 | Capítulos cobrem princípio, passo a passo e variação contra peso maior |
+| M2.3 | Felipe Siqueira Jiu Jitsu | Português | 4:45 | Professor Felipe Siqueira, faixa-preta 3º grau Gracie Barra |
+| M2.4 | Manual do Jiu-Jitsu | Português | 11:03 | O mais longo do bloco; não confirmado que o vídeo inteiro é sobre o cruzado especificamente, ou se cobre outros estrangulamentos também |
+| M2.5 | Muito Mais Ação Jiu Jitsu | Português | 3:16 | Capítulos incluem quebra de postura antes do ataque ao braço, como o nó exige |
+| M2.6 | Muito Mais Ação Jiu Jitsu | Português | 8:36 | 11 capítulos, o mais detalhado do bloco — pegada, ângulo, defesas comuns |
+| M2.7 | Manual do Jiu-Jitsu | Português | 8:32 | Cobre a dupla função do nó: finalização e raspagem quando o oponente rola para escapar |
+| M3.1 | Marcelo Galdino | Português | 3:23 | Título casa com a dicotomia longe/perto que o nó exige |
+| M3.2 | Manual do Jiu-Jitsu | Português | 8:08 | Passo a passo dedicado à torreando, sem misturar outras passagens |
+| M3.3 | Felipe Siqueira Jiu Jitsu | Português | 10:14 | Foco em manter pressão contínua — o critério de descarte do nó |
+| M3.4 | Felipe Siqueira Jiu Jitsu | Português | 9:05 | Cobre a conexão de tronco como pré-condição, não só a raspagem que segue |
+| M3.5 | Manual do Jiu-Jitsu | Português | 10:12 | 4 raspagens de guarda sentada/borboleta; não confirmado que toda enfatiza o peso do tronco especificamente |
+| M3.6 | Felipe Siqueira Jiu Jitsu | Português | 17:31 | O mais longo do bloco; resumo do YouTube já descreve foco em frames e enquadramento de tronco, o conceito exato do nó |
+| M3.7 | Micael Galvão | Português | 4:50 | Título traz "(Old school)" explicitamente; canal do atleta mistura competição e instrução — este vídeo é instrucional |
+| M4.1 | Manual do Jiu-Jitsu | Português | 11:36 | 5 capítulos, incluindo um sobre transição para montada (bônus para M4.3) |
+| M4.2 | Marcelo Galdino | Português | 9:38 | Sobre usar o joelho na barriga ativamente, não como descanso |
+| M4.3 | FEU BJJ | Português | 10:31 | Dedicado à transição 100kg→montada especificamente |
+| M4.4 | Felipe Siqueira Jiu Jitsu | Português | 13:02 | "Todos os detalhes para estabilizar" — foco em manutenção, não em ataque |
+| M4.5 | Manual do Jiu-Jitsu | Português | 8:29 | 5 finalizações da montada; inclui americana e ezequiel entre elas |
+| M4.6 | FEU BJJ | Português | 2:19 | O mais curto do bloco; não confirmado se aborda o gatilho (empurrão do oponente) explicitamente |
+| M5.1 | Manual do Jiu-Jitsu | Português | 14:26 | Sobre a transição montada→costas especificamente |
+| M5.2 | Felipe Pena Preguiça | Português | 16:59 | Multicampeão mundial ADCC; série própria "FP CLASS", instrucional |
+| M5.3 ⚠️ | FEU BJJ | Português | 12:12 | "Três maneiras de aplicar"; não confirmado que trata explicitamente de neutralizar as mãos de defesa antes do ataque — ver nota abaixo |
+| M5.4 | Fabio Gurgel | Português | 3:26 | Coral, cofundador da Alliance; resumo do YouTube cita "trocas de lado", o mecanismo exato do nó |
+| M6.1 | Felipe Siqueira Jiu Jitsu | Português | 3:13 | Título exato: "Puxada para a Guarda com Segurança" |
+| M6.2 | Manual do Jiu-Jitsu | Português | 8:03 | "A primeira queda que todo iniciante deveria aprender" — nível de entrada correto para o nó |
+| M6.3 | Lawrence Luna | Português | 10:24 | Cobre a "baiana" (nome brasileiro do double leg); primeiro uso do canal aprovado pela D45/#60 |
+| M6.4 | André Machado BJJ | Português | 4:47 | Canal modesto (~19,5 mil inscritos) de professor faixa-preta; sem equivalente melhor achado |
+| M7.1 | Voūk Brasil | Português | 4:58 | "3 tipos de Kimura — pra finalizar em qualquer situação", cobrindo múltiplas posições como o nó exige |
+| M7.2 | Voūk Brasil | Português | 9:03 | Série "Jiu Jitsu de Rua"; descrito como "o vídeo mais completo" sobre guilhotina — não confirmado que a entrada específica pelo front headlock/sprawl é coberta em detalhe |
+| M7.3 | Dojjo Confere | Português | 2:12 | Roger Gracie ensinando; o mais curto do bloco, mas de fonte de altíssima credibilidade técnica |
+| M7.4 | Muito Mais Ação Jiu Jitsu | Português | 4:35 | Único candidato encontrado que trata as três finalizações como cadeia conectada, exatamente o conceito do nó |
+
+**M0–M2 são a única mistura de idioma da leva** — M0/M1 em inglês (catalogados antes da D45), M2 em
+diante inteiramente em português. **M5.3 herda a sensibilidade da M0.3** (ver nota logo abaixo da
+tabela de critérios de M5): entre os candidatos encontrados, nenhum confirmava explicitamente o
+passo de neutralizar as mãos antes do ataque ao pescoço — aceito porque o restante do vídeo (canal
+estabelecido, instrucional, sem highlight) atende ao crivo, mas fica marcado como candidato a
+revisita com prioridade equivalente à M0.3 se aparecer opção melhor.
+
+**M8 continua vazio**, inclusive M8.1: apesar de sete buscas dirigidas por "encadeamento de
+raspagens" com termos diferentes, nenhum vídeo em português encontrado tratava explicitamente o
+conceito de uma raspagem nascendo da defesa da anterior (o que existe é compilação de raspagens
+soltas) — `video: null` ficou como estava, e não foi forçado. M8.2 e M8.3 nem chegaram a ser
+buscados: a nota da tabela de critérios já explica por quê.
+
+Mesma ressalva da D21 para todo o bloco M2–M7: id, título, canal e permissão de incorporação vieram
+do YouTube; o encaixe pedagógico foi julgado pelo título, pelos capítulos do vídeo (quando o YouTube
+os gera) e pela descrição — sem assistir a nenhum por inteiro.
+
+**Distribuição de canal em M2–M7 (32 vídeos):** Manual do Jiu-Jitsu (8), Felipe Siqueira Jiu Jitsu
+(6), Muito Mais Ação Jiu Jitsu (4), FEU BJJ (3), Marcelo Galdino (2), Voūk Brasil (2), Cientistas do
+Jiu Jitsu, Micael Galvão, Lawrence Luna, André Machado BJJ, Felipe Pena Preguiça, Dojjo Confere e
+Fabio Gurgel (1 cada).
+
+O teto de um terço da #61 é sobre **os canônicos do currículo**, não sobre o bloco: nos 43
+catalogados, Manual do Jiu-Jitsu fica em 8 (18,6%) e Felipe Siqueira em 6 (14,0%) — o limite seria
+~14,3. Manual é o único que merece atenção se M8 vier a ganhar candidatos, e mesmo assim com folga
+de seis vídeos.
 
 ### Complementares catalogados (primeira leva, D32)
 
