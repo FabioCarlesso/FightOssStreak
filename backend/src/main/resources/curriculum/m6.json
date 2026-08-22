@@ -11,7 +11,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
       "concept": "Puxar guarda é uma decisão legítima em jiu-jitsu, mas é onde muita gente se machuca por pressa.\n\nO princípio é ter a pegada firme antes de sentar, e descer controlando o próprio peso — puxar guarda é levar o oponente junto com você, não simplesmente cair sentado no chão.\n\nO erro comum é soltar o corpo sem controlar o oponente antes: isso entrega uma queda por cima de você, exatamente o oposto da posição inferior segura que puxar guarda deveria criar. Antes de decidir puxar, vale perguntar se a pegada já é firme o suficiente para levar o oponente com você — se não for, ficar em pé ainda é a opção mais segura.",
-      "video": null,
+      "video": {
+        "youtubeId": "ydOxNqwsoyk",
+        "title": "Puxada para a Guarda com Segurança: Técnicas e Dicas",
+        "channel": "Felipe Siqueira Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual é o princípio central de puxar guarda com segurança?",
@@ -103,7 +107,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
       "concept": "O single leg reduz o problema da queda a uma ideia só: tirar um dos dois apoios do oponente do chão.\n\nEle exige entrada com o nível do corpo baixo — é a queda mais acessível para quem começa, porque tolera erro de distância melhor que o double leg.\n\nO erro comum é baixar o nível curvando a coluna em vez de flexionar os joelhos: isso rouba postura e força ao mesmo tempo, e a entrada chega fraca e desalinhada bem no momento em que precisaria de mais estrutura. Dobrar os joelhos custa mais esforço de perna do que curvar a coluna, e é exatamente essa diferença de esforço que costuma decidir se a queda entra ou não.",
-      "video": null,
+      "video": {
+        "youtubeId": "95ciz7Dd0jU",
+        "title": "Single Leg: A Primeira Queda que Todo Iniciante no Jiu-Jitsu Deveria Aprender",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "O single leg reduz o problema da queda a que ideia central?",
@@ -195,7 +203,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M0.2", "M0.5"],
       "concept": "O double leg ataca os dois apoios do oponente de uma vez, e por isso é mais decisivo e menos tolerante a erro do que o single leg.\n\nSem mudança de nível e sem penetração real com o passo, o ataque vira apenas um empurrão de tronco — e um empurrão de tronco qualquer sprawl simples já defende.\n\nO erro comum, além da entrada fraca, é de responsabilidade: é a queda que mais exige levar o parceiro ao chão com controle, nunca projetá-lo — o risco de lesão de uma queda mal controlada recai sobre quem está embaixo, não sobre quem aplica. É por isso que o double leg pede mais repetição supervisionada antes de ser tentado em ritmo de treino livre.",
-      "video": null,
+      "video": {
+        "youtubeId": "mkB62uB6njo",
+        "title": "O jeito certo de fazer a baiana no jiu-jitsu",
+        "channel": "Lawrence Luna"
+      },
       "quiz": [
         {
           "prompt": "O double leg ataca o quê, comparado ao single leg?",
@@ -287,7 +299,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M6.2", "M6.3"],
       "concept": "O sprawl é a resposta simétrica à entrada de queda: jogar o quadril para baixo e as pernas para trás tira exatamente aquilo que o oponente veio buscar — os seus apoios.\n\nEle vale como nó de currículo não só pela defesa: é do sprawl que nasce o front headlock, e é por isso que M7.2 depende deste nó, e não de guarda aberta.\n\nO erro comum é reagir à entrada recuando ou levantando o quadril, em vez de baixá-lo: isso mantém os apoios ao alcance do oponente exatamente onde ele já os está buscando, e a queda completa do jeito que começou. O sprawl bem executado nem sempre parece dramático — muitas vezes é só o suficiente para tirar os apoios do alcance, sem precisar de mais força que isso.",
-      "video": null,
+      "video": {
+        "youtubeId": "xwnDJsd1YrY",
+        "title": "Jiu Jitsu - 557/QG - Noções de Sprawl - Defesa de Queda - Sprawl by André Machado",
+        "channel": "André Machado BJJ"
+      },
       "quiz": [
         {
           "prompt": "O que o sprawl faz, mecanicamente, contra uma entrada de queda?",

@@ -129,7 +129,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("M0–M2 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
+    @DisplayName("M0–M7 têm vídeo catalogado; M8 segue pendente de curadoria")
     void videoCoverageMatchesCuratedScope() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
             if (hasCuratedVideo(node)) {
@@ -655,13 +655,20 @@ class CurriculumIntegrityTest {
     }
 
     /**
-     * Catalogar vídeo exige assistir (D21); M3–M8 seguem pendentes até a #61 cobri-los, bloco a
-     * bloco. M2 entrou nesta issue — a lista cresce a cada bloco, não de uma vez.
+     * Catalogar vídeo exige assistir (D21); M8 segue pendente — três nós conceituais de faixa roxa
+     * (M8.2 e M8.3 por definição do próprio `concept`; M8.1 por não ter sido encontrado candidato à
+     * altura apesar da busca) onde `video: null` é o resultado esperado, não uma lacuna. M2–M7
+     * entraram pela #61, bloco a bloco.
      */
     private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
         return node.code().startsWith("M0.")
                 || node.code().startsWith("M1.")
-                || node.code().startsWith("M2.");
+                || node.code().startsWith("M2.")
+                || node.code().startsWith("M3.")
+                || node.code().startsWith("M4.")
+                || node.code().startsWith("M5.")
+                || node.code().startsWith("M6.")
+                || node.code().startsWith("M7.");
     }
 
     private CurriculumSource.NodeSpec node(String code, List<String> prereqs) {

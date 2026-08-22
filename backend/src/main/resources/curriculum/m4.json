@@ -11,7 +11,11 @@
       "unlockRule": "ANY",
       "prereqs": ["M3.2", "M3.3"],
       "concept": "Manter o 100kg é um problema de peso, não de força: o seu peso precisa cair sobre o oponente, não sobre os seus próprios joelhos e mãos.\n\nA referência prática é o espelho de M1.3: tudo o que você aprendeu a fazer para escapar do 100kg é exatamente o que precisa negar aqui, do outro lado da posição — negar enquadramento, negar espaço, negar respiro.\n\nO erro comum é apoiar-se no próprio tatame em vez de no oponente: quem carrega o próprio corpo com os braços deixa o adversário livre para enquadrar e, mais cedo ou mais tarde, escapar. Manter o peso projetado sobre ele exige ajuste constante conforme o oponente se move, não uma postura fixa que se assume uma vez e se mantém parada.",
-      "video": null,
+      "video": {
+        "youtubeId": "WI218h_0fSc",
+        "title": "100kg no Jiu-Jitsu: Como Fazer Pressão Absurda Mesmo Sendo Leve",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Manter o 100kg é descrito, antes de tudo, como um problema de quê?",
@@ -103,7 +107,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
       "concept": "O joelho na barriga troca estabilidade por mobilidade: concentra pressão numa área pequena e desconfortável do oponente, e ao mesmo tempo deixa você alto e livre para girar.\n\nÉ a posição que melhor ilustra que controle superior não significa ficar parado — a pressão desconfortável é o que força a reação do oponente, e é dessa reação que nascem montada e costas.\n\nO erro comum é tratar o joelho na barriga como posição de descanso: ficar parado sem acompanhar a reação que a própria pressão provoca desperdiça exatamente o que a posição existe para criar. Girar de um lado para o outro, buscando novos ângulos de pressão, é o que mantém a reação constante em vez de deixar o oponente se acomodar.",
-      "video": null,
+      "video": {
+        "youtubeId": "L7L-hmvgf24",
+        "title": "Você sabe usar o joelho na barriga",
+        "channel": "Marcelo Galdino"
+      },
       "quiz": [
         {
           "prompt": "O joelho na barriga troca estabilidade por qual outra coisa?",
@@ -195,7 +203,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
       "concept": "Toda transição de posição tem um instante em que o controle diminui — é nesse instante que as fugas acontecem.\n\nPassar do 100kg para a montada é, portanto, um exercício de reduzir esse instante: bloquear o quadril do oponente antes de mover a própria perna, para que ele não tenha onde inserir o joelho enquanto você atravessa.\n\nO erro comum é inverter a ordem — mover a perna antes de bloquear o quadril. É exatamente nesse intervalo, com o controle momentaneamente reduzido, que o joelho dele entra e a fuga se abre. O detalhe é pequeno na execução, mas separa uma transição limpa de uma que devolve toda a vantagem conquistada no 100kg.",
-      "video": null,
+      "video": {
+        "youtubeId": "YWdcp_fkago",
+        "title": "DOS 100 KILOS PARA A MONTADA PERFEITA - FEU BJJ",
+        "channel": "FEU BJJ"
+      },
       "quiz": [
         {
           "prompt": "O que toda transição de posição tem em comum, segundo o conceito?",
@@ -287,7 +299,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.3"],
       "concept": "A montada é dominante e instável ao mesmo tempo: você está acima do centro de gravidade do oponente, e o que impede a ponte dele é só a sua base.\n\nO princípio é manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha — é o outro lado exato do que M1.4 ensina a fazer para escapar.\n\nO erro comum é deixar os joelhos abrirem ou o peso cair para trás: o espaço lateral que sobra é exatamente o que o elbow escape precisa para recuperar a guarda, o mesmo mecanismo que você aprendeu a explorar embaixo. Saber os dois lados da montada — mantê-la e escapar dela — é o que torna a posição administrável mesmo contra alguém que já conhece a fuga.",
-      "video": null,
+      "video": {
+        "youtubeId": "FvEmNxSG5rw",
+        "title": "Todos os detalhes para estabilizar a Montada! Aprenda agora!",
+        "channel": "Felipe Siqueira Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Por que a montada é descrita como dominante e instável ao mesmo tempo?",
@@ -379,7 +395,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1", "M4.4"],
       "concept": "A americana e o ezequiel são duas finalizações que nascem de posições que você já mantém, sem exigir abrir mão do controle — essa é a lição comum às duas.\n\nA americana pune o braço que o oponente deixa apoiado no chão em ângulo; o ezequiel usa a própria manga do gi e funciona bem justamente porque exige pouquíssimo espaço para ser armado.\n\nO erro comum é caçar finalizações que custam a posição: ataques que exigem abrir mão do 100kg ou da montada para tentar são ruins neste estágio, porque perder o controle devolve tudo o que a manutenção da posição já custou para conquistar. A escolha mais sensata costuma ser esperar pela oportunidade que já nasce dentro da posição, em vez de forçar uma que ainda não apareceu.",
-      "video": null,
+      "video": {
+        "youtubeId": "LiJjKHly97w",
+        "title": "5 Finalizações básicas partindo da Montada",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual é a lição comum entre a americana e o ezequiel?",
@@ -471,7 +491,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.4"],
       "concept": "O armlock da montada aparece quando o oponente empurra para tirar o seu peso de cima — é a punição da defesa mais instintiva de quem está embaixo da montada.\n\nReaproveita o mesmo mecanismo de ângulo e giro de quadril de M2.5, mas com uma diferença cara: aqui você troca a montada, que já é uma posição de ataque, pela tentativa de finalização, e errar significa perder o controle inteiro.\n\nO erro comum é buscar o armlock antes de o oponente empurrar de verdade: sem esse gatilho, a montada consolidada dá lugar a uma tentativa sem o mecanismo que a sustenta — e um armlock perdido da montada custa a posição inteira, não só a finalização.",
-      "video": null,
+      "video": {
+        "youtubeId": "yk-TdARSqEI",
+        "title": "ARM LOCK NA MONTADA POSIÇÃO DE JIU JITSU",
+        "channel": "FEU BJJ"
+      },
       "quiz": [
         {
           "prompt": "Quando o armlock da montada aparece, segundo o conceito?",
