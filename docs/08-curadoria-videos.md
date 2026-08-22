@@ -276,12 +276,15 @@ Mesma ressalva da D21 para todo o bloco M2–M7: id, título, canal e permissão
 do YouTube; o encaixe pedagógico foi julgado pelo título, pelos capítulos do vídeo (quando o YouTube
 os gera) e pela descrição — sem assistir a nenhum por inteiro.
 
-**Distribuição de canal em M2–M7 (32 vídeos):** Manual do Jiu-Jitsu (9), Felipe Siqueira Jiu Jitsu
-(8), Muito Mais Ação Jiu Jitsu (4), FEU BJJ (4), Marcelo Galdino (2), Voūk Brasil (2), Cientistas do
+**Distribuição de canal em M2–M7 (32 vídeos):** Manual do Jiu-Jitsu (8), Felipe Siqueira Jiu Jitsu
+(6), Muito Mais Ação Jiu Jitsu (4), FEU BJJ (3), Marcelo Galdino (2), Voūk Brasil (2), Cientistas do
 Jiu Jitsu, Micael Galvão, Lawrence Luna, André Machado BJJ, Felipe Pena Preguiça, Dojjo Confere e
-Fabio Gurgel (1 cada). Manual do Jiu-Jitsu fica em 28% e Felipe Siqueira em 25% — abaixo do teto de
-um terço, mas ambos merecem atenção se M8 vier a ganhar candidatos: um terço de 35 é ~11,7, e Manual
-já está em 9.
+Fabio Gurgel (1 cada).
+
+O teto de um terço da #61 é sobre **os canônicos do currículo**, não sobre o bloco: nos 43
+catalogados, Manual do Jiu-Jitsu fica em 8 (18,6%) e Felipe Siqueira em 6 (14,0%) — o limite seria
+~14,3. Manual é o único que merece atenção se M8 vier a ganhar candidatos, e mesmo assim com folga
+de seis vídeos.
 
 ### Complementares catalogados (primeira leva, D32)
 

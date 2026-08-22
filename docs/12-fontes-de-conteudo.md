@@ -100,10 +100,10 @@ sem candidato à altura apesar da busca — ver a nota em `08-curadoria-videos.m
 
 ## Canais usados nos canônicos de M2 a M7
 
-Treze canais novos, triados pela régua acima (Gi, instrucional, canal estabelecido, ensina o
-conceito) e pelo critério de idioma da D45, ao catalogar os blocos M2–M7 pela #61. Só **Lawrence
-Luna** vinha da lista de leads do épico #55 (triado na D45/#60, mas usado pela primeira vez em M6.3);
-os demais surgiram da busca dirigida por técnica, nó a nó.
+Treze canais, triados pela régua acima (Gi, instrucional, canal estabelecido, ensina o conceito) e
+pelo critério de idioma da D45, ao catalogar os blocos M2–M7 pela #61. Dois já vinham aprovados da
+lista de leads do épico #55 e só foram **usados** agora — **FEU BJJ** e **Lawrence Luna**, ambos
+triados na D45/#60. Os outros onze surgiram da busca dirigida por técnica, nó a nó.
 
 | Canal | Cobre bem | Já usado em |
 |---|---|---|
