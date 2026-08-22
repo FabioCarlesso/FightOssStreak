@@ -29,13 +29,19 @@ Refazer é barato (um comando), então na dúvida refaça.
 > **não** vale criar um modo que desliga o portão para capturar tela — seria porta dos fundos
 > permanente para economizar oito imagens. Sem a variável o script roda como antes e falha em `401`.
 >
-> **Defasagem zerada na #58:** as oito telas foram recapturadas. O cabeçalho voltou a bater com o
-> app — com o nome da conta e o botão *Sair* da #24 — nos três prints que de fato o mostram
+> **Defasagem zerada na #58:** os nove arquivos foram recapturados. O cabeçalho voltou a bater com
+> o app — com o nome da conta e o botão *Sair* da #24 — nos três prints que de fato o mostram
 > (`no-desktop`, `hoje-desktop`, `hoje-mobile`); nos outros o enquadramento é ancorado abaixo dele,
 > e por isso a defasagem nunca chegou a aparecer ali. `arvore-desktop` e `arvore-mobile` saíram
 > **byte a byte idênticos** aos anteriores, o que é um bom sinal: a captura é determinística, e a
-> árvore não exibe conceito nenhum. O `og.jpg` ficou de fora de propósito — é o hero da landing
-> pública, não tem cabeçalho de app e não mudou.
+> árvore não exibe conceito nenhum.
+>
+> **O `og.jpg` era o mais defasado de todos, e ninguém tinha percebido** — justamente o arquivo que
+> nenhuma tela do app contém e que é a primeira coisa que se vê ao receber o link. Ele ainda trazia
+> o hero anterior ao login: botão *Abrir o app* e a linha "**Sem cadastro** e sem cobrança". Desde a
+> #24/#52 a página diz *Pedir acesso* e "acesso sob aprovação" — e `LandingPage.tsx` tem comentário
+> explicando que a troca foi feita porque "copy que promete o que o produto não entrega é o defeito
+> que esta página existe para não ter". A prévia de link seguia fazendo exatamente essa promessa.
 
 ## Como refazer
 
@@ -167,7 +173,20 @@ Se outra tela precisar do mesmo, o campo aceita qualquer chave de enquadramento
 
 ## Prévia de link (`og.jpg`)
 
-A imagem é gerada a partir do hero da própria landing, então ela nunca fica fora de sintonia com a
-página. As tags `og:url` e `og:image` exigem URL absoluta e são injetadas no build a partir de
+A imagem é gerada a partir do hero da própria landing — o que **não** significa que ela se mantenha
+em sintonia sozinha: entre a #24 e a #58 a página mudou de copy e o `og.jpg` ficou para trás, ainda
+prometendo "Abrir o app" e "sem cadastro". Ela é o arquivo mais fácil de esquecer, porque nenhuma
+tela do app a contém e ninguém a vê navegando. **Mexeu no hero da landing, refaça o `og.jpg`.**
+
+Duas escolhas de captura, e o porquê de cada uma:
+
+- **Sem sessão.** É a prévia que quem ainda não tem conta vê. Rodar com `FOS_PRINT_COOKIE` mudaria o
+  hero para o estado de quem já entrou.
+- **Sem demonstração configurada** (`fos.demo.template-email` vazio, o padrão). Com ela ligada o hero
+  ganha o botão *Ver o app funcionando* antes do *Pedir acesso*. Capturar sem ele é a escolha
+  conservadora: ambiente que tem demonstração mostra um botão a mais do que a prévia promete, o que
+  é bem menos ruim do que o contrário.
+
+As tags `og:url` e `og:image` exigem URL absoluta e são injetadas no build a partir de
 `VITE_PUBLIC_URL` (ver `web/vite.config.ts`); sem a variável, nenhuma das duas é emitida. Cravar o
 domínio no HTML poria configuração de ambiente dentro da imagem, que é o que a D22 evita.
