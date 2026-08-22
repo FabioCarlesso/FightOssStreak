@@ -37,15 +37,16 @@ export const DEMO = {
 /**
  * Números citados na copy. Todos verificáveis no currículo — ver o teste ao lado.
  *
- * `quizModules` e `videoModules` são a parte incômoda e ficam à mostra de propósito: dizer "91
- * perguntas" sem dizer que elas cobrem 4 dos 9 módulos seria escolher o número que favorece.
+ * `videoModules` é a parte incômoda e fica à mostra de propósito: dizer "11 vídeos" sem dizer que
+ * eles cobrem só 2 dos 9 módulos seria escolher o número que favorece. `quizModules` já cobre o
+ * currículo inteiro desde a #59 (D44) — banco de 8 perguntas por nó, com rotação a cada revisão.
  */
 export const NUMEROS = {
   nodes: 46,
   modules: 9,
-  quizQuestions: 91,
-  quizNodes: 25,
-  quizModules: 'M0 a M3',
+  quizQuestions: 368,
+  quizNodes: 46,
+  quizModules: 'M0 a M8',
   canonicalVideos: 11,
   videoModules: 'M0 e M1',
   extraClips: 7,
@@ -202,8 +203,8 @@ export const STATUS: readonly StatusItem[] = [
   { label: `Currículo completo: ${NUMEROS.nodes} nós em ${NUMEROS.modules} módulos`, done: true },
   { label: 'Web ponta a ponta: árvore, quiz, drill, streak e agenda de revisão', done: true },
   {
-    label: `Quiz escrito para ${NUMEROS.quizModules} — os outros 21 nós ainda não têm`,
-    done: false,
+    label: `Banco de quiz completo: ${NUMEROS.quizQuestions} perguntas em ${NUMEROS.quizModules}, ${NUMEROS.quizNodes} de ${NUMEROS.nodes} nós`,
+    done: true,
   },
   {
     label: `Vídeo catalogado em ${NUMEROS.videoModules} — ${NUMEROS.canonicalVideos} de ${NUMEROS.nodes} nós`,

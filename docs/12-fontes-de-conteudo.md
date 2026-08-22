@@ -124,89 +124,89 @@ em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
 
 | Nó | Fontes consultadas |
 |---|---|
-| M0.1 | Canal Keenan Cornelius (vídeo canônico); regulamento IBJJF/CBJJ para a parte de regra |
-| M0.2 | Canal Knight Jiu-Jitsu (vídeo canônico) |
-| M0.3 ⚠️ | Canal Ritchie Yip (vídeo canônico) — escolha conservadora, ver seção acima |
-| M0.4 | Canal SBG PDX & Vancouver BJJ and MMA Videos (vídeo canônico) |
-| M0.5 | Canal RVV BJJ (vídeo canônico) |
+| M0.1 | Canal Keenan Cornelius (vídeo canônico); regulamento IBJJF/CBJJ para a parte de regra; +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M0.2 | Canal Knight Jiu-Jitsu (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M0.3 ⚠️ | Canal Ritchie Yip (vídeo canônico) — escolha conservadora, ver seção acima; +4 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M0.4 | Canal SBG PDX & Vancouver BJJ and MMA Videos (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M0.5 | Canal RVV BJJ (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
 
 ### M1 — Sobrevivência e Fuga
 
 | Nó | Fontes consultadas |
 |---|---|
-| M1.1 | Canal Jordan Teaches Jiujitsu (vídeo canônico) |
-| M1.2 | Canal Ritchie Yip (vídeo canônico) |
-| M1.3 | Canal Stephan Kesting (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência) |
-| M1.4 | Canal Stephan Kesting (vídeo canônico) |
-| M1.5 | Canal Jordan Teaches Jiujitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência) |
-| M1.6 | Canal Matt Arroyo Jiu Jitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência) |
+| M1.1 | Canal Jordan Teaches Jiujitsu (vídeo canônico); +4 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.2 | Canal Ritchie Yip (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.3 | Canal Stephan Kesting (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.4 | Canal Stephan Kesting (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.5 | Canal Jordan Teaches Jiujitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.6 | Canal Matt Arroyo Jiu Jitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
 
 ### M2 — Guarda Fechada
 
 | Nó | Fontes consultadas |
 |---|---|
-| M2.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M2.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M2.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
 
 ### M3 — Guarda Aberta e Passagem
 
 | Nó | Fontes consultadas |
 |---|---|
-| M3.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M3.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M3.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M3.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
 
 ### M4 — Controle Superior
 
 | Nó | Fontes consultadas |
 |---|---|
-| M4.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M4.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M4.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M4.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M4.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M4.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M4.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M4.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 
 ### M5 — Costas (Back Control)
 
 | Nó | Fontes consultadas |
 |---|---|
-| M5.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M5.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M5.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M5.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M5.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M5.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M5.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M5.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 
 ### M6 — Quedas e Entrada em Combate
 
 | Nó | Fontes consultadas |
 |---|---|
-| M6.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M6.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M6.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M6.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M6.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M6.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M6.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M6.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 
 ### M7 — Finalizações Encadeadas
 
 | Nó | Fontes consultadas |
 |---|---|
-| M7.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M7.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M7.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M7.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M7.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M7.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M7.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M7.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 
 ### M8 — Jogo Integrado
 
 | Nó | Fontes consultadas |
 |---|---|
-| M8.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M8.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
-| M8.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43) |
+| M8.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M8.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+| M8.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |

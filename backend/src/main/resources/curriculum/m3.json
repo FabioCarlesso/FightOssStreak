@@ -52,6 +52,46 @@
             { "text": "Impedem que ele aplique qualquer finalização", "correct": false },
             { "text": "Existem para pontuar em competição de gi", "correct": false }
           ]
+        },
+        {
+          "prompt": "Por que as duas pontas da distância (longe ou perto) são consideradas seguras na guarda aberta?",
+          "explanation": "Porque nas duas você tem informação e contato suficientes para reagir — é a faixa intermediária que tira essa vantagem.",
+          "options": [
+            { "text": "Porque nas duas você tem informação e contato suficientes para reagir", "correct": true },
+            { "text": "Porque nelas o oponente não pode se mover", "correct": false },
+            { "text": "Porque nelas você sempre está atacando", "correct": false },
+            { "text": "Porque a distância intermediária não existe de fato", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que fazer ao perceber que está na distância intermediária da guarda aberta?",
+          "explanation": "É sinal de que precisa fechar para controlar de perto ou abrir para negar o alcance dele — ficar parado ali é o que costuma custar a guarda.",
+          "options": [
+            { "text": "Fechar para controlar ou abrir para negar o alcance dele", "correct": true },
+            { "text": "Nada — a distância intermediária é uma fase de transição inofensiva", "correct": false },
+            { "text": "É sinal de que a guarda já foi passada", "correct": false },
+            { "text": "É o momento certo de fechar a guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Pés e joelhos como 'enquadramento móvel' cumprem função parecida com qual outro enquadramento do currículo?",
+          "explanation": "O frame de braço que sustenta espaço embaixo do 100kg (M1.3) — a ideia de negar espaço com estrutura se repete nos dois nós.",
+          "options": [
+            { "text": "O frame de braço que sustenta espaço embaixo do 100kg", "correct": true },
+            { "text": "A pegada de gola do cross collar", "correct": false },
+            { "text": "O giro de quadril do armlock", "correct": false },
+            { "text": "A base de quadrupedia de M0.4", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que cada pegada é descrita como uma restrição, e não como um controle de ataque?",
+          "explanation": "Porque elimina caminhos de passagem e obriga o oponente a jogar onde você já espera — o efeito é sobre as opções dele, não sobre dano.",
+          "options": [
+            { "text": "Porque elimina caminhos de passagem e obriga o oponente a jogar onde você espera", "correct": true },
+            { "text": "Porque pegada nunca serve para atacar, só para defender", "correct": false },
+            { "text": "Porque toda pegada machuca o oponente com o tempo", "correct": false },
+            { "text": "Porque sem pegada nenhuma passagem é possível", "correct": false }
+          ]
         }
       ]
     },
@@ -103,6 +143,46 @@
             { "text": "Insistir na torreando com mais velocidade", "correct": false },
             { "text": "Recuar e esperar que ele venha até você", "correct": false },
             { "text": "Levantá-lo do chão para tirar a referência dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a torreando é chamada de 'passagem por fora'?",
+          "explanation": "Porque ela desloca as pernas do oponente para um lado e ocupa o espaço que sobrou do outro, em vez de disputar as pernas na força.",
+          "options": [
+            { "text": "Porque ela desloca as pernas do oponente e ocupa o espaço que sobrou", "correct": true },
+            { "text": "Porque ela só funciona fora do tatame de competição", "correct": false },
+            { "text": "Porque o passador fica de pé o tempo todo", "correct": false },
+            { "text": "Porque ela ataca as costas do oponente diretamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o controle das calças do oponente permite na torreando?",
+          "explanation": "Deslocar as pernas dele para criar o ângulo da passagem — sem esse controle não há como direcionar o deslocamento.",
+          "options": [
+            { "text": "Deslocar as pernas dele para criar o ângulo da passagem", "correct": true },
+            { "text": "Imobilizar o oponente sem precisar de ângulo nenhum", "correct": false },
+            { "text": "Substituir a necessidade de mudar de direção", "correct": false },
+            { "text": "Preparar uma finalização de perna", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Perder a corrida de reposicionamento de quadril na torreando resulta em quê?",
+          "explanation": "O oponente reencontra a guarda todas as vezes — é uma corrida, e perdê-la devolve a posição de guarda por completo.",
+          "options": [
+            { "text": "O oponente reencontra a guarda todas as vezes", "correct": true },
+            { "text": "Você é obrigado a devolver a posição em pé", "correct": false },
+            { "text": "A passagem sai mais lenta, mas ainda funciona", "correct": false },
+            { "text": "O oponente perde a base e é raspado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O avanço frontal contra as duas pernas do oponente, sem mudança de direção, caracteriza:",
+          "explanation": "O erro típico de quem tenta passar em linha reta na torreando — a passagem existe por causa do ângulo, e sem ele vira só um empurrão contra duas pernas inteiras.",
+          "options": [
+            { "text": "O erro típico de quem tenta passar em linha reta na torreando", "correct": true },
+            { "text": "A execução correta contra oponentes mais pesados", "correct": false },
+            { "text": "A fase inicial obrigatória de toda torreando", "correct": false },
+            { "text": "Uma variação válida quando o oponente está cansado", "correct": false }
           ]
         }
       ]
@@ -156,6 +236,46 @@
             { "text": "Você escolheu o lado errado para passar", "correct": false },
             { "text": "Você deveria ter ficado de pé antes de avançar", "correct": false }
           ]
+        },
+        {
+          "prompt": "Por que um avanço grande de uma vez é arriscado na passagem por cima?",
+          "explanation": "Porque normalmente exige aliviar a pressão, e é nesse instante que a guarda volta — a regra é avançar pouco e não devolver espaço.",
+          "options": [
+            { "text": "Porque normalmente exige aliviar a pressão, e é aí que a guarda volta", "correct": true },
+            { "text": "Porque cansa mais rápido do que avanços pequenos", "correct": false },
+            { "text": "Porque as regras de competição penalizam avanços grandes", "correct": false },
+            { "text": "Porque expõe você a uma raspagem de tesoura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Esmagar as pernas do oponente contra o próprio corpo serve para:",
+          "explanation": "Fechar o espaço e sustentar a pressão que caracteriza essa passagem — é a base de toda a estratégia por cima.",
+          "options": [
+            { "text": "Fechar o espaço e sustentar a pressão que caracteriza essa passagem", "correct": true },
+            { "text": "Machucar o oponente até ele desistir de defender", "correct": false },
+            { "text": "Substituir a necessidade de controlar as calças", "correct": false },
+            { "text": "Preparar uma finalização de perna imediata", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a regra que nunca pode ser quebrada durante o avanço da passagem por cima?",
+          "explanation": "Nunca devolver o espaço já conquistado — é essa regra que separa avanço seguro de guarda recuperada.",
+          "options": [
+            { "text": "Nunca devolver o espaço já conquistado", "correct": true },
+            { "text": "Nunca trocar de pegada, em hipótese nenhuma", "correct": false },
+            { "text": "Nunca ficar de joelhos, só em pé", "correct": false },
+            { "text": "Nunca durar mais que alguns segundos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O enquadramento que o oponente usa para recuperar espaço na passagem por cima é o mesmo de qual outro nó?",
+          "explanation": "O enquadramento (frame) da fuga de 100kg, de M1.3 — o mesmo mecanismo que serve para escapar também serve para reabrir a guarda contra quem passa por pressão.",
+          "options": [
+            { "text": "O enquadramento (frame) da fuga de 100kg, de M1.3", "correct": true },
+            { "text": "O enquadramento móvel da guarda aberta, de M3.1", "correct": false },
+            { "text": "O giro de quadril do armlock, de M2.5", "correct": false },
+            { "text": "A base de quadrupedia, de M0.4", "correct": false }
+          ]
         }
       ]
     },
@@ -207,6 +327,46 @@
             { "text": "A raspagem sai igual, apenas mais devagar", "correct": false },
             { "text": "Você fica em posição defensiva segura", "correct": false },
             { "text": "Ele é obrigado a ficar de pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o oponente tenta fazer assim que sente o gancho da butterfly entrar?",
+          "explanation": "Romper a conexão de tronco que sustenta a raspagem — é por isso que manter esse contato exige ajuste contínuo.",
+          "options": [
+            { "text": "Romper a conexão de tronco que sustenta a raspagem", "correct": true },
+            { "text": "Fechar a própria guarda para se proteger", "correct": false },
+            { "text": "Levantar e sair da distância imediatamente", "correct": false },
+            { "text": "Trocar a pegada de manga pela de gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Manter a conexão de tronco na butterfly exige o quê, na prática?",
+          "explanation": "Ajuste contínuo, porque o oponente tenta romper esse contato o tempo todo assim que sente o gancho.",
+          "options": [
+            { "text": "Ajuste contínuo, porque o oponente tenta romper esse contato o tempo todo", "correct": true },
+            { "text": "Nenhum ajuste depois que o gancho entra", "correct": false },
+            { "text": "Trocar de gancho a cada poucos segundos", "correct": false },
+            { "text": "Manter as duas mãos sempre na gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que diferencia a butterfly de uma guarda que usa as pernas como barreira?",
+          "explanation": "Nela as pernas erguem o oponente, em vez de só mantê-lo afastado — é essa troca de função que a torna uma guarda de elevação.",
+          "options": [
+            { "text": "Nela as pernas erguem o oponente, em vez de só mantê-lo afastado", "correct": true },
+            { "text": "A butterfly não usa nenhuma pegada de gi", "correct": false },
+            { "text": "A butterfly exige o oponente de pé, nunca sentado", "correct": false },
+            { "text": "Não há diferença real entre as duas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a distância intermediária é a pior possível quando você já está sentado na butterfly?",
+          "explanation": "Porque os ganchos não conseguem levantar nada sem a conexão de tronco — sentado e sem contato, você não tem nem a barreira de uma guarda fechada nem a elevação da butterfly.",
+          "options": [
+            { "text": "Porque os ganchos não conseguem levantar nada sem a conexão de tronco", "correct": true },
+            { "text": "Porque nela o oponente sempre consegue finalizar primeiro", "correct": false },
+            { "text": "Porque ela impede fechar a guarda", "correct": false },
+            { "text": "Porque ela é ilegal em competição", "correct": false }
           ]
         }
       ]
@@ -260,6 +420,46 @@
             { "text": "Ela dispensa qualquer pegada de mão", "correct": false },
             { "text": "É a única raspagem que funciona a partir de sentado", "correct": false }
           ]
+        },
+        {
+          "prompt": "Qual é a correção certa quando a raspagem de butterfly trava por falta de força?",
+          "explanation": "Deslocar o peso do próprio tronco para o lado, não forçar mais a perna — a força de uma perna sozinha não move um corpo bem apoiado.",
+          "options": [
+            { "text": "Deslocar o peso do próprio tronco para o lado, não forçar a perna", "correct": true },
+            { "text": "Levantar o gancho mais alto na coxa dele", "correct": false },
+            { "text": "Puxar com mais força a pegada nas costas", "correct": false },
+            { "text": "Trocar para o gancho do outro lado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a inclinação do tronco acrescenta ao trabalho que o gancho já faz?",
+          "explanation": "O peso do seu corpo inteiro no movimento, além da elevação que o gancho já produz sozinho.",
+          "options": [
+            { "text": "O peso do seu corpo inteiro no movimento, além da elevação do gancho", "correct": true },
+            { "text": "Nada — o gancho sozinho já é suficiente", "correct": false },
+            { "text": "Uma segunda linha de ataque, independente do gancho", "correct": false },
+            { "text": "Mais altura na elevação, sem mudar a direção", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Mandar o oponente para o lado onde ele ainda tem apoio, na raspagem de butterfly, resulta em:",
+          "explanation": "Empurrar contra a base dele, o que não o derruba — o princípio é sempre mandá-lo para o lado sem apoio.",
+          "options": [
+            { "text": "Empurrar contra a base dele, o que não o derruba", "correct": true },
+            { "text": "A raspagem sai igual, só que mais devagar", "correct": false },
+            { "text": "Uma finalização automática de perna", "correct": false },
+            { "text": "A recuperação da guarda fechada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Se o oponente já está sem apoio de um lado, o que ainda falta para completar a raspagem de butterfly?",
+          "explanation": "Inclinar o próprio tronco para esse lado, jogando o peso do corpo no movimento — o gancho já fez a parte de elevar, falta a direção do tronco.",
+          "options": [
+            { "text": "Inclinar o próprio tronco para esse lado, jogando o peso no movimento", "correct": true },
+            { "text": "Nada — a raspagem já está completa nesse ponto", "correct": false },
+            { "text": "Trocar o gancho de perna antes de continuar", "correct": false },
+            { "text": "Soltar a pegada nas costas para ganhar velocidade", "correct": false }
+          ]
         }
       ]
     },
@@ -312,6 +512,46 @@
             { "text": "Nada — a perna presa impede qualquer avanço", "correct": false },
             { "text": "Que ele perca a base e caia sozinho para o lado", "correct": false }
           ]
+        },
+        {
+          "prompt": "Entre recuperar o antebraço e ajustar a perna presa, qual é mais urgente quando o enquadramento é perdido?",
+          "explanation": "Recuperar o antebraço — sem ele o ataque à passagem já começou, e a perna presa sozinha só atrasa o inevitável.",
+          "options": [
+            { "text": "Recuperar o antebraço, porque sem ele o ataque à passagem já começou", "correct": true },
+            { "text": "Ajustar a perna, porque é ela que sustenta a posição inteira", "correct": false },
+            { "text": "As duas coisas têm a mesma urgência sempre", "correct": false },
+            { "text": "Nenhuma das duas — a prioridade é sempre a pegada de gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a perna presa sozinha, sem enquadramento de tronco, consegue fazer contra a passagem?",
+          "explanation": "Apenas atrasar o inevitável, sem criar ataque nenhum — é o antebraço que preserva o espaço para atacar.",
+          "options": [
+            { "text": "Apenas atrasar o inevitável, sem criar ataque nenhum", "correct": true },
+            { "text": "Impedir a passagem por completo, mesmo sem enquadramento", "correct": false },
+            { "text": "Substituir totalmente a função do antebraço", "correct": false },
+            { "text": "Transformar a posição em guarda aberta automaticamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o antebraço no lugar certo garante, na meia-guarda, além de evitar o esmagamento?",
+          "explanation": "A chance de chegar embaixo do oponente — é dali que saem as raspagens do módulo. Sem esse espaço, sobra só resistir ao peso.",
+          "options": [
+            { "text": "A chance de chegar embaixo do oponente, de onde saem as raspagens", "correct": true },
+            { "text": "Uma finalização de braço automática", "correct": false },
+            { "text": "A liberação imediata da perna presa", "correct": false },
+            { "text": "A troca automática para guarda aberta", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a diferença entre uma meia-guarda com enquadramento e uma sem ele, segundo o conceito?",
+          "explanation": "Sem enquadramento ela vira só um 100kg com uma perna dentro — pressão sem espaço para trabalhar. Com ele, existe caminho para as raspagens do módulo.",
+          "options": [
+            { "text": "Sem enquadramento ela vira um 100kg com uma perna dentro; com ele, abre raspagem", "correct": true },
+            { "text": "Não há diferença prática entre as duas", "correct": false },
+            { "text": "Sem enquadramento ela vira guarda aberta automaticamente", "correct": false },
+            { "text": "A diferença só aparece quando a perna presa solta", "correct": false }
+          ]
         }
       ]
     },
@@ -363,6 +603,46 @@
             { "text": "Porque o enquadramento é o que segura o tornozelo", "correct": false },
             { "text": "Porque é preciso travar as duas pernas antes de raspar", "correct": false },
             { "text": "Porque a ordem dos nós no currículo exige", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o controle do tornozelo do oponente impede, na old school?",
+          "explanation": "Que ele reponha o pé para recuperar a base — é a segunda metade da tenaz, junto do ombro por baixo do centro de gravidade.",
+          "options": [
+            { "text": "Que ele reponha o pé para recuperar a base", "correct": true },
+            { "text": "Que ele use as mãos para se defender", "correct": false },
+            { "text": "Que ele role para o outro lado", "correct": false },
+            { "text": "Que ele respire livremente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem o ombro por baixo do centro de gravidade do oponente, o controle do tornozelo sozinho consegue derrubá-lo?",
+          "explanation": "Não — ele mantém a base e apenas descarrega peso sobre você. Os dois elementos precisam agir juntos.",
+          "options": [
+            { "text": "Não — ele mantém a base e apenas descarrega peso sobre você", "correct": true },
+            { "text": "Sim, o tornozelo sozinho já é suficiente", "correct": false },
+            { "text": "Sim, mas só contra oponentes mais leves", "correct": false },
+            { "text": "Não, porque o tornozelo não tem relação com a base", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a old school é descrita como a demonstração mais clara de que raspagem eficiente remove apoio em vez de aplicar força?",
+          "explanation": "Porque, sem base nos dois lados, o oponente cai pelo próprio peso — não é força que o derruba, é a ausência de apoio.",
+          "options": [
+            { "text": "Porque, sem base nos dois lados, o oponente cai pelo próprio peso", "correct": true },
+            { "text": "Porque ela exige mais força que qualquer outra raspagem do currículo", "correct": false },
+            { "text": "Porque ela funciona só contra oponentes já desequilibrados de antemão", "correct": false },
+            { "text": "Porque ela dispensa qualquer controle de tornozelo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A base do oponente 'desaparecer dos dois lados' na old school significa o quê, exatamente?",
+          "explanation": "Que ele perde o apoio de cima (o ombro tira a base do centro de gravidade) e o apoio do pé (o tornozelo controlado impede repor) ao mesmo tempo.",
+          "options": [
+            { "text": "Que ele perde o apoio de cima (ombro) e o apoio do pé (tornozelo) juntos", "correct": true },
+            { "text": "Que os dois lutadores ficam sem nenhum apoio no chão", "correct": false },
+            { "text": "Que a perna presa da meia-guarda solta dos dois lados", "correct": false },
+            { "text": "Que o oponente perde as duas mãos de apoio no tatame", "correct": false }
           ]
         }
       ]

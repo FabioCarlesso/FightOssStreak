@@ -16,5 +16,14 @@ public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> 
      */
     List<QuizAttempt> findByUserIdOrderByAttemptedOnAscIdAsc(Long userId);
 
+    /**
+     * Número de tentativas já gravadas para (usuário, nó) — inclusive reprovadas e refeitas.
+     *
+     * <p>É o {@code n} da rotação de banco de perguntas (issue #59, D44): a próxima tentativa serve
+     * a fatia seguinte do banco. Não é preciso estado novo porque {@code quiz_attempt} já registra
+     * uma linha por submissão.
+     */
+    long countByUserIdAndNodeId(Long userId, Long nodeId);
+
     void deleteByUserId(Long userId);
 }

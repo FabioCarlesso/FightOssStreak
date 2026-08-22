@@ -1,7 +1,7 @@
 {
   "code": "M6",
   "title": "Quedas e Entrada em Combate",
-  "summary": "Trilha paralela — pode ser cursada cedo, logo após M0. Quiz pendente de curadoria.",
+  "summary": "Trilha paralela — pode ser cursada cedo, logo após M0.",
   "nodes": [
     {
       "code": "M6.1",
@@ -12,7 +12,88 @@
       "prereqs": ["M0.2", "M0.5"],
       "concept": "Puxar guarda é uma decisão legítima em jiu-jitsu, mas é onde muita gente se machuca por pressa.\n\nO princípio é ter a pegada firme antes de sentar, e descer controlando o próprio peso — puxar guarda é levar o oponente junto com você, não simplesmente cair sentado no chão.\n\nO erro comum é soltar o corpo sem controlar o oponente antes: isso entrega uma queda por cima de você, exatamente o oposto da posição inferior segura que puxar guarda deveria criar. Antes de decidir puxar, vale perguntar se a pegada já é firme o suficiente para levar o oponente com você — se não for, ficar em pé ainda é a opção mais segura.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Qual é o princípio central de puxar guarda com segurança?",
+          "explanation": "Ter a pegada firme antes de sentar e descer controlando o próprio peso é o que separa puxar guarda de simplesmente cair sentado no chão.",
+          "options": [
+            { "text": "Ter a pegada firme antes de sentar e descer controlando o próprio peso", "correct": true },
+            { "text": "Sentar o mais rápido possível para surpreender o oponente", "correct": false },
+            { "text": "Soltar o corpo assim que sentir o primeiro contato", "correct": false },
+            { "text": "Escolher sempre puxar guarda em vez de ficar em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que puxar guarda malfeito é perigoso?",
+          "explanation": "Soltar o corpo sem controlar o oponente antes entrega uma queda por cima de você — o oposto da posição inferior segura que puxar guarda deveria criar.",
+          "options": [
+            { "text": "Solta o corpo sem controlar o oponente antes, entregando uma queda por cima de você", "correct": true },
+            { "text": "Sempre machuca o joelho de quem senta", "correct": false },
+            { "text": "Deixa a guarda aberta demais para qualquer raspagem", "correct": false },
+            { "text": "Cansa mais do que ficar em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que puxar guarda bem executado deveria criar?",
+          "explanation": "O objetivo é uma posição inferior segura, com o oponente controlado — não uma queda por cima de quem puxou.",
+          "options": [
+            { "text": "Uma posição inferior segura, com o oponente controlado", "correct": true },
+            { "text": "Uma vantagem de pontos imediata", "correct": false },
+            { "text": "Uma pegada de gola automática", "correct": false },
+            { "text": "A abertura direta para uma raspagem", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Antes de decidir puxar guarda, qual pergunta o conceito sugere fazer?",
+          "explanation": "Se a pegada ainda não é firme o suficiente para levar o oponente com você, puxar guarda troca uma posição segura aparente por uma queda recebida.",
+          "options": [
+            { "text": "Se a pegada já é firme o suficiente para levar o oponente com você", "correct": true },
+            { "text": "Se o oponente está cansado o bastante", "correct": false },
+            { "text": "Se há espaço suficiente no tatame", "correct": false },
+            { "text": "Se o treino já passou da metade do tempo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Se a pegada ainda não está firme, qual é a opção mais segura?",
+          "explanation": "Sem pegada firme, puxar guarda arrisca a queda por cima que o movimento deveria evitar — ficar em pé é o que o texto recomenda nesse caso.",
+          "options": [
+            { "text": "Ficar em pé", "correct": true },
+            { "text": "Puxar guarda mesmo assim, rápido", "correct": false },
+            { "text": "Esperar o oponente atacar primeiro, parado", "correct": false },
+            { "text": "Trocar de pegada no meio da queda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que significa, na prática, \"levar o oponente junto com você\" ao puxar guarda?",
+          "explanation": "É descer controlando o próprio peso e o do oponente ao mesmo tempo — diferente de cair sentado sozinho e deixar o oponente livre para atacar por cima.",
+          "options": [
+            { "text": "Descer controlando o próprio peso e o do oponente ao mesmo tempo", "correct": true },
+            { "text": "Aplicar uma raspagem imediatamente ao sentar", "correct": false },
+            { "text": "Prender as duas mangas antes de tudo", "correct": false },
+            { "text": "Esperar ele se abaixar primeiro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual erro comum o conceito descreve em quem puxa guarda por pressa?",
+          "explanation": "O erro comum é soltar o corpo sem ter controlado o oponente antes — é isso que entrega a queda por cima.",
+          "options": [
+            { "text": "Soltar o corpo sem ter controlado o oponente antes", "correct": true },
+            { "text": "Escolher a guarda fechada em vez da aberta", "correct": false },
+            { "text": "Sentar de lado em vez de de frente", "correct": false },
+            { "text": "Puxar guarda contra alguém mais leve", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o texto trata puxar guarda como \"decisão legítima\", e não como erro em si?",
+          "explanation": "Bem executado — com pegada firme e peso controlado — puxar guarda cria uma posição segura; o problema descrito é só quando isso é feito por pressa.",
+          "options": [
+            { "text": "Porque, bem executado, cria uma posição inferior segura e controlada — o problema é a pressa", "correct": true },
+            { "text": "Porque sempre garante uma raspagem em seguida", "correct": false },
+            { "text": "Porque é a única forma de evitar qualquer queda", "correct": false },
+            { "text": "Porque conta pontos em qualquer competição", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M6.2",
@@ -23,7 +104,88 @@
       "prereqs": ["M0.2", "M0.5"],
       "concept": "O single leg reduz o problema da queda a uma ideia só: tirar um dos dois apoios do oponente do chão.\n\nEle exige entrada com o nível do corpo baixo — é a queda mais acessível para quem começa, porque tolera erro de distância melhor que o double leg.\n\nO erro comum é baixar o nível curvando a coluna em vez de flexionar os joelhos: isso rouba postura e força ao mesmo tempo, e a entrada chega fraca e desalinhada bem no momento em que precisaria de mais estrutura. Dobrar os joelhos custa mais esforço de perna do que curvar a coluna, e é exatamente essa diferença de esforço que costuma decidir se a queda entra ou não.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O single leg reduz o problema da queda a que ideia central?",
+          "explanation": "Tirar um dos dois apoios do oponente do chão é o mecanismo que resume o single leg, segundo o conceito.",
+          "options": [
+            { "text": "Tirar um dos dois apoios do oponente do chão", "correct": true },
+            { "text": "Derrubar os dois apoios ao mesmo tempo", "correct": false },
+            { "text": "Cansar o oponente antes de atacar", "correct": false },
+            { "text": "Prender as duas mãos dele primeiro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o single leg exige na entrada?",
+          "explanation": "A entrada exige nível do corpo baixo — é isso que sustenta o ataque a um único apoio.",
+          "options": [
+            { "text": "Nível do corpo baixo", "correct": true },
+            { "text": "Pegada dupla na gola", "correct": false },
+            { "text": "Distância máxima do oponente", "correct": false },
+            { "text": "Giro completo de quadril", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o single leg é a queda mais acessível para quem começa?",
+          "explanation": "Ele tolera erro de distância melhor que o double leg, o que reduz a margem de falha para quem ainda está aprendendo a entrada.",
+          "options": [
+            { "text": "Tolera erro de distância melhor que o double leg", "correct": true },
+            { "text": "Não exige contato físico nenhum", "correct": false },
+            { "text": "Funciona sem abaixar o nível do corpo", "correct": false },
+            { "text": "É a única queda permitida para faixa branca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao baixar o nível para o single leg?",
+          "explanation": "O erro comum é curvar a coluna em vez de flexionar os joelhos — isso rouba postura e força ao mesmo tempo.",
+          "options": [
+            { "text": "Curvar a coluna em vez de flexionar os joelhos", "correct": true },
+            { "text": "Flexionar os joelhos além do necessário", "correct": false },
+            { "text": "Manter a coluna reta demais", "correct": false },
+            { "text": "Abaixar o nível rápido demais", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que curvar a coluna rouba, ao entrar no single leg?",
+          "explanation": "Curvar a coluna rouba postura e força ao mesmo tempo, deixando a entrada fraca e desalinhada no momento em que mais precisaria de estrutura.",
+          "options": [
+            { "text": "Postura e força ao mesmo tempo", "correct": true },
+            { "text": "Só o equilíbrio, nada além disso", "correct": false },
+            { "text": "Apenas a velocidade da entrada", "correct": false },
+            { "text": "Só a visão do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que flexionar os joelhos, mesmo custando mais esforço de perna, é a escolha certa?",
+          "explanation": "É exatamente essa diferença de esforço — mais perna, menos coluna — que costuma decidir se a queda entra ou não.",
+          "options": [
+            { "text": "Porque essa diferença de esforço é o que costuma decidir se a queda entra", "correct": true },
+            { "text": "Porque flexionar os joelhos nunca cansa", "correct": false },
+            { "text": "Porque deixa a entrada mais lenta, e isso ajuda", "correct": false },
+            { "text": "Porque exige tirar as mãos do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando a entrada do single leg chega fraca e desalinhada?",
+          "explanation": "Ela chega assim exatamente no momento em que precisaria de mais estrutura, e é isso que costuma fazer a queda falhar.",
+          "options": [
+            { "text": "Chega no momento em que mais precisaria de estrutura, e a queda tende a falhar", "correct": true },
+            { "text": "A queda funciona igual, só mais devagar", "correct": false },
+            { "text": "O oponente é obrigado a recuar sozinho", "correct": false },
+            { "text": "Vira automaticamente um double leg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Em relação ao double leg, o que o texto diz sobre o single leg?",
+          "explanation": "O single leg tolera melhor erro de distância, o que o torna mais acessível para quem está começando.",
+          "options": [
+            { "text": "É mais tolerante a erro de distância, o que o torna mais acessível a iniciantes", "correct": true },
+            { "text": "É igualmente decisivo e igualmente pouco tolerante a erro", "correct": false },
+            { "text": "É mais perigoso para quem aplica a queda", "correct": false },
+            { "text": "Depende de pegada de gola, ao contrário do double leg", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M6.3",
@@ -34,7 +196,88 @@
       "prereqs": ["M0.2", "M0.5"],
       "concept": "O double leg ataca os dois apoios do oponente de uma vez, e por isso é mais decisivo e menos tolerante a erro do que o single leg.\n\nSem mudança de nível e sem penetração real com o passo, o ataque vira apenas um empurrão de tronco — e um empurrão de tronco qualquer sprawl simples já defende.\n\nO erro comum, além da entrada fraca, é de responsabilidade: é a queda que mais exige levar o parceiro ao chão com controle, nunca projetá-lo — o risco de lesão de uma queda mal controlada recai sobre quem está embaixo, não sobre quem aplica. É por isso que o double leg pede mais repetição supervisionada antes de ser tentado em ritmo de treino livre.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O double leg ataca o quê, comparado ao single leg?",
+          "explanation": "Ele ataca os dois apoios do oponente de uma vez, e não só um deles.",
+          "options": [
+            { "text": "Os dois apoios do oponente de uma vez", "correct": true },
+            { "text": "Só o apoio mais próximo", "correct": false },
+            { "text": "A pegada de gola do oponente", "correct": false },
+            { "text": "O equilíbrio pela respiração dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o double leg é mais decisivo e menos tolerante a erro que o single leg?",
+          "explanation": "Atacar os dois apoios ao mesmo tempo deixa menos margem para errar a distância de entrada.",
+          "options": [
+            { "text": "Porque ataca os dois apoios ao mesmo tempo, sem margem para errar a distância", "correct": true },
+            { "text": "Porque exige menos força que o single leg", "correct": false },
+            { "text": "Porque não depende de nível baixo do corpo", "correct": false },
+            { "text": "Porque é mais lento e dá tempo de corrigir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem mudança de nível e penetração real com o passo, o double leg vira o quê?",
+          "explanation": "Sem esses dois elementos, o ataque vira apenas um empurrão de tronco.",
+          "options": [
+            { "text": "Apenas um empurrão de tronco", "correct": true },
+            { "text": "Um single leg automático", "correct": false },
+            { "text": "Uma queda ainda eficaz, só mais lenta", "correct": false },
+            { "text": "Uma raspagem de guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Um empurrão de tronco sem mudança de nível é facilmente defendido por:",
+          "explanation": "Qualquer sprawl simples já defende um empurrão de tronco sem mudança de nível nem penetração real.",
+          "options": [
+            { "text": "Qualquer sprawl simples", "correct": true },
+            { "text": "Nenhuma defesa — é sempre eficaz", "correct": false },
+            { "text": "Somente lutadores muito avançados", "correct": false },
+            { "text": "Apenas quem já sabe puxar guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Além da entrada fraca, qual é o erro comum descrito para o double leg?",
+          "explanation": "É um erro de responsabilidade: não levar o parceiro ao chão com controle, projetando-o em vez de conduzi-lo.",
+          "options": [
+            { "text": "Não levar o parceiro ao chão com controle — projetá-lo em vez de conduzi-lo", "correct": true },
+            { "text": "Escolher a perna errada para atacar", "correct": false },
+            { "text": "Não avisar o parceiro antes de atacar", "correct": false },
+            { "text": "Atacar de uma distância grande demais", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sobre quem recai o risco de lesão de um double leg mal controlado, segundo o texto?",
+          "explanation": "O risco recai sobre quem está embaixo, não sobre quem aplica a queda — daí a exigência extra de controle.",
+          "options": [
+            { "text": "Sobre quem está embaixo, não sobre quem aplica", "correct": true },
+            { "text": "Sobre quem aplica a queda", "correct": false },
+            { "text": "Sobre os dois igualmente, sempre", "correct": false },
+            { "text": "Sobre nenhum dos dois — é seguro por natureza", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o double leg pede mais repetição supervisionada antes do treino livre?",
+          "explanation": "Porque é a queda que mais exige controle ao levar o parceiro ao chão, dado o risco de lesão de uma queda mal controlada.",
+          "options": [
+            { "text": "Porque é a queda que mais exige controle ao levar o parceiro ao chão", "correct": true },
+            { "text": "Porque é proibida para faixas brancas", "correct": false },
+            { "text": "Porque exige mais força física que qualquer outra queda", "correct": false },
+            { "text": "Porque não funciona sem gi", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que caracteriza uma entrada correta de double leg, segundo o conceito?",
+          "explanation": "Mudança de nível com penetração real do passo é o que evita que o ataque vire apenas um empurrão de tronco.",
+          "options": [
+            { "text": "Mudança de nível com penetração real do passo", "correct": true },
+            { "text": "Pegada firme na manga antes de tudo", "correct": false },
+            { "text": "Ficar parado esperando o oponente avançar", "correct": false },
+            { "text": "Girar o quadril antes de abaixar o nível", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M6.4",
@@ -45,7 +288,88 @@
       "prereqs": ["M6.2", "M6.3"],
       "concept": "O sprawl é a resposta simétrica à entrada de queda: jogar o quadril para baixo e as pernas para trás tira exatamente aquilo que o oponente veio buscar — os seus apoios.\n\nEle vale como nó de currículo não só pela defesa: é do sprawl que nasce o front headlock, e é por isso que M7.2 depende deste nó, e não de guarda aberta.\n\nO erro comum é reagir à entrada recuando ou levantando o quadril, em vez de baixá-lo: isso mantém os apoios ao alcance do oponente exatamente onde ele já os está buscando, e a queda completa do jeito que começou. O sprawl bem executado nem sempre parece dramático — muitas vezes é só o suficiente para tirar os apoios do alcance, sem precisar de mais força que isso.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que o sprawl faz, mecanicamente, contra uma entrada de queda?",
+          "explanation": "Ele joga o quadril para baixo e as pernas para trás, tirando exatamente os apoios que o oponente veio buscar.",
+          "options": [
+            { "text": "Joga o quadril para baixo e as pernas para trás, tirando os apoios buscados", "correct": true },
+            { "text": "Empurra o oponente pelos ombros para trás", "correct": false },
+            { "text": "Prende as duas pernas dele no chão", "correct": false },
+            { "text": "Levanta o quadril para ganhar altura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o sprawl vale como nó de currículo além da defesa de queda?",
+          "explanation": "Porque é dele que nasce o front headlock, uma posição de ataque estudada em outro nó.",
+          "options": [
+            { "text": "Porque é dele que nasce o front headlock", "correct": true },
+            { "text": "Porque pontua em competição", "correct": false },
+            { "text": "Porque substitui a necessidade de puxar guarda", "correct": false },
+            { "text": "Porque é pré-requisito de todas as passagens de guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que M7.2 (front headlock e guilhotina) depende deste nó, e não de guarda aberta?",
+          "explanation": "Porque o front headlock nasce de um sprawl bem-sucedido — a dependência é dessa origem, não de guarda aberta.",
+          "options": [
+            { "text": "Porque o front headlock nasce de um sprawl bem-sucedido", "correct": true },
+            { "text": "Porque guarda aberta ainda não existe nesse ponto do currículo", "correct": false },
+            { "text": "Porque o sprawl é mais fácil de ensinar", "correct": false },
+            { "text": "Porque a guilhotina exige estar de pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao reagir a uma entrada de queda?",
+          "explanation": "O erro comum é recuar ou levantar o quadril, em vez de baixá-lo — o que é justamente o oposto do sprawl.",
+          "options": [
+            { "text": "Recuar ou levantar o quadril, em vez de baixá-lo", "correct": true },
+            { "text": "Baixar o quadril rápido demais", "correct": false },
+            { "text": "Prender os dois braços do oponente", "correct": false },
+            { "text": "Girar para o lado errado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando alguém levanta o quadril ao reagir a uma entrada de queda?",
+          "explanation": "Isso mantém os apoios ao alcance do oponente exatamente onde ele já os busca, e a queda tende a se completar do jeito que começou.",
+          "options": [
+            { "text": "Mantém os apoios ao alcance do oponente, e a queda tende a se completar", "correct": true },
+            { "text": "A queda automaticamente falha", "correct": false },
+            { "text": "Ele ganha vantagem de altura sobre o oponente", "correct": false },
+            { "text": "Nada muda no resultado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como costuma ser, na prática, um sprawl bem executado?",
+          "explanation": "Nem sempre é dramático — muitas vezes é só o suficiente para tirar os apoios do alcance, sem precisar de mais força que isso.",
+          "options": [
+            { "text": "Nem sempre dramático — só o suficiente para tirar os apoios do alcance", "correct": true },
+            { "text": "Sempre um movimento explosivo e muito visível", "correct": false },
+            { "text": "Precisa de mais força que a própria queda que defende", "correct": false },
+            { "text": "Só funciona contra double leg, não contra single leg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O sprawl é descrito como a resposta \"simétrica\" à entrada de queda porque:",
+          "explanation": "Ele ataca exatamente o que o oponente veio buscar — os apoios —, respondendo ao ataque com o mesmo alvo, em espelho.",
+          "options": [
+            { "text": "Ataca exatamente o que o oponente veio buscar — os seus apoios", "correct": true },
+            { "text": "Usa a mesma pegada da entrada de queda", "correct": false },
+            { "text": "Exige o mesmo nível de força do atacante", "correct": false },
+            { "text": "É idêntico visualmente à queda que defende", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual conexão o texto estabelece entre o sprawl e o restante do currículo?",
+          "explanation": "O sprawl não é só defesa isolada — ele é a origem de uma posição de ataque (front headlock) usada em outro nó do currículo.",
+          "options": [
+            { "text": "É a origem de uma posição de ataque (front headlock) usada em outro nó", "correct": true },
+            { "text": "Substitui a necessidade de aprender qualquer queda", "correct": false },
+            { "text": "Só serve para quem já sabe puxar guarda", "correct": false },
+            { "text": "É uma variação do double leg", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

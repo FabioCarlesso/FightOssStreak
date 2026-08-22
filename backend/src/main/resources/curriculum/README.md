@@ -23,7 +23,7 @@ Um arquivo por módulo (`m0.json` … `m8.json`), mais o índice `modules.json` 
   "concept": "...",            // o *porquê* da posição, não o passo a passo
   "video": null,               // null = ainda não catalogado (ver abaixo)
   "extraVideos": [],           // opcional — clipes complementares (ver abaixo)
-  "quiz": []                   // 3–5 perguntas conceituais
+  "quiz": []                   // banco de perguntas: [] ou 8+ (D44) — ver seção `quiz` abaixo
 }
 ```
 
@@ -141,23 +141,38 @@ vídeo; não preencher à mão.
 
 ### `quiz`
 
-Preenchido para **M0 a M3** (25 dos 46 nós). M0 e M1 vieram primeiro por serem fundamento e
-sobrevivência; M2 e M3 entraram em seguida porque são o que se alcança poucas semanas depois de
-terminar M1 — sem eles o app perde a camada de retenção justo onde a progressão continua. De M4 a
-M8 os nós seguem com `quiz: []`, e o app trata isso como "quiz ainda não escrito", sem quebrar
-(**D15**).
+Preenchido para os **46 nós** (issue #59, **D44**). `quiz: []` continua um estado válido — é o que
+um nó novo nasce com, antes de o banco ser escrito (**D15**) — mas todo nó que já tem alguma
+pergunta precisa ter **pelo menos 8**.
 
 As perguntas testam compreensão de conceito — *quando usar*, *qual o erro comum*, *o que o oponente
-faz* — e nunca decoreba de sequência de passos.
+faz* — e nunca decoreba de sequência de passos. Dentro de um nó, o enunciado de cada pergunta tem
+que ser único: é a chave que a rotação usa para decidir a ordem (ver abaixo), e duas perguntas com o
+mesmo enunciado colidiriam nela.
 
-M0 e M1 têm 3 a 4 perguntas por nó; **M2 e M3 têm 4**, por causa da nota de corte de 70
-(`QuizService.PASSING_SCORE`): com 3 perguntas, um erro reprova; com 4, tolera-se um erro (75).
-Registrado em **D27**.
+**O banco (o que existe) e a prova (o que é servido numa tentativa) são números diferentes.** Uma
+tentativa serve sempre `QuizRotation.QUESTIONS_PER_ATTEMPT` (**4**) perguntas — por causa da nota de
+corte de 70 (`QuizService.PASSING_SCORE`): com 3 perguntas um erro reprova, com 4 tolera-se um (75).
+Isso é a **D27**, e ela continua valendo. O que a D44 muda é que o banco pode — e deve — ter mais
+perguntas que isso: a tentativa `n` (o número de tentativas anteriores do usuário naquele nó) serve
+a fatia do banco que começa em `(n × 4) mod tamanhoDoBanco`, dando a volta no fim. Revisar o mesmo nó
+repetidamente passa a cobrir o banco inteiro em vez de repetir sempre a mesma prova — é a correção
+para o defeito que a #59 documentou: embaralhamento determinístico (D16) fazia a sexta revisão do
+mesmo nó mostrar as mesmas 4 perguntas, nas mesmas posições.
+
+A chave de ordenação da rotação é o **enunciado**, não o id: `replaceQuizzes()` apaga e recria toda
+pergunta a cada sincronização do currículo (D11), então ordenar por id embaralharia a rotação a cada
+deploy. É por isso que enunciado duplicado no mesmo nó é erro de validação, e não só estilo.
+
+Escrever perguntas novas para um nó sem fonte instrucional própria (M4–M8, ver `docs/12`)? A base é
+o próprio `concept` do nó — o mesmo critério da D43 para o texto do conceito — e não uma técnica ou
+mecanismo que não esteja já descrito ali.
 
 ## Validação
 
 `CurriculumIntegrityTest` roda a cada `./mvnw test` e falha se houver: código duplicado, referência a
-pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida, quiz sem exatamente
-uma alternativa correta, conceito com mais de 3 parágrafos ou fora da faixa de tamanho nos módulos
-já cobertos, ou complementar duplicado, sem crédito de canal ou acima do teto. Detecção de ciclo é
-feita **na ingestão**, nunca em runtime.
+pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida, banco de quiz com
+menos de 8 perguntas ou enunciado repetido no mesmo nó, quiz sem exatamente uma alternativa correta,
+conceito com mais de 3 parágrafos ou fora da faixa de tamanho nos módulos já cobertos, ou
+complementar duplicado, sem crédito de canal ou acima do teto. Detecção de ciclo é feita **na
+ingestão**, nunca em runtime.

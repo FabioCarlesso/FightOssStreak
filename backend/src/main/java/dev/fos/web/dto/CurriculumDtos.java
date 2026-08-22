@@ -22,6 +22,11 @@ public final class CurriculumDtos {
     /**
      * @param prereqCodes códigos dos pré-requisitos, para a UI explicar <em>por que</em> está
      *     travado
+     * @param quizQuestionCount tamanho do <em>banco</em> de perguntas do nó, não o tamanho da prova
+     *     servida numa tentativa — desde a rotação de banco (issue #59, D44) os dois divergem: um
+     *     nó com banco de 8 serve só {@code QuizRotation.QUESTIONS_PER_ATTEMPT} (4) por vez. Hoje
+     *     só sinaliza a etiqueta "quiz" em {@code TreePage.tsx} quando maior que zero, mas uma tela
+     *     futura que exiba o número precisa saber que é o banco, não a prova.
      */
     public record NodeSummaryView(
             String code,

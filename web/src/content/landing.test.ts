@@ -69,13 +69,13 @@ describe('números citados na landing', () => {
       comQuiz.reduce((total, no) => total + (no.quiz?.length ?? 0), 0),
     );
 
-    // "M0 a M3" é afirmação sobre quais módulos têm quiz, não sobre quantos: se o quiz de M4 for
-    // escrito, o texto passa a estar errado mesmo com a contagem batendo.
+    // "M0 a M8" é afirmação sobre quais módulos têm quiz, não sobre quantos: se um M9 nascesse
+    // sem quiz, o texto passaria a estar errado mesmo com a contagem batendo.
     const modulosComQuiz = modulos
       .filter((m) => m.nodes.some((no) => (no.quiz?.length ?? 0) > 0))
       .map((m) => m.code);
-    expect(modulosComQuiz).toEqual(['M0', 'M1', 'M2', 'M3']);
-    expect(NUMEROS.quizModules).toBe('M0 a M3');
+    expect(modulosComQuiz).toEqual(['M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8']);
+    expect(NUMEROS.quizModules).toBe('M0 a M8');
   });
 
   it('vídeos canônicos e clipes complementares', () => {

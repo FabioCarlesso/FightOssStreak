@@ -46,6 +46,56 @@
             { "text": "Finalizar o mais rápido possível para demonstrar a diferença de nível", "correct": false },
             { "text": "Evitar rolar com faixas mais baixas", "correct": false }
           ]
+        },
+        {
+          "prompt": "Por que higiene e pontualidade fazem parte da etiqueta de tatame, e não são só formalidade?",
+          "explanation": "O custo de ignorá-las recai sobre o corpo de outra pessoa, não sobre quem falha — é a mesma lógica de segurança que sustenta o restante da etiqueta.",
+          "options": [
+            { "text": "Porque o custo de ignorá-las recai sobre o corpo de outra pessoa, não sobre quem falha", "correct": true },
+            { "text": "Porque o professor exige isso para manter a turma organizada", "correct": false },
+            { "text": "Porque fazem parte da tradição japonesa do esporte", "correct": false },
+            { "text": "Porque evitam que o aluno seja advertido publicamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a hierarquia de faixas sinaliza, segundo o conceito do nó?",
+          "explanation": "A hierarquia sinaliza controle técnico suficiente para regular a intensidade do treino — não privilégio ou prioridade de uso do espaço.",
+          "options": [
+            { "text": "Quem tem controle técnico suficiente para regular a intensidade do treino", "correct": true },
+            { "text": "Quem pode escolher os parceiros de treino", "correct": false },
+            { "text": "Quem tem prioridade para usar o tatame primeiro", "correct": false },
+            { "text": "Quem está isento de avisar lesão antes de treinar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro que inverte o propósito da hierarquia de faixas?",
+          "explanation": "Usar a vantagem técnica para impor ritmo em cima de quem tem menos recursos inverte exatamente o que a hierarquia deveria garantir.",
+          "options": [
+            { "text": "Usar a vantagem técnica para impor ritmo em vez de regular a intensidade para baixo", "correct": true },
+            { "text": "Recusar-se a rolar com quem tem faixa mais baixa", "correct": false },
+            { "text": "Corrigir a técnica de um colega mais novo durante o treino", "correct": false },
+            { "text": "Avisar o professor sobre uma lesão antes de começar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Pedir permissão para entrar ou sair do tatame durante uma aula em andamento existe por qual motivo?",
+          "explanation": "O ambiente envolve contato próximo e técnicas que machucam de verdade — a mesma razão de fundo por trás da maior parte das regras de etiqueta.",
+          "options": [
+            { "text": "Porque o ambiente envolve contato próximo e técnicas que machucam de verdade", "correct": true },
+            { "text": "Porque é uma tradição sem relação com segurança", "correct": false },
+            { "text": "Porque só assim o professor sabe quem está presente", "correct": false },
+            { "text": "Porque evita que o aluno perca pontos de frequência", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a leitura correta de 'quem tem mais faixa regula a intensidade'?",
+          "explanation": "Quem tem mais graduação diminui o ritmo para dar espaço a quem tem menos recursos técnicos para se defender — não o contrário.",
+          "options": [
+            { "text": "Quem tem mais graduação diminui o ritmo para dar espaço a quem tem menos recursos", "correct": true },
+            { "text": "Quem tem mais graduação decide o ritmo que quiser", "correct": false },
+            { "text": "Quem tem mais graduação está dispensado de seguir a etiqueta", "correct": false },
+            { "text": "Quem tem mais graduação deve sempre finalizar rápido para ensinar", "correct": false }
+          ]
         }
       ]
     },
@@ -91,6 +141,56 @@
             { "text": "Para conseguir enxergar o oponente durante a queda", "correct": false },
             { "text": "Para proteger o pescoço de estrangulamento na sequência", "correct": false },
             { "text": "Para deslocar o centro de gravidade e cair mais perto", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que soltar o ar no momento do impacto faz parte da queda segura?",
+          "explanation": "Soltar o ar evita que a respiração trave junto com o corpo no momento do choque — travar a respiração é o que a queda bem executada evita.",
+          "options": [
+            { "text": "Evita que a respiração trave junto com o corpo no momento do choque", "correct": true },
+            { "text": "Deixa o corpo mais leve durante a queda", "correct": false },
+            { "text": "Ajuda a avisar o parceiro que a queda está acontecendo", "correct": false },
+            { "text": "Aumenta a velocidade da queda para reduzir o tempo de exposição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Numa queda bem executada, qual estrutura do corpo absorve a maior parte do choque?",
+          "explanation": "A superfície do braço distribui o impacto por uma área grande — é o oposto de concentrá-lo em punho, cotovelo ou ombro.",
+          "options": [
+            { "text": "A superfície do braço", "correct": true },
+            { "text": "A palma da mão apoiada no chão", "correct": false },
+            { "text": "O cotovelo isolado", "correct": false },
+            { "text": "Os dedos das mãos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a queda segura evita, em termos de risco de lesão?",
+          "explanation": "O princípio da queda segura é não concentrar o impacto numa articulação isolada — é isso que causa fratura e luxação.",
+          "options": [
+            { "text": "Concentrar o impacto numa articulação isolada", "correct": true },
+            { "text": "Molhar o gi de suor", "correct": false },
+            { "text": "Perder o fôlego antes da luta", "correct": false },
+            { "text": "Machucar o pescoço do parceiro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que 'cair bem' é tratado como mecânica, e não como técnica de exibição?",
+          "explanation": "Cair bem distribui o impacto por uma área grande do corpo — o objetivo é mecânico, não é impressionar quem está assistindo.",
+          "options": [
+            { "text": "Porque distribui o impacto por uma área grande do corpo, e não busca impressionar", "correct": true },
+            { "text": "Porque é uma regra exigida em competições", "correct": false },
+            { "text": "Porque evita perder pontos na avaliação de faixa", "correct": false },
+            { "text": "Porque poupa o gi de desgaste", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Esticar o braço para frear a queda concentra o impacto em quais estruturas?",
+          "explanation": "Punho, cotovelo e ombro recebem o peso do corpo inteiro — a combinação mais comum de fratura e luxação em treino.",
+          "options": [
+            { "text": "Punho, cotovelo e ombro", "correct": true },
+            { "text": "Somente na palma da mão", "correct": false },
+            { "text": "Nos joelhos e tornozelos", "correct": false },
+            { "text": "Na coluna vertebral", "correct": false }
           ]
         }
       ]
@@ -148,6 +248,46 @@
             { "text": "Manter a posição sem pressão até ele bater com a mão", "correct": false },
             { "text": "Soltar apenas se o professor perceber", "correct": false }
           ]
+        },
+        {
+          "prompt": "Qual é a função central do tap dentro do treino de finalizações?",
+          "explanation": "O tap converte uma lesão em uma informação antes que ela aconteça — é o que torna possível treinar finalizações de verdade sem se machucar.",
+          "options": [
+            { "text": "Converter uma lesão em uma informação antes que ela aconteça", "correct": true },
+            { "text": "Registrar oficialmente quem venceu a rolinha", "correct": false },
+            { "text": "Marcar o fim do tempo de treino", "correct": false },
+            { "text": "Avisar o professor que a técnica funcionou", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tocar cedo não é sinal de fraqueza, segundo o conceito do nó?",
+          "explanation": "Tocar cedo é o que garante treinar de novo no dia seguinte — o objetivo do tap é evitar o dano, não registrá-lo.",
+          "options": [
+            { "text": "Porque é o que garante treinar de novo no dia seguinte", "correct": true },
+            { "text": "Porque poupa o parceiro de se cansar", "correct": false },
+            { "text": "Porque conta pontos a favor na graduação", "correct": false },
+            { "text": "Porque evita que o professor interrompa o treino", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que muda entre o aviso dado por uma torção articular e o aviso dado por um estrangulamento?",
+          "explanation": "A torção avisa com dor progressiva; o estrangulamento pode levar ao apagão sem um aviso de dor equivalente — por isso a margem de erro é menor.",
+          "options": [
+            { "text": "A torção avisa com dor progressiva; o estrangulamento pode apagar sem aviso equivalente", "correct": true },
+            { "text": "A torção é sempre mais perigosa que o estrangulamento", "correct": false },
+            { "text": "O estrangulamento nunca causa desconforto antes do apagão", "correct": false },
+            { "text": "Os dois avisam da mesma forma, com a mesma antecedência", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o nó trata como obrigação, e não cortesia, soltar a posição ao perceber o tap do parceiro?",
+          "explanation": "O risco de lesão está do lado de quem já não pode se defender mais — soltar de imediato é obrigação de quem está por cima.",
+          "options": [
+            { "text": "Porque o risco de lesão está do lado de quem não pode se defender mais", "correct": true },
+            { "text": "Porque as regras de competição exigem isso sob pena de desclassificação", "correct": false },
+            { "text": "Porque é uma tradição de respeito entre faixas", "correct": false },
+            { "text": "Porque prolongar a finalização cansa mais quem está por cima", "correct": false }
+          ]
         }
       ]
     },
@@ -194,6 +334,56 @@
             { "text": "Para conseguir levantar mais rápido", "correct": false },
             { "text": "Para proteger as costelas de pressão", "correct": false }
           ]
+        },
+        {
+          "prompt": "Qual é a base mecânica de uma postura eficiente, segundo o conceito do nó?",
+          "explanation": "Postura transfere a carga para a estrutura óssea em vez de sustentá-la com força muscular — que acaba.",
+          "options": [
+            { "text": "Transferir a carga para a estrutura óssea em vez de sustentá-la com força muscular", "correct": true },
+            { "text": "Manter os músculos sempre contraídos ao máximo", "correct": false },
+            { "text": "Ficar o mais baixo possível em qualquer situação", "correct": false },
+            { "text": "Evitar qualquer contato físico com o oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Na base de guarda (sentado), o que mantém a distância sob o seu controle?",
+          "explanation": "Coluna ereta e quadril móvel são o que sustentam a postura de guarda e mantêm a distância administrável.",
+          "options": [
+            { "text": "Coluna ereta e quadril móvel", "correct": true },
+            { "text": "Braços esticados para a frente", "correct": false },
+            { "text": "Pernas totalmente estendidas e rígidas", "correct": false },
+            { "text": "Cabeça baixa apoiada no peito", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que 'músculo cansado sempre perde' é a lógica central deste nó?",
+          "explanation": "Força muscular se esgota; estrutura óssea sustenta pressão sem cansar — é a troca que a postura permite.",
+          "options": [
+            { "text": "Porque força muscular se esgota, e estrutura óssea sustenta pressão sem cansar", "correct": true },
+            { "text": "Porque cansaço aumenta o risco de lesão do parceiro", "correct": false },
+            { "text": "Porque cansaço é penalizado em competição", "correct": false },
+            { "text": "Porque cansaço impede respirar corretamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Em pé, o que evita a queda ao manter os joelhos flexionados e o centro de gravidade baixo?",
+          "explanation": "Joelhos flexionados e centro de gravidade baixo reduzem a chance de o oponente desequilibrar sua base em pé.",
+          "options": [
+            { "text": "Reduz a chance de o oponente desequilibrar sua base", "correct": true },
+            { "text": "Aumenta a velocidade de deslocamento", "correct": false },
+            { "text": "Facilita a aplicação de estrangulamentos", "correct": false },
+            { "text": "Diminui o gasto de energia na respiração", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o braço esticado longe do corpo é um erro comum às três posturas base?",
+          "explanation": "Braço esticado vira alavanca de graça para o oponente — pegada fácil, entrada de queda, material pronto para chave de braço.",
+          "options": [
+            { "text": "Porque vira alavanca de graça para o oponente, seja para pegada, queda ou chave de braço", "correct": true },
+            { "text": "Porque cansa o ombro mais rápido que o normal", "correct": false },
+            { "text": "Porque é proibido pelas regras de etiqueta do tatame", "correct": false },
+            { "text": "Porque atrapalha a respiração durante o treino", "correct": false }
+          ]
         }
       ]
     },
@@ -239,6 +429,56 @@
             { "text": "Impedir que ele se levante", "correct": false },
             { "text": "Prepará-lo para uma queda em pé", "correct": false },
             { "text": "Cansar o antebraço do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a pegada é descrita como 'o que substitui a força' no jogo de gi?",
+          "explanation": "A pegada conecta você ao oponente e transforma seu movimento de quadril em controle do corpo dele.",
+          "options": [
+            { "text": "Porque conecta você ao oponente e transforma movimento de quadril em controle do corpo dele", "correct": true },
+            { "text": "Porque dispensa a necessidade de base ou postura", "correct": false },
+            { "text": "Porque garante vitória automática em qualquer posição", "correct": false },
+            { "text": "Porque substitui a necessidade de aprender técnica", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o efeito de controlar a manga do oponente sobre a postura dele?",
+          "explanation": "O braço sustenta e defende a postura inteira — controlá-lo compromete a postura, não só o próprio braço.",
+          "options": [
+            { "text": "Compromete a postura inteira, porque o braço a sustenta e a defende", "correct": true },
+            { "text": "Não tem efeito sobre a postura, só sobre o braço isolado", "correct": false },
+            { "text": "Obriga o oponente a ficar de pé imediatamente", "correct": false },
+            { "text": "Cansa apenas o antebraço, sem outro efeito", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que uma pegada com o cotovelo longe do corpo custa mais para quem a segura do que para quem a sofre?",
+          "explanation": "Ela gasta força onde deveria gastar estrutura — o oposto de uma pegada com o cotovelo colado perto do corpo.",
+          "options": [
+            { "text": "Porque gasta força onde deveria gastar estrutura", "correct": true },
+            { "text": "Porque estica o tecido do gi e o danifica", "correct": false },
+            { "text": "Porque distrai a atenção do oponente", "correct": false },
+            { "text": "Porque exige soltar a pegada mais cedo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Segundo o conceito do nó, pegada é pré-requisito de quê?",
+          "explanation": "De quase tudo: raspagem, passagem e estrangulamento começam com uma pegada específica, não com o movimento em si.",
+          "options": [
+            { "text": "De quase tudo — raspagem, passagem e estrangulamento começam por uma pegada específica", "correct": true },
+            { "text": "Só de finalizações, não de raspagens ou passagens", "correct": false },
+            { "text": "Só de passagens de guarda", "correct": false },
+            { "text": "De nenhuma técnica em especial, é só apoio", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que decide se uma pegada 'vale a energia que exige'?",
+          "explanation": "O cotovelo estar colado perto de quem a segura é o que decide se a pegada custa estrutura ou custa força.",
+          "options": [
+            { "text": "O cotovelo estar colado perto do corpo de quem segura", "correct": true },
+            { "text": "A força do aperto na mão", "correct": false },
+            { "text": "O tipo de tecido do gi", "correct": false },
+            { "text": "A quantidade de pano agarrado por vez", "correct": false }
           ]
         }
       ]
