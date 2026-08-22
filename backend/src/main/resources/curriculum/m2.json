@@ -11,7 +11,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M1.5"],
       "concept": "A guarda fechada é a única posição inferior do jiu-jitsu em que você tem mais opções de ataque do que o oponente por baixo dele — mas tudo isso depende de uma única variável: a postura do oponente.\n\nCom a postura ereta, ele passa ou abre a guarda sem risco; com a postura quebrada, o peso dele vem para frente e raspagens e estrangulamentos entram em alcance. Por isso o trabalho não começa na finalização — começa nas pegadas que impedem a postura de subir de volta.\n\nO erro que define a guarda fechada de faixa branca é atacar antes de quebrar essa postura: tentar o estrangulamento ou a raspagem contra alguém ainda ereto e longe vira disputa de força de braço, que a guarda perde quase sempre.",
-      "video": null,
+      "video": {
+        "youtubeId": "P3O7FjRZbW8",
+        "title": "QUEBRA DE POSTURA, DISTÂNCIA E ATAQUES DA GUARDA FECHADA (Fundamentos Básicos)",
+        "channel": "CIENTISTAS DO JIU JITSU"
+      },
       "quiz": [
         {
           "prompt": "Qual variável determina o que você consegue fazer da guarda fechada?",
@@ -103,7 +107,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.1"],
       "concept": "A tesoura ensina o princípio mais reaproveitável de toda raspagem de guarda: tirar a base do oponente de um lado e levar o peso dele para esse lado que ficou vazio.\n\nO joelho atravessado no peito e a outra perna varrendo funcionam como as duas lâminas do movimento — mas quem decide o resultado é o desequilíbrio criado antes, não a força das pernas fechando.\n\nO erro comum é sentir que a raspagem exige força: isso é o sintoma clássico de tentar a tesoura cedo demais, antes de o desequilíbrio existir. Quando o desequilíbrio já está lá, o movimento sai leve — é por isso que peso menor consegue raspar peso maior. O sinal de que o momento chegou é o oponente já estar apoiado só num ponto, e não mais distribuído entre os dois lados.",
-      "video": null,
+      "video": {
+        "youtubeId": "20hA15yXEjA",
+        "title": "COMO FAZER A RASPAGEM TESOURA NO JIU JITSU",
+        "channel": "Muito Mais Ação Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual princípio a tesoura ensina, e que se repete em quase toda raspagem?",
@@ -195,7 +203,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.1"],
       "concept": "O pêndulo é a resposta natural para quando o oponente resiste à tesoura, postando o peso para trás para não ser varrido de lado.\n\nVocê usa o balanço do próprio quadril e o peso do corpo para levá-lo exatamente na direção em que ele já está indo — é o primeiro contato do currículo com a ideia de encadeamento: a raspagem não vence a resistência, ela usa a resistência a seu favor.\n\nO erro comum é sentar para o pêndulo sem prender o braço do oponente do lado para onde você gira: sem esse bloqueio, ele simplesmente apoia a mão no chão e sua estrutura não vira — o mesmo motivo pelo qual a upa da fuga de montada morre sem o braço preso.",
-      "video": null,
+      "video": {
+        "youtubeId": "oMt9rgTedEM",
+        "title": "Raspagem de Pêndulo na Guarda Fechada: Técnica Clássica e Eficaz",
+        "channel": "Felipe Siqueira Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Quando o pêndulo é a escolha natural?",
@@ -287,7 +299,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.1"],
       "concept": "O cross collar é o ataque fundamental da guarda fechada no gi, não conteúdo avançado — ele nasce direto da mesma pegada de gola já usada para quebrar a postura do oponente.\n\nO detalhe que decide se ele tem alavanca é a profundidade da primeira pegada: rasa, não existe alavanca nenhuma; profunda, o segundo braço só precisa fechar o triângulo de pressão. Mesmo quando não finaliza, a ameaça constante ocupa as mãos dele e traz o peso para frente — é isso que abre as raspagens.\n\nO erro comum é apertar mesmo com a primeira pegada rasa: sem alavanca, o estrangulamento vira disputa de força de braço, o que dá tempo de sobra para o oponente recuperar a postura e encerrar o ataque.",
-      "video": null,
+      "video": {
+        "youtubeId": "G6vNclSlSVI",
+        "title": "A Melhor Aula Sobre Estrangulamento na Guarda Fechada Que Você Vai Assistir na Internet",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "O que decide se o cross collar tem alavanca?",
@@ -379,7 +395,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.1"],
       "concept": "O armlock da guarda pune o braço que o oponente deixa esticado ou apoiado longe do corpo — exatamente o erro de postura estudado em M0.4, agora visto do outro lado da posição.\n\nO ponto conceitual é que o ataque não começa no braço: começa no controle de postura e no ângulo. Sem girar o quadril para fora, não existe alavanca, e a força do próprio bíceps do oponente já basta para defender.\n\nO erro comum é partir direto para puxar o braço, antes de controlar postura e ângulo: com a estrutura inteira ainda disponível, o oponente apenas flexiona o cotovelo e escapa — a ameaça avisada cedo demais perde o efeito. Só depois de postura e ângulo estarem garantidos é que puxar o braço vira consequência natural, e não uma disputa de força incerta.",
-      "video": null,
+      "video": {
+        "youtubeId": "GkHDgtyz4nY",
+        "title": "Jiu Jitsu: Domine essa Chave de Braço e Surpreenda Seus Oponentes! 🔥",
+        "channel": "Muito Mais Ação Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Que erro do oponente o armlock da guarda pune?",
@@ -471,7 +491,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.1"],
       "concept": "O triângulo aproveita uma assimetria comum na guarda: um braço do oponente dentro e o outro fora. Com os dois dentro ou os dois fora, não existe triângulo possível.\n\nO estrangulamento não vem da força das pernas fechando — vem do ângulo. Girar o quadril para o lado é o que transforma uma posição travada e desconfortável numa finalização de verdade; é também a porta de entrada para o encadeamento com armlock e omoplata.\n\nO erro comum é apertar com força ficando de frente para o oponente, sem ter girado o quadril para criar o ângulo. Sem ângulo, o triângulo vira só uma posição incômoda que ele aguenta enquanto trabalha a postura de volta.",
-      "video": null,
+      "video": {
+        "youtubeId": "ZGHWZShHB40",
+        "title": "Ninguém Consegue Escapar Desse Triângulo na Guarda Fechada",
+        "channel": "Muito Mais Ação Jiu Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Que assimetria o triângulo aproveita?",
@@ -563,7 +587,11 @@
       "unlockRule": "ALL",
       "prereqs": ["M2.6"],
       "concept": "A omoplata usa a perna como alavanca sobre o ombro do oponente, mas sua utilidade real vai além da finalização: ela controla e desequilibra, servindo também como raspagem quando ele rola para escapar.\n\nEla depende do triângulo porque compartilha o mesmo mecanismo — girar o quadril para criar ângulo. O rolamento de fuga do oponente não é motivo para soltar: é justamente dali que sai a raspagem, porque o movimento dele tira a própria base.\n\nO erro comum é chegar à omoplata sem ter entendido o ângulo do triângulo: sobra decorar a sequência, que funciona enquanto o parceiro colabora e trava na primeira reação fora do roteiro.",
-      "video": null,
+      "video": {
+        "youtubeId": "uAwPq60rSUg",
+        "title": "Omoplata - Finalização e Raspagem. Aprenda 2 Maneiras de Aplicar essa Técnica!",
+        "channel": "Manual do Jiu-Jitsu"
+      },
       "quiz": [
         {
           "prompt": "Qual é a utilidade da omoplata além de finalizar?",

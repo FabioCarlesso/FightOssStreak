@@ -85,8 +85,8 @@ describe('números citados na landing', () => {
     const modulosComVideo = modulos
       .filter((m) => m.nodes.some((no) => Boolean(no.video?.youtubeId)))
       .map((m) => m.code);
-    expect(modulosComVideo).toEqual(['M0', 'M1']);
-    expect(NUMEROS.videoModules).toBe('M0 e M1');
+    expect(modulosComVideo).toEqual(['M0', 'M1', 'M2']);
+    expect(NUMEROS.videoModules).toBe('M0 a M2');
 
     expect(NUMEROS.extraClips).toBe(
       nos.reduce((total, no) => total + (no.extraVideos?.length ?? 0), 0),

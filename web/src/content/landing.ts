@@ -47,8 +47,8 @@ export const NUMEROS = {
   quizQuestions: 368,
   quizNodes: 46,
   quizModules: 'M0 a M8',
-  canonicalVideos: 11,
-  videoModules: 'M0 e M1',
+  canonicalVideos: 18,
+  videoModules: 'M0 a M2',
   extraClips: 7,
 } as const;
 

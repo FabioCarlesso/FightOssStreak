@@ -129,14 +129,14 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("M0 e M1 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
+    @DisplayName("M0–M2 têm vídeo catalogado; os demais módulos seguem pendentes de curadoria")
     void videoCoverageMatchesCuratedScope() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
             if (hasCuratedVideo(node)) {
                 assertThat(node.video()).as("vídeo de %s", node.code()).isNotNull();
             } else {
                 assertThat(node.video())
-                        .as("vídeo de %s — M2–M8 entram em issues próprias", node.code())
+                        .as("vídeo de %s — bloco ainda não catalogado pela #61", node.code())
                         .isNull();
             }
         }
@@ -654,9 +654,14 @@ class CurriculumIntegrityTest {
                                 List.of())));
     }
 
-    /** Catalogar vídeo exige assistir (D21); M2–M8 entram em issues próprias. */
+    /**
+     * Catalogar vídeo exige assistir (D21); M3–M8 seguem pendentes até a #61 cobri-los, bloco a
+     * bloco. M2 entrou nesta issue — a lista cresce a cada bloco, não de uma vez.
+     */
     private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
-        return node.code().startsWith("M0.") || node.code().startsWith("M1.");
+        return node.code().startsWith("M0.")
+                || node.code().startsWith("M1.")
+                || node.code().startsWith("M2.");
     }
 
     private CurriculumSource.NodeSpec node(String code, List<String> prereqs) {

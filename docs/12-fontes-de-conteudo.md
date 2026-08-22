@@ -87,22 +87,34 @@ módulos não têm:
   tap como segurança do parceiro e uma que o trata como "desistência", a primeira vence mesmo que
   a segunda seja mais completa. Foi o critério que já escolheu Ritchie Yip para o vídeo deste nó.
 
-## Fontes por módulo — M2 a M8
+## Fontes por módulo — M3 a M8
 
-Nenhum destes módulos tem vídeo catalogado ainda (`08-curadoria-videos.md`, estado atual restrito a
-M0 e M1) — logo, nenhum tem canal instrucional julgado. Isto é estado normal, o mesmo que
+M3–M8 ainda não têm vídeo catalogado (`08-curadoria-videos.md`, estado atual cobre M0 a M2) — logo,
+nenhum desses módulos tem canal instrucional julgado. Isto é estado normal, o mesmo que
 `video: null`: a linha existe para ser preenchida quando alguém escolher, pelos critérios acima, não
 para ficar em branco por descuido.
 
 | Módulo | Fonte instrucional |
 |---|---|
-| M2 — Guarda Fechada | nenhuma catalogada ainda |
 | M3 — Guarda Aberta e Passagem | nenhuma catalogada ainda |
 | M4 — Controle Superior | nenhuma catalogada ainda |
 | M5 — Costas (Back Control) | nenhuma catalogada ainda |
 | M6 — Quedas e Entrada em Combate | nenhuma catalogada ainda |
 | M7 — Finalizações Encadeadas | nenhuma catalogada ainda |
 | M8 — Jogo Integrado | nenhuma catalogada ainda |
+
+## Canais usados nos canônicos de M2
+
+Quatro canais novos, triados pela régua acima (Gi, instrucional, canal estabelecido, ensina o
+conceito) e pelo critério de idioma da D45, ao catalogar o bloco M2 pela #61. Nenhum estava na lista
+de leads do épico #55 — surgiram da busca dirigida por técnica, nó a nó.
+
+| Canal | Cobre bem | Já usado em |
+|---|---|---|
+| [Cientistas do Jiu Jitsu](https://www.youtube.com/@Cientistasdojiujitsu) | Fundamentos com professor identificado (Cristiano Carvalho); canal de porte modesto (~29 mil inscritos) — vale reforçar com um segundo canal se M2.1 for revisitado | M2.1 |
+| [Muito Mais Ação Jiu Jitsu](https://www.youtube.com/@muitomaisacaojiujitsu) | Técnicas fundamentais em vídeos capitulados, um por golpe, com estrutura de introdução → princípio → passo a passo → recapitulação | M2.2, M2.5, M2.6 |
+| [Felipe Siqueira Jiu Jitsu](https://www.youtube.com/@FelipeSiqueiraJiuJitsu) | Professor identificado (faixa-preta 3º grau, Gracie Barra), catálogo amplo de técnicas isoladas | M2.3 |
+| [Manual do Jiu-Jitsu](https://www.youtube.com/@ManualdoJiuJitsu) | Aulas completas por posição, capituladas, com foco declarado em conceito antes de execução | M2.4, M2.7 |
 
 **Três leads foram levantados na abertura do épico #55.** Triados pelos critérios de
 `08-curadoria-videos.md` (Gi, instrucional, canal estabelecido, ensina o conceito) mais o critério de
@@ -124,10 +136,12 @@ Preenchida à medida que B e C (escrita de conceito e de quiz) avançarem. Ao es
 nó, adicione a fonte efetivamente consultada nesta linha; "nenhuma além do professor" também é um
 registro válido.
 
-M2–M8 não têm vídeo canônico catalogado ainda (`docs/08-curadoria-videos.md`), então a reescrita de
-#58 não teve canal instrucional para citar como fonte. A linha registra isso com honestidade — texto
-reestruturado a partir do conceito que já estava no currículo, sem pesquisa nova por trás (D43) —
-em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
+Quando #58 reescreveu M2–M8, nenhum desses módulos tinha vídeo canônico catalogado
+(`docs/08-curadoria-videos.md`), então o texto não teve canal instrucional para citar como fonte. As
+linhas registram isso com honestidade — texto reestruturado a partir do conceito que já estava no
+currículo, sem pesquisa nova por trás (D43) — em vez de fingir uma fonte que não existiu ou deixar a
+linha em branco. M2 ganhou vídeo depois, pela #61 — a fonte do texto continua sendo D43 (não mudou
+retroativamente), e a linha de cada nó passou a citar também o canal do vídeo, separadamente.
 
 ### M0 — Fundamentos e Segurança
 
@@ -154,13 +168,13 @@ em vez de fingir uma fonte que não existiu ou deixar a linha em branco.
 
 | Nó | Fontes consultadas |
 |---|---|
-| M2.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.4 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.5 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.6 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
-| M2.7 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43) |
+| M2.1 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Cientistas do Jiu Jitsu (#61) |
+| M2.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
+| M2.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
+| M2.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Muito Mais Ação Jiu Jitsu (#61) |
+| M2.7 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
 
 ### M3 — Guarda Aberta e Passagem
 

@@ -202,7 +202,7 @@ A `note` é o único campo que você escreve: título e canal continuam vindo do
 `orientation` é detectada pelo script. Vale a pena preenchê-la — os títulos são taquigrafia de aula
 ("aula do dia 09/05") e não dizem por que aquele clipe importa para aquele nó.
 
-## Estado atual (M0 e M1)
+## Estado atual (M0 a M2)
 
 Os 11 nós estão catalogados. O que foi verificado e o que não foi está em D21 de
 `07-decisoes.md` — em resumo: id, título, canal e permissão de incorporação vieram do YouTube;
@@ -226,6 +226,23 @@ sensível do currículo, e é onde a barreira do idioma mais pesa.
 | M1.4 | Stephan Kesting | Inglês | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
 | M1.5 | Jordan Teaches Jiujitsu | Inglês | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
 | M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | Inglês | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
+| M2.1 | Cientistas do Jiu Jitsu | Português | 3:02 | Título casa exatamente com o nó (postura, distância, ataques); canal de porte modesto (~29 mil inscritos), sem equivalente melhor achado num canal maior |
+| M2.2 | Muito Mais Ação Jiu Jitsu | Português | 4:06 | Capítulos cobrem princípio, passo a passo e variação contra peso maior |
+| M2.3 | Felipe Siqueira Jiu Jitsu | Português | 4:45 | Professor Felipe Siqueira, faixa-preta 3º grau Gracie Barra |
+| M2.4 | Manual do Jiu-Jitsu | Português | 11:03 | O mais longo do bloco; não confirmado que o vídeo inteiro é sobre o cruzado especificamente, ou se cobre outros estrangulamentos também |
+| M2.5 | Muito Mais Ação Jiu Jitsu | Português | 3:16 | Capítulos incluem quebra de postura antes do ataque ao braço, como o nó exige |
+| M2.6 | Muito Mais Ação Jiu Jitsu | Português | 8:36 | 11 capítulos, o mais detalhado do bloco — pegada, ângulo, defesas comuns |
+| M2.7 | Manual do Jiu-Jitsu | Português | 8:32 | Cobre a dupla função do nó: finalização e raspagem quando o oponente rola para escapar |
+
+**M2 é o primeiro bloco sob o critério de idioma (D45): os sete são em português**, escolhidos entre
+canais triados pela régua desta página (Gi, instrucional, canal estabelecido, ensina o conceito) —
+**Cientistas do Jiu Jitsu**, **Muito Mais Ação Jiu Jitsu**, **Felipe Siqueira Jiu Jitsu** e
+**Manual do Jiu-Jitsu**, registrados em `12-fontes-de-conteudo.md`. Mesma ressalva da D21: id,
+título, canal e permissão de incorporação vieram do YouTube; o encaixe pedagógico foi julgado pelo
+título, pelos capítulos do vídeo (quando o YouTube os gera) e pela descrição — sem assistir aos sete
+por inteiro. Distribuição de canal do bloco: Muito Mais Ação Jiu Jitsu (3 de 7), Manual do Jiu-Jitsu
+(2 de 7), Cientistas do Jiu Jitsu e Felipe Siqueira Jiu Jitsu (1 cada) — nenhum se aproxima do teto
+de um terço dos canônicos do currículo (critério de aceite da #61, motivado pela #41).
 
 ### Complementares catalogados (primeira leva, D32)
 
