@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.fos.curriculum.CurriculumValidator;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.UserIdentity;
+import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizQuestionRepository;
 import dev.fos.repo.UserIdentityRepository;
 import java.time.Clock;
@@ -26,7 +27,10 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -111,6 +115,8 @@ class ApiIntegrationTest {
     @Autowired private ObjectMapper objectMapper;
 
     @Autowired private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired private NodeRepository nodeRepository;
 
     @Autowired private UserIdentityRepository identities;
 
@@ -365,6 +371,10 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz escrito responde 409, não erro de servidor")
     void nodeWithoutQuizReturnsConflict() throws Exception {
+        // Desde a #59 (D44) todos os 46 nós têm banco de quiz; o estado vazio (D15) só existe mais
+        // para um nó futuro. Simula esse estado esvaziando o banco de um nó real.
+        wipeQuiz("M8.3");
+
         mockMvc.perform(
                         post("/api/nodes/M8.3/quiz")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -376,12 +386,74 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz é concluído pelo registro de drill")
     void nodeWithoutQuizIsCompletedByDrill() throws Exception {
+        wipeQuiz("M8.3");
+
         mockMvc.perform(
                         post("/api/nodes/M8.3/drill")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"recall\":\"OK\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"));
+    }
+
+    @Test
+    @DisplayName(
+            "banco maior que a prova gira: a segunda tentativa serve outras perguntas, e a nona "
+                    + "repete a primeira (issue #59, D44)")
+    void quizBankRotatesAcrossAttempts() throws Exception {
+        Set<Long> firstServed = idsOf(getJson("/api/nodes/M0.1").get("quiz"));
+
+        completeNode("M0.1");
+        Set<Long> secondServed = idsOf(getJson("/api/nodes/M0.1").get("quiz"));
+        assertThat(secondServed)
+                .as("segunda tentativa não pode repetir nenhuma pergunta da primeira")
+                .doesNotContainAnyElementsOf(firstServed);
+
+        // Mais 7 tentativas — 8 no total — para completar o ciclo até a nona.
+        for (int i = 0; i < 7; i++) {
+            completeNode("M0.1");
+        }
+
+        Set<Long> ninthServed = idsOf(getJson("/api/nodes/M0.1").get("quiz"));
+        assertThat(ninthServed)
+                .as("a nona tentativa dá a volta e repete a primeira")
+                .isEqualTo(firstServed);
+    }
+
+    @Test
+    @DisplayName(
+            "submeter um quiz já renovado responde 409 e não grava tentativa nem altera o "
+                    + "progresso (issue #59, D44)")
+    void staleQuizSubmissionIsRejected() throws Exception {
+        JsonNode node = getJson("/api/nodes/M0.2");
+        String payload = answerPayload(node, true);
+
+        mockMvc.perform(
+                        post("/api/nodes/M0.2/quiz")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.passed").value(true));
+
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.quizRetakes.value").value(0));
+        JsonNode treeBefore = getJson("/api/curriculum/tree");
+
+        // Reenvia o mesmo payload: a rotação já avançou para a próxima fatia, então este conjunto
+        // não é mais o servido.
+        mockMvc.perform(
+                        post("/api/nodes/M0.2/quiz")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("quiz_stale"));
+
+        assertThat(getJson("/api/curriculum/tree"))
+                .as("submissão recusada não pode mexer no progresso")
+                .isEqualTo(treeBefore);
+        // Submissão recusada não pode gravar tentativa: o contador de refeitas continua em zero.
+        mockMvc.perform(get("/api/metrics/mvp"))
+                .andExpect(jsonPath("$.quizRetakes.value").value(0));
     }
 
     @Test
@@ -696,6 +768,19 @@ class ApiIntegrationTest {
                 .map(question -> question.getNode().getCode())
                 .distinct()
                 .toList();
+    }
+
+    /** Esvazia o banco de quiz de um nó real, simulando o estado {@code quiz: []} (D15). */
+    private void wipeQuiz(String nodeCode) {
+        Long nodeId = nodeRepository.findByCode(nodeCode).orElseThrow().getId();
+        quizQuestionRepository.deleteAll(quizQuestionRepository.findByNodeIdWithOptions(nodeId));
+    }
+
+    /** Ids das perguntas servidas num payload de nó. */
+    private Set<Long> idsOf(JsonNode quiz) {
+        return StreamSupport.stream(quiz.spliterator(), false)
+                .map(question -> question.get("id").asLong())
+                .collect(Collectors.toSet());
     }
 
     /** Procura o status de um nó dentro do payload da árvore. */

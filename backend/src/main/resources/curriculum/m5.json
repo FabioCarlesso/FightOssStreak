@@ -1,7 +1,7 @@
 {
   "code": "M5",
   "title": "Costas (Back Control)",
-  "summary": "A posição mais dominante do jiu-jitsu. Quiz pendente de curadoria.",
+  "summary": "A posição mais dominante do jiu-jitsu.",
   "nodes": [
     {
       "code": "M5.1",
@@ -12,7 +12,88 @@
       "prereqs": ["M4.4"],
       "concept": "Pegar as costas raramente é um ataque de verdade — na maior parte das vezes, é a colheita de uma defesa que o próprio oponente tentou.\n\nQuando ele vira de lado para tentar escapar da montada, ele mesmo entrega as costas na tentativa. O seu trabalho é reconhecer esse instante e acompanhar o giro dele, sem se adiantar nem forçá-lo a acontecer antes da hora.\n\nO erro comum é tentar obrigar a virada por conta própria: forçar o oponente a virar de lado, em vez de esperar que a defesa dele crie a abertura sozinha, costuma custar a montada inteira sem entregar as costas em troca — ele sente a força e simplesmente não vira.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Pegar as costas a partir da montada é descrito, na maior parte das vezes, como o quê?",
+          "explanation": "É a colheita de uma defesa que o próprio oponente tentou — raramente um ataque de verdade iniciado por quem está por cima.",
+          "options": [
+            { "text": "A colheita de uma defesa que o oponente tentou", "correct": true },
+            { "text": "Um ataque planejado desde o início da montada", "correct": false },
+            { "text": "Uma finalização direta sem passar pela montada", "correct": false },
+            { "text": "Uma técnica que exige gi obrigatoriamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o oponente faz que entrega as costas, segundo o conceito?",
+          "explanation": "Ele vira de lado para tentar escapar da montada, e é nessa tentativa que entrega as costas.",
+          "options": [
+            { "text": "Vira de lado tentando escapar da montada", "correct": true },
+            { "text": "Estica os dois braços para cima", "correct": false },
+            { "text": "Empurra o quadril de quem está por cima", "correct": false },
+            { "text": "Solta a pegada de gola do adversário", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o seu trabalho no instante em que o oponente começa a virar de lado?",
+          "explanation": "Reconhecer esse instante e acompanhar o giro dele, sem se adiantar nem forçá-lo a acontecer antes da hora.",
+          "options": [
+            { "text": "Reconhecer o instante e acompanhar o giro dele", "correct": true },
+            { "text": "Soltar a montada e reposicionar do zero", "correct": false },
+            { "text": "Aplicar pressão máxima para impedir o giro", "correct": false },
+            { "text": "Trocar imediatamente para o 100kg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao tentar pegar as costas a partir da montada?",
+          "explanation": "Tentar obrigar a virada por conta própria, forçando o oponente a virar de lado em vez de esperar a defesa dele criar a abertura.",
+          "options": [
+            { "text": "Forçar o oponente a virar de lado por conta própria", "correct": true },
+            { "text": "Esperar demais pela virada do oponente", "correct": false },
+            { "text": "Acompanhar o giro rápido demais", "correct": false },
+            { "text": "Manter os joelhos apertados durante a espera", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você força o oponente a virar de lado, em vez de esperar a defesa dele criar a abertura. O que costuma acontecer?",
+          "explanation": "Ele sente a força e simplesmente não vira — o que costuma custar a montada inteira sem entregar as costas em troca.",
+          "options": [
+            { "text": "Ele sente a força, não vira, e a montada se perde", "correct": true },
+            { "text": "Ele vira mais rápido do que viraria sozinho", "correct": false },
+            { "text": "As costas são entregues de qualquer forma", "correct": false },
+            { "text": "Nada muda — o resultado é o mesmo de esperar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que forçar a virada custa a montada inteira, e não só a chance de pegar as costas?",
+          "explanation": "Porque a força aplicada para forçar a virada é sentida pelo oponente, que resiste e usa essa resistência para desestabilizar a própria montada.",
+          "options": [
+            { "text": "Porque a resistência à força usada desestabiliza a montada já conquistada", "correct": true },
+            { "text": "Porque forçar a virada é proibido pelas regras", "correct": false },
+            { "text": "Porque a montada só existe enquanto ninguém se move", "correct": false },
+            { "text": "Porque forçar sempre resulta em escape total", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que caracteriza o momento certo de acompanhar o giro do oponente rumo às costas?",
+          "explanation": "É o instante em que a própria tentativa de defesa do oponente já iniciou o giro — o trabalho é reconhecer e acompanhar, não antecipar.",
+          "options": [
+            { "text": "O instante em que a própria defesa do oponente já iniciou o giro", "correct": true },
+            { "text": "Qualquer momento em que você decida agir", "correct": false },
+            { "text": "O momento em que o oponente para de se mover", "correct": false },
+            { "text": "Assim que a montada é consolidada, antes de qualquer reação", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que pegar as costas raramente é descrito como um ataque de verdade?",
+          "explanation": "Porque na maior parte das vezes é a defesa do próprio oponente — a tentativa de escapar da montada virando de lado — que cria a oportunidade.",
+          "options": [
+            { "text": "Porque a oportunidade nasce da defesa do oponente, não de uma ofensiva sua", "correct": true },
+            { "text": "Porque as costas nunca são uma posição de finalização", "correct": false },
+            { "text": "Porque exige sempre uma queda antes", "correct": false },
+            { "text": "Porque só funciona contra oponentes cansados", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M5.2",
@@ -23,7 +104,88 @@
       "prereqs": ["M5.1"],
       "concept": "O controle de costas se sustenta em dois elementos independentes: os ganchos, que impedem o oponente de deslizar para fora, e o seat belt, que impede que ele gire de frente para você.\n\nPerder um dos dois normalmente ainda dá para recuperar; perder os dois ao mesmo tempo acaba a posição. Entender essa divisão é o que transforma costas de posição instável em posição dominante.\n\nO erro comum é tratar os dois como se fossem a mesma coisa — reagir à perda de um copiando a resposta do outro. Cada elemento falha e se recupera de um jeito diferente, e confundir os dois é o que costuma transformar a perda de um no colapso da posição inteira.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Em quantos elementos independentes o controle de costas se sustenta?",
+          "explanation": "Em dois: os ganchos e o seat belt — cada um cumprindo uma função diferente e falhando de um jeito diferente.",
+          "options": [
+            { "text": "Dois: os ganchos e o seat belt", "correct": true },
+            { "text": "Um só: a pegada de gola", "correct": false },
+            { "text": "Três: ganchos, seat belt e pegada de manga", "correct": false },
+            { "text": "Nenhum específico — depende só do peso", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que os ganchos impedem, no controle de costas?",
+          "explanation": "Impedem que o oponente deslize para fora da posição.",
+          "options": [
+            { "text": "Que o oponente deslize para fora", "correct": true },
+            { "text": "Que o oponente respire fundo", "correct": false },
+            { "text": "Que o oponente gire de frente para você", "correct": false },
+            { "text": "Que o oponente solte a própria gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o seat belt impede, no controle de costas?",
+          "explanation": "Impede que o oponente gire de frente para você — é a função distinta da dos ganchos.",
+          "options": [
+            { "text": "Que o oponente gire de frente para você", "correct": true },
+            { "text": "Que o oponente deslize para fora", "correct": false },
+            { "text": "Que o oponente estique os dois braços", "correct": false },
+            { "text": "Que o oponente use as pernas para empurrar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando se perde só um dos dois elementos — ganchos ou seat belt?",
+          "explanation": "Normalmente ainda dá para recuperar — é perder os dois ao mesmo tempo que acaba a posição.",
+          "options": [
+            { "text": "Normalmente ainda dá para recuperar a posição", "correct": true },
+            { "text": "A posição acaba imediatamente", "correct": false },
+            { "text": "O outro elemento também se perde automaticamente", "correct": false },
+            { "text": "Nada muda — os dois são redundantes entre si", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que entender a divisão entre ganchos e seat belt transforma a posição de costas?",
+          "explanation": "Transforma costas de posição instável em posição dominante, porque cada falha pode ser tratada e recuperada especificamente.",
+          "options": [
+            { "text": "De posição instável em posição dominante", "correct": true },
+            { "text": "De posição de ataque em posição de defesa", "correct": false },
+            { "text": "De posição exclusiva de gi em posição livre", "correct": false },
+            { "text": "De posição temporária em posição permanente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum na manutenção de costas descrito no conceito?",
+          "explanation": "Tratar os dois elementos como se fossem a mesma coisa, reagindo à perda de um copiando a resposta do outro.",
+          "options": [
+            { "text": "Tratar ganchos e seat belt como a mesma coisa", "correct": true },
+            { "text": "Recuperar os ganchos rápido demais", "correct": false },
+            { "text": "Priorizar o seat belt sobre os ganchos sempre", "correct": false },
+            { "text": "Trocar de gancho no meio da manutenção", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você perde o gancho e reage do mesmo jeito que reagiria à perda do seat belt. Qual é o risco dessa confusão?",
+          "explanation": "Cada elemento falha e se recupera de um jeito diferente; confundir os dois costuma transformar a perda de um no colapso da posição inteira.",
+          "options": [
+            { "text": "Transformar a perda de um elemento no colapso da posição inteira", "correct": true },
+            { "text": "Nenhum — a resposta é sempre a mesma para os dois", "correct": false },
+            { "text": "Perder automaticamente o gancho restante", "correct": false },
+            { "text": "Ganhar tempo extra para reagir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que perder os dois elementos ao mesmo tempo é mais grave do que perder um de cada vez?",
+          "explanation": "Porque cada elemento cobre uma falha diferente do oponente (deslizar para fora ou girar de frente); perder os dois remove as duas travas ao mesmo tempo, e a posição acaba.",
+          "options": [
+            { "text": "Porque as duas travas contra fugas diferentes desaparecem juntas", "correct": true },
+            { "text": "Porque o oponente ganha automaticamente uma finalização", "correct": false },
+            { "text": "Porque isso nunca acontece na prática", "correct": false },
+            { "text": "Porque um elemento sozinho nunca sustenta nada", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M5.3",
@@ -34,7 +196,88 @@
       "prereqs": ["M5.2"],
       "concept": "O mata-leão é a finalização mais confiável do jiu-jitsu porque não depende do gi nem de erro do oponente — depende só de o controle de costas estar mantido.\n\nO trabalho real acontece antes do estrangulamento em si: neutralizar as mãos que defendem o pescoço. Só depois disso o braço tem caminho livre até o pescoço.\n\nO erro comum é atacar o pescoço direto, ignorando as mãos que o defendem — o braço trava na barreira e a posição se desgasta à toa. E por interromper circulação, é a técnica que menos tolera demora no tap (M0.3): o apagão pode chegar sem o aviso de dor de uma torção articular. Paciência para neutralizar a defesa primeiro custa alguns segundos a mais, mas é o que transforma uma tentativa travada numa finalização de verdade.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Por que o mata-leão é descrito como a finalização mais confiável do jiu-jitsu?",
+          "explanation": "Porque não depende do gi nem de erro do oponente — depende só de o controle de costas estar mantido.",
+          "options": [
+            { "text": "Não depende do gi nem de erro do oponente, só do controle de costas", "correct": true },
+            { "text": "Porque é a única finalização permitida sem gi", "correct": false },
+            { "text": "Porque não exige nenhum controle de posição prévio", "correct": false },
+            { "text": "Porque funciona mesmo sem as costas estarem controladas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que precisa estar mantido para o mata-leão funcionar, segundo o conceito?",
+          "explanation": "O controle de costas — é a única condição citada para a confiabilidade da finalização.",
+          "options": [
+            { "text": "O controle de costas", "correct": true },
+            { "text": "A pegada na gola do gi", "correct": false },
+            { "text": "Um erro cometido pelo oponente", "correct": false },
+            { "text": "O joelho na barriga do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde acontece o trabalho real do mata-leão, antes do estrangulamento em si?",
+          "explanation": "Em neutralizar as mãos que defendem o pescoço — só depois disso o braço tem caminho livre.",
+          "options": [
+            { "text": "Em neutralizar as mãos que defendem o pescoço", "correct": true },
+            { "text": "Em prender as duas pernas do oponente", "correct": false },
+            { "text": "Em trocar o seat belt de lado", "correct": false },
+            { "text": "Em ajustar o gancho antes de tudo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao tentar o mata-leão?",
+          "explanation": "Atacar o pescoço direto, ignorando as mãos que o defendem — o braço trava na barreira e a posição se desgasta à toa.",
+          "options": [
+            { "text": "Atacar o pescoço direto, ignorando as mãos de defesa", "correct": true },
+            { "text": "Neutralizar as mãos antes de atacar o pescoço", "correct": false },
+            { "text": "Esperar demais antes de atacar o pescoço", "correct": false },
+            { "text": "Trocar o seat belt pelo gancho no meio do ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você ataca o pescoço direto, sem neutralizar as mãos que o defendem. O que costuma acontecer?",
+          "explanation": "O braço trava na barreira das mãos e a posição se desgasta à toa, sem progresso real na finalização.",
+          "options": [
+            { "text": "O braço trava na barreira das mãos e a posição se desgasta", "correct": true },
+            { "text": "O estrangulamento sai mais rápido do que o normal", "correct": false },
+            { "text": "As mãos do oponente cedem sozinhas com o tempo", "correct": false },
+            { "text": "Nada muda — a barreira das mãos não afeta o ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o mata-leão é descrito como a técnica que menos tolera demora no tap?",
+          "explanation": "Porque interrompe circulação, e o apagão pode chegar sem o aviso de dor que uma torção articular normalmente dá (ligação com M0.3).",
+          "options": [
+            { "text": "Porque interrompe circulação e o apagão pode vir sem aviso de dor", "correct": true },
+            { "text": "Porque é a finalização mais dolorosa do jiu-jitsu", "correct": false },
+            { "text": "Porque exige mais tempo para ser encaixada que outras", "correct": false },
+            { "text": "Porque só funciona em quem já está cansado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o custo de ter paciência para neutralizar a defesa do pescoço antes de atacar?",
+          "explanation": "Custa alguns segundos a mais — mas é o que transforma uma tentativa travada numa finalização de verdade.",
+          "options": [
+            { "text": "Alguns segundos a mais, em troca de uma finalização de verdade", "correct": true },
+            { "text": "A perda total do controle de costas", "correct": false },
+            { "text": "A necessidade de recomeçar a posição do zero", "correct": false },
+            { "text": "Nenhum custo — é imediato de qualquer forma", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que diferencia o risco do mata-leão do risco de uma chave de articulação, segundo o conceito e M0.3?",
+          "explanation": "A chave de articulação avisa com dor progressiva; o mata-leão pode levar ao apagão sem esse aviso equivalente — por isso exige tocar mais cedo.",
+          "options": [
+            { "text": "O mata-leão pode apagar sem o aviso de dor que a chave dá", "correct": true },
+            { "text": "O mata-leão nunca causa desconforto nenhum", "correct": false },
+            { "text": "A chave de articulação é sempre mais perigosa", "correct": false },
+            { "text": "Não há diferença real entre os dois riscos", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M5.4",
@@ -45,7 +288,88 @@
       "prereqs": ["M5.2"],
       "concept": "Contra alguém que sabe defender, manter as costas vira um jogo de deslocamento contínuo, não uma posição parada.\n\nEle leva os ombros ao chão e tenta girar para escapar; você precisa acompanhar o giro mantendo o peito colado ao dele, trocando de lado sem nunca soltar o seat belt.\n\nO erro comum é tentar travar a posição parado, como se costas fosse algo que se segura sem se mover: contra defesa de verdade, quem trava perde o encaixe assim que o oponente completa o giro que você não acompanhou. Manter o contato de tronco durante a troca de lado é o que garante que a posição nunca fique, nem por um instante, sem controle nenhum sobre o oponente.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que a manutenção de costas vira contra alguém que sabe defender?",
+          "explanation": "Vira um jogo de deslocamento contínuo, não uma posição parada.",
+          "options": [
+            { "text": "Um jogo de deslocamento contínuo", "correct": true },
+            { "text": "Uma posição estática, mantida sem se mover", "correct": false },
+            { "text": "Uma disputa de força de braço", "correct": false },
+            { "text": "Uma corrida para a finalização imediata", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o oponente faz para tentar escapar do controle de costas?",
+          "explanation": "Leva os ombros ao chão e tenta girar para escapar.",
+          "options": [
+            { "text": "Leva os ombros ao chão e tenta girar", "correct": true },
+            { "text": "Estica os dois braços para cima", "correct": false },
+            { "text": "Prende as pernas de quem está atrás", "correct": false },
+            { "text": "Solta a própria gola para respirar melhor", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que você precisa fazer para acompanhar o giro do oponente que tenta escapar?",
+          "explanation": "Acompanhar o giro mantendo o peito colado ao dele, trocando de lado sem nunca soltar o seat belt.",
+          "options": [
+            { "text": "Manter o peito colado ao dele e trocar de lado sem soltar o seat belt", "correct": true },
+            { "text": "Soltar o seat belt para girar mais rápido", "correct": false },
+            { "text": "Afastar o peito para ganhar espaço de reação", "correct": false },
+            { "text": "Trocar o seat belt pelos ganchos nesse momento", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum na manutenção de costas contra defesa de verdade?",
+          "explanation": "Tentar travar a posição parado, como se costas fosse algo que se segura sem se mover.",
+          "options": [
+            { "text": "Tentar travar a posição parado, sem se mover", "correct": true },
+            { "text": "Trocar de lado rápido demais durante o giro", "correct": false },
+            { "text": "Manter o peito colado ao do oponente o tempo todo", "correct": false },
+            { "text": "Acompanhar o giro cedo demais", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você tenta travar a posição de costas parado, sem acompanhar o giro do oponente. O que acontece quando ele completa o giro?",
+          "explanation": "Quem trava perde o encaixe assim que o oponente completa o giro que não foi acompanhado.",
+          "options": [
+            { "text": "Perde o encaixe da posição", "correct": true },
+            { "text": "Nada muda — a posição continua igual", "correct": false },
+            { "text": "O seat belt automaticamente se ajusta sozinho", "correct": false },
+            { "text": "O gancho se torna mais forte", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que manter o contato de tronco durante a troca de lado garante?",
+          "explanation": "Garante que a posição nunca fique, nem por um instante, sem controle nenhum sobre o oponente.",
+          "options": [
+            { "text": "Que a posição nunca fique um instante sem controle sobre ele", "correct": true },
+            { "text": "Que o oponente nunca mais tente girar de novo", "correct": false },
+            { "text": "Que o gancho substitua o seat belt na troca", "correct": false },
+            { "text": "Que a finalização saia automaticamente depois", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que 'costas' não pode ser tratada como algo que se segura sem se mover, segundo o conceito?",
+          "explanation": "Porque contra defesa de verdade o oponente está sempre se deslocando, e travar parado perde o encaixe assim que ele completa o giro não acompanhado.",
+          "options": [
+            { "text": "Porque a defesa de verdade exige deslocamento contínuo para ser acompanhada", "correct": true },
+            { "text": "Porque as costas são, na prática, uma posição só de gi", "correct": false },
+            { "text": "Porque a posição exige força constante nos braços", "correct": false },
+            { "text": "Porque o seat belt só funciona em movimento", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a diferença entre manter costas contra alguém que não sabe defender e contra alguém que sabe?",
+          "explanation": "Contra quem sabe defender, a manutenção exige deslocamento contínuo acompanhando o giro; sem essa defesa, a posição pode parecer mais parada.",
+          "options": [
+            { "text": "Contra quem sabe defender, a manutenção exige deslocamento contínuo", "correct": true },
+            { "text": "Não há diferença nenhuma na manutenção", "correct": false },
+            { "text": "Contra quem sabe defender, o seat belt deixa de ser necessário", "correct": false },
+            { "text": "Contra quem sabe defender, os ganchos bastam sozinhos", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

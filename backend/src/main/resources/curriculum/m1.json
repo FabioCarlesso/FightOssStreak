@@ -56,6 +56,46 @@
             { "text": "Respirar fundo aumenta a força de resistência", "correct": false },
             { "text": "É o que permite tocar mais cedo", "correct": false }
           ]
+        },
+        {
+          "prompt": "Segundo o conceito do nó, qual é a primeira habilidade do jiu-jitsu sob pressão?",
+          "explanation": "A primeira habilidade não é escapar — é não perder enquanto ainda não é possível escapar. Fugir exige espaço e tempo que ainda não existem.",
+          "options": [
+            { "text": "Não perder enquanto ainda não é possível escapar", "correct": true },
+            { "text": "Escapar o mais rápido possível", "correct": false },
+            { "text": "Contra-atacar imediatamente", "correct": false },
+            { "text": "Cansar o oponente com movimento constante", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que fugas exigem esperar o momento certo, segundo o conceito?",
+          "explanation": "Espaço e tempo aparecem quando o oponente se move — é aí que a fuga real se torna possível.",
+          "options": [
+            { "text": "Porque espaço e tempo aparecem quando o oponente se move", "correct": true },
+            { "text": "Porque fugir logo é proibido pela etiqueta", "correct": false },
+            { "text": "Porque o professor avalia a paciência do aluno", "correct": false },
+            { "text": "Porque escapar cedo demais cansa mais o oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a consequência de gastar todo o ar em explosão nos primeiros 30 segundos?",
+          "explanation": "Quando a brecha real de fuga aparece, não sobra energia para aproveitá-la — o erro que define o faixa branca sob pressão.",
+          "options": [
+            { "text": "Não sobra energia quando a brecha real de fuga aparece", "correct": true },
+            { "text": "O oponente perde pontos por passividade", "correct": false },
+            { "text": "A postura defensiva melhora com o esforço inicial", "correct": false },
+            { "text": "O risco de lesão do parceiro aumenta imediatamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a hierarquia de prioridades descrita para sobreviver sob pressão?",
+          "explanation": "Proteger o pescoço, manter os cotovelos colados ao corpo e continuar respirando, nessa ordem — é o que mantém a pessoa no jogo até a fuga ser possível.",
+          "options": [
+            { "text": "Proteger o pescoço, manter os cotovelos colados ao corpo e respirar", "correct": true },
+            { "text": "Buscar uma pegada de ataque antes de qualquer defesa", "correct": false },
+            { "text": "Levantar-se o quanto antes, mesmo sem espaço", "correct": false },
+            { "text": "Segurar a respiração para reduzir o volume do tórax", "correct": false }
+          ]
         }
       ]
     },
@@ -101,6 +141,56 @@
             { "text": "As duas usam a mesma pegada de gola", "correct": false },
             { "text": "As duas terminam na mesma posição final", "correct": false },
             { "text": "É apenas uma convenção de ordem de currículo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o shrimping cria, e por que isso importa para qualquer fuga?",
+          "explanation": "Ele cria espaço entre o quadril e o oponente — a moeda de toda fuga em jiu-jitsu, segundo o conceito do nó.",
+          "options": [
+            { "text": "Espaço entre o quadril e o oponente — a moeda de toda fuga em jiu-jitsu", "correct": true },
+            { "text": "Uma pegada nova na gola do oponente", "correct": false },
+            { "text": "Distância suficiente para ficar de pé", "correct": false },
+            { "text": "Pressão extra sobre o peito do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o quadril, e não o braço, é o motor real da fuga?",
+          "explanation": "O quadril, apoiado na perna e no chão, reposiciona a estrutura toda; empurrar com os braços apenas cansa sem deslocar nada.",
+          "options": [
+            { "text": "Porque o quadril, apoiado na perna e no chão, reposiciona a estrutura inteira do corpo", "correct": true },
+            { "text": "Porque o braço é proibido de ser usado em fugas", "correct": false },
+            { "text": "Porque o quadril cansa mais devagar que o braço", "correct": false },
+            { "text": "Porque o braço só serve para pegadas de ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual erro comum o nó aponta sobre a forma como o shrimp costuma ser tratado?",
+          "explanation": "Tratá-lo como aquecimento isolado ignora que ele é o motor comum das três fugas de M1.",
+          "options": [
+            { "text": "Ser visto como aquecimento isolado, em vez de motor comum das fugas", "correct": true },
+            { "text": "Ser executado rápido demais para ter efeito", "correct": false },
+            { "text": "Ser praticado apenas com o gi, nunca sem gi", "correct": false },
+            { "text": "Ser confundido com uma técnica de ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Em quais fugas o mesmo mecanismo do shrimping reaparece, segundo o conceito?",
+          "explanation": "O mesmo mecanismo de criar e ocupar espaço aparece embaixo da fuga de 100kg, da fuga de montada e da recuperação de guarda.",
+          "options": [
+            { "text": "Fuga de 100kg, fuga de montada e recuperação de guarda", "correct": true },
+            { "text": "Somente na fuga de montada", "correct": false },
+            { "text": "Somente em finalizações da guarda fechada", "correct": false },
+            { "text": "Em nenhuma outra fuga além dele mesmo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece com quem pula a etapa do shrimping no aprendizado?",
+          "explanation": "Quem pula essa etapa chega ao módulo seguinte sem o mecanismo que sustenta o restante das fugas.",
+          "options": [
+            { "text": "Chega aos módulos seguintes sem o mecanismo que sustenta as outras fugas", "correct": true },
+            { "text": "Aprende a defender estrangulamentos mais rápido", "correct": false },
+            { "text": "Ganha vantagem de peso sobre o oponente", "correct": false },
+            { "text": "Não sofre nenhuma consequência prática", "correct": false }
           ]
         }
       ]
@@ -168,6 +258,56 @@
             { "text": "Não segurou a gola dele antes de começar", "correct": false },
             { "text": "Explodiu com pouca força", "correct": false }
           ]
+        },
+        {
+          "prompt": "Qual é o problema real de estar embaixo do 100kg, segundo o conceito do nó?",
+          "explanation": "O problema não é o peso — é a falta de enquadramento, que deixa o peito do oponente colar no seu e o espaço desaparecer.",
+          "options": [
+            { "text": "A falta de enquadramento, que deixa o peito do oponente colar no seu", "correct": true },
+            { "text": "O peso do oponente, que é impossível de deslocar", "correct": false },
+            { "text": "A falta de força nos braços", "correct": false },
+            { "text": "A posição das pernas, que impede qualquer movimento", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tentar empurrar o oponente sem enquadramento gasta força à toa?",
+          "explanation": "Sem estrutura óssea no lugar, o empurrão vira uma disputa de força que se perde — o enquadramento é o que sustenta o esforço.",
+          "options": [
+            { "text": "Porque sem estrutura óssea no lugar, o empurrão vira uma disputa de força que se perde", "correct": true },
+            { "text": "Porque empurrar é proibido nas regras do jiu-jitsu", "correct": false },
+            { "text": "Porque o oponente sempre pesa mais que você", "correct": false },
+            { "text": "Porque empurrar machuca o próprio ombro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando o shrimp é feito sem ter para onde levar o joelho?",
+          "explanation": "O espaço criado é devolvido de graça um instante depois, porque nada ocupa o lugar aberto pelo shrimp.",
+          "options": [
+            { "text": "O espaço criado é devolvido de graça um instante depois", "correct": true },
+            { "text": "O oponente perde a postura automaticamente", "correct": false },
+            { "text": "A fuga se completa mesmo sem o joelho", "correct": false },
+            { "text": "O enquadramento se fortalece sozinho", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a ordem lógica das etapas da fuga de 100kg, segundo o conceito?",
+          "explanation": "Construir o enquadramento primeiro, abrir espaço com o shrimp já com essa estrutura no lugar, e ocupar o espaço com o joelho antes que ele feche de novo.",
+          "options": [
+            { "text": "Construir o enquadramento, abrir espaço com o shrimp, ocupar o espaço com o joelho", "correct": true },
+            { "text": "Ocupar o espaço primeiro, depois abrir espaço, depois enquadrar", "correct": false },
+            { "text": "Empurrar o oponente, depois puxar a gola, depois sentar", "correct": false },
+            { "text": "Girar o quadril, depois levantar, depois enquadrar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que cada etapa da fuga de 100kg depende da etapa anterior ter funcionado?",
+          "explanation": "Enquadramento sem shrimp não abre espaço, e shrimp sem joelho não fixa o espaço aberto — cada etapa depende da anterior.",
+          "options": [
+            { "text": "Porque enquadramento sem shrimp não abre espaço, e shrimp sem joelho não fixa o espaço aberto", "correct": true },
+            { "text": "Porque as etapas precisam ser feitas na mesma velocidade", "correct": false },
+            { "text": "Porque o oponente sempre reage na mesma ordem", "correct": false },
+            { "text": "Porque a regra de competição exige essa sequência", "correct": false }
+          ]
         }
       ]
     },
@@ -213,6 +353,56 @@
             { "text": "Derrubar o oponente por cima da sua cabeça", "correct": false },
             { "text": "Virar de barriga para baixo e levantar", "correct": false },
             { "text": "Alcançar a gola dele para estrangular", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a upa (bridge) faz para desequilibrar o oponente?",
+          "explanation": "A upa usa a ponte para jogar o peso do oponente por cima da sua cabeça — mas só funciona se o braço daquele lado estiver bloqueado.",
+          "options": [
+            { "text": "Usa a ponte para jogar o peso dele por cima da sua cabeça", "correct": true },
+            { "text": "Empurra o oponente para o lado com os braços", "correct": false },
+            { "text": "Gira o quadril sem tocar no chão", "correct": false },
+            { "text": "Prende as pernas do oponente antes de levantar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a upa falha se o braço do oponente do lado do giro não estiver bloqueado?",
+          "explanation": "Sem o braço bloqueado, ele apoia a mão no chão e a ponte para no meio do caminho — o bloqueio é o que impede essa base de socorro.",
+          "options": [
+            { "text": "Porque ele apoia a mão no chão e a ponte para no meio do caminho", "correct": true },
+            { "text": "Porque ele consegue aplicar uma chave de braço imediatamente", "correct": false },
+            { "text": "Porque o giro fica proibido pela regra da posição", "correct": false },
+            { "text": "Porque o próprio corpo perde o equilíbrio antes de girar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o objetivo imediato do elbow escape, em relação ao espaço lateral?",
+          "explanation": "O elbow escape recupera espaço lateral para trazer o joelho por dentro — o primeiro passo para sair de baixo da montada.",
+          "options": [
+            { "text": "Recuperar espaço lateral para trazer o joelho por dentro", "correct": true },
+            { "text": "Derrubar o oponente por cima da cabeça", "correct": false },
+            { "text": "Alcançar a gola do oponente para estrangular", "correct": false },
+            { "text": "Levantar-se imediatamente para ficar em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tratar upa e elbow escape como técnicas isoladas rende pouco contra quem resiste?",
+          "explanation": "Na prática elas formam um par: quando o oponente se defende de uma, abre a outra.",
+          "options": [
+            { "text": "Porque na prática elas formam um par: a defesa de uma abre a outra", "correct": true },
+            { "text": "Porque só uma das duas funciona no gi", "correct": false },
+            { "text": "Porque decorar as duas ao mesmo tempo é impossível", "correct": false },
+            { "text": "Porque uma delas só serve para faixas mais graduadas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual das duas fugas de montada depende de bloquear o braço do oponente antes de agir?",
+          "explanation": "A upa depende do bloqueio do braço; sem ele, o oponente apoia a mão no chão e neutraliza a ponte.",
+          "options": [
+            { "text": "A upa", "correct": true },
+            { "text": "O elbow escape", "correct": false },
+            { "text": "As duas dependem igualmente disso", "correct": false },
+            { "text": "Nenhuma das duas depende disso", "correct": false }
           ]
         }
       ]
@@ -274,6 +464,56 @@
             { "text": "O oponente fica obrigado a ficar de pé", "correct": false },
             { "text": "Elimina o risco de estrangulamento", "correct": false }
           ]
+        },
+        {
+          "prompt": "Por que a recuperação de guarda é chamada de checkpoint do currículo?",
+          "explanation": "Ela só acontece se shrimp, enquadramento e as fugas de 100kg e montada estiverem funcionando — é onde o módulo inteiro se junta.",
+          "options": [
+            { "text": "Porque só acontece se shrimp, enquadramento e as fugas de 100kg e montada estiverem funcionando", "correct": true },
+            { "text": "Porque é a técnica mais difícil de todo o módulo", "correct": false },
+            { "text": "Porque marca o fim do currículo de faixa branca", "correct": false },
+            { "text": "Porque é a primeira posição de ataque ensinada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o critério real de sucesso ao recuperar a guarda, segundo o conceito?",
+          "explanation": "O objetivo é voltar a controlar a distância com as pernas — guarda fechada é uma das formas, não o requisito.",
+          "options": [
+            { "text": "Ter pernas entre você e o oponente, controlando a distância", "correct": true },
+            { "text": "Fechar a guarda com os tornozelos cruzados", "correct": false },
+            { "text": "Conseguir uma pegada de gola", "correct": false },
+            { "text": "Ficar de joelhos de frente para o oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que perseguir especificamente a guarda fechada pode ser um erro nesse momento?",
+          "explanation": "Se a guarda aberta já devolveu o controle da distância, perseguir a fechada é gastar tempo num detalhe que não muda o que importa.",
+          "options": [
+            { "text": "Porque a guarda aberta já pode ter devolvido o controle da distância, tornando isso desnecessário", "correct": true },
+            { "text": "Porque a guarda fechada é proibida para faixa branca", "correct": false },
+            { "text": "Porque a guarda fechada nunca controla distância", "correct": false },
+            { "text": "Porque fechar a guarda sempre demora mais que qualquer outra opção", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que muda no seu jogo assim que a guarda é recuperada?",
+          "explanation": "Você sai de uma posição só defensiva para uma com opções de ataque — raspagem e finalização passam a existir.",
+          "options": [
+            { "text": "Você sai de uma posição só defensiva para uma com opções de ataque", "correct": true },
+            { "text": "Você passa a pontuar automaticamente em competição", "correct": false },
+            { "text": "O oponente é obrigado a ficar de pé", "correct": false },
+            { "text": "O risco de estrangulamento desaparece", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a recuperação de guarda depende do que foi aprendido antes, no mesmo módulo?",
+          "explanation": "Ela consolida shrimp, enquadramento e as fugas de 100kg e montada já estudadas — nenhuma delas termina de verdade sem essa etapa final.",
+          "options": [
+            { "text": "Porque consolida shrimp, enquadramento e as fugas já estudadas", "correct": true },
+            { "text": "Porque exige uma pegada nova, não estudada antes", "correct": false },
+            { "text": "Porque é uma técnica independente das anteriores", "correct": false },
+            { "text": "Porque só funciona depois de aprender uma finalização", "correct": false }
+          ]
         }
       ]
     },
@@ -333,6 +573,56 @@
             { "text": "É a posição em que o oponente aplica mais peso", "correct": false },
             { "text": "É a única posição sem fuga possível", "correct": false },
             { "text": "É a que mais pontua em competição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a ordem correta de prioridades ao ter as costas pegas?",
+          "explanation": "Defender o pescoço com as mãos vem primeiro; tentar escapar com a gola exposta entrega a finalização durante a própria tentativa de fuga.",
+          "options": [
+            { "text": "Defender o pescoço com as mãos primeiro, só depois trabalhar a fuga", "correct": true },
+            { "text": "Escapar primeiro, defender o pescoço depois", "correct": false },
+            { "text": "Atacar o braço do oponente antes de qualquer coisa", "correct": false },
+            { "text": "Ficar completamente imóvel até o professor intervir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Para que lado se leva os ombros ao chão na fuga de costas?",
+          "explanation": "Para o lado do braço que estrangula — ir para o lado oposto gira você direto para dentro do próprio estrangulamento.",
+          "options": [
+            { "text": "Para o lado do braço que estrangula", "correct": true },
+            { "text": "Para o lado oposto ao braço que estrangula", "correct": false },
+            { "text": "Para qualquer lado, sem diferença", "correct": false },
+            { "text": "Para trás, afastando-se do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que ir para o lado errado durante a fuga de costas é perigoso?",
+          "explanation": "Isso gira a pessoa direto para dentro do próprio estrangulamento, em vez de tirar espaço de onde ele finaliza.",
+          "options": [
+            { "text": "Porque gira a pessoa direto para dentro do próprio estrangulamento", "correct": true },
+            { "text": "Porque perde pontos em competição", "correct": false },
+            { "text": "Porque cansa mais rápido que o lado correto", "correct": false },
+            { "text": "Porque expõe o braço a uma chave", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual erro específico o conceito aponta como o que mais custa nessa posição?",
+          "explanation": "Tentar escapar antes de neutralizar a mão que busca a gola entrega o estrangulamento durante a própria tentativa de fuga.",
+          "options": [
+            { "text": "Tentar escapar antes de neutralizar a mão que busca a gola", "correct": true },
+            { "text": "Tentar se levantar rápido demais", "correct": false },
+            { "text": "Girar para o lado errado do estrangulamento", "correct": false },
+            { "text": "Prender as pernas do oponente antes de defender o pescoço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que não ver o ataque chegar agrava especificamente o risco de estar de costas?",
+          "explanation": "Sem aviso do que vem a seguir, a defesa só reage depois que o ataque já começou, em vez de antecipar — o oposto de posições em que se vê o oponente se preparar.",
+          "options": [
+            { "text": "Porque a defesa só reage depois que o ataque já começou, sem poder antecipar", "correct": true },
+            { "text": "Porque impede fisicamente qualquer movimento de fuga", "correct": false },
+            { "text": "Porque aumenta o peso que o oponente aplica sobre as costas", "correct": false },
+            { "text": "Porque torna o tap inválido nessa posição", "correct": false }
           ]
         }
       ]

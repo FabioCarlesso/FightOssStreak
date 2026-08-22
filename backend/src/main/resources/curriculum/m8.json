@@ -1,7 +1,7 @@
 {
   "code": "M8",
   "title": "Jogo Integrado",
-  "summary": "Integração e personalização. Quiz pendente de curadoria.",
+  "summary": "Integração e personalização.",
   "nodes": [
     {
       "code": "M8.1",
@@ -12,7 +12,88 @@
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
       "concept": "Contra alguém que reage bem, nenhuma raspagem isolada funciona de verdade — o que funciona é a segunda, encadeada a partir da defesa da primeira.\n\nEncadear é escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma já seja a entrada da outra. É o mesmo raciocínio de tesoura e pêndulo em M2.2 e M2.3, agora aplicado deliberadamente em vez de descoberto por acidente.\n\nO erro comum é insistir na mesma raspagem depois que ela já foi defendida: repetir o que já não funciona ignora que a própria defesa do oponente é a informação que aponta para a próxima tentativa. Montar essas cadeias com antecedência, sabendo de cor qual raspagem segue a defesa de qual, é o que separa quem improvisa de quem já treinou a sequência.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Contra um oponente que reage bem, o que realmente funciona, segundo o conceito?",
+          "explanation": "Funciona a segunda raspagem, encadeada a partir da defesa da primeira — não a primeira raspagem isolada.",
+          "options": [
+            { "text": "A segunda raspagem, encadeada a partir da defesa da primeira", "correct": true },
+            { "text": "A raspagem fisicamente mais forte", "correct": false },
+            { "text": "A primeira raspagem, repetida com mais velocidade", "correct": false },
+            { "text": "Qualquer raspagem, desde que surpreenda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que significa \"encadear\" raspagens, segundo o texto?",
+          "explanation": "É escolher raspagens cujas direções de desequilíbrio se opõem, de forma que a defesa de uma já seja a entrada da outra.",
+          "options": [
+            { "text": "Escolher raspagens cujas direções de desequilíbrio se opõem", "correct": true },
+            { "text": "Aplicar duas raspagens ao mesmo tempo", "correct": false },
+            { "text": "Repetir a mesma raspagem até ela funcionar", "correct": false },
+            { "text": "Alternar raspagens aleatoriamente a cada tentativa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A que raciocínio já visto no currículo o encadeamento de raspagens se compara?",
+          "explanation": "Ao par tesoura e pêndulo de M2.2 e M2.3 — o mesmo raciocínio, agora aplicado deliberadamente.",
+          "options": [
+            { "text": "Ao par tesoura e pêndulo de M2.2 e M2.3", "correct": true },
+            { "text": "Ao encadeamento de kimura de M7.1", "correct": false },
+            { "text": "Ao sistema de fuga de costas de M1.6", "correct": false },
+            { "text": "À passagem torreando de M3.2", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao encontrar resistência numa raspagem?",
+          "explanation": "É insistir na mesma raspagem depois que ela já foi defendida, ignorando a informação que a defesa deu.",
+          "options": [
+            { "text": "Insistir na mesma raspagem depois que ela já foi defendida", "correct": true },
+            { "text": "Trocar de raspagem cedo demais", "correct": false },
+            { "text": "Parar de atacar até reorganizar a guarda", "correct": false },
+            { "text": "Pedir para reiniciar a posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a defesa do oponente representa, segundo o texto?",
+          "explanation": "Ela é a informação que aponta para a próxima tentativa de raspagem — não um sinal para desistir.",
+          "options": [
+            { "text": "A informação que aponta para a próxima tentativa de raspagem", "correct": true },
+            { "text": "O fim da sequência de ataque", "correct": false },
+            { "text": "Um sinal para desistir da raspagem", "correct": false },
+            { "text": "Uma falha de execução que precisa ser corrigida", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que separa quem improvisa de quem já treinou a sequência de raspagens?",
+          "explanation": "Montar as cadeias com antecedência, sabendo de cor qual raspagem segue a defesa de qual.",
+          "options": [
+            { "text": "Montar as cadeias com antecedência, sabendo qual raspagem segue qual defesa", "correct": true },
+            { "text": "A força física de cada um", "correct": false },
+            { "text": "A velocidade de execução, apenas", "correct": false },
+            { "text": "O tipo de guarda usada no início", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Em que módulo anterior o mesmo raciocínio de opor direções de desequilíbrio já aparecia, mesmo sem ser deliberado?",
+          "explanation": "Em M2, no par tesoura (M2.2) e pêndulo (M2.3) — o mesmo mecanismo, descoberto por acidente antes de ser treinado de propósito.",
+          "options": [
+            { "text": "Em M2, no par tesoura e pêndulo", "correct": true },
+            { "text": "Em M4, na transição 100kg para montada", "correct": false },
+            { "text": "Em M6, no sprawl", "correct": false },
+            { "text": "Em M1, na recuperação de guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que nenhuma raspagem isolada funciona contra quem reage bem?",
+          "explanation": "Porque quem reage bem defende a primeira tentativa, e só a segunda, que usa essa defesa a favor, tem chance real de funcionar.",
+          "options": [
+            { "text": "Porque quem reage bem defende a primeira, e só a segunda usa isso a favor", "correct": true },
+            { "text": "Porque raspagem isolada nunca funciona, nem contra iniciantes", "correct": false },
+            { "text": "Porque falta força para uma raspagem só", "correct": false },
+            { "text": "Porque toda raspagem exige duas tentativas, por regra", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M8.2",
@@ -23,7 +104,88 @@
       "prereqs": ["M7.1", "M7.2", "M7.3", "M7.4"],
       "concept": "A partir de certo ponto do currículo, o ganho não vem mais de saber mais técnicas — vem de perceber mais cedo o que o oponente está prestes a fazer.\n\nLer direção de pressão e distribuição de peso permite agir na intenção dele em vez de na ação já consumada. É a diferença entre reagir e antecipar, e é o que faz um jogo de alto nível parecer sem esforço, mesmo sendo o oposto disso.\n\nO erro comum é continuar jogando por reação mesmo depois de acumular técnica suficiente: esperar a ação terminar para responder desperdiça a informação que a pressão e o peso já davam um instante antes. É uma habilidade que amadurece com repetição, não com mais um vídeo assistido — a leitura de pressão só se refina no contato de verdade.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "A partir de certo ponto do currículo, de onde vem o ganho real, segundo o texto?",
+          "explanation": "Vem de perceber mais cedo o que o oponente está prestes a fazer, não de aprender mais técnicas.",
+          "options": [
+            { "text": "De perceber mais cedo o que o oponente está prestes a fazer", "correct": true },
+            { "text": "De aprender mais técnicas novas", "correct": false },
+            { "text": "De treinar mais horas por semana", "correct": false },
+            { "text": "De assistir mais vídeos instrucionais", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que ler direção de pressão e distribuição de peso permite fazer?",
+          "explanation": "Permite agir na intenção do oponente, em vez de esperar a ação já consumada para responder.",
+          "options": [
+            { "text": "Agir na intenção do oponente, em vez de na ação já consumada", "correct": true },
+            { "text": "Prever o resultado de uma luta inteira", "correct": false },
+            { "text": "Eliminar a necessidade de defesa", "correct": false },
+            { "text": "Substituir o treino de técnica por completo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a diferença central entre reagir e antecipar, segundo o conceito?",
+          "explanation": "Reagir responde à ação já consumada; antecipar age sobre a intenção, antes de ela virar ação.",
+          "options": [
+            { "text": "Reagir responde à ação consumada; antecipar age sobre a intenção", "correct": true },
+            { "text": "Reagir é mais rápido que antecipar", "correct": false },
+            { "text": "Antecipar só funciona sem gi", "correct": false },
+            { "text": "Não há diferença prática entre os dois", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que um jogo de alto nível parece \"sem esforço\", segundo o texto?",
+          "explanation": "Porque a antecipação evita a resposta tardia e cara que a reação exige, mesmo sendo o oposto de fácil.",
+          "options": [
+            { "text": "Porque a antecipação evita a resposta tardia que a reação exige", "correct": true },
+            { "text": "Porque quem joga assim usa menos força física", "correct": false },
+            { "text": "Porque esse jogo dispensa técnica", "correct": false },
+            { "text": "Porque o oponente sempre coopera", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum descrito neste nó?",
+          "explanation": "É continuar jogando por reação mesmo depois de já ter acumulado técnica suficiente.",
+          "options": [
+            { "text": "Continuar jogando por reação mesmo depois de acumular técnica suficiente", "correct": true },
+            { "text": "Antecipar cedo demais, antes de ter técnica", "correct": false },
+            { "text": "Ler pressão em vez de estudar posição", "correct": false },
+            { "text": "Praticar demais a leitura de peso", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que se perde ao esperar a ação do oponente terminar para responder?",
+          "explanation": "Perde-se a informação que a pressão e o peso já davam um instante antes da ação se consumar.",
+          "options": [
+            { "text": "A informação que a pressão e o peso já davam um instante antes", "correct": true },
+            { "text": "A chance de aplicar qualquer finalização depois", "correct": false },
+            { "text": "O direito de contra-atacar", "correct": false },
+            { "text": "Apenas tempo, sem outra consequência", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como essa habilidade de leitura de pressão amadurece, segundo o texto?",
+          "explanation": "Amadurece com repetição e contato de verdade — não com mais vídeo assistido.",
+          "options": [
+            { "text": "Com repetição e contato de verdade, não com mais vídeo assistido", "correct": true },
+            { "text": "Apenas estudando anatomia", "correct": false },
+            { "text": "Assistindo análises técnicas de competição", "correct": false },
+            { "text": "Memorizando sequências de ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a leitura de pressão substitui, no processo de evolução descrito pelo texto?",
+          "explanation": "Substitui a ideia de que o ganho técnico vem só de aprender mais técnicas novas.",
+          "options": [
+            { "text": "A ideia de que o ganho vem só de aprender mais técnicas", "correct": true },
+            { "text": "A necessidade de qualquer postura defensiva", "correct": false },
+            { "text": "O treino de quedas", "correct": false },
+            { "text": "A necessidade de treinar sob supervisão", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M8.3",
@@ -34,7 +196,88 @@
       "prereqs": ["M8.1", "M8.2"],
       "concept": "Jogo pessoal é escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis: uma posição de partida, uma sequência principal e uma alternativa para quando essa sequência é defendida.\n\nÉ o nó final do currículo, e por um motivo específico: ele é justamente o que não se pode copiar de um vídeo, porque depende do seu corpo, do seu tempo de treino e do que já funcionou de verdade para você nos módulos anteriores.\n\nO erro comum é copiar o jogo pessoal de outra pessoa em vez de construir o próprio: um game plan pensado para o corpo e o ritmo de outro atleta raramente encaixa no seu, e o app não tem como decidir isso por você — só apontar de onde partir.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que é \"jogo pessoal\", segundo o texto?",
+          "explanation": "É escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis.",
+          "options": [
+            { "text": "Escolher poucas posições e conhecê-las profundamente, ligadas por caminhos previsíveis", "correct": true },
+            { "text": "Aprender o máximo de técnicas possível", "correct": false },
+            { "text": "Copiar o jogo de um atleta de referência", "correct": false },
+            { "text": "Trocar de estratégia a cada treino", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quais são os três elementos que compõem um jogo pessoal?",
+          "explanation": "Uma posição de partida, uma sequência principal e uma alternativa para quando essa sequência é defendida.",
+          "options": [
+            { "text": "Uma posição de partida, uma sequência principal e uma alternativa", "correct": true },
+            { "text": "Uma queda, uma passagem e uma finalização, nessa ordem fixa", "correct": false },
+            { "text": "Um plano A, um plano B e um plano C escolhidos ao acaso", "correct": false },
+            { "text": "Uma posição de ataque e duas de defesa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que este é o nó final do currículo?",
+          "explanation": "Porque é justamente o que não se pode copiar de um vídeo — depende do seu corpo e do seu treino.",
+          "options": [
+            { "text": "Porque é justamente o que não se pode copiar de um vídeo", "correct": true },
+            { "text": "Porque é o mais difícil tecnicamente", "correct": false },
+            { "text": "Porque exige faixa preta para ser feito", "correct": false },
+            { "text": "Porque encerra o conteúdo de finalizações", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De que depende a construção do jogo pessoal, segundo o texto?",
+          "explanation": "Depende do seu corpo, do seu tempo de treino e do que já funcionou de verdade para você nos módulos anteriores.",
+          "options": [
+            { "text": "Do seu corpo, do seu tempo de treino e do que já funcionou para você", "correct": true },
+            { "text": "Apenas do que for mais popular entre atletas de competição", "correct": false },
+            { "text": "Só do peso e da altura do praticante", "correct": false },
+            { "text": "Exclusivamente dos módulos M0 e M1", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao construir um jogo pessoal?",
+          "explanation": "É copiar o jogo pessoal de outra pessoa em vez de construir o próprio.",
+          "options": [
+            { "text": "Copiar o jogo pessoal de outra pessoa em vez de construir o próprio", "correct": true },
+            { "text": "Escolher poucas posições demais", "correct": false },
+            { "text": "Demorar para escolher uma sequência principal", "correct": false },
+            { "text": "Não ter uma alternativa de finalização", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que um game plan pensado para outro atleta raramente encaixa no seu?",
+          "explanation": "Porque foi pensado para o corpo e o ritmo de outra pessoa, não para os seus.",
+          "options": [
+            { "text": "Porque foi pensado para o corpo e o ritmo de outra pessoa", "correct": true },
+            { "text": "Porque é sempre tecnicamente errado", "correct": false },
+            { "text": "Porque exige um gi diferente", "correct": false },
+            { "text": "Porque foi criado para outra faixa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o aplicativo pode fazer em relação ao jogo pessoal do usuário, segundo o texto?",
+          "explanation": "Só apontar de onde partir — o app não decide o jogo pessoal por ninguém.",
+          "options": [
+            { "text": "Só apontar de onde partir — não decidir o jogo por ele", "correct": true },
+            { "text": "Montar o jogo pessoal automaticamente", "correct": false },
+            { "text": "Escolher a melhor sequência com base no histórico de outros usuários", "correct": false },
+            { "text": "Determinar qual posição de partida é obrigatória", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que ter uma alternativa para quando a sequência principal é defendida é parte do jogo pessoal?",
+          "explanation": "Porque o jogo é feito de caminhos previsíveis, e a sequência principal sozinha nem sempre passa da defesa do oponente.",
+          "options": [
+            { "text": "Porque a sequência principal sozinha nem sempre passa da defesa do oponente", "correct": true },
+            { "text": "Porque toda sequência principal falha na maioria das vezes", "correct": false },
+            { "text": "Porque a alternativa substitui a necessidade de treinar a principal", "correct": false },
+            { "text": "Porque competições exigem pelo menos duas opções registradas", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

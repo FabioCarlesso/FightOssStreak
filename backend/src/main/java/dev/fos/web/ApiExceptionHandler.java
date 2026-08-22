@@ -5,6 +5,7 @@ import dev.fos.service.AccessNotGrantedException;
 import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.NodeNotFoundException;
 import dev.fos.service.OwnerRequiredException;
+import dev.fos.service.QuizStaleException;
 import dev.fos.service.QuizUnavailableException;
 import dev.fos.service.UnauthenticatedException;
 import java.time.Instant;
@@ -81,6 +82,12 @@ class ApiExceptionHandler {
     ResponseEntity<ApiError> handleQuizUnavailable(QuizUnavailableException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiError.of("quiz_unavailable", e.getMessage()));
+    }
+
+    @ExceptionHandler(QuizStaleException.class)
+    ResponseEntity<ApiError> handleQuizStale(QuizStaleException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiError.of("quiz_stale", e.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

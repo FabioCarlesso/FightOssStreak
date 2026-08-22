@@ -6,8 +6,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { QuizForm } from './QuizForm.tsx';
 
 /**
- * O quiz monta a submissão, trata o `quiz_unavailable` — estado esperado nos 35 nós sem quiz
- * escrito (D15) — e exibe as explicações, que é onde mora o valor de retenção.
+ * O quiz monta a submissão, trata o `quiz_unavailable` — estado normal para um nó futuro sem quiz
+ * escrito ainda (D15), embora nenhum dos 46 nós atuais esteja nesse estado (D44) — e o
+ * `quiz_stale` da rotação de banco (issue #59, D44), além de exibir as explicações, que é onde
+ * mora o valor de retenção.
  */
 const { apiMock } = vi.hoisted(() => ({
   apiMock: {
@@ -119,9 +121,9 @@ describe('QuizForm', () => {
   });
 
   it('nó sem quiz escrito é estado esperado, não erro', () => {
-    // 35 dos 46 nós estão nessa situação hoje (D15). Tratar como falha faria o app parecer
-    // quebrado na maior parte da árvore.
-    render(<QuizForm nodeCode="M5.1" questions={[]} onDone={vi.fn()} />);
+    // Nenhum dos 46 nós atuais está nessa situação (D44), mas um nó futuro pode nascer assim
+    // (D15) — tratar como falha faria o app parecer quebrado assim que isso acontecesse.
+    render(<QuizForm nodeCode="M9.9" questions={[]} onDone={vi.fn()} />);
 
     expect(screen.getByText(/quiz ainda não escrito para este nó/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /responder/i })).not.toBeInTheDocument();
@@ -140,6 +142,20 @@ describe('QuizForm', () => {
 
     expect(await screen.findByText(/ainda não tem quiz escrito/i)).toBeInTheDocument();
     expect(screen.queryByText(/No quiz for node/)).not.toBeInTheDocument();
+  });
+
+  it('quiz_stale vindo do backend pede para recarregar o nó, não mensagem de erro crua', async () => {
+    apiMock.submitQuiz.mockRejectedValue(
+      new ApiError(409, 'quiz_stale', 'O quiz de M0.1 foi renovado'),
+    );
+
+    render(<QuizForm nodeCode="M0.1" questions={PERGUNTAS} onDone={vi.fn()} />);
+    await userEvent.click(screen.getByRole('radio', { name: /criar espaço com o quadril/i }));
+    await userEvent.click(screen.getByRole('radio', { name: /joelhos flexionados/i }));
+    await userEvent.click(screen.getByRole('button', { name: /responder/i }));
+
+    expect(await screen.findByText(/recarregue o nó/i)).toBeInTheDocument();
+    expect(screen.queryByText(/de M0\.1 foi renovado/)).not.toBeInTheDocument();
   });
 
   it('falha de rede exibe a mensagem e mantém o formulário respondido', async () => {

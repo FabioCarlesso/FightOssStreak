@@ -104,34 +104,12 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("M0 a M3 têm quiz escrito; os demais módulos ainda não")
-    void quizCoverageMatchesCuratedScope() {
-        Map<String, CurriculumSource.NodeSpec> byCode = byCode();
-
-        for (CurriculumSource.NodeSpec node : byCode.values()) {
-            if (hasCuratedQuiz(node)) {
-                assertThat(node.quiz()).as("quiz de %s", node.code()).hasSizeBetween(3, 5);
-            } else {
-                assertThat(node.quiz())
-                        .as(
-                                "quiz de %s — M4–M8 entram em issues próprias, e D15 depende disso",
-                                node.code())
-                        .isEmpty();
-            }
-        }
-    }
-
-    @Test
-    @DisplayName("M2 e M3 têm quatro perguntas por nó: com três, um erro reprova (D27)")
-    void curatedBatchToleratesOneMistake() {
+    @DisplayName("todos os 46 nós têm banco de quiz com pelo menos 8 perguntas (issue #59, D44)")
+    void everyNodeHasAQuizBankOfAtLeastEight() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
-            if (node.code().startsWith("M2.") || node.code().startsWith("M3.")) {
-                assertThat(node.quiz())
-                        .as(
-                                "quiz de %s: 3 perguntas dariam 66 em um erro, abaixo do corte de 70",
-                                node.code())
-                        .hasSize(4);
-            }
+            assertThat(node.quiz())
+                    .as("banco de quiz de %s", node.code())
+                    .hasSizeGreaterThanOrEqualTo(CurriculumValidator.MIN_QUIZ_QUESTIONS);
         }
     }
 
@@ -342,33 +320,61 @@ class CurriculumIntegrityTest {
     void rejectsQuizWithoutSingleCorrectOption() {
         CurriculumSource.QuestionSpec twoCorrect =
                 new CurriculumSource.QuestionSpec(
-                        "pergunta",
+                        "pergunta com duas corretas",
                         "explicação",
                         List.of(
                                 new CurriculumSource.OptionSpec("a", true),
                                 new CurriculumSource.OptionSpec("b", true)));
 
-        CurriculumSource.Module broken =
-                new CurriculumSource.Module(
-                        "MX",
-                        "Quebrado",
-                        "resumo",
-                        List.of(
-                                new CurriculumSource.NodeSpec(
-                                        "MX.1",
-                                        "t",
-                                        "BRANCA",
-                                        1,
-                                        "ALL",
-                                        List.of(),
-                                        "conceito",
-                                        null,
-                                        List.of(),
-                                        List.of(twoCorrect))));
+        // Sete perguntas válidas de preenchimento: o banco precisa passar do mínimo de 8 (D44)
+        // para que este teste continue verificando a regra de gabarito, e não a de tamanho.
+        List<CurriculumSource.QuestionSpec> quiz = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            quiz.add(question("pergunta de preenchimento " + i));
+        }
+        quiz.add(twoCorrect);
+
+        CurriculumSource.Module broken = moduleWithQuiz(quiz);
 
         assertThatThrownBy(() -> validator.validate(List.of(broken)))
                 .isInstanceOf(CurriculumException.class)
                 .hasMessageContaining("exatamente uma alternativa correta");
+    }
+
+    @Test
+    @DisplayName(
+            "o validador rejeita banco de quiz com menos de 8 perguntas, mas aceita quiz vazio "
+                    + "(issue #59, D44)")
+    void rejectsQuizBankSmallerThanMinimum() {
+        List<CurriculumSource.QuestionSpec> sevenQuestions = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            sevenQuestions.add(question("pergunta " + i));
+        }
+        CurriculumSource.Module broken = moduleWithQuiz(sevenQuestions);
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("banco de quiz com 7 perguntas")
+                .hasMessageContaining("o mínimo é 8");
+
+        assertThatCode(() -> validator.validate(List.of(moduleWithQuiz(List.of()))))
+                .as("quiz: [] continua aceito (D15) — o mínimo só vale para quem já tem alguma")
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("o validador rejeita enunciado repetido no mesmo nó")
+    void rejectsDuplicatePromptInSameNode() {
+        List<CurriculumSource.QuestionSpec> eightQuestions = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            eightQuestions.add(question("pergunta " + i));
+        }
+        eightQuestions.add(question("pergunta 0"));
+        CurriculumSource.Module broken = moduleWithQuiz(eightQuestions);
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("enunciado repetido no mesmo nó");
     }
 
     @Test
@@ -585,6 +591,34 @@ class CurriculumIntegrityTest {
                 code, "t", "BRANCA", 1, "ALL", List.of(), "conceito", video, extras, List.of());
     }
 
+    private CurriculumSource.QuestionSpec question(String prompt) {
+        return new CurriculumSource.QuestionSpec(
+                prompt,
+                "explicação",
+                List.of(
+                        new CurriculumSource.OptionSpec("certa", true),
+                        new CurriculumSource.OptionSpec("errada", false)));
+    }
+
+    private CurriculumSource.Module moduleWithQuiz(List<CurriculumSource.QuestionSpec> quiz) {
+        return new CurriculumSource.Module(
+                "MX",
+                "Quebrado",
+                "resumo",
+                List.of(
+                        new CurriculumSource.NodeSpec(
+                                "MX.1",
+                                "t",
+                                "BRANCA",
+                                1,
+                                "ALL",
+                                List.of(),
+                                "conceito",
+                                null,
+                                List.of(),
+                                quiz)));
+    }
+
     private CurriculumSource.Module moduleWithConcept(String concept) {
         return moduleWithConceptAndCode("MX", "MX.1", concept);
     }
@@ -618,17 +652,6 @@ class CurriculumIntegrityTest {
                                 video,
                                 List.of(),
                                 List.of())));
-    }
-
-    /**
-     * A curadoria é incremental e as duas frentes andam em ritmos diferentes: o quiz já cobre até
-     * M3, o vídeo ainda para em M1. Por isso são dois escopos, e não um só.
-     */
-    private boolean hasCuratedQuiz(CurriculumSource.NodeSpec node) {
-        return node.code().startsWith("M0.")
-                || node.code().startsWith("M1.")
-                || node.code().startsWith("M2.")
-                || node.code().startsWith("M3.");
     }
 
     /** Catalogar vídeo exige assistir (D21); M2–M8 entram em issues próprias. */

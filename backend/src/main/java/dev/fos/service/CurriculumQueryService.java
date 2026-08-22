@@ -11,6 +11,7 @@ import dev.fos.model.UserProgress;
 import dev.fos.model.VideoRef;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.NodeRepository;
+import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.QuizQuestionRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserProgressRepository;
@@ -39,6 +40,7 @@ public class CurriculumQueryService {
 
     private final NodeRepository nodeRepository;
     private final QuizQuestionRepository quizQuestionRepository;
+    private final QuizAttemptRepository quizAttemptRepository;
     private final UserProgressRepository progressRepository;
     private final SrsReviewRepository srsRepository;
     private final DrillLogRepository drillLogRepository;
@@ -47,12 +49,14 @@ public class CurriculumQueryService {
     public CurriculumQueryService(
             NodeRepository nodeRepository,
             QuizQuestionRepository quizQuestionRepository,
+            QuizAttemptRepository quizAttemptRepository,
             UserProgressRepository progressRepository,
             SrsReviewRepository srsRepository,
             DrillLogRepository drillLogRepository,
             UnlockService unlockService) {
         this.nodeRepository = nodeRepository;
         this.quizQuestionRepository = quizQuestionRepository;
+        this.quizAttemptRepository = quizAttemptRepository;
         this.progressRepository = progressRepository;
         this.srsRepository = srsRepository;
         this.drillLogRepository = drillLogRepository;
@@ -133,8 +137,10 @@ public class CurriculumQueryService {
                                                         == ProgressStatus.COMPLETED))
                         .toList();
 
+        List<QuizQuestion> bank = quizQuestionRepository.findByNodeIdWithOptions(node.getId());
+        long attemptNumber = quizAttemptRepository.countByUserIdAndNodeId(userId, node.getId());
         List<QuizDtos.QuestionView> quiz =
-                quizQuestionRepository.findByNodeIdWithOptions(node.getId()).stream()
+                QuizRotation.served(bank, attemptNumber).stream()
                         .map(
                                 question ->
                                         new QuizDtos.QuestionView(
@@ -217,29 +223,14 @@ public class CurriculumQueryService {
         Comparator<QuizOption> deterministicShuffle =
                 Comparator.comparingLong(
                                 (QuizOption option) ->
-                                        mix(question.getId() * 1_000_003L + option.getId()))
+                                        SplitMix.finalize(
+                                                question.getId() * 1_000_003L + option.getId()))
                         .thenComparing(QuizOption::getId);
 
         return question.getOptions().stream()
                 .sorted(deterministicShuffle)
                 .map(option -> new QuizDtos.OptionView(option.getId(), option.getLabel()))
                 .toList();
-    }
-
-    /**
-     * Espalha os bits de uma chave pequena e sequencial (finalizador do splitmix64).
-     *
-     * <p>Aqui estava o bug que fazia o embaralhamento não embaralhar: a versão anterior usava
-     * {@code Long.hashCode}, que para qualquer valor abaixo de 2³¹ devolve o próprio valor — e as
-     * chaves reais não passam de ~91 milhões. A ordenação virava id crescente, ou seja, a ordem do
-     * JSON, com a correta em primeiro lugar nas 91 perguntas. Um multiplicador só não resolveria:
-     * multiplicação preserva a ordem dos bits altos, e é justamente deles que a comparação depende.
-     */
-    private static long mix(long key) {
-        long z = key;
-        z = (z ^ (z >>> 30)) * 0xbf58476d1ce4e5b9L;
-        z = (z ^ (z >>> 27)) * 0x94d049bb133111ebL;
-        return z ^ (z >>> 31);
     }
 
     private Map<Long, Integer> quizCountsByNodeId() {

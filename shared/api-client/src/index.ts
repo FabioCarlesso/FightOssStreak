@@ -44,6 +44,14 @@ export class ApiError extends Error {
     return this.code === 'quiz_unavailable';
   }
 
+  /**
+   * A rotação de banco de perguntas (issue #59, D44) avançou entre a tela carregar e a resposta
+   * chegar — outra aba, ou uma submissão antiga reenviada. Recarregar o nó resolve.
+   */
+  get isQuizStale(): boolean {
+    return this.code === 'quiz_stale';
+  }
+
   /** Sem sessão: a resposta é a tela de login, não uma mensagem de erro. */
   get isUnauthenticated(): boolean {
     return this.status === 401;

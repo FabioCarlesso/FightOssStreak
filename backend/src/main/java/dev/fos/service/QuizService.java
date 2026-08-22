@@ -16,8 +16,10 @@ import dev.fos.web.dto.QuizDtos;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Correção do quiz conceitual.
  *
  * <p>A correção é sempre do lado do servidor: o cliente nunca recebe o gabarito antes de responder.
+ * A correção também vale só para o conjunto que {@link QuizRotation} serviu para esta tentativa
+ * (issue #59, D44) — uma submissão fora desse conjunto é recusada como {@link QuizStaleException},
+ * em vez de corrigida contra o que o cliente mandou.
  */
 @Service
 public class QuizService {
@@ -64,10 +69,13 @@ public class QuizService {
             Long userId, String nodeCode, QuizDtos.QuizSubmission submission, LocalDate today) {
 
         Node node = curriculumQueryService.requireNode(nodeCode);
-        List<QuizQuestion> questions = quizQuestionRepository.findByNodeIdWithOptions(node.getId());
-        if (questions.isEmpty()) {
+        List<QuizQuestion> bank = quizQuestionRepository.findByNodeIdWithOptions(node.getId());
+        if (bank.isEmpty()) {
             throw new QuizUnavailableException(nodeCode);
         }
+
+        long attemptNumber = quizAttemptRepository.countByUserIdAndNodeId(userId, node.getId());
+        List<QuizQuestion> questions = QuizRotation.served(bank, attemptNumber);
 
         Map<Long, Long> answers =
                 submission.answers().stream()
@@ -76,6 +84,12 @@ public class QuizService {
                                         QuizDtos.Answer::questionId,
                                         QuizDtos.Answer::optionId,
                                         (first, second) -> second));
+
+        Set<Long> servedIds =
+                questions.stream().map(QuizQuestion::getId).collect(Collectors.toSet());
+        if (!servedIds.equals(new HashSet<>(answers.keySet()))) {
+            throw new QuizStaleException(nodeCode);
+        }
 
         List<QuizDtos.QuestionFeedback> feedback = new ArrayList<>(questions.size());
         int correctCount = 0;

@@ -52,6 +52,46 @@
             { "text": "Não ter apertado a guarda com força suficiente", "correct": false },
             { "text": "Ter escolhido a finalização errada para o físico dele", "correct": false }
           ]
+        },
+        {
+          "prompt": "Com o oponente de postura ereta, o que a guarda fechada permite que ele faça sem risco?",
+          "explanation": "Postura ereta é justamente o estado em que ele abre ou passa a guarda sem correr perigo. É por isso que quebrar a postura vem antes de qualquer ataque.",
+          "options": [
+            { "text": "Abrir ou passar a guarda", "correct": true },
+            { "text": "Nada — a guarda fechada sempre trava o oponente", "correct": false },
+            { "text": "Só finalizar, nunca passar", "correct": false },
+            { "text": "Apenas recuar, sem atacar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tentar o estrangulamento contra um oponente ainda ereto e longe costuma falhar?",
+          "explanation": "Sem a postura quebrada, o ataque vira disputa de força de braço — e é uma disputa que a guarda perde quase sempre.",
+          "options": [
+            { "text": "Vira disputa de força de braço, que a guarda perde quase sempre", "correct": true },
+            { "text": "Porque o gi escorrega da mão nessa distância", "correct": false },
+            { "text": "Porque a guarda fechada não alcança o pescoço nessa posição", "correct": false },
+            { "text": "Porque regras de competição proíbem esse ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a pegada que impede a postura de subir de volta garante, no fim das contas?",
+          "explanation": "É essa pegada que mantém raspagem e estrangulamento ao alcance — sem ela, a postura sobe e o ataque perde o alvo.",
+          "options": [
+            { "text": "Que raspagem e estrangulamento continuem ao alcance", "correct": true },
+            { "text": "Que você pontue em competição, independente do ataque", "correct": false },
+            { "text": "Que a necessidade de quebrar a postura desapareça", "correct": false },
+            { "text": "Que o oponente se canse até desistir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a guarda fechada é descrita como a posição inferior com mais opções de ataque do jiu-jitsu?",
+          "explanation": "Com a postura do oponente quebrada, quem está embaixo tem mais opções de ataque do que ele por cima — é a única posição inferior em que isso acontece.",
+          "options": [
+            { "text": "Porque, com a postura do oponente quebrada, você ataca mais do que ele por cima", "correct": true },
+            { "text": "Porque nenhuma outra posição inferior permite qualquer ataque", "correct": false },
+            { "text": "Porque o oponente não pode se defender estando por cima", "correct": false },
+            { "text": "Porque ela dispensa controlar a postura do oponente", "correct": false }
+          ]
         }
       ]
     },
@@ -103,6 +143,46 @@
             { "text": "É hora de insistir na tesoura com mais velocidade", "correct": false },
             { "text": "A guarda está prestes a ser aberta e o certo é defender", "correct": false },
             { "text": "Nada muda: a tesoura funciona igual para os dois lados", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o sinal de que o momento certo para a tesoura chegou?",
+          "explanation": "O sinal é o oponente apoiado só num ponto, não mais distribuído entre os dois lados — é aí que o desequilíbrio já existe e o movimento sai leve.",
+          "options": [
+            { "text": "O oponente está apoiado só num ponto, não mais distribuído nos dois lados", "correct": true },
+            { "text": "Ele fecha a guarda ao seu redor", "correct": false },
+            { "text": "Ele solta as duas mãos do seu gi", "correct": false },
+            { "text": "Ele começa a levantar o quadril", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O joelho atravessado no peito e a perna que varre funcionam, segundo o conceito do nó, como:",
+          "explanation": "São as duas lâminas do movimento, mas quem decide o resultado é o desequilíbrio criado antes de elas se moverem, não a força delas.",
+          "options": [
+            { "text": "As duas lâminas do movimento, mas quem decide é o desequilíbrio criado antes", "correct": true },
+            { "text": "Uma trava de segurança contra a passagem, sem função ofensiva", "correct": false },
+            { "text": "Um substituto para a pegada de manga", "correct": false },
+            { "text": "Um jeito de aumentar o peso aplicado sobre o oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que peso menor consegue raspar peso maior com a tesoura, segundo o conceito?",
+          "explanation": "Com o desequilíbrio já criado, o movimento sai leve — é por isso que a tesoura não depende de força para funcionar.",
+          "options": [
+            { "text": "Porque, com o desequilíbrio já criado, o movimento sai leve", "correct": true },
+            { "text": "Porque a tesoura ignora completamente o peso do oponente", "correct": false },
+            { "text": "Porque as regras de competição favorecem lutadores mais leves", "correct": false },
+            { "text": "Porque a velocidade sempre supera o peso", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Tirar a base do oponente de um lado e levar o peso dele para esse lado vazio é:",
+          "explanation": "É o princípio que a tesoura ensina e que se repete em quase toda raspagem de guarda — mudam as pernas, não a ideia.",
+          "options": [
+            { "text": "O princípio da tesoura, que se repete em quase toda raspagem de guarda", "correct": true },
+            { "text": "Uma técnica exclusiva da tesoura, sem uso em outras raspagens", "correct": false },
+            { "text": "Um efeito colateral, não o mecanismo principal", "correct": false },
+            { "text": "Válido só quando a guarda está aberta", "correct": false }
           ]
         }
       ]
@@ -156,6 +236,46 @@
             { "text": "Ambos terminam com você por cima na montada", "correct": false },
             { "text": "Ambos são movimentos de explosão, decididos pela velocidade", "correct": false }
           ]
+        },
+        {
+          "prompt": "O pêndulo usa o quê para levar o oponente na direção em que ele já está indo?",
+          "explanation": "O balanço do próprio quadril e o peso do corpo — não força de braço nem pegada extra.",
+          "options": [
+            { "text": "O balanço do próprio quadril e o peso do corpo", "correct": true },
+            { "text": "A força dos braços puxando a gola", "correct": false },
+            { "text": "Uma pegada dupla na manga", "correct": false },
+            { "text": "O peso do oponente sozinho, sem ação sua", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a diferença central entre a tesoura e o pêndulo, segundo o conceito do nó?",
+          "explanation": "A tesoura varre para o lado que ficou vazio; o pêndulo aproveita a direção para onde o oponente já está indo ao resistir à tesoura.",
+          "options": [
+            { "text": "A tesoura varre para o lado vazio; o pêndulo segue a direção da resistência dele", "correct": true },
+            { "text": "O pêndulo exige a guarda aberta; a tesoura, fechada", "correct": false },
+            { "text": "O pêndulo é mais forte fisicamente; a tesoura é mais técnica", "correct": false },
+            { "text": "Não há diferença: são a mesma raspagem com nomes distintos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que se diz que o pêndulo 'usa a resistência a seu favor' em vez de vencê-la?",
+          "explanation": "Porque ele acompanha a direção que a própria defesa do oponente já criou, em vez de disputar força contra ela.",
+          "options": [
+            { "text": "Porque ele acompanha a direção que a própria defesa do oponente já criou", "correct": true },
+            { "text": "Porque ele ignora completamente a reação do oponente", "correct": false },
+            { "text": "Porque ele depende de o oponente desistir de resistir", "correct": false },
+            { "text": "Porque ele é aplicado antes de qualquer resistência aparecer", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem prender o braço do oponente do lado para onde você gira no pêndulo, o que ele consegue fazer?",
+          "explanation": "Ele apoia a mão no chão e impede que sua estrutura vire — o mesmo motivo pelo qual a upa da fuga de montada morre sem o braço preso.",
+          "options": [
+            { "text": "Apoiar a mão no chão e impedir que sua estrutura vire", "correct": true },
+            { "text": "Nada — o pêndulo funciona igual, só que mais devagar", "correct": false },
+            { "text": "Fechar a própria guarda em cima de você", "correct": false },
+            { "text": "Aplicar uma finalização imediata de braço", "correct": false }
+          ]
         }
       ]
     },
@@ -207,6 +327,46 @@
             { "text": "A finalização sai do mesmo jeito, só mais devagar", "correct": false },
             { "text": "Você acaba machucando o pescoço do parceiro", "correct": false },
             { "text": "O oponente fica obrigado a abrir a guarda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde nasce o ataque de cross collar, segundo o conceito?",
+          "explanation": "Da mesma pegada de gola já usada para quebrar a postura do oponente — não há posição nova a aprender.",
+          "options": [
+            { "text": "Da mesma pegada de gola já usada para quebrar a postura do oponente", "correct": true },
+            { "text": "De uma pegada exclusiva, diferente de qualquer outra da guarda fechada", "correct": false },
+            { "text": "Da pegada de calça, adaptada para o pescoço", "correct": false },
+            { "text": "De uma posição de montada temporária", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Com a primeira pegada profunda, o que o segundo braço precisa fazer?",
+          "explanation": "Só fechar o triângulo de pressão — a alavanca já está pronta pela profundidade da primeira pegada.",
+          "options": [
+            { "text": "Só fechar o triângulo de pressão, porque a alavanca já está pronta", "correct": true },
+            { "text": "Repetir a mesma pegada do primeiro braço", "correct": false },
+            { "text": "Soltar a guarda fechada para ganhar ângulo", "correct": false },
+            { "text": "Puxar a perna do oponente para dentro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a ameaça de cross collar continua útil mesmo quando ela não finaliza?",
+          "explanation": "Porque ocupa as mãos do oponente com defesa e traz o peso dele para frente — exatamente o estado em que as raspagens funcionam.",
+          "options": [
+            { "text": "Porque ocupa as mãos dele com defesa e traz o peso para frente, abrindo raspagens", "correct": true },
+            { "text": "Porque cansa fisicamente o oponente até ele errar sozinho", "correct": false },
+            { "text": "Porque conta pontos mesmo sem apertar até o fim", "correct": false },
+            { "text": "Porque impede qualquer outro ataque do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que decide, mais do que a força do aperto, se o cross collar tem alavanca de verdade?",
+          "explanation": "A profundidade da primeira pegada na gola — rasa, não existe alavanca; profunda, o segundo braço só fecha a pressão.",
+          "options": [
+            { "text": "A profundidade da primeira pegada na gola", "correct": true },
+            { "text": "A velocidade com que os dois braços se movem", "correct": false },
+            { "text": "O tamanho da mão de quem finaliza", "correct": false },
+            { "text": "Se a guarda está fechada ou aberta no momento do aperto", "correct": false }
           ]
         }
       ]
@@ -260,6 +420,46 @@
             { "text": "Quem tem boa postura nunca precisa defender armlock", "correct": false },
             { "text": "O armlock só funciona contra quem nunca treinou postura", "correct": false }
           ]
+        },
+        {
+          "prompt": "O que precisa estar garantido antes de disputar o braço no armlock da guarda?",
+          "explanation": "Controle de postura e o ângulo criado pelo giro do quadril — sem isso, disputar o braço é força de bíceps contra bíceps.",
+          "options": [
+            { "text": "Controle de postura e o ângulo criado pelo giro do quadril", "correct": true },
+            { "text": "Que o oponente já esteja cansado", "correct": false },
+            { "text": "Que a guarda esteja aberta, não fechada", "correct": false },
+            { "text": "Que as duas mãos estejam presas na manga dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que um braço esticado longe do corpo é um alvo fácil para o armlock da guarda?",
+          "explanation": "Porque fica sem defesa estrutural — exatamente o erro de postura descrito em M0.4.",
+          "options": [
+            { "text": "Porque fica sem defesa estrutural, o mesmo erro de postura de M0.4", "correct": true },
+            { "text": "Porque fica mais próximo do seu quadril", "correct": false },
+            { "text": "Porque é mais fácil de enxergar", "correct": false },
+            { "text": "Porque o oponente perde o equilíbrio automaticamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem o giro do quadril para fora, o que acontece na disputa pelo cotovelo do oponente?",
+          "explanation": "Vira uma disputa de força contra o próprio bíceps dele — e essa disputa a guarda perde.",
+          "options": [
+            { "text": "Vira uma disputa de força contra o bíceps dele, e você perde", "correct": true },
+            { "text": "A finalização sai igual, só que mais devagar", "correct": false },
+            { "text": "O oponente é obrigado a soltar o braço", "correct": false },
+            { "text": "A guarda automaticamente se abre", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Se o oponente mantém os dois cotovelos colados ao corpo o tempo todo, o que isso faz com o armlock da guarda?",
+          "explanation": "Tira o alvo do ataque: sem braço esticado ou apoiado longe do corpo, não sobra estrutura exposta para atacar.",
+          "options": [
+            { "text": "Tira o alvo do ataque, porque não sobra braço exposto", "correct": true },
+            { "text": "Não muda nada, porque o armlock ataca o ombro, não o braço", "correct": false },
+            { "text": "Facilita o ataque, já que o braço fica mais perto de você", "correct": false },
+            { "text": "Obriga você a atacar o triângulo em vez do armlock", "correct": false }
+          ]
         }
       ]
     },
@@ -312,6 +512,46 @@
             { "text": "As duas terminam na mesma finalização", "correct": false },
             { "text": "É apenas a ordem cronológica em que se costuma ensinar", "correct": false }
           ]
+        },
+        {
+          "prompt": "Com os dois braços do oponente dentro da guarda, o triângulo é possível?",
+          "explanation": "Não — a assimetria de um braço dentro e outro fora é o que permite fechar o pescoço contra o próprio ombro dele.",
+          "options": [
+            { "text": "Não — a assimetria de um braço dentro e outro fora é exigida", "correct": true },
+            { "text": "Sim, mas fica mais fraco", "correct": false },
+            { "text": "Sim, e é até mais forte assim", "correct": false },
+            { "text": "Depende só da força das pernas, não dos braços", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o triângulo fecha o pescoço do oponente contra, mecanicamente?",
+          "explanation": "O próprio ombro dele, do lado que ficou dentro da guarda — é isso que a assimetria de braços permite.",
+          "options": [
+            { "text": "O próprio ombro dele, do lado que ficou dentro da guarda", "correct": true },
+            { "text": "A sua coxa, sem relação com o ombro dele", "correct": false },
+            { "text": "A gola do próprio gi dele", "correct": false },
+            { "text": "O chão, prensando por baixo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Girar o quadril para o lado, no triângulo, serve para:",
+          "explanation": "Criar o ângulo que fecha o espaço contra o ombro do oponente — é dali que vem o estrangulamento, não da força das pernas.",
+          "options": [
+            { "text": "Criar o ângulo que fecha o espaço contra o ombro do oponente", "correct": true },
+            { "text": "Aliviar o peso sobre as próprias costas", "correct": false },
+            { "text": "Impedir que o oponente respire, independente do ângulo", "correct": false },
+            { "text": "Aumentar a distância entre os dois corpos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que apertar as pernas de frente para o oponente, sem girar, costuma falhar no triângulo?",
+          "explanation": "Porque vira só uma posição incômoda, sem o ângulo que produz o estrangulamento de verdade.",
+          "options": [
+            { "text": "Porque vira só uma posição incômoda, sem o ângulo que estrangula", "correct": true },
+            { "text": "Porque as pernas nunca fecham o suficiente de frente", "correct": false },
+            { "text": "Porque o oponente sempre escapa antes de você apertar", "correct": false },
+            { "text": "Porque de frente o braço errado fica preso dentro", "correct": false }
+          ]
         }
       ]
     },
@@ -363,6 +603,46 @@
             { "text": "Aplicar força demais e machucar o parceiro", "correct": false },
             { "text": "Confundir a omoplata com a americana", "correct": false },
             { "text": "Conseguir a finalização, mas nunca a raspagem", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a omoplata compartilha mecanismo com o triângulo?",
+          "explanation": "As duas dependem do mesmo giro de quadril para criar ângulo — é o que as liga como sistema, não como técnicas isoladas.",
+          "options": [
+            { "text": "As duas dependem do mesmo giro de quadril para criar ângulo", "correct": true },
+            { "text": "As duas terminam sempre na mesma finalização", "correct": false },
+            { "text": "As duas exigem que o oponente esteja de pé", "correct": false },
+            { "text": "É só uma coincidência de nomenclatura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Se você solta a omoplata assim que o oponente começa a rolar para escapar, o que você perde?",
+          "explanation": "A raspagem que nasceria exatamente desse rolamento — soltar cedo abre mão da parte mais útil da posição.",
+          "options": [
+            { "text": "A raspagem que nasceria exatamente desse rolamento", "correct": true },
+            { "text": "Nada — soltar nesse momento é sempre a decisão certa", "correct": false },
+            { "text": "Só a chance de repetir a mesma finalização", "correct": false },
+            { "text": "O controle do braço, que já estava perdido de qualquer forma", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Além de eventualmente finalizar, o que a omoplata faz ao oponente enquanto ele ainda não escapou?",
+          "explanation": "Controla e desequilibra — boa parte do valor da posição está aí, mesmo quando a finalização em si não sai.",
+          "options": [
+            { "text": "Controla e desequilibra, mesmo sem finalizar", "correct": true },
+            { "text": "Apenas cansa o ombro dele para uma finalização futura", "correct": false },
+            { "text": "Obriga o árbitro a interromper a luta", "correct": false },
+            { "text": "Nada — sem finalizar, a posição não tem efeito nenhum", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tratar a omoplata só como finalização, e não também como controle, é um jeito limitado de ver a posição?",
+          "explanation": "Porque ignora que ela também controla, desequilibra e vira raspagem quando o oponente reage — o valor da posição não está só na finalização.",
+          "options": [
+            { "text": "Porque ignora o controle, o desequilíbrio e a raspagem que nascem da reação dele", "correct": true },
+            { "text": "Porque a omoplata nunca finaliza de verdade, só ameaça", "correct": false },
+            { "text": "Porque toda finalização de perna é, por definição, controle", "correct": false },
+            { "text": "Não é limitado — finalizar é a única função real da posição", "correct": false }
           ]
         }
       ]

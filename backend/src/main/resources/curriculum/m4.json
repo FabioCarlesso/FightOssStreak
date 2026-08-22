@@ -1,7 +1,7 @@
 {
   "code": "M4",
   "title": "Controle Superior",
-  "summary": "Manter e progredir por cima. M4.1 usa unlockRule ANY — qualquer passagem serve (D13). Quiz pendente de curadoria.",
+  "summary": "Manter e progredir por cima. M4.1 usa unlockRule ANY — qualquer passagem serve (D13).",
   "nodes": [
     {
       "code": "M4.1",
@@ -12,7 +12,88 @@
       "prereqs": ["M3.2", "M3.3"],
       "concept": "Manter o 100kg é um problema de peso, não de força: o seu peso precisa cair sobre o oponente, não sobre os seus próprios joelhos e mãos.\n\nA referência prática é o espelho de M1.3: tudo o que você aprendeu a fazer para escapar do 100kg é exatamente o que precisa negar aqui, do outro lado da posição — negar enquadramento, negar espaço, negar respiro.\n\nO erro comum é apoiar-se no próprio tatame em vez de no oponente: quem carrega o próprio corpo com os braços deixa o adversário livre para enquadrar e, mais cedo ou mais tarde, escapar. Manter o peso projetado sobre ele exige ajuste constante conforme o oponente se move, não uma postura fixa que se assume uma vez e se mantém parada.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Manter o 100kg é descrito, antes de tudo, como um problema de quê?",
+          "explanation": "É um problema de peso, não de força: o que decide a posição é sobre quem o seu peso está caindo, não quanta força você aplica.",
+          "options": [
+            { "text": "De peso — sobre quem ele cai", "correct": true },
+            { "text": "De força muscular dos braços", "correct": false },
+            { "text": "De velocidade de reação", "correct": false },
+            { "text": "De flexibilidade de quadril", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sobre quem o seu peso precisa efetivamente cair na manutenção do 100kg?",
+          "explanation": "Sobre o oponente, não sobre os seus próprios joelhos e mãos — é essa diferença que faz o peso pesar para quem está embaixo.",
+          "options": [
+            { "text": "Sobre o oponente, não sobre os próprios apoios", "correct": true },
+            { "text": "Sobre os próprios joelhos, para preservar as costas", "correct": false },
+            { "text": "Sobre as próprias mãos, para manter o equilíbrio", "correct": false },
+            { "text": "Distribuído igualmente entre você e o tatame", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A manutenção do 100kg é descrita como o espelho de qual outro nó do currículo?",
+          "explanation": "É o espelho de M1.3: tudo que se aprende para escapar do 100kg é exatamente o que a manutenção precisa negar, do outro lado da posição.",
+          "options": [
+            { "text": "M1.3, a fuga de 100kg", "correct": true },
+            { "text": "M1.4, a fuga de montada", "correct": false },
+            { "text": "M2.1, a guarda fechada", "correct": false },
+            { "text": "M0.4, as posturas base", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Retomando o mecanismo de M1.3, o que a manutenção do 100kg precisa negar ao oponente?",
+          "explanation": "Negar enquadramento, negar espaço e negar respiro — as três coisas que a fuga de M1.3 depende para funcionar.",
+          "options": [
+            { "text": "Enquadramento, espaço e respiro", "correct": true },
+            { "text": "Só a pegada de gola", "correct": false },
+            { "text": "Só a visão do tatame", "correct": false },
+            { "text": "Só o apoio dos pés no chão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você mantém o 100kg apoiando o peso dos braços no próprio tatame, em vez de sobre o oponente. O que isso libera para ele fazer?",
+          "explanation": "Apoiar-se no próprio tatame deixa o adversário livre para enquadrar e, mais cedo ou mais tarde, escapar — é o erro comum descrito no nó.",
+          "options": [
+            { "text": "Enquadrar e, com o tempo, escapar", "correct": true },
+            { "text": "Nada — o peso continua igual para ele", "correct": false },
+            { "text": "Aplicar uma finalização de braço imediata", "correct": false },
+            { "text": "Levantar você do chão com as pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que apoiar-se no próprio tatame, em vez de no oponente, é o erro comum da manutenção do 100kg?",
+          "explanation": "Porque quem carrega o próprio corpo com os braços tira o peso de cima do oponente — o mesmo peso que deveria impedi-lo de enquadrar e escapar.",
+          "options": [
+            { "text": "Porque tira o peso de cima do oponente", "correct": true },
+            { "text": "Porque cansa os braços mais rápido", "correct": false },
+            { "text": "Porque expõe o pescoço a estrangulamento", "correct": false },
+            { "text": "Porque é proibido nas regras de competição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como deve ser a postura de manutenção do 100kg ao longo do tempo?",
+          "explanation": "Manter o peso projetado sobre o oponente exige ajuste constante conforme ele se move — não uma postura fixa assumida uma vez.",
+          "options": [
+            { "text": "Ajustada constantemente conforme o oponente se move", "correct": true },
+            { "text": "Fixa, assumida uma vez e mantida parada", "correct": false },
+            { "text": "Cada vez mais alta, afastando o quadril dele", "correct": false },
+            { "text": "Decidida no início e só revista se ele parar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Assumir uma postura fixa no 100kg, sem ajustar ao movimento do oponente, tende a:",
+          "explanation": "Uma postura fixa não acompanha o deslocamento do oponente, e é justamente esse ajuste constante que mantém o peso projetado sobre ele.",
+          "options": [
+            { "text": "Perder o peso projetado à medida que ele se desloca", "correct": true },
+            { "text": "Aumentar automaticamente a pressão sobre ele", "correct": false },
+            { "text": "Facilitar a transição para a montada", "correct": false },
+            { "text": "Não ter nenhum efeito sobre a posição", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M4.2",
@@ -23,7 +104,88 @@
       "prereqs": ["M4.1"],
       "concept": "O joelho na barriga troca estabilidade por mobilidade: concentra pressão numa área pequena e desconfortável do oponente, e ao mesmo tempo deixa você alto e livre para girar.\n\nÉ a posição que melhor ilustra que controle superior não significa ficar parado — a pressão desconfortável é o que força a reação do oponente, e é dessa reação que nascem montada e costas.\n\nO erro comum é tratar o joelho na barriga como posição de descanso: ficar parado sem acompanhar a reação que a própria pressão provoca desperdiça exatamente o que a posição existe para criar. Girar de um lado para o outro, buscando novos ângulos de pressão, é o que mantém a reação constante em vez de deixar o oponente se acomodar.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O joelho na barriga troca estabilidade por qual outra coisa?",
+          "explanation": "Troca estabilidade por mobilidade: concentra pressão numa área pequena e deixa você alto e livre para girar.",
+          "options": [
+            { "text": "Mobilidade", "correct": true },
+            { "text": "Força", "correct": false },
+            { "text": "Alcance de finalização", "correct": false },
+            { "text": "Controle de pescoço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde o joelho na barriga concentra a pressão?",
+          "explanation": "Numa área pequena e desconfortável do oponente — é essa concentração, e não peso distribuído, que caracteriza a posição.",
+          "options": [
+            { "text": "Numa área pequena e desconfortável do oponente", "correct": true },
+            { "text": "Distribuída por todo o tronco dele", "correct": false },
+            { "text": "Nas pernas do oponente", "correct": false },
+            { "text": "Nos dois ombros ao mesmo tempo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o joelho na barriga ilustra sobre controle superior, segundo o conceito?",
+          "explanation": "Que controle superior não significa ficar parado — a posição é a que melhor mostra isso, porque depende de provocar reação, não de imobilidade.",
+          "options": [
+            { "text": "Que controle superior não significa ficar parado", "correct": true },
+            { "text": "Que controle superior exige o máximo de peso possível", "correct": false },
+            { "text": "Que controle superior é sempre mais seguro que a guarda", "correct": false },
+            { "text": "Que controle superior dispensa pegada de gi", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde nascem a montada e as costas, a partir do joelho na barriga?",
+          "explanation": "A pressão desconfortável força uma reação do oponente, e é dessa reação — não de um ataque direto — que essas duas posições nascem.",
+          "options": [
+            { "text": "Da reação do oponente à pressão desconfortável", "correct": true },
+            { "text": "De uma pegada de gola aplicada antes", "correct": false },
+            { "text": "Da queda do oponente ao tentar se levantar", "correct": false },
+            { "text": "Do cansaço acumulado do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você aplica o joelho na barriga e fica parado, sem girar, esperando o tempo passar. Qual é o erro nessa escolha?",
+          "explanation": "Tratar o joelho na barriga como posição de descanso desperdiça exatamente o que ela existe para criar: a reação do oponente à pressão.",
+          "options": [
+            { "text": "Trata a posição como descanso e desperdiça a reação que ela provoca", "correct": true },
+            { "text": "Aumenta o risco de ser varrido para trás", "correct": false },
+            { "text": "Nenhum — ficar parado também funciona igual", "correct": false },
+            { "text": "Perde automaticamente o controle da posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que girar de um lado para o outro no joelho na barriga tem como efeito?",
+          "explanation": "Buscar novos ângulos de pressão mantém a reação do oponente constante, em vez de deixá-lo se acomodar à pressão parada.",
+          "options": [
+            { "text": "Mantém a reação do oponente constante", "correct": true },
+            { "text": "Cansa apenas quem está por cima", "correct": false },
+            { "text": "Serve só para descansar o joelho de apoio", "correct": false },
+            { "text": "Não muda nada na resposta do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que deixar o oponente se acomodar à pressão do joelho na barriga é um problema?",
+          "explanation": "É o oposto do que a posição busca: sem reação constante, a pressão para de forçar a abertura de montada ou costas.",
+          "options": [
+            { "text": "Porque a pressão para de forçar a reação que abre montada ou costas", "correct": true },
+            { "text": "Porque o joelho perde apoio no chão", "correct": false },
+            { "text": "Porque a posição vira automaticamente 100kg", "correct": false },
+            { "text": "Porque o oponente ganha uma finalização de braço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que caracteriza a mobilidade que o joelho na barriga oferece, comparado ao 100kg?",
+          "explanation": "A posição deixa você alto e livre para girar, ao custo da estabilidade mais firme e mais baixa do 100kg.",
+          "options": [
+            { "text": "Ficar alto e livre para girar em busca de ângulo", "correct": true },
+            { "text": "Poder se deitar totalmente sobre o oponente", "correct": false },
+            { "text": "Prender as duas pernas do oponente por baixo", "correct": false },
+            { "text": "Eliminar qualquer necessidade de base", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M4.3",
@@ -34,7 +196,88 @@
       "prereqs": ["M4.1"],
       "concept": "Toda transição de posição tem um instante em que o controle diminui — é nesse instante que as fugas acontecem.\n\nPassar do 100kg para a montada é, portanto, um exercício de reduzir esse instante: bloquear o quadril do oponente antes de mover a própria perna, para que ele não tenha onde inserir o joelho enquanto você atravessa.\n\nO erro comum é inverter a ordem — mover a perna antes de bloquear o quadril. É exatamente nesse intervalo, com o controle momentaneamente reduzido, que o joelho dele entra e a fuga se abre. O detalhe é pequeno na execução, mas separa uma transição limpa de uma que devolve toda a vantagem conquistada no 100kg.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que toda transição de posição tem em comum, segundo o conceito?",
+          "explanation": "Um instante em que o controle diminui — e é justamente nesse instante que as fugas do oponente acontecem.",
+          "options": [
+            { "text": "Um instante em que o controle diminui", "correct": true },
+            { "text": "Um aumento temporário de pressão", "correct": false },
+            { "text": "A necessidade de soltar toda pegada", "correct": false },
+            { "text": "A troca obrigatória de lado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Passar do 100kg para a montada é descrito como um exercício de fazer o quê?",
+          "explanation": "É um exercício de reduzir o instante de controle diminuído que toda transição carrega — não de executar mais rápido de qualquer jeito.",
+          "options": [
+            { "text": "Reduzir o instante em que o controle diminui", "correct": true },
+            { "text": "Aumentar a velocidade da transição a qualquer custo", "correct": false },
+            { "text": "Trocar a pegada de gola pela de manga", "correct": false },
+            { "text": "Ganhar altura antes de mover qualquer parte do corpo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Na transição para a montada, o que deve ser feito antes de mover a própria perna?",
+          "explanation": "Bloquear o quadril do oponente primeiro é o que impede que ele tenha onde inserir o joelho enquanto você atravessa.",
+          "options": [
+            { "text": "Bloquear o quadril do oponente", "correct": true },
+            { "text": "Soltar completamente o controle do tronco", "correct": false },
+            { "text": "Levantar o próprio quadril ao máximo", "correct": false },
+            { "text": "Girar a cabeça para o lado oposto", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que bloquear o quadril do oponente antes de mover a perna evita a fuga?",
+          "explanation": "Porque sem espaço no quadril o oponente não tem onde inserir o joelho enquanto a perna atravessa — é essa a função do bloqueio.",
+          "options": [
+            { "text": "Porque tira o espaço onde o joelho dele entraria", "correct": true },
+            { "text": "Porque imobiliza o pescoço do oponente", "correct": false },
+            { "text": "Porque aumenta seu próprio peso sobre ele", "correct": false },
+            { "text": "Porque encurta a distância até o armlock", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum na transição do 100kg para a montada?",
+          "explanation": "Inverter a ordem: mover a perna antes de bloquear o quadril, abrindo exatamente o intervalo que a fuga precisa.",
+          "options": [
+            { "text": "Mover a perna antes de bloquear o quadril", "correct": true },
+            { "text": "Bloquear o quadril cedo demais", "correct": false },
+            { "text": "Manter os dois joelhos no chão por tempo demais", "correct": false },
+            { "text": "Trocar de lado no meio da transição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você move a perna antes de bloquear o quadril do oponente na transição para a montada. O que abre nesse intervalo?",
+          "explanation": "É exatamente nesse intervalo, com o controle momentaneamente reduzido, que o joelho dele entra e a fuga se abre.",
+          "options": [
+            { "text": "Espaço para o joelho dele entrar e abrir a fuga", "correct": true },
+            { "text": "Uma oportunidade de finalização para você", "correct": false },
+            { "text": "Nada — a montada se completa do mesmo jeito", "correct": false },
+            { "text": "Um risco de estrangulamento contra você", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que esse detalhe de ordem é descrito como pequeno na execução, mas decisivo no resultado?",
+          "explanation": "Porque separa uma transição limpa de uma que devolve toda a vantagem já conquistada no 100kg — um detalhe de sequência com efeito grande.",
+          "options": [
+            { "text": "Porque separa uma transição limpa de uma que devolve a vantagem do 100kg", "correct": true },
+            { "text": "Porque muda a faixa exigida para tentar a técnica", "correct": false },
+            { "text": "Porque decide se a posição pontua em competição", "correct": false },
+            { "text": "Porque troca a finalização disponível depois", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a transição limpa do 100kg para a montada preserva, que a transição malfeita perde?",
+          "explanation": "Preserva a vantagem já conquistada na manutenção do 100kg, reduzindo ao mínimo o instante em que o controle cai.",
+          "options": [
+            { "text": "A vantagem de controle já conquistada no 100kg", "correct": true },
+            { "text": "A possibilidade de voltar para a guarda aberta", "correct": false },
+            { "text": "O direito de repetir a transição quantas vezes quiser", "correct": false },
+            { "text": "A pegada de manga usada na guarda fechada", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M4.4",
@@ -45,7 +288,88 @@
       "prereqs": ["M4.3"],
       "concept": "A montada é dominante e instável ao mesmo tempo: você está acima do centro de gravidade do oponente, e o que impede a ponte dele é só a sua base.\n\nO princípio é manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha — é o outro lado exato do que M1.4 ensina a fazer para escapar.\n\nO erro comum é deixar os joelhos abrirem ou o peso cair para trás: o espaço lateral que sobra é exatamente o que o elbow escape precisa para recuperar a guarda, o mesmo mecanismo que você aprendeu a explorar embaixo. Saber os dois lados da montada — mantê-la e escapar dela — é o que torna a posição administrável mesmo contra alguém que já conhece a fuga.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Por que a montada é descrita como dominante e instável ao mesmo tempo?",
+          "explanation": "Porque você está acima do centro de gravidade do oponente (dominante), mas o que impede a ponte dele é só a sua base (instável).",
+          "options": [
+            { "text": "Domina o centro de gravidade dele, mas depende só da sua base", "correct": true },
+            { "text": "É instável porque exige pegada de gi obrigatória", "correct": false },
+            { "text": "É dominante só em competição, não em treino", "correct": false },
+            { "text": "É instável apenas contra oponentes mais pesados", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que impede a ponte do oponente na montada, segundo o conceito?",
+          "explanation": "Só a sua base — não há outro elemento citado que contenha a ponte além da base mantida por quem está por cima.",
+          "options": [
+            { "text": "Só a sua base", "correct": true },
+            { "text": "O peso das pernas dele mesmo", "correct": false },
+            { "text": "A pegada na gola do oponente", "correct": false },
+            { "text": "A distância entre os dois quadris", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o princípio de manutenção da montada?",
+          "explanation": "Manter o peso alto e os joelhos apertados nas axilas, negando o espaço lateral onde o elbow escape trabalha.",
+          "options": [
+            { "text": "Peso alto e joelhos apertados nas axilas", "correct": true },
+            { "text": "Peso baixo e joelhos afastados do tronco", "correct": false },
+            { "text": "Pernas esticadas para trás, longe do tronco dele", "correct": false },
+            { "text": "Mãos presas na cintura do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A manutenção da montada é descrita como o outro lado exato de qual nó?",
+          "explanation": "É o outro lado exato do que M1.4 ensina a fazer para escapar — o mesmo mecanismo, visto de quem está por cima.",
+          "options": [
+            { "text": "M1.4, a fuga de montada", "correct": true },
+            { "text": "M1.3, a fuga de 100kg", "correct": false },
+            { "text": "M2.6, o triângulo", "correct": false },
+            { "text": "M4.2, o joelho na barriga", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum na manutenção da montada?",
+          "explanation": "Deixar os joelhos abrirem ou o peso cair para trás — os dois criam o espaço lateral que o elbow escape explora.",
+          "options": [
+            { "text": "Deixar os joelhos abrirem ou o peso cair para trás", "correct": true },
+            { "text": "Manter o peso alto demais sobre o peito", "correct": false },
+            { "text": "Apertar demais os joelhos nas axilas", "correct": false },
+            { "text": "Girar o quadril para buscar ângulo de finalização", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você mantém a montada com os joelhos abertos e o peso caindo para trás. O que isso abre para o oponente?",
+          "explanation": "O espaço lateral que sobra é exatamente o que o elbow escape precisa para recuperar a guarda.",
+          "options": [
+            { "text": "O espaço lateral que o elbow escape usa para recuperar a guarda", "correct": true },
+            { "text": "Uma chance de estrangulamento contra você", "correct": false },
+            { "text": "Nada — a montada continua igualmente segura", "correct": false },
+            { "text": "Uma raspagem de tesoura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que saber os dois lados da montada — mantê-la e escapar dela — torna a posição mais administrável?",
+          "explanation": "Porque é o mesmo mecanismo visto dos dois lados: quem entende como o elbow escape funciona sabe exatamente o espaço que precisa negar para não sofrê-lo.",
+          "options": [
+            { "text": "Porque o mecanismo de ataque e de fuga é o mesmo, visto de dois lados", "correct": true },
+            { "text": "Porque a montada deixa de ser posição de risco para quem está embaixo", "correct": false },
+            { "text": "Porque elimina a necessidade de base na montada", "correct": false },
+            { "text": "Porque troca o elbow escape por outra fuga mais fraca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O espaço lateral negado pelos joelhos apertados nas axilas serve, sobretudo, para impedir:",
+          "explanation": "Impede justamente o mecanismo do elbow escape — o mesmo que M1.4 ensina a explorar de baixo da montada.",
+          "options": [
+            { "text": "O mecanismo do elbow escape recuperar a guarda", "correct": true },
+            { "text": "Uma pegada de gola do oponente", "correct": false },
+            { "text": "A troca de lado do estrangulamento", "correct": false },
+            { "text": "A entrada de um armlock do oponente", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M4.5",
@@ -56,7 +380,88 @@
       "prereqs": ["M4.1", "M4.4"],
       "concept": "A americana e o ezequiel são duas finalizações que nascem de posições que você já mantém, sem exigir abrir mão do controle — essa é a lição comum às duas.\n\nA americana pune o braço que o oponente deixa apoiado no chão em ângulo; o ezequiel usa a própria manga do gi e funciona bem justamente porque exige pouquíssimo espaço para ser armado.\n\nO erro comum é caçar finalizações que custam a posição: ataques que exigem abrir mão do 100kg ou da montada para tentar são ruins neste estágio, porque perder o controle devolve tudo o que a manutenção da posição já custou para conquistar. A escolha mais sensata costuma ser esperar pela oportunidade que já nasce dentro da posição, em vez de forçar uma que ainda não apareceu.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Qual é a lição comum entre a americana e o ezequiel?",
+          "explanation": "As duas nascem de posições que você já mantém, sem exigir abrir mão do controle para serem tentadas.",
+          "options": [
+            { "text": "Nascem de posições já mantidas, sem abrir mão do controle", "correct": true },
+            { "text": "As duas exigem pegada de manga profunda", "correct": false },
+            { "text": "As duas só funcionam da montada", "correct": false },
+            { "text": "As duas dependem do gi para existir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a americana pune, especificamente?",
+          "explanation": "Pune o braço que o oponente deixa apoiado no chão em ângulo — é esse erro de postura que abre a finalização.",
+          "options": [
+            { "text": "O braço apoiado no chão em ângulo", "correct": true },
+            { "text": "A perna que o oponente estica para escapar", "correct": false },
+            { "text": "O pescoço exposto do oponente", "correct": false },
+            { "text": "A mão que segura a sua gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o ezequiel funciona bem nas posições de controle superior?",
+          "explanation": "Porque usa a própria manga do gi e exige pouquíssimo espaço para ser armado — o que combina com posições onde o espaço já é escasso.",
+          "options": [
+            { "text": "Usa a própria manga do gi e exige pouquíssimo espaço", "correct": true },
+            { "text": "Não depende de controle de posição nenhum", "correct": false },
+            { "text": "Funciona só quando o oponente está de pé", "correct": false },
+            { "text": "Exige abrir mão da montada para armar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao buscar americana ou ezequiel do 100kg ou da montada?",
+          "explanation": "Caçar finalizações que custam a posição: tentar ataques que exigem abrir mão do controle para serem buscados.",
+          "options": [
+            { "text": "Caçar finalizações que exigem abrir mão da posição", "correct": true },
+            { "text": "Esperar demais pela oportunidade certa", "correct": false },
+            { "text": "Usar a manga em vez da gola", "correct": false },
+            { "text": "Trocar de posição antes de atacar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você abre mão do 100kg para forçar uma americana e perde a posição no processo. O que se perde junto?",
+          "explanation": "Perder o controle devolve tudo o que a manutenção da posição já custou para conquistar — não só a finalização.",
+          "options": [
+            { "text": "Tudo o que a manutenção da posição já tinha conquistado", "correct": true },
+            { "text": "Nada além da própria tentativa de finalização", "correct": false },
+            { "text": "Apenas o direito de tentar o ezequiel depois", "correct": false },
+            { "text": "Só a pegada de manga usada na tentativa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a escolha mais sensata em relação a essas duas finalizações, segundo o conceito?",
+          "explanation": "Esperar pela oportunidade que já nasce dentro da posição, em vez de forçar uma que ainda não apareceu.",
+          "options": [
+            { "text": "Esperar a oportunidade que já nasce dentro da posição", "correct": true },
+            { "text": "Tentar as duas ao mesmo tempo para aumentar a chance", "correct": false },
+            { "text": "Forçar a finalização assim que a posição é conquistada", "correct": false },
+            { "text": "Trocar de posição a cada tentativa fracassada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que ataques que exigem abrir mão do 100kg ou da montada são descritos como ruins neste estágio?",
+          "explanation": "Porque o custo de perder o controle é maior que o ganho potencial da finalização, já que a posição levou esforço para ser conquistada.",
+          "options": [
+            { "text": "Porque o custo de perder o controle supera o ganho da finalização", "correct": true },
+            { "text": "Porque são proibidos para faixa branca", "correct": false },
+            { "text": "Porque exigem gi, e nem todo treino é de gi", "correct": false },
+            { "text": "Porque cansam mais rápido que a americana", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que caracteriza uma finalização que 'já nasce dentro da posição', no sentido do conceito?",
+          "explanation": "É uma oportunidade que aparece sem que você precise abrir mão do controle que já tem — como o braço que o próprio oponente apoia em ângulo.",
+          "options": [
+            { "text": "Ela aparece sem exigir abrir mão do controle já conquistado", "correct": true },
+            { "text": "Ela exige sempre trocar de posição antes", "correct": false },
+            { "text": "Ela só existe fora do gi", "correct": false },
+            { "text": "Ela precisa ser preparada com uma queda", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M4.6",
@@ -67,7 +472,88 @@
       "prereqs": ["M4.4"],
       "concept": "O armlock da montada aparece quando o oponente empurra para tirar o seu peso de cima — é a punição da defesa mais instintiva de quem está embaixo da montada.\n\nReaproveita o mesmo mecanismo de ângulo e giro de quadril de M2.5, mas com uma diferença cara: aqui você troca a montada, que já é uma posição de ataque, pela tentativa de finalização, e errar significa perder o controle inteiro.\n\nO erro comum é buscar o armlock antes de o oponente empurrar de verdade: sem esse gatilho, a montada consolidada dá lugar a uma tentativa sem o mecanismo que a sustenta — e um armlock perdido da montada custa a posição inteira, não só a finalização.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Quando o armlock da montada aparece, segundo o conceito?",
+          "explanation": "Quando o oponente empurra para tirar o seu peso de cima — é a punição dessa defesa instintiva.",
+          "options": [
+            { "text": "Quando o oponente empurra para tirar o peso de cima", "correct": true },
+            { "text": "Quando o oponente vira de lado para escapar", "correct": false },
+            { "text": "Quando o oponente solta a pegada de gola", "correct": false },
+            { "text": "Quando o oponente estica as duas pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O armlock da montada pune qual comportamento de quem está embaixo?",
+          "explanation": "Pune a defesa mais instintiva de quem está embaixo da montada, que é empurrar para tirar o peso de cima.",
+          "options": [
+            { "text": "Empurrar para tirar o peso de cima", "correct": true },
+            { "text": "Ficar completamente parado sem reagir", "correct": false },
+            { "text": "Prender as duas pernas de quem está por cima", "correct": false },
+            { "text": "Girar a cabeça para o lado oposto", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O mecanismo do armlock da montada é o mesmo de qual outro nó?",
+          "explanation": "Reaproveita o mesmo mecanismo de ângulo e giro de quadril de M2.5, o armlock da guarda.",
+          "options": [
+            { "text": "M2.5, o armlock da guarda", "correct": true },
+            { "text": "M2.6, o triângulo", "correct": false },
+            { "text": "M2.7, a omoplata", "correct": false },
+            { "text": "M4.5, a americana", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a diferença cara entre o armlock da montada e o de M2.5, segundo o conceito?",
+          "explanation": "Aqui você troca a montada, que já é posição de ataque, pela tentativa de finalização — errar significa perder o controle inteiro.",
+          "options": [
+            { "text": "Aqui você troca uma posição de ataque já conquistada pela tentativa", "correct": true },
+            { "text": "Aqui o giro de quadril não é necessário", "correct": false },
+            { "text": "Aqui a finalização não depende de ângulo", "correct": false },
+            { "text": "Aqui não existe risco de perder posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece se o armlock da montada é tentado e falha?",
+          "explanation": "Errar significa perder o controle inteiro — o custo de um armlock perdido da montada é a posição toda, não só a finalização.",
+          "options": [
+            { "text": "Perde-se o controle da posição inteira", "correct": true },
+            { "text": "Nada muda além de não finalizar", "correct": false },
+            { "text": "A montada se transforma automaticamente em costas", "correct": false },
+            { "text": "Só a pegada do braço se perde, a montada continua", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao tentar o armlock da montada?",
+          "explanation": "Buscar o armlock antes de o oponente empurrar de verdade — sem esse gatilho, falta o mecanismo que sustenta a finalização.",
+          "options": [
+            { "text": "Buscar o armlock antes de o oponente empurrar de verdade", "correct": true },
+            { "text": "Esperar demais pelo empurrão do oponente", "correct": false },
+            { "text": "Girar o quadril rápido demais depois do gatilho", "correct": false },
+            { "text": "Manter os joelhos apertados nas axilas durante a tentativa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Você tenta o armlock da montada sem que o oponente tenha empurrado de verdade. O que falta na tentativa?",
+          "explanation": "A montada consolidada dá lugar a uma tentativa sem o mecanismo que a sustenta — falta o gatilho que cria o ângulo necessário.",
+          "options": [
+            { "text": "O mecanismo que sustenta a finalização", "correct": true },
+            { "text": "A pegada de manga no braço dele", "correct": false },
+            { "text": "O peso alto sobre o peito dele", "correct": false },
+            { "text": "O controle do outro braço do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que um armlock perdido da montada custa mais do que um armlock perdido da guarda (M2.5)?",
+          "explanation": "Porque a montada já é uma posição de ataque consolidada, e é essa posição inteira que se perde ao errar — não apenas a chance de finalizar.",
+          "options": [
+            { "text": "Porque troca uma posição de ataque já conquistada pela tentativa", "correct": true },
+            { "text": "Porque o gi trava o movimento do braço na montada", "correct": false },
+            { "text": "Porque a montada exige mais força para armar o armlock", "correct": false },
+            { "text": "Porque não existe possibilidade de recomeçar da montada", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

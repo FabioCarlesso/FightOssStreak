@@ -1,7 +1,7 @@
 {
   "code": "M7",
   "title": "Finalizações Encadeadas",
-  "summary": "Onde as finalizações deixam de ser isoladas e viram sequência. Quiz pendente de curadoria.",
+  "summary": "Onde as finalizações deixam de ser isoladas e viram sequência.",
   "nodes": [
     {
       "code": "M7.1",
@@ -12,7 +12,88 @@
       "prereqs": ["M2.1", "M4.1"],
       "concept": "A kimura é o melhor exemplo de que o jiu-jitsu se organiza por mecanismo, e não por posição: a mesma figura-quatro no braço funciona da guarda, do 100kg e das costas.\n\nEstudá-la nas três posições de uma vez ensina a reconhecer o mecanismo comum, em vez de decorar três técnicas separadas que por acaso têm o mesmo nome. Ela também vale como controle poderoso, não só como finalização.\n\nO erro comum é tratá-la só como finalização e soltá-la assim que não fecha de primeira: a figura-quatro sustentada continua controlando o braço e a postura do oponente mesmo sem a torção completa — abandoná-la cedo joga fora metade do valor da posição.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que a kimura exemplifica sobre como o jiu-jitsu se organiza?",
+          "explanation": "A kimura mostra que o jiu-jitsu se organiza por mecanismo, e não por posição — a mesma alavanca funciona em lugares diferentes.",
+          "options": [
+            { "text": "Que ele se organiza por mecanismo, não por posição", "correct": true },
+            { "text": "Que toda finalização depende da guarda fechada", "correct": false },
+            { "text": "Que finalizações de braço só funcionam em pé", "correct": false },
+            { "text": "Que cada posição tem uma finalização exclusiva", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual mecanismo é o mesmo nas três aplicações da kimura (guarda, 100kg e costas)?",
+          "explanation": "A mesma figura-quatro no braço é o que funciona nas três posições — é o mecanismo comum que o nó ensina a reconhecer.",
+          "options": [
+            { "text": "A figura-quatro no braço", "correct": true },
+            { "text": "O triângulo de pernas", "correct": false },
+            { "text": "O giro de quadril da omoplata", "correct": false },
+            { "text": "A pegada dupla de gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que estudar a kimura nas três posições de uma vez é melhor que aprender cada uma isolada?",
+          "explanation": "Isso ensina a reconhecer o mecanismo comum, em vez de decorar três técnicas separadas que por acaso têm o mesmo nome.",
+          "options": [
+            { "text": "Ensina a reconhecer o mecanismo comum, em vez de decorar três técnicas separadas", "correct": true },
+            { "text": "Porque é mais rápido de memorizar assim", "correct": false },
+            { "text": "Porque só funciona contra faixas brancas", "correct": false },
+            { "text": "Porque reduz o número de aulas necessárias", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Além de finalização, o que a kimura vale como, segundo o conceito?",
+          "explanation": "Ela vale como controle poderoso, não só como finalização — parte do valor da posição está nisso.",
+          "options": [
+            { "text": "Controle poderoso", "correct": true },
+            { "text": "Raspagem eficiente", "correct": false },
+            { "text": "Fuga de posição inferior", "correct": false },
+            { "text": "Substituta do estrangulamento", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao aplicar a kimura?",
+          "explanation": "O erro comum é tratá-la só como finalização e soltá-la assim que não fecha de primeira.",
+          "options": [
+            { "text": "Tratá-la só como finalização e soltar assim que não fecha de primeira", "correct": true },
+            { "text": "Manter a figura-quatro por tempo demais", "correct": false },
+            { "text": "Aplicá-la só a partir da guarda", "correct": false },
+            { "text": "Buscar o controle antes da finalização", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a figura-quatro sustentada continua fazendo, mesmo sem a torção completa?",
+          "explanation": "Ela continua controlando o braço e a postura do oponente, mesmo sem a torção — é isso que sustenta o valor de controle da kimura.",
+          "options": [
+            { "text": "Controlando o braço e a postura do oponente", "correct": true },
+            { "text": "Nada — sem torção ela perde toda a função", "correct": false },
+            { "text": "Prendendo as duas pernas dele", "correct": false },
+            { "text": "Impedindo qualquer movimento do quadril dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que se perde ao abandonar a kimura cedo, quando ela não finaliza de primeira?",
+          "explanation": "Perde-se metade do valor da posição, que está no controle sustentado, não só na finalização em si.",
+          "options": [
+            { "text": "Metade do valor da posição, que está no controle, não só na finalização", "correct": true },
+            { "text": "Apenas a chance daquela finalização específica", "correct": false },
+            { "text": "A guarda fechada por completo", "correct": false },
+            { "text": "O direito de tentar a kimura de novo depois", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a kimura é chamada de \"melhor exemplo\" de organização por mecanismo?",
+          "explanation": "Porque a mesma figura-quatro no braço aparece em três posições diferentes do currículo — guarda, 100kg e costas.",
+          "options": [
+            { "text": "Porque a mesma figura-quatro no braço aparece em três posições diferentes", "correct": true },
+            { "text": "Porque é a única finalização ensinada em mais de um módulo", "correct": false },
+            { "text": "Porque funciona sem gi e com gi igualmente", "correct": false },
+            { "text": "Porque substitui o armlock em todas as posições", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M7.2",
@@ -23,7 +104,88 @@
       "prereqs": ["M6.4"],
       "concept": "O front headlock é o que sobra depois de um sprawl bem-sucedido: o oponente fica com a cabeça baixa, à sua frente, e daí nascem tanto o controle quanto a guilhotina.\n\nEncadear defesa de queda, front headlock e guilhotina é o ponto do nó — cada etapa entrega a seguinte, em vez de serem três técnicas que por acaso aparecem perto umas das outras.\n\nO erro comum é tratar a guilhotina como finalização isolada, buscada do zero contra qualquer postura: sem o front headlock que a antecede, ela vira uma finalização de sorte, tentada contra um oponente que ainda tem estrutura para defender. Reconhecer que a cabeça está baixa e à frente, sem procurar mais nada, já é sinal suficiente de que a guilhotina tem terreno para funcionar.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "De onde nasce o front headlock, segundo o conceito?",
+          "explanation": "Ele é o que sobra depois de um sprawl bem-sucedido, com o oponente de cabeça baixa à frente.",
+          "options": [
+            { "text": "De um sprawl bem-sucedido", "correct": true },
+            { "text": "De uma guarda fechada quebrada", "correct": false },
+            { "text": "De uma raspagem de guarda aberta", "correct": false },
+            { "text": "De uma queda de double leg finalizada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que caracteriza a posição do oponente no front headlock?",
+          "explanation": "O oponente fica com a cabeça baixa, à frente — é dessa postura que nascem controle e guilhotina.",
+          "options": [
+            { "text": "Cabeça baixa, à frente", "correct": true },
+            { "text": "De costas, com os ganchos presos", "correct": false },
+            { "text": "Montado, com o peso para frente", "correct": false },
+            { "text": "De lado, sob o 100kg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o ponto conceitual central deste nó?",
+          "explanation": "É encadear defesa de queda, front headlock e guilhotina — cada etapa entrega a seguinte, em vez de serem técnicas soltas.",
+          "options": [
+            { "text": "Encadear defesa de queda, front headlock e guilhotina — cada etapa entrega a seguinte", "correct": true },
+            { "text": "Escolher a guilhotina como primeira opção de ataque", "correct": false },
+            { "text": "Substituir o sprawl pela guilhotina direta", "correct": false },
+            { "text": "Aplicar a guilhotina sem depender de outra posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao buscar a guilhotina?",
+          "explanation": "O erro comum é tratá-la como finalização isolada, buscada do zero contra qualquer postura do oponente.",
+          "options": [
+            { "text": "Tratá-la como finalização isolada, buscada do zero contra qualquer postura", "correct": true },
+            { "text": "Buscá-la sempre depois do front headlock", "correct": false },
+            { "text": "Aplicá-la só contra quem já está cansado", "correct": false },
+            { "text": "Nunca tentá-la sem antes finalizar o sprawl", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece com a guilhotina tentada sem o front headlock antecedente?",
+          "explanation": "Ela vira uma finalização de sorte, tentada contra um oponente que ainda tem estrutura inteira para defender.",
+          "options": [
+            { "text": "Vira uma finalização de sorte, contra um oponente com estrutura para defender", "correct": true },
+            { "text": "Funciona igual, só que mais devagar", "correct": false },
+            { "text": "Passa a exigir gi para funcionar", "correct": false },
+            { "text": "Torna-se automaticamente um estrangulamento de costas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que sinal já é suficiente para indicar que a guilhotina tem terreno para funcionar?",
+          "explanation": "Reconhecer que a cabeça do oponente está baixa e à frente, sem precisar procurar mais nada, já é sinal suficiente.",
+          "options": [
+            { "text": "Reconhecer que a cabeça do oponente está baixa e à frente", "correct": true },
+            { "text": "Ver que o oponente já está cansado", "correct": false },
+            { "text": "Perceber que ele soltou a pegada de gola", "correct": false },
+            { "text": "Notar que ele está de joelhos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que front headlock, guilhotina e defesa de queda são tratados como uma cadeia, e não como três técnicas soltas?",
+          "explanation": "Porque cada etapa entrega a seguinte: a defesa de queda cria o front headlock, que cria a chance de guilhotina.",
+          "options": [
+            { "text": "Porque cada etapa entrega a seguinte, uma abrindo a próxima", "correct": true },
+            { "text": "Porque as três têm o mesmo nome técnico", "correct": false },
+            { "text": "Porque são sempre ensinadas na mesma aula", "correct": false },
+            { "text": "Porque nenhuma das três funciona sem as outras duas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O controle do front headlock, segundo o texto, serve para:",
+          "explanation": "Tanto controlar o oponente quanto abrir caminho para a guilhotina — as duas coisas nascem da mesma posição.",
+          "options": [
+            { "text": "Tanto controlar quanto abrir caminho para a guilhotina", "correct": true },
+            { "text": "Apenas cansar o oponente até ele desistir", "correct": false },
+            { "text": "Substituir a necessidade de qualquer finalização", "correct": false },
+            { "text": "Impedir apenas que ele fique de pé", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M7.3",
@@ -34,7 +196,88 @@
       "prereqs": ["M7.2"],
       "concept": "Defender a guilhotina é urgente porque a posição aperta enquanto você ainda está pensando no que fazer.\n\nA lógica é a mesma de qualquer defesa de estrangulamento: aliviar a pressão no pescoço antes de tentar sair, tipicamente ganhando o lado correto e tirando a cabeça do eixo do estrangulamento. Vir logo depois do nó de ataque é proposital — entender como a guilhotina se aplica é o que revela por onde a defesa entra.\n\nO erro comum é tentar puxar a cabeça para fora antes de aliviar a pressão: sem o alívio primeiro, o puxão só aperta mais o próprio pescoço contra o braço que estrangula. Ganhar o lado correto muda o ângulo do estrangulamento antes de qualquer tentativa de sair, e é esse detalhe que costuma decidir a defesa.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "Por que defender a guilhotina é urgente?",
+          "explanation": "Porque a posição aperta enquanto você ainda está pensando no que fazer — a urgência vem da velocidade do próprio estrangulamento.",
+          "options": [
+            { "text": "Porque a posição aperta enquanto você ainda está pensando no que fazer", "correct": true },
+            { "text": "Porque é a única finalização sem defesa possível", "correct": false },
+            { "text": "Porque sempre acontece de surpresa total", "correct": false },
+            { "text": "Porque exige gi para ser aplicada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a lógica geral por trás da defesa de guilhotina?",
+          "explanation": "É a mesma de qualquer defesa de estrangulamento: aliviar a pressão no pescoço antes de tentar sair.",
+          "options": [
+            { "text": "A mesma de qualquer defesa de estrangulamento: aliviar a pressão antes de sair", "correct": true },
+            { "text": "Prender os dois braços do oponente antes de tudo", "correct": false },
+            { "text": "Esperar o oponente cansar o braço", "correct": false },
+            { "text": "Girar para as costas dele imediatamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que tipicamente alivia a pressão do estrangulamento, segundo o texto?",
+          "explanation": "Ganhar o lado correto e tirar a cabeça do eixo do estrangulamento é o que tipicamente alivia a pressão.",
+          "options": [
+            { "text": "Ganhar o lado correto e tirar a cabeça do eixo do estrangulamento", "correct": true },
+            { "text": "Puxar a própria cabeça para fora com força", "correct": false },
+            { "text": "Prender a perna do oponente", "correct": false },
+            { "text": "Levantar o quadril rapidamente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que este nó vem logo depois do nó de ataque (front headlock e guilhotina)?",
+          "explanation": "Porque entender como a guilhotina se aplica é o que revela por onde a defesa entra — a ordem é proposital.",
+          "options": [
+            { "text": "Porque entender como a guilhotina se aplica revela por onde a defesa entra", "correct": true },
+            { "text": "Porque os dois nós usam a mesma pegada de gi", "correct": false },
+            { "text": "Porque a ordem não tem relação nenhuma entre os nós", "correct": false },
+            { "text": "Porque a defesa é sempre mais fácil de aprender antes do ataque", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum ao tentar sair da guilhotina?",
+          "explanation": "O erro comum é puxar a cabeça para fora antes de aliviar a pressão do estrangulamento.",
+          "options": [
+            { "text": "Puxar a cabeça para fora antes de aliviar a pressão", "correct": true },
+            { "text": "Ganhar o lado correto cedo demais", "correct": false },
+            { "text": "Tirar a cabeça do eixo do estrangulamento primeiro", "correct": false },
+            { "text": "Esperar demais antes de reagir", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando alguém puxa a cabeça para fora sem aliviar a pressão primeiro?",
+          "explanation": "O puxão só aperta mais o próprio pescoço contra o braço que estrangula — o alívio precisa vir antes.",
+          "options": [
+            { "text": "O puxão só aperta mais o próprio pescoço contra o braço que estrangula", "correct": true },
+            { "text": "A defesa funciona igual, só que mais devagar", "correct": false },
+            { "text": "O estrangulamento se solta automaticamente", "correct": false },
+            { "text": "Nada muda, o resultado é neutro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que ganhar o lado correto muda, antes de qualquer tentativa de sair?",
+          "explanation": "Muda o ângulo do estrangulamento — é esse ajuste que abre espaço para a saída funcionar de verdade.",
+          "options": [
+            { "text": "O ângulo do estrangulamento", "correct": true },
+            { "text": "A posição das pernas do oponente", "correct": false },
+            { "text": "O tipo de finalização que ele pode tentar em seguida", "correct": false },
+            { "text": "A necessidade de tocar (tap)", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Segundo o texto, o que costuma decidir se a defesa de guilhotina funciona?",
+          "explanation": "O detalhe de ganhar o lado correto antes de tentar sair costuma ser o que decide a defesa.",
+          "options": [
+            { "text": "O detalhe de ganhar o lado correto antes de tentar sair", "correct": true },
+            { "text": "A velocidade da reação, acima de qualquer outro fator", "correct": false },
+            { "text": "A força do pescoço de quem defende", "correct": false },
+            { "text": "O tamanho da mão de quem finaliza", "correct": false }
+          ]
+        }
+      ]
     },
     {
       "code": "M7.4",
@@ -45,7 +288,88 @@
       "prereqs": ["M2.5", "M2.6", "M2.7"],
       "concept": "As três finalizações da guarda fechada — triângulo, armlock e omoplata — compartilham controle e ângulo, e cada defesa do oponente abre exatamente uma das outras duas.\n\nTratá-las como um sistema, em vez de três técnicas separadas, é o salto conceitual do módulo: você deixa de tentar impor uma finalização específica e passa a seguir para onde a defesa dele aponta.\n\nO erro comum é insistir numa das três mesmo depois que a defesa do oponente já abriu outra: forçar o triângulo contra quem já defendeu para o armlock gasta tempo e força numa porta que já fechou, enquanto a que está aberta espera do lado. Reconhecer qual defesa específica ele usou é o que diz qual das outras duas está livre naquele instante.",
       "video": null,
-      "quiz": []
+      "quiz": [
+        {
+          "prompt": "O que as três finalizações (triângulo, armlock, omoplata) compartilham?",
+          "explanation": "Elas compartilham controle e ângulo — é isso que permite tratá-las como um sistema, e não como técnicas isoladas.",
+          "options": [
+            { "text": "Controle e ângulo", "correct": true },
+            { "text": "A mesma pegada de gola", "correct": false },
+            { "text": "O mesmo tempo de execução", "correct": false },
+            { "text": "A necessidade de gi", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que cada defesa do oponente faz, segundo o texto?",
+          "explanation": "Cada defesa do oponente abre exatamente uma das outras duas finalizações — nunca fecha as três.",
+          "options": [
+            { "text": "Abre exatamente uma das outras duas finalizações", "correct": true },
+            { "text": "Fecha as três finalizações ao mesmo tempo", "correct": false },
+            { "text": "Não tem relação com as outras finalizações", "correct": false },
+            { "text": "Obriga a reiniciar a posição do zero", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o salto conceitual deste nó?",
+          "explanation": "É deixar de impor uma finalização específica e passar a seguir para onde a defesa do oponente aponta.",
+          "options": [
+            { "text": "Deixar de impor uma finalização específica e seguir para onde a defesa aponta", "correct": true },
+            { "text": "Decorar a ordem fixa das três finalizações", "correct": false },
+            { "text": "Escolher sempre o triângulo como primeira opção", "correct": false },
+            { "text": "Aplicar as três finalizações ao mesmo tempo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o erro comum descrito neste nó?",
+          "explanation": "É insistir numa das três finalizações mesmo depois que a defesa do oponente já abriu outra.",
+          "options": [
+            { "text": "Insistir numa das três mesmo depois que a defesa já abriu outra", "correct": true },
+            { "text": "Trocar de finalização cedo demais", "correct": false },
+            { "text": "Nunca tentar o triângulo primeiro", "correct": false },
+            { "text": "Buscar controle antes de buscar ângulo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece ao forçar o triângulo contra quem já defendeu para o armlock?",
+          "explanation": "Gasta-se tempo e força numa porta que já fechou, enquanto a que está aberta espera do lado.",
+          "options": [
+            { "text": "Gasta tempo e força numa porta que já fechou, enquanto a aberta espera do lado", "correct": true },
+            { "text": "A finalização sai mais forte, por insistência", "correct": false },
+            { "text": "O oponente é obrigado a se render", "correct": false },
+            { "text": "Nada muda, o resultado é o mesmo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que diz qual das outras duas finalizações está livre, num dado instante?",
+          "explanation": "Reconhecer qual defesa específica o oponente usou é o que aponta qual das outras duas está livre.",
+          "options": [
+            { "text": "Reconhecer qual defesa específica o oponente usou", "correct": true },
+            { "text": "Contar quantos segundos já se passaram na posição", "correct": false },
+            { "text": "Verificar se o treino é de gi ou sem gi", "correct": false },
+            { "text": "Perguntar ao parceiro qual finalização ele prefere", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que tratar as três finalizações como sistema é melhor do que tratá-las como técnicas separadas?",
+          "explanation": "Porque a defesa de uma já indica qual das outras está disponível, em vez de forçar uma escolha isolada.",
+          "options": [
+            { "text": "Porque a defesa de uma já indica qual das outras está disponível", "correct": true },
+            { "text": "Porque assim se aprende mais rápido cada uma isoladamente", "correct": false },
+            { "text": "Porque reduz o número de posições no currículo", "correct": false },
+            { "text": "Porque elimina a necessidade de controle de postura", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o texto quer dizer com \"seguir para onde a defesa aponta\"?",
+          "explanation": "Que a reação do oponente indica qual das duas finalizações restantes está aberta naquele instante.",
+          "options": [
+            { "text": "Que a reação do oponente indica qual das finalizações restantes está aberta", "correct": true },
+            { "text": "Que se deve sempre recuar quando o oponente se defende", "correct": false },
+            { "text": "Que a defesa do oponente é sempre eficaz contra as três", "correct": false },
+            { "text": "Que apenas o triângulo deve ser tentado primeiro", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

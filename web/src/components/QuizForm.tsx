@@ -33,10 +33,10 @@ export function QuizForm({
     // leitor procurar uma seção que não existe.
     return (
       <p className="empty">
-        Quiz ainda não escrito para este nó. A curadoria começou por M0 e M1 —{' '}
+        Quiz ainda não escrito para este nó.{' '}
         {readOnly
-          ? 'aqui há só conceito e vídeo para revisar.'
-          : 'registrar o drill abaixo já conclui nós sem quiz.'}
+          ? 'Aqui há só conceito e vídeo para revisar.'
+          : 'Registrar o drill abaixo já conclui o nó sem quiz.'}
       </p>
     );
   }
@@ -60,9 +60,11 @@ export function QuizForm({
       setFailure(
         cause instanceof ApiError && cause.isQuizUnavailable
           ? 'Este nó ainda não tem quiz escrito.'
-          : cause instanceof Error
-            ? cause.message
-            : String(cause),
+          : cause instanceof ApiError && cause.isQuizStale
+            ? 'O quiz foi renovado. Recarregue o nó e responda de novo.'
+            : cause instanceof Error
+              ? cause.message
+              : String(cause),
       );
     } finally {
       setSubmitting(false);

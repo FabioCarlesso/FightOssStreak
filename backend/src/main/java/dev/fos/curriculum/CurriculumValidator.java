@@ -77,6 +77,16 @@ public class CurriculumValidator {
     private static final Set<String> CONCEPT_LENGTH_CURATED_MODULES =
             Set.of("M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8");
 
+    /**
+     * Mínimo de perguntas no banco de um nó que tem quiz (issue #59, D44).
+     *
+     * <p>Duas tentativas sem repetir — {@code QuizRotation.QUESTIONS_PER_ATTEMPT} vezes dois — é o
+     * menor banco em que a rotação já entrega alguma coisa nova na segunda vez que o nó é revisado.
+     * Nó com {@code quiz: []} continua aceito (D15): o mínimo só vale para quem já tem alguma
+     * pergunta escrita.
+     */
+    public static final int MIN_QUIZ_QUESTIONS = 8;
+
     /** Executa todas as checagens e lança na primeira violação encontrada. */
     public void validate(List<CurriculumSource.Module> modules) {
         Map<String, CurriculumSource.NodeSpec> byCode = indexNodes(modules);
@@ -252,11 +262,26 @@ public class CurriculumValidator {
     }
 
     private void validateQuiz(CurriculumSource.NodeSpec node, String where) {
-        for (int i = 0; i < node.quiz().size(); i++) {
-            CurriculumSource.QuestionSpec question = node.quiz().get(i);
+        List<CurriculumSource.QuestionSpec> quiz = node.quiz();
+        if (!quiz.isEmpty() && quiz.size() < MIN_QUIZ_QUESTIONS) {
+            throw new CurriculumException(
+                    where
+                            + ": banco de quiz com "
+                            + quiz.size()
+                            + " perguntas, o mínimo é "
+                            + MIN_QUIZ_QUESTIONS
+                            + " (D44)");
+        }
+
+        Set<String> prompts = new HashSet<>();
+        for (int i = 0; i < quiz.size(); i++) {
+            CurriculumSource.QuestionSpec question = quiz.get(i);
             String qWhere = where + ", pergunta " + (i + 1);
 
             requireText(question.prompt(), qWhere + ": enunciado vazio");
+            if (!prompts.add(question.prompt().strip())) {
+                throw new CurriculumException(qWhere + ": enunciado repetido no mesmo nó");
+            }
             requireText(question.explanation(), qWhere + ": explicação vazia");
 
             if (question.options().size() < 2) {
