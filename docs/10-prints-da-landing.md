@@ -29,10 +29,13 @@ Refazer é barato (um comando), então na dúvida refaça.
 > **não** vale criar um modo que desliga o portão para capturar tela — seria porta dos fundos
 > permanente para economizar oito imagens. Sem a variável o script roda como antes e falha em `401`.
 >
-> **Defasagem que sobra:** a #58 recapturou só `no-desktop` e `no-mobile`, porque foi o conceito do
-> nó que mudou. Os outros seis arquivos seguem com o cabeçalho anterior à #24 — sem o nome da conta
-> e o botão *Sair*. Continua sendo defasagem pequena e conhecida, e agora tem conserto de um comando:
-> `node scripts/capturar-prints.mjs --semear` refaz todos.
+> **Defasagem zerada na #58:** as oito telas foram recapturadas. O cabeçalho voltou a bater com o
+> app — com o nome da conta e o botão *Sair* da #24 — nos três prints que de fato o mostram
+> (`no-desktop`, `hoje-desktop`, `hoje-mobile`); nos outros o enquadramento é ancorado abaixo dele,
+> e por isso a defasagem nunca chegou a aparecer ali. `arvore-desktop` e `arvore-mobile` saíram
+> **byte a byte idênticos** aos anteriores, o que é um bom sinal: a captura é determinística, e a
+> árvore não exibe conceito nenhum. O `og.jpg` ficou de fora de propósito — é o hero da landing
+> pública, não tem cabeçalho de app e não mudou.
 
 ## Como refazer
 
