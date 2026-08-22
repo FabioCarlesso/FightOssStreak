@@ -10,7 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M2.1", "M0.5"],
-      "concept": "Na guarda aberta, sem as pernas travadas, o que segura o jogo é a gestão de distância: pegadas definem o que o oponente pode fazer, e pés e joelhos funcionam como enquadramento móvel. A regra que organiza tudo é simples — ou você o mantém longe o bastante para não ser alcançado, ou perto o bastante para controlá-lo. A distância intermediária é onde a guarda é passada.",
+      "concept": "Na guarda aberta, sem as pernas travadas ao redor do oponente, o que segura o jogo é a gestão de distância: pegadas definem o que ele pode fazer, e pés e joelhos funcionam como enquadramento móvel.\n\nA regra que organiza tudo é simples: ou você o mantém longe o bastante para não ser alcançado, ou perto o bastante para controlá-lo. Nas duas pontas você tem informação e contato suficientes para reagir.\n\nO erro comum é ficar parado na distância intermediária — perto o bastante para ele te alcançar, mas longe o bastante para você não controlar nada. É exatamente essa faixa que a guarda aberta costuma ser passada. Perceber em qual das duas pontas você está, a cada momento, é o primeiro julgamento que todo o resto do módulo depende.",
       "video": null,
       "quiz": [
         {
@@ -62,7 +62,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M3.1"],
-      "concept": "A torreando é a passagem por fora: em vez de vencer as pernas, você as desloca para um lado e corre para o outro. Depende de controlar as calças e de mudar de direção mais rápido do que o oponente reposiciona o quadril. O erro típico é tentar passar em linha reta — a passagem existe justamente por causa do ângulo.",
+      "concept": "A torreando é a passagem por fora: em vez de vencer as pernas do oponente na força, você as desloca para um lado e corre para o lado que ficou livre.\n\nEla depende de controlar as calças dele e de mudar de direção mais rápido do que ele consegue reposicionar o quadril de volta para você — é uma corrida, e perder essa corrida devolve a guarda todas as vezes.\n\nO erro típico é tentar passar em linha reta, indo direto para onde as pernas dele já estão. A passagem existe por causa do ângulo: sem mudança de direção, vira só um avanço frontal contra duas pernas inteiras. Trocar de direção repetidamente é o que impede o oponente de simplesmente girar o quadril de volta a cada tentativa.",
       "video": null,
       "quiz": [
         {
@@ -114,7 +114,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M3.1"],
-      "concept": "A passagem por cima é o oposto da torreando: em vez de velocidade e ângulo, pressão e paciência. Você fecha o espaço, esmaga as pernas do oponente contra o corpo dele e avança pouco, sem devolver o que ganhou. Serve de complemento porque cobre o cenário em que o oponente é rápido demais para o jogo de fora.",
+      "concept": "A passagem por cima é o oposto da torreando: em vez de velocidade e ângulo, ela troca por pressão e paciência contra o oponente rápido demais para o jogo de fora.\n\nVocê fecha o espaço, esmaga as pernas dele contra o próprio corpo e avança pouco de cada vez, sem nunca devolver o espaço já conquistado. Um avanço grande normalmente exige aliviar a pressão — e é nesse instante que a guarda volta.\n\nO erro comum é aliviar a pressão sem perceber, ao reposicionar uma pegada por exemplo: o oponente aproveita a folga para enquadrar e recuperar o espaço, o mesmo enquadramento de M1.3 agora trabalhando contra você. Trocar de pegada com a pressão mantida — nunca as duas mãos livres ao mesmo tempo — é o que evita essa janela de folga.",
       "video": null,
       "quiz": [
         {
@@ -166,7 +166,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": ["M3.1"],
-      "concept": "A butterfly transforma as pernas em alavancas de elevação em vez de barreiras. Ela funciona sentado, com o oponente perto — a conexão de tronco é o que permite levantá-lo. É a guarda que melhor ensina que raspagem é desequilíbrio somado a elevação, não empurrão.",
+      "concept": "A butterfly transforma as pernas em alavancas de elevação em vez de barreiras — é a guarda que melhor ensina que raspagem é desequilíbrio somado a elevação, não empurrão.\n\nEla funciona sentado, com o oponente perto: a conexão de tronco é o que permite levantar o corpo inteiro dele, não só a perna que o gancho toca.\n\nO erro comum é sentar na butterfly com o oponente afastado, sem esse contato de tronco. Sem conexão os ganchos não levantam nada, e a distância que sobra é a intermediária — a pior de todas, onde ele já começa a trabalhar a passagem. Manter esse contato exige ajuste contínuo, porque o oponente tenta romper a conexão de tronco assim que sente o gancho entrar.",
       "video": null,
       "quiz": [
         {
@@ -218,7 +218,7 @@
       "order": 5,
       "unlockRule": "ALL",
       "prereqs": ["M3.4"],
-      "concept": "A raspagem de butterfly é a aplicação direta do gancho: você carrega o peso do oponente na perna e o joga para o lado em que ele não tem apoio. O detalhe decisivo é a inclinação do próprio tronco — quem tenta levantar sentado ereto usa só a perna e trava; quem cai para o lado usa o corpo inteiro.",
+      "concept": "A raspagem de butterfly é a aplicação direta do gancho: o gancho já carrega o peso do oponente, e a raspagem só precisa remover o apoio do lado oposto.\n\nO detalhe que decide é a inclinação do próprio tronco para o lado — é ela que coloca o peso do seu corpo inteiro no movimento, jogando o oponente para o lado em que ele não tem apoio.\n\nO erro comum é tentar levantar mantendo o tronco ereto: sentado reto, só a perna trabalha, e uma perna sozinha não move um corpo bem apoiado — a raspagem trava com a sensação de que faltou força. A correção não é força extra na perna, e sim deslocar o peso do próprio tronco para o lado — o mesmo ajuste que decide a tesoura em M2.2.",
       "video": null,
       "quiz": [
         {
@@ -270,7 +270,7 @@
       "order": 6,
       "unlockRule": "ALL",
       "prereqs": ["M3.1"],
-      "concept": "A meia-guarda deixou de ser posição defensiva quando se entendeu que o que importa não é a perna presa, e sim o enquadramento do tronco: com o antebraço no espaço certo, você impede que ele te esmague e mantém a possibilidade de chegar embaixo dele. Sem isso, a meia-guarda vira apenas um 100kg com uma perna dentro.",
+      "concept": "A meia-guarda deixou de ser vista como posição defensiva quando se entendeu que o que importa não é a perna presa — é o enquadramento do tronco.\n\nCom o antebraço no espaço certo, você impede que o oponente te esmague e mantém a possibilidade de chegar embaixo dele, de onde saem as raspagens do módulo. Sem esse enquadramento, a meia-guarda vira apenas um 100kg com uma perna dentro.\n\nO erro comum é deixar o oponente cravar o braço por baixo do seu e colar o peito no seu: isso destrói o enquadramento e abre caminho direto para o 100kg — a perna presa só atrasa o inevitável quando o tronco já perdeu o espaço. Recuperar o antebraço nesse instante é mais urgente do que qualquer ajuste na perna que ainda está presa.",
       "video": null,
       "quiz": [
         {
@@ -322,7 +322,7 @@
       "order": 7,
       "unlockRule": "ALL",
       "prereqs": ["M3.6"],
-      "concept": "A old school ensina o princípio de chegar por baixo do centro de gravidade: com o ombro sob o oponente e o controle do tornozelo dele, a base desaparece e ele cai por cima do próprio peso. É a demonstração mais clara de que a raspagem eficiente remove apoio em vez de aplicar força.",
+      "concept": "A old school ensina o princípio de chegar por baixo do centro de gravidade do oponente — é a demonstração mais clara do currículo de que raspagem eficiente remove apoio em vez de aplicar força.\n\nCom o ombro sob o oponente e o controle do tornozelo dele ao mesmo tempo, a base desaparece dos dois lados: um tira o apoio de cima, o outro impede que ele reponha o pé. Ela depende do enquadramento do nó anterior — sem ele você é esmagado antes de o ombro chegar embaixo.\n\nO erro comum é controlar o tornozelo com o ombro ainda ao lado do oponente, em vez de por baixo dele: sem tirar o apoio de cima, ele mantém a base inteira e só descarrega mais peso em cima de você.",
       "video": null,
       "quiz": [
         {

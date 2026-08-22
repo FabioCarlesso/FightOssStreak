@@ -263,15 +263,50 @@ class CurriculumIntegrityTest {
 
     @Test
     @DisplayName(
-            "a faixa de tamanho do conceito (450-900) tem método pronto, mas não roda em validate() "
-                    + "ainda (D41): M2-M8 ainda não foram reescritos")
-    void conceptLengthGuardExistsButIsNotWiredIntoValidateYet() {
-        // Currículo real de M2-M8 tem conceito abaixo de 450 caracteres hoje, e validate() precisa
-        // continuar aceitando isso até o PR de conteúdo do módulo correspondente religar a regra.
+            "a faixa de tamanho do conceito (450-900) só vale para módulos já reescritos "
+                    + "(D42): módulo fora de CONCEPT_LENGTH_CURATED_MODULES continua livre")
+    void conceptLengthGuardOnlyAppliesToCuratedModules() {
+        // "MX" não está em CONCEPT_LENGTH_CURATED_MODULES (hoje M0-M8, o currículo inteiro), então
+        // um conceito curto demais nesse módulo sintético não quebra validate() — é o
+        // comportamento esperado para um módulo futuro ainda não escrito no padrão.
         assertThatCode(
                         () ->
                                 validator.validate(
                                         List.of(moduleWithConcept("curto demais, de propósito"))))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("a faixa de tamanho do conceito é aplicada de verdade para M0 e M1 (D42)")
+    void conceptLengthGuardAppliesToCuratedModules() {
+        assertThatThrownBy(
+                        () ->
+                                validator.validate(
+                                        List.of(
+                                                moduleWithConceptAndCode(
+                                                        "M0",
+                                                        "M0.1",
+                                                        "curto demais, de propósito"))))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de 450 a 900");
+
+        assertThatThrownBy(
+                        () ->
+                                validator.validate(
+                                        List.of(
+                                                moduleWithConceptAndCode(
+                                                        "M1",
+                                                        "M1.1",
+                                                        "curto demais, de propósito"))))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de 450 a 900");
+
+        assertThatCode(
+                        () ->
+                                validator.validate(
+                                        List.of(
+                                                moduleWithConceptAndCode(
+                                                        "M0", "M0.1", "a".repeat(450)))))
                 .doesNotThrowAnyException();
     }
 
@@ -551,13 +586,18 @@ class CurriculumIntegrityTest {
     }
 
     private CurriculumSource.Module moduleWithConcept(String concept) {
+        return moduleWithConceptAndCode("MX", "MX.1", concept);
+    }
+
+    private CurriculumSource.Module moduleWithConceptAndCode(
+            String moduleCode, String nodeCode, String concept) {
         return new CurriculumSource.Module(
-                "MX",
+                moduleCode,
                 "Quebrado",
                 "resumo",
                 List.of(
                         new CurriculumSource.NodeSpec(
-                                "MX.1", "t", "BRANCA", 1, "ALL", List.of(), concept, null,
+                                nodeCode, "t", "BRANCA", 1, "ALL", List.of(), concept, null,
                                 List.of(), List.of())));
     }
 

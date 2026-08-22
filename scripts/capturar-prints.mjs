@@ -19,8 +19,9 @@
  * contrário do que a seção afirma. A semeadura só fala com a API pública, sem SQL — o que ela usa é
  * o `drilledOn` do `DrillRequest`, que aceita data passada.
  *
- * Pré-requisitos: backend e web no ar (`npm run dev:backend` e `npm run dev:web`) e `google-chrome`
- * no PATH. O passo a passo completo está em `docs/10-prints-da-landing.md`.
+ * Pré-requisitos: backend e web no ar (`npm run dev:backend` e `npm run dev:web`), `google-chrome`
+ * no PATH e — desde que o app exige login (#24) — uma sessão já obtida em `FOS_PRINT_COOKIE`. O
+ * passo a passo completo está em `docs/10-prints-da-landing.md`.
  *
  * Códigos de saída:
  *   0  todos os prints gravados dentro do teto de tamanho
@@ -152,6 +153,30 @@ const QUIZ_REFEITO = 'M0.2';
 
 const dormir = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
+/**
+ * Sessão já obtida, passada de fora por `FOS_PRINT_COOKIE`.
+ *
+ * Desde a #24 o app exige login (D36/D37), e este script não tem como se autenticar sozinho: ele
+ * semeia por `fetch` e sobe um Chrome com perfil novo, e os dois levavam 401. O caminho que
+ * `docs/10-prints-da-landing.md` já prescrevia é este — **receber** uma sessão de verdade, obtida
+ * por quem opera, em vez de um modo que desliga o portão para tirar foto, que seria porta dos
+ * fundos permanente para economizar oito imagens.
+ *
+ * O valor é o cabeçalho `Cookie` inteiro, como o navegador o manda:
+ * `FOS_PRINT_COOKIE='JSESSIONID=...; XSRF-TOKEN=...'`. Sem a variável nada muda — o script segue
+ * como antes, e falha em 401 se o app exigir sessão.
+ */
+const cookieSessao = process.env.FOS_PRINT_COOKIE?.trim() || null;
+
+/** Um valor específico de dentro do `Cookie` — o CSRF precisa ir também como cabeçalho próprio. */
+function valorDoCookie(nome) {
+  const achado = (cookieSessao ?? '')
+    .split(';')
+    .map((parte) => parte.trim())
+    .find((parte) => parte.startsWith(`${nome}=`));
+  return achado ? achado.slice(nome.length + 1) : null;
+}
+
 function argumento(nome, padrao) {
   const prefixo = `--${nome}=`;
   const encontrado = process.argv.find((arg) => arg.startsWith(prefixo));
@@ -162,19 +187,41 @@ function argumento(nome, padrao) {
 // Semeadura pela API pública
 // ---------------------------------------------------------------------------
 
+/**
+ * Data local, e não `toISOString()`.
+ *
+ * O backend recusa drill em data futura e decide "hoje" pelo fuso do servidor (`TZ`, que o deploy
+ * fixa em America/Sao_Paulo — ver README). `toISOString()` devolve UTC: entre 21h e a meia-noite
+ * de Brasília ele já está no dia seguinte, e a semeadura morria em 400 dizendo "data futura" —
+ * falha que só aparecia à noite, que é o pior tipo de intermitência para depurar.
+ */
 function hojeMenos(dias) {
   const data = new Date();
   data.setDate(data.getDate() - dias);
-  return data.toISOString().slice(0, 10);
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+  return `${data.getFullYear()}-${mes}-${dia}`;
 }
 
 async function pedir(api, caminho, init) {
+  // `withHttpOnlyFalse()` no backend: o token de CSRF viaja no cookie e é cobrado no cabeçalho.
+  const xsrf = valorDoCookie('XSRF-TOKEN');
   const resposta = await fetch(`${api}${caminho}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(cookieSessao && { Cookie: cookieSessao }),
+      ...(xsrf && { 'X-XSRF-TOKEN': decodeURIComponent(xsrf) }),
+      ...(init?.headers ?? {}),
+    },
   });
   if (!resposta.ok) {
-    throw new Error(`${init?.method ?? 'GET'} ${caminho} devolveu ${resposta.status}`);
+    // O corpo junto porque só o status é opaco: 400 pode ser payload inválido e 401 pode ser
+    // `FOS_PRINT_COOKIE` ausente ou vencido, e a diferença é o que diz o que fazer a seguir.
+    const corpo = await resposta.text().catch(() => '');
+    throw new Error(
+      `${init?.method ?? 'GET'} ${caminho} devolveu ${resposta.status}${corpo ? ` — ${corpo.slice(0, 300)}` : ''}`,
+    );
   }
   return resposta.json();
 }
@@ -377,6 +424,19 @@ async function esperarSeletor(cdp, sessao, seletor, limiteMs = 20000) {
   }
 }
 
+/** Põe a sessão recebida dentro do Chrome, que sobe com perfil limpo e sem cookie nenhum. */
+async function aplicarSessao(cdp, sessionId, base) {
+  if (!cookieSessao) return;
+  await cdp.enviar('Network.enable', {}, sessionId);
+  for (const parte of cookieSessao.split(';')) {
+    const igual = parte.indexOf('=');
+    if (igual < 1) continue;
+    const name = parte.slice(0, igual).trim();
+    const value = parte.slice(igual + 1).trim();
+    await cdp.enviar('Network.setCookie', { url: base, name, value }, sessionId);
+  }
+}
+
 /**
  * `porFormato` permite que uma tela seja enquadrada de um jeito no desktop e de outro no celular.
  * Existe porque 1280×800 e 390×844 não cabem a mesma quantidade de página, e forçar um
@@ -389,6 +449,9 @@ async function capturar(cdp, base, telaBase, formato, saida) {
 
   try {
     await cdp.enviar('Page.enable', {}, sessionId);
+    // Antes de navegar: sem os cookies no lugar, a primeira requisição já volta 401 e a tela
+    // fotografada seria a de login.
+    await aplicarSessao(cdp, sessionId, base);
     await cdp.enviar(
       'Emulation.setDeviceMetricsOverride',
       {

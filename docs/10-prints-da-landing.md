@@ -17,20 +17,31 @@ espaçamento e de cor — não para texto de conceito ou pergunta de quiz, que o
 
 Refazer é barato (um comando), então na dúvida refaça.
 
-> ⚠️ **Desde a #24 a recaptura está bloqueada, e não por descuido.** O app passou a exigir login e
-> liberação (D36), e o script não tem como se autenticar: ele semeia o progresso pela API com
-> `fetch` sem cookie, e sobe um Chrome com perfil novo, sem sessão. Nos dois casos a resposta agora
-> é `401` — o print sairia da tela de login.
+> ℹ️ **A recaptura ficou bloqueada da #24 até a #58, e agora está destravada** — pelo caminho que
+> a versão anterior deste documento já prescrevia, não por um atalho. O app exige login (D36/D37) e
+> o script não tem como se autenticar sozinho: ele semeia pela API com `fetch` e sobe um Chrome com
+> perfil novo, e os dois levavam `401`.
 >
-> **O que isso significa na prática:** os oito arquivos em `web/public/prints/` ficaram com o
-> cabeçalho anterior do app, sem o nome da conta e o botão *Sair* que a #24 acrescentou. É uma
-> defasagem pequena e conhecida, não um print mentindo sobre o produto.
+> **O que resolveu:** o script passou a **receber** uma sessão já obtida, em `FOS_PRINT_COOKIE` —
+> aplicada no `fetch` da semeadura (mais o cabeçalho `X-XSRF-TOKEN`, que o
+> `CookieCsrfTokenRepository.withHttpOnlyFalse()` cobra) e no Chrome via `Network.setCookie` do CDP.
+> Continua valendo o que já estava escrito aqui: é caminho de operador, com login de verdade, e
+> **não** vale criar um modo que desliga o portão para capturar tela — seria porta dos fundos
+> permanente para economizar oito imagens. Sem a variável o script roda como antes e falha em `401`.
 >
-> **O que resolve**, quando alguém for mexer nisto: ensinar o script a receber uma sessão já obtida
-> — um cookie de sessão por variável de ambiente, aplicado no `fetch` da semeadura e no Chrome via
-> `Network.setCookie` do CDP. É caminho de operador, com login de verdade; **não** vale criar um
-> modo que desliga o portão para capturar tela, que seria uma porta dos fundos permanente para
-> economizar oito imagens.
+> **Defasagem zerada na #58:** os nove arquivos foram recapturados. O cabeçalho voltou a bater com
+> o app — com o nome da conta e o botão *Sair* da #24 — nos três prints que de fato o mostram
+> (`no-desktop`, `hoje-desktop`, `hoje-mobile`); nos outros o enquadramento é ancorado abaixo dele,
+> e por isso a defasagem nunca chegou a aparecer ali. `arvore-desktop` e `arvore-mobile` saíram
+> **byte a byte idênticos** aos anteriores, o que é um bom sinal: a captura é determinística, e a
+> árvore não exibe conceito nenhum.
+>
+> **O `og.jpg` era o mais defasado de todos, e ninguém tinha percebido** — justamente o arquivo que
+> nenhuma tela do app contém e que é a primeira coisa que se vê ao receber o link. Ele ainda trazia
+> o hero anterior ao login: botão *Abrir o app* e a linha "**Sem cadastro** e sem cobrança". Desde a
+> #24/#52 a página diz *Pedir acesso* e "acesso sob aprovação" — e `LandingPage.tsx` tem comentário
+> explicando que a troca foi feita porque "copy que promete o que o produto não entrega é o defeito
+> que esta página existe para não ter". A prévia de link seguia fazendo exatamente essa promessa.
 
 ## Como refazer
 
@@ -44,9 +55,45 @@ npm run dev:backend
 # terminal 2 — web em :5173
 npm run dev:web
 
-# terminal 3
-node scripts/capturar-prints.mjs --semear
+# terminal 3 — a sessão vem de fora; ver "Como obter a sessão" abaixo
+FOS_PRINT_COOKIE='JSESSIONID=...; XSRF-TOKEN=...' node scripts/capturar-prints.mjs --semear
 ```
+
+**A porta importa**: o CORS do backend libera `localhost:5173` e nada mais (`SecurityConfig`), e o
+proxy do Vite repassa o `Origin` do navegador. Se a 5173 estiver ocupada o Vite sobe na 5174 e a
+semeadura morre em `Invalid CORS request` — libere a porta em vez de mudar a base.
+
+### Como obter a sessão
+
+O `FOS_PRINT_COOKIE` é o cabeçalho `Cookie` de uma sessão de verdade — os dois valores que
+importam são o `JSESSIONID` e o `XSRF-TOKEN`. O jeito honesto de consegui-lo é **entrar no app pelo
+navegador** (provedor externo ou link de e-mail, conforme o ambiente) e copiar o `Cookie` do
+DevTools → Network → qualquer requisição para `/api`.
+
+Em ambiente local sem provedor nem envio de e-mail configurados, dá para emitir um link de entrada
+direto no banco, porque `login_token` guarda o **SHA-256** do token e o resto do fluxo é o normal
+do app — nenhuma porta dos fundos no código:
+
+```bash
+docker compose up -d db   # e suba o backend no perfil `postgres`
+
+# a conta semeada pela V2 já nasce APROVADA (V6); falta uma identidade de e-mail para ela
+docker exec fos-db psql -U fos -d fos -c "INSERT INTO user_identity
+  (user_id, provider, provider_subject, email, email_verified, display_name, created_at, last_login_at)
+  VALUES (1,'email','voce@local.test','voce@local.test',TRUE,'Autor',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);"
+
+T="local-$(date +%s)"; H=$(printf '%s' "$T" | sha256sum | cut -d' ' -f1)
+docker exec fos-db psql -U fos -d fos -c "INSERT INTO login_token
+  (user_id, token_hash, created_at, expires_at)
+  VALUES (1,'$H',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP + INTERVAL '2 hours');"
+
+curl -s -c j.txt -b j.txt -o /dev/null "http://localhost:8080/api/login/email/$T"
+export FOS_PRINT_COOKIE="$(awk 'NF==7 {printf "%s=%s; ", $6, $7}' j.txt | sed 's/; $//')"
+```
+
+> ⚠️ **Não use a conta de demonstração (D39) para capturar.** Ela funciona e é tentadora, mas põe a
+> faixa "Você está numa demonstração" no topo de todas as telas — o print sai com um aviso que o
+> app real não mostra. Foi exatamente o erro cometido na primeira tentativa de recaptura da #58.
 
 Sai um relatório com o tamanho de cada arquivo. O script devolve 1 se algum passar de 150 KB — aí
 baixe `QUALIDADE_WEBP` no topo dele e repita.
@@ -126,7 +173,20 @@ Se outra tela precisar do mesmo, o campo aceita qualquer chave de enquadramento
 
 ## Prévia de link (`og.jpg`)
 
-A imagem é gerada a partir do hero da própria landing, então ela nunca fica fora de sintonia com a
-página. As tags `og:url` e `og:image` exigem URL absoluta e são injetadas no build a partir de
+A imagem é gerada a partir do hero da própria landing — o que **não** significa que ela se mantenha
+em sintonia sozinha: entre a #24 e a #58 a página mudou de copy e o `og.jpg` ficou para trás, ainda
+prometendo "Abrir o app" e "sem cadastro". Ela é o arquivo mais fácil de esquecer, porque nenhuma
+tela do app a contém e ninguém a vê navegando. **Mexeu no hero da landing, refaça o `og.jpg`.**
+
+Duas escolhas de captura, e o porquê de cada uma:
+
+- **Sem sessão.** É a prévia que quem ainda não tem conta vê. Rodar com `FOS_PRINT_COOKIE` mudaria o
+  hero para o estado de quem já entrou.
+- **Sem demonstração configurada** (`fos.demo.template-email` vazio, o padrão). Com ela ligada o hero
+  ganha o botão *Ver o app funcionando* antes do *Pedir acesso*. Capturar sem ele é a escolha
+  conservadora: ambiente que tem demonstração mostra um botão a mais do que a prévia promete, o que
+  é bem menos ruim do que o contrário.
+
+As tags `og:url` e `og:image` exigem URL absoluta e são injetadas no build a partir de
 `VITE_PUBLIC_URL` (ver `web/vite.config.ts`); sem a variável, nenhuma das duas é emitida. Cravar o
 domínio no HTML poria configuração de ambiente dentro da imagem, que é o que a D22 evita.
