@@ -46,6 +46,11 @@ campo continua `null`, que é estado normal.
   trecho útil começa em 3:10, use `--start 190`.
 - **O vídeo precisa ensinar o *conceito* do nó**, não só executar a técnica. O posicionamento do
   produto é retenção do porquê (D1).
+- **Entre candidatos equivalentes, ganha o em português** (D45). Desempate, não passe livre: idioma
+  não promove vídeo que falha em outro critério acima — vídeo em português que é highlight, que é
+  no-gi (D6) ou que não ensina o conceito continua descartado. Onde não existir vídeo em português à
+  altura, cataloga-se o em inglês e o nó fica marcado como **candidato a revisita** na tabela de
+  estado atual, em vez de ficar vazio: nó sem vídeo é pior que nó com vídeo em inglês.
 
 ## O que cada nó precisa mostrar
 
@@ -123,19 +128,24 @@ Os 11 nós estão catalogados. O que foi verificado e o que não foi está em D2
 `07-decisoes.md` — em resumo: id, título, canal e permissão de incorporação vieram do YouTube;
 o encaixe pedagógico foi julgado sem assistir aos vídeos por inteiro.
 
-| Nó | Canal | Duração | Observação |
-|---|---|---|---|
-| M0.1 | Keenan Cornelius | 23:04 | O mais longo da leva; formato de lista, mas merece um `--start` depois de assistir |
-| M0.2 | Knight Jiu-Jitsu | 6:36 | — |
-| M0.3 ⚠️ | Ritchie Yip | 1:41 | Enquadra o tap como segurança do parceiro e cita o tap verbal; escolhido por ser o mais conservador |
-| M0.4 | SBG PDX (Matt Thornton) | 3:42 | Base e postura como conceito; não confirmado que percorre as três bases do nó |
-| M0.5 | RVV BJJ | 8:05 | Gola, manga e calça em capítulos |
-| M1.1 | Jordan Teaches Jiujitsu | 5:32 | "T-rex arms" = cotovelos colados; o exemplo é meia-guarda |
-| M1.2 | Ritchie Yip | 4:36 | — |
-| M1.3 | Stephan Kesting | 8:11 | — |
-| M1.4 | Stephan Kesting | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
-| M1.5 | Jordan Teaches Jiujitsu | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
-| M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
+Os onze são, sem exceção, de canal em inglês — o critério de idioma (D45) chegou depois desta leva,
+e nenhum foi trocado retroativamente (troca por troca não é ganho). **M0.3** é o candidato a
+revisita de maior prioridade se aparecer equivalente em português claramente melhor: é o nó mais
+sensível do currículo, e é onde a barreira do idioma mais pesa.
+
+| Nó | Canal | Idioma | Duração | Observação |
+|---|---|---|---|---|
+| M0.1 | Keenan Cornelius | Inglês | 23:04 | O mais longo da leva; formato de lista, mas merece um `--start` depois de assistir |
+| M0.2 | Knight Jiu-Jitsu | Inglês | 6:36 | — |
+| M0.3 ⚠️ | Ritchie Yip | Inglês | 1:41 | Enquadra o tap como segurança do parceiro e cita o tap verbal; escolhido por ser o mais conservador. Candidato a revisita (D45) se surgir equivalente em português à altura |
+| M0.4 | SBG PDX (Matt Thornton) | Inglês | 3:42 | Base e postura como conceito; não confirmado que percorre as três bases do nó |
+| M0.5 | RVV BJJ | Inglês | 8:05 | Gola, manga e calça em capítulos |
+| M1.1 | Jordan Teaches Jiujitsu | Inglês | 5:32 | "T-rex arms" = cotovelos colados; o exemplo é meia-guarda |
+| M1.2 | Ritchie Yip | Inglês | 4:36 | — |
+| M1.3 | Stephan Kesting | Inglês | 8:11 | — |
+| M1.4 | Stephan Kesting | Inglês | 5:20 | Cobre por que a upa falha sem o braço preso; não cobre o elbow escape |
+| M1.5 | Jordan Teaches Jiujitsu | Inglês | 8:33 | Gi; conceitos de barreira de pernas, não "voltar à guarda fechada" |
+| M1.6 ⚠️ | Matt Arroyo Jiu Jitsu | Inglês | 11:15 | Falta confirmar que ensina pescoço antes de ganchos — a regra de descarte deste nó |
 
 ### Complementares catalogados (primeira leva, D32)
 

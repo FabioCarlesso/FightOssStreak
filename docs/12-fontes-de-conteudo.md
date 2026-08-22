@@ -104,10 +104,19 @@ para ficar em branco por descuido.
 | M7 — Finalizações Encadeadas | nenhuma catalogada ainda |
 | M8 — Jogo Integrado | nenhuma catalogada ainda |
 
-**Três leads levantados na abertura do épico #55 — candidatos a triar, não escolhas:** Jiu Jitsu
-Channel, FEU BJJ e o "Curso Completo da Faixa Branca de Jiu-jitsu" de @lawluna. Nenhum foi assistido.
-Eles só entram nesta lista depois de passar pelos critérios de `08-curadoria-videos.md` — citá-los
-aqui sem isso seria exatamente o que este documento existe para impedir.
+**Três leads foram levantados na abertura do épico #55.** Triados pelos critérios de
+`08-curadoria-videos.md` (Gi, instrucional, canal estabelecido, ensina o conceito) mais o critério de
+idioma da D45 — sem assistir aos vídeos por inteiro, mesma ressalva da D21 e do restante deste
+documento:
+
+| Canal | Cobre bem | Situação |
+|---|---|---|
+| [FEU BJJ](https://www.youtube.com/@FEUBJJ) | 936 mil inscritos, mais de uma década de aulas em vídeo além dos podcasts recentes — ex.: "3 Raspagens e 3 Finalizações para Iniciantes", 503 mil visualizações, descrito como aula básica | **Aprovado** — candidato a canal instrucional para M2–M8 |
+| [Lawrence Luna (@lawluna)](https://www.youtube.com/@lawluna) | 34 mil inscritos, 505 vídeos; curso "Curso Completo da Faixa Branca de Jiu-jitsu" em vídeo-aulas encadeadas por capítulo (posicionamento, rolamento, ...), formato que casa com "ensinar o conceito antes da execução" | **Aprovado** — candidato a canal instrucional para M2–M8 |
+| [Jiu Jitsu Channel (@jiu-jitsu)](https://www.youtube.com/@jiu-jitsu) | — | **Reprovado**: descrição do canal em inglês ("BJJ & No-Gi Training"), uploads recentes são clipe de competição/reação ("Tiago vs Lincoln REMATCH", "Kid celebrates like a champion") — falha em instrucional-não-highlight e mistura no-gi (D6); não é efetivamente canal em português apesar do nome ter sido sugerido como lead |
+
+Aprovação aqui é "passou no crivo do canal", não "vídeo já escolhido": qual vídeo específico de FEU
+BJJ ou de @lawluna vira canônico de qual nó de M2–M8 é trabalho da #61, nó a nó.
 
 ## Tabela: nó → fontes consultadas
 
