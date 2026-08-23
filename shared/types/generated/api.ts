@@ -60,6 +60,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Envia um feedback; opcionalmente amarrado a um nó do currículo */
+        post: operations["submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/disclaimer/accept": {
         parameters: {
             query?: never;
@@ -171,6 +188,23 @@ export interface paths {
          * @description Quem pediu por e-mail recebe aqui o primeiro link de entrada — é o único momento em que o app escreve para um endereço que ainda não entrou.
          */
         post: operations["approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/feedback/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Muda o status de um feedback (em análise, resolvido, recusado) */
+        post: operations["decideFeedback"];
         delete?: never;
         options?: never;
         head?: never;
@@ -360,6 +394,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fila de feedback, da mais antiga para a mais nova */
+        get: operations["feedback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -437,6 +488,27 @@ export interface components {
             /** Format: date */
             today?: string;
         };
+        FeedbackRequest: {
+            /** @enum {string} */
+            category: "BUG" | "CONTEUDO_ERRADO" | "TROCA_DE_VIDEO" | "SUGESTAO_FUNCIONALIDADE" | "OUTRO";
+            nodeCode?: string;
+            message: string;
+        };
+        FeedbackView: {
+            /** Format: int64 */
+            id?: number;
+            /** @enum {string} */
+            category?: "BUG" | "CONTEUDO_ERRADO" | "TROCA_DE_VIDEO" | "SUGESTAO_FUNCIONALIDADE" | "OUTRO";
+            nodeCode?: string;
+            message?: string;
+            /** @enum {string} */
+            status?: "ABERTO" | "EM_ANALISE" | "RESOLVIDO" | "RECUSADO";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            authorLabel?: string;
+        };
         AcceptDisclaimerRequest: {
             version: string;
         };
@@ -465,6 +537,10 @@ export interface components {
         };
         AccessRequests: {
             requests?: components["schemas"]["AccessRequestView"][];
+        };
+        FeedbackStatusRequest: {
+            /** @enum {string} */
+            status: "ABERTO" | "EM_ANALISE" | "RESOLVIDO" | "RECUSADO";
         };
         DueItemView: {
             nodeCode?: string;
@@ -651,6 +727,9 @@ export interface components {
             emailEnabled?: boolean;
             demoEnabled?: boolean;
         };
+        FeedbackList: {
+            items?: components["schemas"]["FeedbackView"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -734,6 +813,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DrillResult"];
+                };
+            };
+        };
+    };
+    submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FeedbackView"];
                 };
             };
         };
@@ -866,6 +969,32 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AccessRequests"];
+                };
+            };
+        };
+    };
+    decideFeedback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FeedbackView"];
                 };
             };
         };
@@ -1088,6 +1217,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AccessRequests"];
+                };
+            };
+        };
+    };
+    feedback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FeedbackList"];
                 };
             };
         };

@@ -1410,6 +1410,221 @@ button.landing__button {
   max-width: 70ch;
 }
 
+/* Feedback de usuários (docs/13-feedback-usuarios.md)
+ *
+ * Os campos têm classe própria em vez de estilo em `form`/`label` soltos: o resto do app estiliza
+ * formulário por componente (`.drill__note`, `.pinned-note__input`), e uma regra genérica de
+ * elemento alcançaria também o quiz e a anotação fixada, que já têm desenho próprio.
+ */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/*
+ * Categoria e nó dividem a linha: são campos curtos, e empilhá-los afastaria a mensagem — que é o
+ * campo que importa — de quem acabou de abrir a tela.
+ */
+.feedback-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.8rem;
+}
+
+.feedback-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+/* Mesma etiqueta em versalete da anotação fixada: rótulo de campo não disputa com o título. */
+.feedback-form__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.feedback-form__control {
+  width: 100%;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+textarea.feedback-form__control {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+.feedback-form__control:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.feedback-form__control::placeholder {
+  color: var(--muted);
+}
+
+/*
+ * Botão e recado na mesma linha: "enviado" ao lado do que o produziu, e não empurrando o botão
+ * para baixo a cada envio.
+ */
+.feedback-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.feedback-form__actions .hint,
+.feedback-form__actions .error {
+  margin: 0;
+}
+
+/*
+ * Fila do dono. Não reusa `.requests__item` porque aquele item cabe em uma linha (nome + ações) e
+ * este tem corpo de texto: com `justify-content: space-between` a mensagem e os botões brigariam
+ * pela mesma faixa.
+ */
+.feedback-queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feedback-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.feedback-item:last-child {
+  border-bottom: none;
+}
+
+.feedback-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.feedback-item__category {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* O código do nó com a mesma cara que ele tem na árvore e na agenda. */
+.feedback-item__node {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+
+.feedback-item__status {
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Um estado, uma cor: aberto pede ação, resolvido é bom, recusado é fim de linha. */
+.feedback-item__status--em-analise {
+  background: rgba(154, 163, 178, 0.15);
+  color: var(--muted);
+}
+
+.feedback-item__status--resolvido {
+  background: rgba(76, 175, 125, 0.15);
+  color: var(--ok);
+}
+
+.feedback-item__status--recusado {
+  background: rgba(217, 83, 79, 0.15);
+  color: var(--warn);
+}
+
+.feedback-item__meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.feedback-item__message {
+  margin: 0.5rem 0 0;
+  font-size: 0.92rem;
+  /* O texto veio de textarea: as quebras de linha são de quem escreveu. */
+  white-space: pre-wrap;
+}
+
+.feedback-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+/*
+ * Ação secundária, como em `.demo-toggle`: três botões em laranja cheio davam a decidir um
+ * feedback o mesmo peso visual que "Registrar drill" tem na tela do nó, que é a ação do dia.
+ */
+.feedback-item__action {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.feedback-item__action:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.feedback-item__action.danger:hover:not(:disabled) {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+/* O status atual não é oferecido de novo: aplicá-lo duas vezes só reescreveria a mesma decisão. */
+.feedback-item__action--atual {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Recusado realça em vermelho, e não em laranja: o realce concorda com a chip do mesmo estado. */
+.feedback-item__action--atual.danger {
+  border-color: var(--warn);
+  background: rgba(217, 83, 79, 0.15);
+  color: var(--warn);
+}
+
+/*
+ * Sem o `opacity: 1`, o desligado de `button:disabled` apagaria justamente o botão que marca o
+ * estado atual — pareceria defeito, e não "é aqui que este item está".
+ */
+.feedback-item__action--atual:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
 /* ==========================================================================
  * Mobile
  *
@@ -1480,6 +1695,11 @@ button.landing__button {
   /* Duas colunas fixas: com `auto-fit` e base de 150px o grid caía para uma coluna só. */
   .drill__options {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Categoria e nó lado a lado deixariam o select cortando o texto das opções mais longas. */
+  .feedback-form__row {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .gate {
