@@ -66,41 +66,51 @@ function FeedbackForm() {
   return (
     <section className="card">
       <h2>Enviar feedback</h2>
+      <p className="hint">
+        Bug, conteúdo errado, vídeo que não serve ou ideia de funcionalidade — tudo cai na mesma
+        fila.
+      </p>
       <form
+        className="feedback-form"
         onSubmit={(event) => {
           event.preventDefault();
           setSent(false);
           void submit();
         }}
       >
-        <label>
-          <span>Categoria</span>
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value as FeedbackCategory)}
-          >
-            {FEEDBACK_CATEGORY_LABELS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="feedback-form__row">
+          <label className="feedback-form__field">
+            <span className="feedback-form__label">Categoria</span>
+            <select
+              className="feedback-form__control"
+              value={category}
+              onChange={(event) => setCategory(event.target.value as FeedbackCategory)}
+            >
+              {FEEDBACK_CATEGORY_LABELS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label>
-          <span>Nó do currículo (opcional)</span>
-          <input
-            type="text"
-            value={nodeCode}
-            onChange={(event) => setNodeCode(event.target.value)}
-            placeholder="Ex.: M0.3"
-            maxLength={16}
-          />
-        </label>
+          <label className="feedback-form__field">
+            <span className="feedback-form__label">Nó do currículo (opcional)</span>
+            <input
+              className="feedback-form__control"
+              type="text"
+              value={nodeCode}
+              onChange={(event) => setNodeCode(event.target.value)}
+              placeholder="Ex.: M0.3"
+              maxLength={16}
+            />
+          </label>
+        </div>
 
-        <label>
-          <span>Mensagem</span>
+        <label className="feedback-form__field">
+          <span className="feedback-form__label">Mensagem</span>
           <textarea
+            className="feedback-form__control"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             rows={4}
@@ -109,15 +119,32 @@ function FeedbackForm() {
           />
         </label>
 
-        {failure && <p className="error">{failure}</p>}
-        {sent && <p className="hint">Feedback enviado. Obrigado!</p>}
-
-        <button type="submit" disabled={sending || message.trim().length === 0}>
-          {sending ? 'Enviando…' : 'Enviar'}
-        </button>
+        <div className="feedback-form__actions">
+          <button type="submit" disabled={sending || message.trim().length === 0}>
+            {sending ? 'Enviando…' : 'Enviar'}
+          </button>
+          {failure && <p className="error">{failure}</p>}
+          {sent && <p className="hint">Feedback enviado. Obrigado!</p>}
+        </div>
       </form>
     </section>
   );
+}
+
+type Decisao = { status: 'EM_ANALISE' | 'RESOLVIDO' | 'RECUSADO'; label: string; danger?: boolean };
+
+/** As três saídas de um feedback, na ordem em que costumam acontecer. */
+const DECISOES: ReadonlyArray<Decisao> = [
+  { status: 'EM_ANALISE', label: 'Em análise' },
+  { status: 'RESOLVIDO', label: 'Resolvido' },
+  { status: 'RECUSADO', label: 'Recusar', danger: true },
+];
+
+/** `EM_ANALISE` vira `--em-analise`: status desconhecido fica com a chip neutra, sem quebrar. */
+function statusClass(status: string | undefined): string {
+  const base = 'feedback-item__status';
+  if (!status || status === 'ABERTO') return base;
+  return `${base} ${base}--${status.toLowerCase().replace(/_/g, '-')}`;
 }
 
 /** Fila de feedback, do lado de quem decide — só o dono do app chega aqui. */
@@ -154,42 +181,34 @@ function FeedbackQueue() {
 
       {!queue.loading && items.length === 0 && <p className="empty">Nenhum feedback ainda.</p>}
 
-      <ul className="requests">
+      <ul className="feedback-queue">
         {items.map((item) => (
-          <li key={item.id} className="requests__item">
-            <div>
-              <p className="requests__name">
-                {feedbackCategoryLabel(item.category)}
-                {item.nodeCode ? ` · ${item.nodeCode}` : ''}
-              </p>
-              <p className="requests__meta">
-                {item.authorLabel} · {feedbackStatusLabel(item.status)}
-              </p>
-              <p>{item.message}</p>
+          <li key={item.id} className="feedback-item">
+            <div className="feedback-item__head">
+              <p className="feedback-item__category">{feedbackCategoryLabel(item.category)}</p>
+              {item.nodeCode && <span className="feedback-item__node">{item.nodeCode}</span>}
+              <span className={statusClass(item.status)}>{feedbackStatusLabel(item.status)}</span>
             </div>
-            <div className="requests__actions">
-              <button
-                type="button"
-                onClick={() => void decide(item.id ?? 0, 'EM_ANALISE')}
-                disabled={deciding === item.id}
-              >
-                Em análise
-              </button>
-              <button
-                type="button"
-                onClick={() => void decide(item.id ?? 0, 'RESOLVIDO')}
-                disabled={deciding === item.id}
-              >
-                Resolvido
-              </button>
-              <button
-                type="button"
-                className="danger"
-                onClick={() => void decide(item.id ?? 0, 'RECUSADO')}
-                disabled={deciding === item.id}
-              >
-                Recusar
-              </button>
+            <p className="feedback-item__meta">{item.authorLabel}</p>
+            <p className="feedback-item__message">{item.message}</p>
+            <div className="feedback-item__actions">
+              {DECISOES.map((decisao) => (
+                <button
+                  key={decisao.status}
+                  type="button"
+                  className={[
+                    'feedback-item__action',
+                    decisao.danger ? 'danger' : '',
+                    item.status === decisao.status ? 'feedback-item__action--atual' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => void decide(item.id ?? 0, decisao.status)}
+                  disabled={deciding === item.id || item.status === decisao.status}
+                >
+                  {decisao.label}
+                </button>
+              ))}
             </div>
           </li>
         ))}
