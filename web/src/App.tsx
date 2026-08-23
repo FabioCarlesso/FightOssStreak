@@ -7,6 +7,7 @@ import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { SignOutButton } from './components/SignOutButton.tsx';
 import { AccessRequestsPage } from './pages/AccessRequestsPage.tsx';
 import { AccountPage } from './pages/AccountPage.tsx';
+import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { HomePage } from './pages/HomePage.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
 import { NodePage } from './pages/NodePage.tsx';
@@ -39,6 +40,7 @@ export function App() {
           <Route path="/no/:code" element={<NodePage />} />
           <Route path="/progresso" element={<ProgressPage />} />
           <Route path="/conta" element={<AccountPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/solicitacoes" element={<AccessRequestsPage />} />
           <Route path="*" element={<p className="empty">Página não encontrada.</p>} />
         </Route>
@@ -119,7 +121,8 @@ function AppChrome() {
           {/* `Link`, e não `<a href>`: âncora comum descarta o app carregado e recarrega tudo só
               para mostrar a apresentação. O `?ver` é o que impede a landing de devolver quem já
               entrou direto para a agenda. */}
-          <Link to="/?ver=apresentacao">Sobre o projeto</Link>
+          <Link to="/?ver=apresentacao">Sobre o projeto</Link> ·{' '}
+          <Link to="/feedback">Feedback</Link>
         </p>
       </footer>
     </div>

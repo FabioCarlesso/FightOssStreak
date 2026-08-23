@@ -48,4 +48,13 @@ export type AuthProviders = Schemas['AuthProviders'];
 export type AccessRequestView = Schemas['AccessRequestView'];
 export type AccessRequests = Schemas['AccessRequests'];
 
+export type FeedbackRequest = Schemas['FeedbackRequest'];
+export type FeedbackView = Schemas['FeedbackView'];
+export type FeedbackList = Schemas['FeedbackList'];
+export type FeedbackStatusRequest = Schemas['FeedbackStatusRequest'];
+/** Assunto do feedback — o que o formulário oferece para escolher. */
+export type FeedbackCategory = NonNullable<FeedbackRequest['category']>;
+/** Estado de um feedback na fila do dono. */
+export type FeedbackStatus = NonNullable<FeedbackStatusRequest['status']>;
+
 export type { components, paths } from '../generated/api.ts';

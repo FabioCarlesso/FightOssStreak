@@ -72,21 +72,25 @@ app, com o mesmo modelo mental da fila de acesso.
   como enum) e `npm run gen:types` depois de fechar o contrato — não editar
   `shared/types/generated/` à mão.
 
-## Perguntas em aberto antes de codar
+## Perguntas em aberto — resolvidas para implementar
 
-1. Quem pode mandar feedback: só conta aprovada, ou também a demonstrativa (D39)? Como a demo é
-   descartável e sem identidade — provavelmente **não**, mas vale confirmar antes de escrever o
-   guard.
-2. Categoria fixa (enum) é suficiente, ou vale campo livre de "assunto" além da categoria?
-3. O botão "reportar problema neste nó" mora dentro da página do nó (perto do vídeo) ou é sempre
-   o mesmo formulário genérico com o campo pré-preenchido, sem botão contextual novo?
+1. **Conta demonstrativa (D39) não manda feedback.** Ela não tem identidade própria
+   (`provider = demo`, sem e-mail, `isOwner` sempre falso) e é descartável em duas horas — um
+   feedback dela não tem para quem responder nem por quanto tempo vale. O guard nega com o mesmo
+   tipo de erro que a demo já usa para não ter poder além do próprio progresso.
+2. **Categoria fixa (enum) é suficiente.** Campo livre de "assunto" duplicaria o que a primeira
+   linha da mensagem já cobre, sem ganho — a fila do dono lê a mensagem inteira, não só o título.
+3. **Sem botão contextual novo na página do nó nesta fatia.** O formulário é único e genérico,
+   acessível do rodapé; o campo de nó fica nele, com busca/seleção manual. Prender a pré-seleção
+   à página do nó é UI adicional que pode entrar depois, sem mudar contrato nenhum — o campo já
+   nasce pronto para receber o valor de onde quer que venha.
 
 ## Próximos passos
 
-- [ ] Decidir as três perguntas acima
-- [ ] Migration + entidade + repositório
-- [ ] `FeedbackController` (escrita) + extensão do `AdminController` (leitura/decisão), ou
-      `FeedbackAdminController` separado — decidir ao implementar, conforme o tamanho
-- [ ] Contrato OpenAPI + `npm run gen:types`
-- [ ] Formulário no web + tela do dono
-- [ ] Registrar em `07-decisoes.md` quando as perguntas em aberto forem fechadas
+- [x] Decidir as três perguntas acima
+- [x] Migration + entidade + repositório
+- [x] `FeedbackController` (escrita) + extensão do `AdminController` (leitura/decisão) — coube no
+      mesmo controller, sem justificar arquivo próprio
+- [x] Contrato OpenAPI + `npm run gen:types`
+- [x] Formulário no web (`/feedback`, link no rodapé) + tela do dono na mesma página
+- [x] Registrar em `07-decisoes.md` (D46)

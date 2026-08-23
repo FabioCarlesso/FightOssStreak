@@ -12,6 +12,10 @@ import type {
   DisclaimerStatus,
   DrillRequest,
   DrillResult,
+  FeedbackList,
+  FeedbackRequest,
+  FeedbackStatus,
+  FeedbackView,
   MvpMetrics,
   NodeDetail,
   PinnedNote,
@@ -65,6 +69,11 @@ export class ApiError extends Error {
   /** Teto de demonstrações vivas, ou freio por IP: passa, e a tela pode oferecer tentar de novo. */
   get isDemoBusy(): boolean {
     return this.code === 'demo_lotado';
+  }
+
+  /** Conta de demonstração (D39) tentando mandar feedback — ela não tem identidade nem prazo. */
+  get isFeedbackNotAllowed(): boolean {
+    return this.code === 'feedback_nao_permitido';
   }
 
   /**
@@ -248,6 +257,25 @@ export function createApiClient(options: ApiClientOptions = {}) {
 
     denyAccessRequest: (id: number) =>
       request<AccessRequests>(`/api/admin/solicitacoes/${id}/recusar`, { method: 'POST' }),
+
+    /**
+     * Envia um feedback: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).
+     * `nodeCode` é opcional — nem todo feedback é sobre um nó do currículo.
+     */
+    submitFeedback: (feedback: FeedbackRequest) =>
+      request<FeedbackView>('/api/feedback', {
+        method: 'POST',
+        body: JSON.stringify(feedback),
+      }),
+
+    /** Fila de feedback. Só o dono do app recebe 200 aqui. */
+    getFeedbackQueue: () => request<FeedbackList>('/api/admin/feedback'),
+
+    decideFeedback: (id: number, status: FeedbackStatus) =>
+      request<FeedbackView>(`/api/admin/feedback/${id}/status`, {
+        method: 'POST',
+        body: JSON.stringify({ status }),
+      }),
   };
 }
 

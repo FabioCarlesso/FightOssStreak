@@ -5,9 +5,12 @@ import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.EmailAccessService;
+import dev.fos.service.FeedbackService;
 import dev.fos.web.dto.AccountDtos;
+import dev.fos.web.dto.FeedbackDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -36,14 +40,17 @@ public class AdminController {
     private final AccountService accounts;
     private final CurrentUserProvider currentUser;
     private final EmailAccessService emailAccess;
+    private final FeedbackService feedbackService;
 
     public AdminController(
             AccountService accounts,
             CurrentUserProvider currentUser,
-            EmailAccessService emailAccess) {
+            EmailAccessService emailAccess,
+            FeedbackService feedbackService) {
         this.accounts = accounts;
         this.currentUser = currentUser;
         this.emailAccess = emailAccess;
+        this.feedbackService = feedbackService;
     }
 
     @GetMapping("/solicitacoes")
@@ -73,6 +80,19 @@ public class AdminController {
     public AccountDtos.AccessRequests deny(@PathVariable Long id) {
         accounts.decide(id, false, currentUser.currentUserId());
         return queue();
+    }
+
+    @GetMapping("/feedback")
+    @Operation(summary = "Fila de feedback, da mais antiga para a mais nova")
+    public FeedbackDtos.FeedbackList feedback() {
+        return feedbackService.queue();
+    }
+
+    @PostMapping("/feedback/{id}/status")
+    @Operation(summary = "Muda o status de um feedback (em análise, resolvido, recusado)")
+    public FeedbackDtos.FeedbackView decideFeedback(
+            @PathVariable Long id, @Valid @RequestBody FeedbackDtos.FeedbackStatusRequest request) {
+        return feedbackService.decide(id, request.status(), currentUser.currentUserId());
     }
 
     /** Uma consulta de identidades para a fila inteira, e não uma por linha. */

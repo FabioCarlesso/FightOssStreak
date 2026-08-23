@@ -3,6 +3,7 @@ package dev.fos.web;
 import dev.fos.curriculum.CurriculumException;
 import dev.fos.service.AccessNotGrantedException;
 import dev.fos.service.DemoUnavailableException;
+import dev.fos.service.FeedbackNotAllowedException;
 import dev.fos.service.NodeNotFoundException;
 import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.QuizStaleException;
@@ -70,6 +71,12 @@ class ApiExceptionHandler {
                     case SESSAO_EXISTENTE -> HttpStatus.CONFLICT;
                 };
         return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    @ExceptionHandler(FeedbackNotAllowedException.class)
+    ResponseEntity<ApiError> handleFeedbackNotAllowed(FeedbackNotAllowedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiError.of("feedback_nao_permitido", e.getMessage()));
     }
 
     @ExceptionHandler(NodeNotFoundException.class)
