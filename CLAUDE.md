@@ -49,6 +49,12 @@ Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os oito pri
 pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
 nó, do drill ou da tela inicial? O print correspondente precisa ser refeito no mesmo PR.
 
+Testar tela autenticada em `localhost`: o app exige login e dev não tem provedor nem envio de
+e-mail configurados. `node scripts/seed-dev-users.mjs` cria `aluno@teste.local` e `dono@teste.local`
+no Postgres do Compose (uma vez, com o schema migrado) e `node scripts/mint-dev-login.mjs <e-mail>`
+imprime a URL de entrada. Nenhum dos dois é código do Spring nem migration do Flyway — não rodam
+sozinhos em ambiente nenhum. Ver `docs/14-contas-de-teste-local.md`.
+
 Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga o canônico (verifica e credita o
 canal), `... <NÓ> --extra <url>...` acrescenta complementares (D32, teto de 4 por nó) e
 `node scripts/verificar-videos.mjs` reconfere os já catalogados — o workflow `videos` roda esse

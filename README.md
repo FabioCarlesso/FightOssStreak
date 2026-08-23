@@ -118,6 +118,17 @@ docker compose up -d db
 cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
+Como o app exige login e `localhost` não tem provedor nem envio de e-mail configurados, use as
+contas de teste para chegar a qualquer tela autenticada — inclusive a do dono:
+
+```bash
+node scripts/seed-dev-users.mjs            # uma vez, com o schema já migrado
+node scripts/mint-dev-login.mjs aluno@teste.local   # imprime a URL de entrada
+```
+
+Roteiro completo, e por que isto não alcança produção, em
+[`docs/14-contas-de-teste-local.md`](docs/14-contas-de-teste-local.md).
+
 ## Deploy na Railway
 
 Dois serviços a partir deste repo (papéis **backend** e **web**) mais um Postgres
@@ -346,6 +357,9 @@ Toda a documentação de planejamento está em [`docs/`](docs/):
 - [`09-regras-repositorio.md`](docs/09-regras-repositorio.md) — `main` protegida, PR obrigatório, CI como portão
 - [`10-prints-da-landing.md`](docs/10-prints-da-landing.md) — como refazer os prints que a landing exibe
 - [`11-privacidade.md`](docs/11-privacidade.md) — o que o app guarda de dado pessoal, e como apagar
+- [`12-fontes-de-conteudo.md`](docs/12-fontes-de-conteudo.md) — régua de fonte para conceito e quiz
+- [`13-feedback-usuarios.md`](docs/13-feedback-usuarios.md) — fila de feedback de quem usa o app
+- [`14-contas-de-teste-local.md`](docs/14-contas-de-teste-local.md) — como entrar no app em `localhost` sem provedor configurado
 
 ## Contribuindo
 
