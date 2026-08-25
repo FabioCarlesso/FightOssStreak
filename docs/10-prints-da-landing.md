@@ -42,6 +42,13 @@ Refazer é barato (um comando), então na dúvida refaça.
 > #24/#52 a página diz *Pedir acesso* e "acesso sob aprovação" — e `LandingPage.tsx` tem comentário
 > explicando que a troca foi feita porque "copy que promete o que o produto não entrega é o defeito
 > que esta página existe para não ter". A prévia de link seguia fazendo exatamente essa promessa.
+>
+> **A #82 mexeu no hero de novo, e só nele.** Com o cadastro aberto (D47/D48) o botão virou *Criar
+> conta* e a linha passou a ser "Cadastro aberto e sem cobrança: e-mail e senha, ou a conta do
+> Google" — a promessa mudou, então o `og.jpg` foi refeito no mesmo PR. Os oito prints de tela do app
+> **não** foram recapturados: nada em `/arvore`, `/no/*` ou `/hoje` mudou nessa fatia, e recapturar
+> por via das dúvidas só troca bytes idênticos por bytes idênticos. A tela de entrada mudou muito, e
+> não é print da landing — ela vive atrás do botão, não dentro da página.
 
 ## Como refazer
 
@@ -183,7 +190,7 @@ Duas escolhas de captura, e o porquê de cada uma:
 - **Sem sessão.** É a prévia que quem ainda não tem conta vê. Rodar com `FOS_PRINT_COOKIE` mudaria o
   hero para o estado de quem já entrou.
 - **Sem demonstração configurada** (`fos.demo.template-email` vazio, o padrão). Com ela ligada o hero
-  ganha o botão *Ver o app funcionando* antes do *Pedir acesso*. Capturar sem ele é a escolha
+  ganha o botão *Ver o app funcionando* antes do *Criar conta*. Capturar sem ele é a escolha
   conservadora: ambiente que tem demonstração mostra um botão a mais do que a prévia promete, o que
   é bem menos ruim do que o contrário.
 

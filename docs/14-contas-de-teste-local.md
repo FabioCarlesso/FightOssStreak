@@ -1,7 +1,7 @@
 # Contas de teste no ambiente local
 
 Como entrar no app rodando na sua máquina sem ter provedor OAuth nem envio de e-mail
-configurados — para testar tela autenticada, fila do dono e qualquer coisa que dependa de
+configurados — para testar tela autenticada, a fila de feedback e qualquer coisa que dependa de
 `CurrentUserProvider`.
 
 ## Por que isto existe
@@ -23,11 +23,10 @@ Inserir uma linha em `app_user` não resolve: quem decide se você está logado 
 Security, não a presença no banco. O `CurrentUserProvider` só resolve usuário a partir de uma
 autenticação de tipo conhecido (OAuth2, e-mail, demonstração ou senha).
 
-O caminho que funciona sem credencial é o da **entrada por e-mail** (a do #52, que a fatia 3 da #81
-vai desmontar), fabricada à mão: o
-`login_token` guarda só o SHA-256 do valor que viaja no link, então dá para escolher o valor,
-gravar o hash e abrir `/api/login/email/<valor>`. É exatamente o fluxo de produção, só que sem o
-e-mail no meio.
+O caminho que funciona sem credencial é o **link de confirmação de e-mail** (D47), fabricado à mão:
+o `login_token` guarda só o SHA-256 do valor que viaja no link, então dá para escolher o valor,
+gravar o hash e abrir `/api/auth/verificar/<valor>`. É exatamente o fluxo de produção, só que sem o
+e-mail no meio — e, como lá, é ele que abre a sessão.
 
 ## Por que Postgres local, e não o H2 do perfil dev
 
@@ -65,12 +64,12 @@ cd backend && FOS_DB_URL=jdbc:postgresql://localhost:5432/fos FOS_DB_USER=fos \
 node scripts/seed-dev-users.mjs
 ```
 
-Isso cria duas contas, ambas já `APROVADO` (não passam pela fila):
+Isso cria duas contas, ambas já `APROVADO` — o único estado que existe desde a D48:
 
 | E-mail | Papel | Para quê |
 |---|---|---|
 | `aluno@teste.local` | conta comum | o app do ponto de vista de quem usa: árvore, drill, envio de feedback |
-| `dono@teste.local` | conta dona | o que só o autor vê: *Solicitações* e a fila de feedback |
+| `dono@teste.local` | conta de administração | o que só o autor vê: a fila de feedback |
 
 `seed-dev-users.mjs` é idempotente — rodar de novo não duplica nada, só informa o que já existia.
 
@@ -90,14 +89,17 @@ node scripts/mint-dev-login.mjs aluno@teste.local
 node scripts/mint-dev-login.mjs dono@teste.local
 ```
 
-O link emitido vale **24h** e pode ser usado uma vez; rodar o script de novo emite outro. (A
-entrada por e-mail de verdade usa 15 minutos — aqui é mais folgado só por conveniência de reteste,
-e é o link que expira, nunca a conta.)
+O link emitido vale **24h** e pode ser usado uma vez, igual ao de produção; rodar o script de novo
+emite outro. É o link que expira, nunca a conta.
+
+As contas semeadas nascem com identidade `password` e **sem senha**: elas existem para entrar pelo
+link acima, não pelo formulário. Quem quiser exercitar o login por senha de verdade precisa do
+roteiro do Compose, no fim desta página.
 
 ## Detalhes que economizam tempo
 
-- **`FOS_OWNER_EMAILS=dono@teste.local` é obrigatório para testar a fila do dono.** Sem essa
-  variável, `dono@teste.local` entra como conta comum: `AccountService.isOwner` exige e-mail
+- **`FOS_OWNER_EMAILS=dono@teste.local` é obrigatório para testar a administração.** Sem essa
+  variável, `dono@teste.local` entra como conta comum: `AccountService.roleOf` exige e-mail
   verificado **e** presente na lista. O seed já grava `email_verified = true`; a lista é sua parte.
 - **Cada conta aceita o disclaimer separadamente.** É por conta, não por navegador — trocar de
   usuário mostra o aviso de novo, e isso é o comportamento correto.

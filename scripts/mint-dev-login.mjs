@@ -9,8 +9,9 @@
  * Fala só com o Postgres LOCAL do docker-compose (`fos-db`, via `docker exec`) — nunca alcança
  * produção, que vive num Postgres gerenciado à parte, sem rede nem credencial em comum com este.
  *
- * O token vale por 24h aqui (bem mais que os 15 minutos da entrada por e-mail de verdade) porque
- * é só conveniência de reteste local — não é da conta, é só o link; rodar de novo emite outro.
+ * É um token de **confirmação de e-mail** (D47): o mesmo caminho que o cadastro real percorre, só
+ * que sem o e-mail no meio. Ele abre a sessão e vale 24h, como o de produção. Rodar de novo emite
+ * outro; o que expira é o link, nunca a conta.
  *
  * Códigos de saída:
  *   0  link emitido, impresso em stdout
@@ -58,7 +59,7 @@ try {
 }
 
 const userId = psql(
-  `SELECT user_id FROM user_identity WHERE provider = 'email' AND provider_subject = '${email}'`,
+  `SELECT user_id FROM user_identity WHERE provider = 'password' AND provider_subject = '${email}'`,
 ).trim();
 
 if (!userId) {
@@ -70,8 +71,8 @@ const token = randomBytes(24).toString('base64url');
 const hash = createHash('sha256').update(token).digest('hex');
 
 psql(
-  `INSERT INTO login_token (user_id, token_hash, created_at, expires_at) ` +
-    `VALUES (${Number(userId)}, '${hash}', now(), now() + interval '24 hours');`,
+  `INSERT INTO login_token (user_id, token_hash, purpose, created_at, expires_at) ` +
+    `VALUES (${Number(userId)}, '${hash}', 'VERIFICACAO', now(), now() + interval '24 hours');`,
 );
 
-console.log(`http://localhost:5173/api/login/email/${token}`);
+console.log(`http://localhost:5173/api/auth/verificar/${token}`);

@@ -279,12 +279,13 @@ class DemoAccessIntegrationTest {
     }
 
     @Test
-    @DisplayName("a demonstração não é dona, mesmo clonando a conta que está em owner-emails")
+    @DisplayName("a demonstração não administra nada, mesmo clonando a conta de owner-emails")
     void theDemoAccountIsNeverOwner() throws Exception {
         MockHttpSession sessao = abrirDemo();
 
-        mockMvc.perform(get("/api/me").session(sessao)).andExpect(jsonPath("$.owner").value(false));
-        mockMvc.perform(get("/api/admin/solicitacoes").session(sessao))
+        mockMvc.perform(get("/api/me").session(sessao))
+                .andExpect(jsonPath("$.role").value("USUARIO"));
+        mockMvc.perform(get("/api/admin/feedback").session(sessao))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("nao_autorizado"));
     }

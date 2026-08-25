@@ -13,7 +13,7 @@ import { useAsync } from '../state/useAsync.ts';
  * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).
  *
  * Formulário único e genérico — sem botão contextual por nó nesta fatia (docs/13). Quem manda não
- * decide: a fila abaixo só aparece para o dono, mesmo modelo da `AccessRequestsPage`.
+ * decide: a fila abaixo só aparece para quem administra (D48).
  */
 export function FeedbackPage() {
   const { account } = useAccount();
@@ -31,7 +31,7 @@ export function FeedbackPage() {
       ) : (
         <FeedbackForm />
       )}
-      {account.owner && <FeedbackQueue />}
+      {account.role === 'ADMIN' && <FeedbackQueue />}
     </div>
   );
 }

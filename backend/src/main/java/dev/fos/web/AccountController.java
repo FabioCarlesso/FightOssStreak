@@ -5,7 +5,6 @@ import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
-import dev.fos.service.EmailAccessService;
 import dev.fos.service.PasswordAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
  * A conta vista por ela mesma: com que provedores dá para entrar, quem está logado e como sumir.
  *
  * <p>Estas rotas ficam <em>fora</em> do portão de aprovação (ver {@code WebMvcConfig}): é delas que
- * a tela de "solicitação registrada" tira o que mostrar, e quem pediu acesso e não entrou precisa
- * conseguir se excluir.
+ * a tela de entrada tira o que oferecer, e quem quiser sumir precisa conseguir se excluir sem
+ * passar por portão nenhum.
  */
 @RestController
 @RequestMapping("/api")
@@ -44,7 +43,6 @@ public class AccountController {
 
     private final CurrentUserProvider currentUser;
     private final AccountService accounts;
-    private final EmailAccessService emailAccess;
     private final DemoAccessService demoAccess;
     private final PasswordAccessService passwordAccess;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrations;
@@ -52,13 +50,11 @@ public class AccountController {
     public AccountController(
             CurrentUserProvider currentUser,
             AccountService accounts,
-            EmailAccessService emailAccess,
             DemoAccessService demoAccess,
             PasswordAccessService passwordAccess,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) {
         this.currentUser = currentUser;
         this.accounts = accounts;
-        this.emailAccess = emailAccess;
         this.demoAccess = demoAccess;
         this.passwordAccess = passwordAccess;
         this.clientRegistrations = clientRegistrations;
@@ -79,10 +75,7 @@ public class AccountController {
                                 .toList()
                         : List.of();
         return new AccountDtos.AuthProviders(
-                enabled,
-                emailAccess.isEnabled(),
-                demoAccess.isEnabled(),
-                passwordAccess.isEnabled());
+                enabled, demoAccess.isEnabled(), passwordAccess.isEnabled());
     }
 
     @GetMapping("/me")
@@ -99,7 +92,7 @@ public class AccountController {
                 identity.map(UserIdentity::getEmail).orElse(null),
                 identity.map(UserIdentity::getProvider).orElse(null),
                 user.getAccessStatus(),
-                accounts.isOwner(user),
+                accounts.roleOf(user),
                 user.getDemoExpiresAt());
     }
 
@@ -107,8 +100,8 @@ public class AccountController {
     @Operation(
             summary = "Exclui a conta e todo o dado dela",
             description =
-                    "Irreversível. Vale para conta aprovada, pendente ou recusada. A sessão é"
-                            + " invalidada junto.")
+                    "Irreversível: apaga a conta, a identidade, o hash da senha, os links"
+                            + " pendentes e todo o progresso. A sessão é invalidada junto.")
     public ResponseEntity<Void> deleteMe(HttpServletRequest request) {
         accounts.delete(currentUser.currentUserId());
         HttpSession session = request.getSession(false);

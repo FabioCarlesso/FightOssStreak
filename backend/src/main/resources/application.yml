@@ -20,9 +20,10 @@ fos:
   # materialmente — isso força novo aceite (docs/06-disclaimer-responsabilidade.md).
   disclaimer-version: '2026-08-16'
   auth:
-    # Quem entra já aprovado e decide a fila de solicitações. Vazia por default: sem ela
-    # ninguém é aprovado automaticamente, e a primeira identidade de dono a entrar é quem
-    # adota o progresso pré-existente (app_user id = 1). Ver docs/07-decisoes.md (D36).
+    # As contas de administração (D48): fila de feedback e métricas. Exige e-mail VERIFICADO —
+    # pelo provedor externo ou pela confirmação do próprio app. Vazia por default: sem ela
+    # ninguém administra nada, e a primeira identidade de administrador a entrar é quem adota
+    # o progresso pré-existente (app_user id = 1). Ver docs/07-decisoes.md (D48).
     owner-emails: ${FOS_OWNER_EMAILS:}
     # As credenciais NÃO ficam declaradas aqui: provedor sem client-id e client-secret não é
     # registrado, não aparece na tela de login, e a aplicação sobe sem segredo nenhum. Para
@@ -30,8 +31,10 @@ fos:
     #   FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID / _CLIENT_SECRET
     #   FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID / _CLIENT_SECRET
   email:
-    # Envio dos links de entrada (#52). Sem estas duas a aplicação sobe igual e a entrada por
-    # e-mail simplesmente não é oferecida na tela — mesma regra dos provedores de login.
+    # Confirmação de cadastro e redefinição de senha (D47). Sem estas duas a aplicação sobe
+    # igual e o cadastro por senha responde indisponível — mesma regra dos provedores de login.
+    # É a única credencial cuja ausência tira uma porta de entrada inteira: o cadastro É o
+    # e-mail de confirmação.
     api-key: ${FOS_EMAIL_API_KEY:}
     from: ${FOS_EMAIL_FROM:}
   demo:
@@ -40,10 +43,6 @@ fos:
     # sobe igual, o botão não aparece na landing e o endpoint responde que não há demonstração
     # neste ambiente. Mesma regra dos provedores de login e do envio de e-mail.
     template-email: ${FOS_DEMO_TEMPLATE_EMAIL:}
-  # URL pública do app, para o resumo da fila (#54) conseguir montar o link de Solicitações.
-  # O agendador não tem requisição de onde deduzi-la, ao contrário do link de entrada. Vazia
-  # por default: o resumo sai sem link e o resto funciona igual.
-  public-url: ${FOS_PUBLIC_URL:}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

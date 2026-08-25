@@ -11,24 +11,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @param disclaimerVersion versão vigente do texto de disclaimer; subir força novo aceite
  * @param curriculum origem do currículo versionado
- * @param auth donos do app e credenciais de provedor de login (#24)
- * @param email envio de e-mail para a entrada por link (#52)
+ * @param auth administradores do app e credenciais de provedor de login
+ * @param email envio de e-mail: confirmação de cadastro e redefinição de senha (D47)
  * @param demo conta-modelo do acesso demonstrativo (#62)
- * @param publicUrl URL pública do app, sem barra final. Só o resumo da fila (#54) precisa dela:
- *     e-mail disparado por agendador não tem requisição de onde deduzir o endereço, ao contrário do
- *     link de entrada. Opcional — sem ela o resumo sai sem link, e nada mais muda
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
-        String disclaimerVersion,
-        Curriculum curriculum,
-        Auth auth,
-        Email email,
-        Demo demo,
-        String publicUrl) {
+        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email, Demo demo) {
 
     public FosProperties {
-        publicUrl = publicUrl == null ? "" : publicUrl.trim().replaceAll("/+$", "");
         if (auth == null) {
             auth = new Auth(null, null);
         }
@@ -41,10 +32,12 @@ public record FosProperties(
     }
 
     /**
-     * Envio de e-mail — a credencial que faz a entrada por link existir.
+     * Envio de e-mail — a credencial que faz o cadastro por senha existir (D47).
      *
-     * <p>Opcional pelo mesmo motivo dos provedores de login: sem ela a aplicação sobe igual, a
-     * entrada por e-mail não é oferecida na tela, e dev e CI rodam sem segredo nenhum.
+     * <p>Opcional pelo mesmo motivo dos provedores de login: sem ela a aplicação sobe igual, o
+     * cadastro não é oferecido na tela, e dev e CI rodam sem segredo nenhum. É a única credencial
+     * cuja ausência tira uma <em>porta de entrada</em> inteira, e não só um botão: o cadastro
+     * <em>é</em> o e-mail de confirmação.
      *
      * @param apiKey chave do provedor de envio; nunca versionada
      * @param from remetente, em domínio verificado no provedor de envio
@@ -92,8 +85,9 @@ public record FosProperties(
     }
 
     /**
-     * @param ownerEmails e-mails que entram já aprovados e podem decidir a fila de solicitações.
-     *     Vazia por default: sem ela ninguém é aprovado automaticamente
+     * @param ownerEmails e-mails das contas de administração (D48). Exige e-mail <b>verificado</b>
+     *     — pelo provedor externo ou pela confirmação do próprio app. Vazia por default: sem ela
+     *     ninguém administra nada, e o app funciona igual para todo mundo
      * @param providers credenciais por provedor de login. Provedor sem credencial não é registrado
      *     e não aparece na tela de login — a aplicação sobe em dev sem nenhum segredo
      */

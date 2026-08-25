@@ -5,7 +5,6 @@
  * camada de UI é reescrita (docs/03-estrutura-projeto.md).
  */
 import type {
-  AccessRequests,
   AccountView,
   AuthProviders,
   DemoSession,
@@ -21,6 +20,7 @@ import type {
   PinnedNote,
   QuizResult,
   QuizSubmission,
+  ResetLink,
   ReviewAgenda,
   StreakView,
   TreeView,
@@ -77,14 +77,42 @@ export class ApiError extends Error {
   }
 
   /**
-   * Autenticado, mas a conta ainda não foi liberada.
+   * E-mail inexistente ou senha errada, sem dizer qual dos dois (D47).
    *
-   * É 403 e não 401 de propósito: 401 devolveria a pessoa para o login que ela acabou de fazer.
+   * A indistinção é do backend, e a tela a repete: separar transformaria o login em consulta de
+   * quem tem conta no app.
    */
-  get isAccessPending(): boolean {
-    return this.code === 'acesso_pendente';
+  get isBadCredentials(): boolean {
+    return this.code === 'credencial_invalida';
   }
 
+  /** Senha certa, e-mail ainda não confirmado. A tela oferece reenviar o link. */
+  get isEmailUnverified(): boolean {
+    return this.code === 'email_nao_verificado';
+  }
+
+  /** Freio de tentativas: por e-mail e por IP. Passa sozinho — a tela pede para esperar. */
+  get isTooManyAttempts(): boolean {
+    return this.code === 'muitas_tentativas';
+  }
+
+  /**
+   * Ambiente sem provedor de envio de e-mail: não há cadastro por senha aqui.
+   *
+   * É o caso de dev e do CI, onde a aplicação sobe sem segredo nenhum. A tela precisa dizer isso
+   * em vez de mostrar um formulário que sempre falha.
+   */
+  get isSignUpUnavailable(): boolean {
+    return this.code === 'cadastro_indisponivel';
+  }
+
+  /**
+   * Sessão válida, conta bloqueada.
+   *
+   * É 403 e não 401 de propósito: 401 devolveria a pessoa para o login que ela acabou de fazer.
+   * Nada no app produz este estado desde a D48 — ver `AccessStatus` no backend para por que ele
+   * continua de pé.
+   */
   get isAccessDenied(): boolean {
     return this.code === 'acesso_recusado';
   }
@@ -202,7 +230,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
      */
     getAuthProviders: () => request<AuthProviders>('/api/auth/providers'),
 
-    /** Conta autenticada e estado do acesso. Responde também para conta pendente ou recusada. */
+    /** Conta autenticada: quem é, e se administra o app (D48). */
     getAccount: () => request<AccountView>('/api/me'),
 
     /**
@@ -217,28 +245,58 @@ export function createApiClient(options: ApiClientOptions = {}) {
     deleteAccount: () => requestNoContent('/api/me', { method: 'DELETE' }),
 
     /**
-     * Registra um pedido de acesso para quem não tem provedor externo (#52).
+     * Cria a conta e dispara o link de confirmação (D47).
      *
-     * Nenhum e-mail sai daqui: o primeiro é enviado quando o dono aprova. Enviar no pedido faria de
-     * um endpoint público um canal de spam com o domínio do app no remetente.
+     * Não abre sessão: a conta nasce não verificada, e quem autentica é o link. A resposta é
+     * idêntica para e-mail novo e já cadastrado — de propósito, para não virar consulta de quem
+     * tem conta no app. A tela diz "enviamos para este endereço", e é a verdade nos dois casos.
      */
-    requestEmailAccess: (email: string) =>
-      requestNoContent('/api/auth/email/solicitar', {
+    signUp: (email: string, senha: string, nome?: string) =>
+      requestNoContent('/api/auth/cadastro', {
+        method: 'POST',
+        body: JSON.stringify({ email, senha, nome }),
+      }),
+
+    /** Entra com e-mail e senha. Abre sessão — daí não haver corpo de resposta. */
+    signInWithPassword: (email: string, senha: string) =>
+      requestNoContent('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, senha }),
+      }),
+
+    /** Outro link de confirmação. Responde igual para cadastro pendente, confirmado e inexistente. */
+    resendVerification: (email: string) =>
+      requestNoContent('/api/auth/verificacao/reenviar', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+
+    /** Link de redefinição. Mesma resposta para endereço com conta e sem conta. */
+    requestPasswordReset: (email: string) =>
+      requestNoContent('/api/auth/senha/esquecida', {
         method: 'POST',
         body: JSON.stringify({ email }),
       }),
 
     /**
-     * Pede o link de entrada.
+     * O link de redefinição ainda vale?
      *
-     * A resposta é a mesma para endereço inexistente, pendente, recusado e aprovado — de propósito,
-     * para não virar consulta de quem tem conta no app. A tela diz "se existe conta, o link foi
-     * enviado", e é a verdade.
+     * Consulta que não gasta o link — consumir na abertura da tela o queimaria em qualquer
+     * pré-carregamento do navegador ou do cliente de e-mail.
      */
-    requestEmailLogin: (email: string) =>
-      requestNoContent('/api/auth/email/entrar', {
+    checkPasswordResetLink: (token: string) =>
+      request<ResetLink>(`/api/auth/senha/redefinir/${encodeURIComponent(token)}`),
+
+    /**
+     * Troca a senha.
+     *
+     * Não abre sessão de propósito: a troca derruba as sessões abertas da conta, e abrir uma aqui
+     * criaria a única que ela não derruba. A próxima tela é o login, com a senha nova.
+     */
+    resetPassword: (token: string, senha: string) =>
+      requestNoContent(`/api/auth/senha/redefinir/${encodeURIComponent(token)}`, {
         method: 'POST',
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ senha }),
       }),
 
     /**
@@ -248,15 +306,6 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * sabe o que a sessão recém-aberta já pode ver é quem a abriu.
      */
     startDemo: () => request<DemoSession>('/api/demo/sessao', { method: 'POST' }),
-
-    /** Fila de solicitações de acesso. Só o dono do app recebe 200 aqui. */
-    getAccessRequests: () => request<AccessRequests>('/api/admin/solicitacoes'),
-
-    approveAccessRequest: (id: number) =>
-      request<AccessRequests>(`/api/admin/solicitacoes/${id}/aprovar`, { method: 'POST' }),
-
-    denyAccessRequest: (id: number) =>
-      request<AccessRequests>(`/api/admin/solicitacoes/${id}/recusar`, { method: 'POST' }),
 
     /**
      * Envia um feedback: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).
@@ -268,7 +317,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
         body: JSON.stringify(feedback),
       }),
 
-    /** Fila de feedback. Só o dono do app recebe 200 aqui. */
+    /** Fila de feedback. Só a conta de administração (D48) recebe 200 aqui. */
     getFeedbackQueue: () => request<FeedbackList>('/api/admin/feedback'),
 
     decideFeedback: (id: number, status: FeedbackStatus) =>

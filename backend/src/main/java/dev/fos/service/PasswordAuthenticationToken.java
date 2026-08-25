@@ -6,11 +6,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 /**
  * Sessão de quem entrou com e-mail e senha próprios (#81).
  *
- * <p>Terceiro tipo no mesmo molde do {@link EmailAuthenticationToken} e do {@link
- * DemoAuthenticationToken}, e pela mesma razão: o {@link CurrentUserProvider} resolve o usuário
- * pelo par {@code (provider, subject)} da própria autenticação, então cada forma de entrar precisa
- * de um tipo que ele reconheça. Ficar de fora dali é o defeito da #51 — a sessão existe, o login
- * "funciona", e toda chamada responde 401 sem erro nenhum no log.
+ * <p>Mesmo molde do {@link DemoAuthenticationToken}, e pela mesma razão: o {@link
+ * CurrentUserProvider} resolve o usuário pelo par {@code (provider, subject)} da própria
+ * autenticação, então cada forma de entrar precisa de um tipo que ele reconheça. Ficar de fora dali
+ * é o defeito da #51 — a sessão existe, o login "funciona", e toda chamada responde 401 sem erro
+ * nenhum no log.
  */
 public class PasswordAuthenticationToken extends AbstractAuthenticationToken {
 

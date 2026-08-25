@@ -24,11 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>A identidade é buscada pelo par {@code (provider, subject)} da própria autenticação, o que
  * mantém a resolução idêntica no fluxo real e em teste.
  *
- * <p><b>Todo método de autenticação novo passa por aqui.</b> Quando a entrada por link de e-mail
- * (#52) chegou, foi este {@code instanceof} que precisou crescer — de novo com a demonstração
- * pública (#62), e de novo com a senha própria (#81). É o mesmo ponto que, esquecido na #51, fez o
- * login por Google autenticar e o app responder 401 para sempre. Tipo de autenticação que este
- * método não reconhece vira usuário inexistente, em silêncio.
+ * <p><b>Todo método de autenticação novo passa por aqui.</b> Foi este {@code instanceof} que
+ * precisou crescer quando a entrada por link de e-mail (#52) chegou, de novo com a demonstração
+ * pública (#62) e de novo com a senha própria (#81) — e que encolheu quando a primeira saiu com a
+ * fila de aprovação (D48). É o mesmo ponto que, esquecido na #51, fez o login por Google autenticar
+ * e o app responder 401 para sempre. Tipo de autenticação que este método não reconhece vira
+ * usuário inexistente, em silêncio.
  *
  * <p>É também aqui que a demonstração vencida deixa de existir: sessão de conta com prazo vencido
  * não resolve usuário nenhum, e o app responde 401 como responderia a quem nunca entrou. Tratar
@@ -76,10 +77,6 @@ public class CurrentUserProvider {
         if (authentication instanceof OAuth2AuthenticationToken token) {
             return identities.findByProviderAndProviderSubject(
                     token.getAuthorizedClientRegistrationId(), token.getPrincipal().getName());
-        }
-        if (authentication instanceof EmailAuthenticationToken token) {
-            return identities.findByProviderAndProviderSubject(
-                    EmailAuthenticationToken.PROVIDER, token.getName());
         }
         if (authentication instanceof DemoAuthenticationToken token) {
             return identities.findByProviderAndProviderSubject(

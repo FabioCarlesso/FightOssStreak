@@ -1,8 +1,8 @@
 package dev.fos.service;
 
 import dev.fos.config.FosProperties;
-import dev.fos.model.AccessStatus;
 import dev.fos.model.AppUser;
+import dev.fos.model.Role;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
@@ -228,7 +228,7 @@ public class AccountService {
         if (!emailVerified || email == null || email.isBlank()) {
             return Optional.empty();
         }
-        return users.findByPrimaryEmail(EmailAccessService.normalize(email));
+        return users.findByPrimaryEmail(Emails.normalize(email));
     }
 
     /**
@@ -244,7 +244,7 @@ public class AccountService {
         if (!emailVerified || email == null || email.isBlank() || user.getPrimaryEmail() != null) {
             return;
         }
-        String normalizado = EmailAccessService.normalize(email);
+        String normalizado = Emails.normalize(email);
         if (users.findByPrimaryEmail(normalizado).isEmpty()) {
             user.claimPrimaryEmail(normalizado);
         }
@@ -292,67 +292,31 @@ public class AccountService {
                 .filter(user -> identities.findByUserId(user.getId()).isEmpty());
     }
 
-    /** Fila de solicitações, da mais antiga para a mais nova. */
-    @Transactional(readOnly = true)
-    public List<AppUser> pendingRequests() {
-        return users.findByAccessStatusOrderByRequestedAtAsc(AccessStatus.PENDENTE);
-    }
-
-    /**
-     * Decide uma solicitação da fila.
-     *
-     * <p>Duas guardas, e nenhuma é preciosismo. **A própria conta fica de fora**: recusar a si
-     * mesmo tranca o dono para fora do app em definitivo, e a recuperação seria pelo banco. **Só
-     * decide quem está pendente**: sem isso, uma segunda aba aberta na fila antiga desfaz calada
-     * uma decisão já tomada — o clássico de reabrir acesso a quem foi recusado.
-     *
-     * @param decidedBy conta que está decidindo
-     */
-    @Transactional
-    public AppUser decide(Long userId, boolean approve, Long decidedBy) {
-        if (userId.equals(decidedBy)) {
-            throw new IllegalArgumentException(
-                    "Não dá para decidir a própria conta. Peça a outro dono, se houver.");
-        }
-        AppUser user =
-                users.findById(userId)
-                        .orElseThrow(
-                                () ->
-                                        new IllegalArgumentException(
-                                                "Solicitação inexistente: " + userId));
-        if (user.getAccessStatus() != AccessStatus.PENDENTE) {
-            throw new IllegalArgumentException(
-                    "Esta solicitação já foi decidida (" + user.getAccessStatus() + ").");
-        }
-        Instant now = Instant.now(clock);
-        if (approve) {
-            user.approve(now);
-        } else {
-            user.deny(now);
-        }
-        return user;
-    }
-
     /** Identidades da conta, na ordem em que foram criadas. */
     @Transactional(readOnly = true)
     public List<UserIdentity> identitiesOf(Long userId) {
         return identities.findByUserId(userId);
     }
 
-    public List<UserIdentity> identitiesOfAll(List<Long> userIds) {
-        return userIds.isEmpty() ? List.of() : identities.findByUserIdIn(userIds);
+    /**
+     * O papel da conta — e o <b>único</b> ponto do app que decide isso (D48).
+     *
+     * <p>A origem continua sendo {@code fos.auth.owner-emails}, e continua exigindo e-mail
+     * <b>verificado</b>. O que mudou com o cadastro aberto é que "verificado" passou a incluir a
+     * confirmação do próprio app, e não só a de um provedor externo: quem confirma o endereço pelo
+     * link do cadastro tem {@code email_verified = true} igual a quem entrou pelo Google. Sem a
+     * exigência de verificação, digitar o endereço do administrador num provedor que não verifica
+     * e-mail daria acesso de administração — que é a razão da regra, e ela não mudou.
+     */
+    @Transactional(readOnly = true)
+    public Role roleOf(AppUser user) {
+        return isAdmin(user) ? Role.ADMIN : Role.USUARIO;
     }
 
-    /**
-     * Dono é quem tem e-mail <em>verificado</em> na lista de configuração.
-     *
-     * <p>Sem a exigência de verificação, qualquer provedor que aceitasse um e-mail digitado pelo
-     * usuário viraria caminho para a fila de aprovação.
-     */
-    public boolean isOwner(AppUser user) {
+    private boolean isAdmin(AppUser user) {
         // Guarda explícita, mesmo com a identidade de demonstração nascendo sem e-mail: a cópia
         // pode vir de uma conta-modelo que ESTÁ em `owner-emails`, e um dia alguém pode achar boa
-        // ideia copiar a identidade junto. Se isso acontecer, o defeito é a fila de solicitações
+        // ideia copiar a identidade junto. Se isso acontecer, o defeito é a administração do app
         // aberta para um link público (#62).
         if (user.isDemo()) {
             return false;

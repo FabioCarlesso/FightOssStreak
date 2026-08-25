@@ -13,9 +13,9 @@ import java.time.Instant;
 /**
  * Conta da aplicação.
  *
- * <p>Desde a #24 a conta é criada por um login social bem-sucedido e nasce {@link
- * AccessStatus#PENDENTE}: autenticar não é entrar. Quem libera é o autor, pela fila de
- * solicitações.
+ * <p>Desde a D47 ela nasce {@link AccessStatus#APROVADO} por qualquer caminho: cadastro com senha,
+ * login por provedor ou demonstração. A fila de aprovação que a D36 criou saiu inteira na D48 —
+ * quando qualquer um pode criar conta, aprovação não filtra ninguém, só atrasa.
  */
 @Entity
 @Table(name = "app_user")
@@ -41,23 +41,6 @@ public class AppUser {
     @Column(name = "decided_at")
     private Instant decidedAt;
 
-    /**
-     * Quando esta conta pendente entrou num resumo já enviado ao dono (#54).
-     *
-     * <p>Nulo é "ainda não anunciada", e é o que faz a janela da hora ter ou não novidade. Fica
-     * aqui, junto do pedido, em vez de num relógio global: assim o estado do aviso sobrevive a
-     * reinício e a deploy sem depender de o agendador ter rodado.
-     */
-    @Column(name = "queue_notice_sent_at")
-    private Instant queueNoticeSentAt;
-
-    /**
-     * Prazo de vida de uma conta de demonstração (#62); nulo em toda conta de gente de verdade.
-     *
-     * <p>É a conta que expira, não uma sessão dela: passado o prazo não sobra progresso, identidade
-     * nem sessão para guardar. Enquanto vale, a conta é comum em tudo o mais — grava de verdade, e
-     * o que a distingue é ser descartável, não ser limitada.
-     */
     @Column(name = "demo_expires_at")
     private Instant demoExpiresAt;
 
@@ -90,11 +73,6 @@ public class AppUser {
         this.decidedAt = decidedAt;
     }
 
-    /** Conta recém-criada por um login: entra na fila. */
-    public static AppUser pending(String label, Instant now) {
-        return new AppUser(label, now, AccessStatus.PENDENTE, null);
-    }
-
     /** Conta do dono (e-mail verificado em {@code fos.auth.owner-emails}): já entra liberada. */
     public static AppUser approved(String label, Instant now) {
         return new AppUser(label, now, AccessStatus.APROVADO, now);
@@ -125,13 +103,14 @@ public class AppUser {
         return user;
     }
 
+    /**
+     * Libera a conta.
+     *
+     * <p>Sobrou de uma época em que havia o que liberar. Continua sendo chamado no bootstrap do
+     * dono, onde a conta semeada pela V2 é adotada — ali ele é idempotente e só carimba a data.
+     */
     public void approve(Instant now) {
         this.accessStatus = AccessStatus.APROVADO;
-        this.decidedAt = now;
-    }
-
-    public void deny(Instant now) {
-        this.accessStatus = AccessStatus.RECUSADO;
         this.decidedAt = now;
     }
 
@@ -148,16 +127,6 @@ public class AppUser {
     /** Dá nome à linha semeada pela V2, que nasceu como {@code usuario-local}. */
     public void rename(String label) {
         this.label = label;
-    }
-
-    /** Registra que esta conta já saiu num resumo da fila. */
-    public void markQueueNoticeSent(Instant now) {
-        this.queueNoticeSentAt = now;
-    }
-
-    /** Pendente que o dono ainda não viu em nenhum resumo. */
-    public boolean isQueueNoticePending() {
-        return queueNoticeSentAt == null;
     }
 
     public boolean isApproved() {
@@ -202,10 +171,6 @@ public class AppUser {
 
     public Instant getDecidedAt() {
         return decidedAt;
-    }
-
-    public Instant getQueueNoticeSentAt() {
-        return queueNoticeSentAt;
     }
 
     public Instant getDemoExpiresAt() {

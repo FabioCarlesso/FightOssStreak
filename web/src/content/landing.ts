@@ -12,8 +12,17 @@ export const REPO_URL = 'https://github.com/FabioCarlesso/FightOssStreak';
 export const DOCS_URL = `${REPO_URL}/tree/main/docs`;
 export const DISCLAIMER_DOC_URL = `${REPO_URL}/blob/main/docs/06-disclaimer-responsabilidade.md`;
 
-/** Rota de entrada do app. A landing é a única tela pública; daqui para dentro passa pelo aceite. */
+/** Rota de entrada do app. Daqui para dentro passa pelo login e pelo aceite. */
 export const APP_PATH = '/hoje';
+
+/**
+ * Onde a apresentação leva quem se convenceu (D47).
+ *
+ * Separado do `APP_PATH` de propósito: quem já entrou uma vez cai em `/hoje` e não precisa ver
+ * formulário nenhum, e quem está chegando agora precisa de uma tela que diga o que fazer. Apontar
+ * os dois para o mesmo lugar faria a primeira visita bater num portão sem explicação.
+ */
+export const SIGNUP_PATH = '/cadastrar';
 
 /**
  * Acesso demonstrativo (#62): o degrau que faltava antes do portão.

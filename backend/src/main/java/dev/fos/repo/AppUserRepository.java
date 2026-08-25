@@ -1,6 +1,5 @@
 package dev.fos.repo;
 
-import dev.fos.model.AccessStatus;
 import dev.fos.model.AppUser;
 import java.time.Instant;
 import java.util.List;
@@ -16,9 +15,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
      * segunda conta vazia que a falta de merge por e-mail (D36) produziria com senha própria.
      */
     Optional<AppUser> findByPrimaryEmail(String primaryEmail);
-
-    /** Fila de solicitações, da mais antiga para a mais nova. */
-    List<AppUser> findByAccessStatusOrderByRequestedAtAsc(AccessStatus status);
 
     /** Demonstrações vencidas — a varredura preguiçosa da criação (#62) come daqui. */
     List<AppUser> findByDemoExpiresAtLessThan(Instant instant);

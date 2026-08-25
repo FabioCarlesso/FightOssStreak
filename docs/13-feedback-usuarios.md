@@ -5,6 +5,11 @@
 Não existe hoje canal nenhum dentro do app para reportar bug, pedir troca de vídeo, apontar
 conteúdo errado ou sugerir funcionalidade. Quem usa o app (o autor, e desde D36/D37 quem tiver
 acesso aprovado) só consegue avisar por fora — mensagem, memória, ou uma issue manual no GitHub.
+> **Nota (D48):** a fila de acesso citada abaixo como precedente de desenho **não existe mais** — o
+> cadastro abriu (D47) e o portão de aprovação foi desmontado. As referências a ela aqui são
+> históricas: o que sobreviveu foi o *formato* (entidade com `user_id`, rota pública para quem manda,
+> rota de administração para quem decide), e é ele que a fila de feedback usa.
+
 Isso é o mesmo silêncio que a D38 corrigiu do outro lado (a fila de acesso): sinal que existe mas
 não tem lugar para pousar.
 

@@ -90,6 +90,9 @@ public class PasswordAccessService {
 
     static final Duration JANELA_TENTATIVAS = Duration.ofMinutes(15);
 
+    /** Teto do nome, alinhado ao da coluna {@code user_identity.display_name}. */
+    private static final int MAX_NOME = 200;
+
     private static final SecureRandom RANDOM = new SecureRandom();
 
     /**
@@ -162,9 +165,10 @@ public class PasswordAccessService {
      * </ul>
      */
     @Transactional
-    public void register(String rawEmail, String rawPassword, String baseUrl) {
+    public void register(String rawEmail, String rawPassword, String rawNome, String baseUrl) {
         exigirEnvioConfigurado();
-        String email = EmailAccessService.normalize(rawEmail);
+        String email = Emails.normalize(rawEmail);
+        String nome = nomeOuNulo(rawNome);
         PasswordPolicy.check(rawPassword, email);
         // Sempre, mesmo quando for descartado logo abaixo: ver HASH_FANTASMA.
         String hash = encoder.encode(rawPassword);
@@ -183,7 +187,10 @@ public class PasswordAccessService {
             return;
         }
 
-        AppUser user = users.save(AppUser.forPassword(email, now));
+        // O rótulo é o nome quando ele veio, e o endereço quando não veio: o cabeçalho do app
+        // mostra esse valor, e "aluno@example.test" no lugar do nome é o tipo de aspereza que
+        // ninguém volta para consertar.
+        AppUser user = users.save(AppUser.forPassword(nome != null ? nome : email, now));
         UserIdentity identity =
                 identities.save(
                         new UserIdentity(
@@ -195,7 +202,7 @@ public class PasswordAccessService {
                                 // endereço — só digitou ele. Enquanto for falso, a conta não tem
                                 // sessão, não vincula nada e não vale primary_email.
                                 false,
-                                null,
+                                nome,
                                 now));
         credentials.save(new PasswordCredential(identity.getId(), hash, now));
         enviarVerificacao(user.getId(), email, baseUrl, now);
@@ -206,7 +213,7 @@ public class PasswordAccessService {
     @Transactional
     public void resendVerification(String rawEmail, String baseUrl) {
         exigirEnvioConfigurado();
-        String email = EmailAccessService.normalize(rawEmail);
+        String email = Emails.normalize(rawEmail);
         Instant now = Instant.now(clock);
         identities
                 .findByProviderAndProviderSubject(PasswordAuthenticationToken.PROVIDER, email)
@@ -218,18 +225,78 @@ public class PasswordAccessService {
     /**
      * Consome o link de confirmação e devolve o e-mail autenticado.
      *
-     * <p>Vazio quando o token não existe, já foi usado, venceu ou foi emitido para outra coisa — os
-     * quatro respondem igual para fora. É aqui, e só aqui, que o cadastro vira conta de verdade: o
-     * endereço passa a ser verificado, a conta reivindica o {@code primary_email} e a sessão pode
-     * ser aberta.
+     * <p>É aqui, e só aqui, que o cadastro vira conta de verdade: o endereço passa a ser
+     * verificado, a conta reivindica o {@code primary_email} e a sessão pode ser aberta. O
+     * propósito é conferido antes de tudo: link de redefinição apresentado aqui é inválido, não uma
+     * confirmação.
      */
+    /**
+     * Por que um link não serviu.
+     *
+     * <p>Os três casos existem porque a tela faz coisas diferentes com cada um: <b>vencido</b>
+     * oferece reenviar, <b>usado</b> manda entrar (a conta já está confirmada) e <b>inválido</b>
+     * não tem o que oferecer. Com um motivo só, a saída certa — "clique em reenviar" — ficaria
+     * escondida atrás de um erro genérico.
+     *
+     * <p>Distinguir não vaza nada de útil: para chegar a qualquer uma destas respostas é preciso
+     * apresentar o token, e quem o tem já teve acesso à caixa de entrada.
+     */
+    public enum FalhaDeLink {
+        VENCIDO,
+        USADO,
+        INVALIDO
+    }
+
+    /**
+     * Resultado de abrir um link: ou o e-mail confirmado, ou o motivo de não ter dado.
+     *
+     * @param email endereço autenticado; nulo quando houve falha
+     * @param falha motivo; nulo quando deu certo
+     */
+    public record Confirmacao(String email, FalhaDeLink falha) {
+        public boolean ok() {
+            return email != null;
+        }
+
+        static Confirmacao de(String email) {
+            return new Confirmacao(email, null);
+        }
+
+        static Confirmacao falhou(FalhaDeLink falha) {
+            return new Confirmacao(null, falha);
+        }
+    }
+
     @Transactional
-    public Optional<String> verify(String rawToken) {
+    public Confirmacao verify(String rawToken) {
         Instant now = Instant.now(clock);
-        return tokens.findByTokenHash(hash(rawToken))
-                .filter(token -> token.consume(LoginTokenPurpose.VERIFICACAO, now))
-                .flatMap(token -> identidadeDeSenha(token.getUserId()))
-                .map(identity -> confirmar(identity, now));
+        Optional<LoginToken> encontrado = tokens.findByTokenHash(hash(rawToken));
+        if (encontrado.isEmpty()
+                || encontrado.get().getPurpose() != LoginTokenPurpose.VERIFICACAO) {
+            return Confirmacao.falhou(FalhaDeLink.INVALIDO);
+        }
+        LoginToken token = encontrado.get();
+        FalhaDeLink falha = motivo(token, now);
+        if (falha != null) {
+            return Confirmacao.falhou(falha);
+        }
+        token.consume(LoginTokenPurpose.VERIFICACAO, now);
+        return identidadeDeSenha(token.getUserId())
+                .map(identity -> Confirmacao.de(confirmar(identity, now)))
+                // Conta sem identidade de senha não tem o que confirmar. Não acontece pelo fluxo
+                // normal, e "inválido" é a resposta honesta se acontecer.
+                .orElseGet(() -> Confirmacao.falhou(FalhaDeLink.INVALIDO));
+    }
+
+    /** Nulo quando o token ainda serve. */
+    private static FalhaDeLink motivo(LoginToken token, Instant now) {
+        if (token.getUsedAt() != null) {
+            return FalhaDeLink.USADO;
+        }
+        if (!now.isBefore(token.getExpiresAt())) {
+            return FalhaDeLink.VENCIDO;
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------ entrada
@@ -245,7 +312,7 @@ public class PasswordAccessService {
      */
     @Transactional
     public String authenticate(String rawEmail, String rawPassword, String ip) {
-        String email = EmailAccessService.normalize(rawEmail);
+        String email = Emails.normalize(rawEmail);
         Instant now = Instant.now(clock);
         freio.evictOlderThan(JANELA_TENTATIVAS, now);
         if (freio.isBlocked(chaveEmail(email), MAX_TENTATIVAS_EMAIL, JANELA_TENTATIVAS, now)
@@ -291,7 +358,7 @@ public class PasswordAccessService {
     @Transactional
     public void requestReset(String rawEmail, String baseUrl) {
         exigirEnvioConfigurado();
-        String email = EmailAccessService.normalize(rawEmail);
+        String email = Emails.normalize(rawEmail);
         Instant now = Instant.now(clock);
         identities
                 .findByProviderAndProviderSubject(PasswordAuthenticationToken.PROVIDER, email)
@@ -303,14 +370,21 @@ public class PasswordAccessService {
      * O link de redefinição ainda vale — sem gastá-lo.
      *
      * <p>É o que a tela consulta antes de pedir a senha nova. Consumir na abertura queimaria o link
-     * em qualquer pré-carregamento do navegador ou do cliente de e-mail.
+     * em qualquer pré-carregamento do navegador ou do cliente de e-mail. Devolve o motivo pela
+     * mesma razão da confirmação: "venceu" e "já foi usado" levam a telas diferentes.
      */
     @Transactional(readOnly = true)
-    public boolean isResetLinkValid(String rawToken) {
+    public Confirmacao checkResetLink(String rawToken) {
         Instant now = Instant.now(clock);
-        return tokens.findByTokenHash(hash(rawToken))
-                .filter(token -> token.isUsable(LoginTokenPurpose.REDEFINICAO, now))
-                .isPresent();
+        Optional<LoginToken> encontrado = tokens.findByTokenHash(hash(rawToken));
+        if (encontrado.isEmpty()
+                || encontrado.get().getPurpose() != LoginTokenPurpose.REDEFINICAO) {
+            return Confirmacao.falhou(FalhaDeLink.INVALIDO);
+        }
+        FalhaDeLink falha = motivo(encontrado.get(), now);
+        // String vazia, e não o e-mail: quem consulta o link ainda não provou nada, e devolver o
+        // endereço aqui entregaria de quem é a conta a quem só tem a URL.
+        return falha == null ? Confirmacao.de("") : Confirmacao.falhou(falha);
     }
 
     /**
@@ -370,7 +444,7 @@ public class PasswordAccessService {
     public List<String> subjectsOf(String email) {
         return identities
                 .findByProviderAndProviderSubject(
-                        PasswordAuthenticationToken.PROVIDER, EmailAccessService.normalize(email))
+                        PasswordAuthenticationToken.PROVIDER, Emails.normalize(email))
                 .map(
                         identity ->
                                 identities.findByUserId(identity.getUserId()).stream()
@@ -499,6 +573,17 @@ public class PasswordAccessService {
     private void registrarErro(String email, String ip, Instant now) {
         freio.record(chaveEmail(email), JANELA_TENTATIVAS, now);
         freio.record(chaveIp(ip), JANELA_TENTATIVAS, now);
+    }
+
+    /**
+     * Nome em branco é ausência de nome, não string vazia — a identidade guarda nulo nesse caso.
+     */
+    private static String nomeOuNulo(String nome) {
+        if (nome == null || nome.isBlank()) {
+            return null;
+        }
+        String limpo = nome.trim();
+        return limpo.length() > MAX_NOME ? limpo.substring(0, MAX_NOME) : limpo;
     }
 
     private static String chaveEmail(String email) {

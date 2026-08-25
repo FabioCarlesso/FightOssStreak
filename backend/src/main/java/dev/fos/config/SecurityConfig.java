@@ -62,7 +62,6 @@ class SecurityConfig {
                                 auth.requestMatchers(
                                                 "/actuator/health",
                                                 "/api/auth/providers",
-                                                "/api/auth/email/**",
                                                 // Cadastro com senha própria (#81): é a porta de
                                                 // quem ainda não tem conta, então exigir sessão
                                                 // aqui seria pedir conta a quem vem criar uma.

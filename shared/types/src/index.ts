@@ -41,12 +41,12 @@ export type CountedMetric = Schemas['Counted'];
 export type SrsAdherence = Schemas['SrsAdherence'];
 
 export type AccountView = Schemas['AccountView'];
-/** Estado do acesso da conta: é ele que decide qual tela a web mostra (#24). */
-export type AccessStatus = NonNullable<AccountView['accessStatus']>;
+/** `ADMIN` ou `USUARIO` (D48). É por ele que a web decide o que mostrar de administração. */
+export type Role = NonNullable<AccountView['role']>;
 export type AuthProviderView = Schemas['AuthProviderView'];
 export type AuthProviders = Schemas['AuthProviders'];
-export type AccessRequestView = Schemas['AccessRequestView'];
-export type AccessRequests = Schemas['AccessRequests'];
+/** Se o link de redefinição ainda vale, e por que não vale (D47). */
+export type ResetLink = Schemas['LinkView'];
 
 export type FeedbackRequest = Schemas['FeedbackRequest'];
 export type FeedbackView = Schemas['FeedbackView'];

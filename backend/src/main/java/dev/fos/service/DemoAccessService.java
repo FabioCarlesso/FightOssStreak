@@ -189,14 +189,14 @@ public class DemoAccessService {
     /**
      * A conta-modelo, quando ela existe.
      *
-     * <p><b>E-mail verificado</b> (na consulta) é o filtro que importa: pedir acesso digitando o
-     * endereço da conta-modelo grava uma identidade <em>não</em> verificada, e se o dono aprovar
-     * esse pedido — plausível, já que ele vê o próprio endereço na fila — passam a existir duas
-     * contas aprovadas com o mesmo e-mail. Sem a verificação, qual delas vira molde depende da
-     * ordem que o banco devolver. Há teste para esse cenário exato.
+     * <p><b>E-mail verificado</b> (na consulta) é o filtro que importa: qualquer um pode se
+     * cadastrar digitando o endereço da conta-modelo, o que grava uma identidade <em>não</em>
+     * verificada numa conta nova — e passam a existir duas contas com o mesmo e-mail. Sem a
+     * verificação, qual delas vira molde depende da ordem que o banco devolver. Há teste para esse
+     * cenário exato.
      *
-     * <p><b>Aprovada</b> porque conta na fila não tem estado nenhum para copiar. E
-     * <b>não-demonstração</b> é defesa em profundidade, hoje inalcançável: a identidade de
+     * <p><b>Aprovada</b> continua no filtro por precaução, embora desde a D48 toda conta nasça
+     * assim. E <b>não-demonstração</b> é defesa em profundidade, hoje inalcançável: a identidade de
      * demonstração nasce sem e-mail, então a consulta nunca a devolve. Fica para o dia em que
      * alguém resolver copiar o e-mail junto.
      */

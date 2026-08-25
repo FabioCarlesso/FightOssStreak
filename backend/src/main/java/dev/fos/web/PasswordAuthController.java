@@ -1,7 +1,7 @@
 package dev.fos.web;
 
 import dev.fos.service.AccessRateLimiter;
-import dev.fos.service.EmailAccessService;
+import dev.fos.service.Emails;
 import dev.fos.service.PasswordAccessService;
 import dev.fos.service.PasswordAuthenticationToken;
 import dev.fos.service.SessionLogin;
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,8 +50,14 @@ public class PasswordAuthController {
     /** Para onde a confirmação leva quando dá certo. É a primeira tela do app. */
     private static final String APOS_CONFIRMAR = "/hoje";
 
-    /** E quando não dá: a tela sabe ler este motivo e oferecer outro link. */
-    private static final String LINK_INVALIDO = "/entrar?erro=confirmacao_invalida";
+    /**
+     * E quando não dá.
+     *
+     * <p>Uma tela própria, e não a de login com um aviso: os três motivos levam a ações diferentes
+     * — vencido oferece reenviar, usado manda entrar, inválido não tem o que oferecer — e isso não
+     * cabe numa faixa de erro em cima do formulário.
+     */
+    private static final String CONFIRMACAO_FALHOU = "/confirmar-email?erro=";
 
     private final PasswordAccessService senha;
     private final SessionLogin sessao;
@@ -68,7 +75,13 @@ public class PasswordAuthController {
         this.clock = clock;
     }
 
-    public record CadastroRequest(@NotBlank @Email String email, @NotBlank String senha) {}
+    /**
+     * @param nome opcional. Sem ele o app chama a pessoa pelo endereço, o que funciona e é feio —
+     *     por isso o formulário pede, e por isso o backend não exige: quem não quiser dizer entra
+     *     do mesmo jeito
+     */
+    public record CadastroRequest(
+            @NotBlank @Email String email, @NotBlank String senha, String nome) {}
 
     public record LoginRequest(@NotBlank String email, @NotBlank String senha) {}
 
@@ -78,8 +91,10 @@ public class PasswordAuthController {
 
     /**
      * @param valido se o link de redefinição ainda serve; a tela decide entre formulário e aviso
+     * @param motivo por que não serve — {@code vencido}, {@code usado} ou {@code invalido}. Nulo
+     *     quando vale. São três telas diferentes: vencido oferece pedir outro, usado manda entrar
      */
-    public record LinkView(boolean valido) {}
+    public record LinkView(boolean valido, String motivo) {}
 
     @PostMapping("/cadastro")
     @Operation(
@@ -93,7 +108,7 @@ public class PasswordAuthController {
         if (!freiar(request, body.email())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        senha.register(body.email(), body.senha(), baseUrl());
+        senha.register(body.email(), body.senha(), body.nome(), baseUrl());
         return ResponseEntity.accepted().build();
     }
 
@@ -102,12 +117,12 @@ public class PasswordAuthController {
     public void verificar(
             @PathVariable String token, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String email = senha.verify(token).orElse(null);
-        if (email == null) {
-            response.sendRedirect(LINK_INVALIDO);
+        PasswordAccessService.Confirmacao confirmacao = senha.verify(token);
+        if (!confirmacao.ok()) {
+            response.sendRedirect(CONFIRMACAO_FALHOU + motivo(confirmacao));
             return;
         }
-        sessao.signIn(new PasswordAuthenticationToken(email), request, response);
+        sessao.signIn(new PasswordAuthenticationToken(confirmacao.email()), request, response);
         response.sendRedirect(APOS_CONFIRMAR);
     }
 
@@ -161,7 +176,8 @@ public class PasswordAuthController {
                     "Consulta que não gasta o link: consumir na abertura da tela o queimaria em"
                             + " qualquer pré-carregamento do navegador ou do cliente de e-mail.")
     public LinkView conferir(@PathVariable String token) {
-        return new LinkView(senha.isResetLinkValid(token));
+        PasswordAccessService.Confirmacao confirmacao = senha.checkResetLink(token);
+        return new LinkView(confirmacao.ok(), confirmacao.ok() ? null : motivo(confirmacao));
     }
 
     @PostMapping("/senha/redefinir/{token}")
@@ -195,10 +211,15 @@ public class PasswordAuthController {
                         JANELA_EMAILS,
                         agora)
                 && freio.tryAcquire(
-                        "email:" + EmailAccessService.normalize(email),
+                        "email:" + Emails.normalize(email),
                         MAX_EMAILS_POR_JANELA,
                         JANELA_EMAILS,
                         agora);
+    }
+
+    /** O motivo em minúsculas, que é como ele viaja na query e como a tela o lê. */
+    private static String motivo(PasswordAccessService.Confirmacao confirmacao) {
+        return confirmacao.falha().name().toLowerCase(Locale.ROOT);
     }
 
     /** A URL pública que o browser usou — a mesma que monta o redirect do OAuth. */

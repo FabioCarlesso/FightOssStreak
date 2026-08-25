@@ -1,15 +1,17 @@
 import type { AccountView, AuthProviders, DemoSession } from '@fos/types';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthGate } from './AuthGate.tsx';
 
 /**
- * O portão de autenticação e aprovação decide quem vê o app.
+ * O portão de autenticação decide quem vê o app.
  *
- * O defeito caro aqui não é visual: é deixar entrar quem não foi liberado, ou prender quem já foi.
- * Por isso os testes olham para o que aparece na tela em cada estado da conta, e não para o
- * layout — mesma extensão consciente da D29 que o `DisclaimerGate` já tinha.
+ * Desde a D48 ele decide **uma** coisa: há sessão, ou não há. Os estados intermediários que a D36
+ * criou — pendente e recusado — saíram com a fila de aprovação, e com eles as duas telas que este
+ * arquivo testava. O que sobra aqui é a fronteira que ainda existe: sem sessão vai para `/entrar`,
+ * com sessão abre o app, e demonstração vencida tem tela própria.
  *
  * O cliente de API é mockado no módulo: nenhum teste toca a rede.
  */
@@ -19,8 +21,6 @@ const { apiMock } = vi.hoisted(() => ({
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     logout: vi.fn<() => Promise<void>>(),
     deleteAccount: vi.fn<() => Promise<void>>(),
-    requestEmailAccess: vi.fn<(email: string) => Promise<void>>(),
-    requestEmailLogin: vi.fn<(email: string) => Promise<void>>(),
     startDemo: vi.fn<() => Promise<DemoSession>>(),
   },
 }));
@@ -33,12 +33,27 @@ vi.mock('../api/client.ts', async () => {
 const { ApiError } = await vi.importActual<typeof import('@fos/api-client')>('@fos/api-client');
 
 const APP = 'árvore do currículo';
+const ENTRAR = 'a tela de entrada';
 
+/**
+ * O portão redireciona em vez de renderizar o login, então o teste precisa de um roteador com a
+ * rota de destino — é ela que prova que quem não tem sessão sai daqui.
+ */
 function renderGate() {
   return render(
-    <AuthGate>
-      <p>{APP}</p>
-    </AuthGate>,
+    <MemoryRouter initialEntries={['/hoje']}>
+      <Routes>
+        <Route
+          path="/hoje"
+          element={
+            <AuthGate>
+              <p>{APP}</p>
+            </AuthGate>
+          }
+        />
+        <Route path="/entrar" element={<p>{ENTRAR}</p>} />
+      </Routes>
+    </MemoryRouter>,
   );
 }
 
@@ -46,9 +61,9 @@ function conta(overrides: Partial<AccountView> = {}): AccountView {
   return {
     displayName: 'Ana',
     email: 'ana@example.test',
-    provider: 'google',
+    provider: 'password',
     accessStatus: 'APROVADO',
-    owner: false,
+    role: 'USUARIO',
     ...overrides,
   };
 }
@@ -60,126 +75,27 @@ beforeEach(() => {
     providers: [
       { id: 'google', label: 'Google', authorizationUrl: '/api/oauth2/authorization/google' },
     ],
-    emailEnabled: false,
     demoEnabled: false,
+    passwordEnabled: true,
   });
   apiMock.startDemo.mockResolvedValue({ destino: '/hoje', expiraEm: '2026-08-18T12:00:00Z' });
-  apiMock.requestEmailAccess.mockResolvedValue(undefined);
-  apiMock.requestEmailLogin.mockResolvedValue(undefined);
   apiMock.logout.mockResolvedValue(undefined);
   apiMock.deleteAccount.mockResolvedValue(undefined);
 });
 
 describe('AuthGate', () => {
-  it('sem sessão, mostra a tela de login com um botão por provedor habilitado', async () => {
+  it('sem sessão, manda para a tela de entrada', async () => {
     apiMock.getAccount.mockRejectedValue(
       new ApiError(401, 'nao_autenticado', 'Requisição sem sessão autenticada.'),
     );
 
     renderGate();
 
-    const entrar = await screen.findByRole('link', { name: /entrar com google/i });
-    // Âncora, e não botão com fetch: o fluxo OAuth é navegação de página inteira.
-    expect(entrar).toHaveAttribute('href', '/api/oauth2/authorization/google');
+    expect(await screen.findByText(ENTRAR)).toBeInTheDocument();
     expect(screen.queryByText(APP)).not.toBeInTheDocument();
   });
 
-  it('sem provedor configurado, o login diz isso em vez de mostrar tela vazia', async () => {
-    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-    apiMock.getAuthProviders.mockResolvedValue({ providers: [], emailEnabled: false });
-
-    renderGate();
-
-    expect(
-      await screen.findByText(/nenhuma forma de entrada está configurada/i),
-    ).toBeInTheDocument();
-  });
-
-  it('sem entrada por e-mail habilitada, não oferece a alternativa', async () => {
-    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-
-    renderGate();
-
-    await screen.findByRole('link', { name: /entrar com google/i });
-    expect(screen.queryByRole('button', { name: /não tenho nenhuma dessas contas/i })).toBeNull();
-  });
-
-  it('quem não tem provedor pede acesso e vê o pedido registrado', async () => {
-    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-    apiMock.getAuthProviders.mockResolvedValue({
-      providers: [
-        { id: 'google', label: 'Google', authorizationUrl: '/api/oauth2/authorization/google' },
-      ],
-      emailEnabled: true,
-    });
-
-    renderGate();
-
-    await userEvent.click(
-      await screen.findByRole('button', { name: /não tenho nenhuma dessas contas/i }),
-    );
-    await userEvent.type(screen.getByLabelText(/seu e-mail/i), 'sem-provedor@example.test');
-    await userEvent.click(screen.getByRole('button', { name: /pedir acesso/i }));
-
-    expect(apiMock.requestEmailAccess).toHaveBeenCalledWith('sem-provedor@example.test');
-    expect(await screen.findByText(/pedido registrado/i)).toBeInTheDocument();
-    // Não promete e-mail agora: o primeiro só sai quando o autor aprova.
-    expect(screen.getByText(/quando ela sair, você recebe um link/i)).toBeInTheDocument();
-  });
-
-  it('quem já tem acesso pede o link, e a tela não revela se a conta existe', async () => {
-    apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-    apiMock.getAuthProviders.mockResolvedValue({ providers: [], emailEnabled: true });
-
-    renderGate();
-
-    await userEvent.click(
-      await screen.findByRole('button', { name: /não tenho nenhuma dessas contas/i }),
-    );
-    await userEvent.type(screen.getByLabelText(/seu e-mail/i), 'ana@example.test');
-    await userEvent.click(screen.getByRole('button', { name: /já tenho acesso/i }));
-
-    expect(apiMock.requestEmailLogin).toHaveBeenCalledWith('ana@example.test');
-    // "Se existe uma conta liberada" — a tela repete a indistinção do backend de propósito.
-    expect(await screen.findByText(/se existe uma conta liberada/i)).toBeInTheDocument();
-  });
-
-  it('conta na fila vê a solicitação registrada, não o app', async () => {
-    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'PENDENTE' }));
-
-    renderGate();
-
-    expect(
-      await screen.findByRole('heading', { name: /solicitação registrada/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/ana@example.test/i)).toBeInTheDocument();
-    expect(screen.queryByText(APP)).not.toBeInTheDocument();
-  });
-
-  it('aprovada, a conta pendente entra ao verificar de novo', async () => {
-    apiMock.getAccount
-      .mockResolvedValueOnce(conta({ accessStatus: 'PENDENTE' }))
-      .mockResolvedValue(conta());
-
-    renderGate();
-    await userEvent.click(await screen.findByRole('button', { name: /verificar de novo/i }));
-
-    expect(await screen.findByText(APP)).toBeInTheDocument();
-  });
-
-  it('conta recusada não ganha botão de pedir de novo', async () => {
-    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'RECUSADO' }));
-
-    renderGate();
-
-    expect(
-      await screen.findByRole('heading', { name: /acesso não liberado/i }),
-    ).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /pedir/i })).not.toBeInTheDocument();
-    expect(screen.queryByText(APP)).not.toBeInTheDocument();
-  });
-
-  it('conta aprovada abre o app', async () => {
+  it('com sessão, abre o app', async () => {
     apiMock.getAccount.mockResolvedValue(conta());
 
     renderGate();
@@ -187,57 +103,15 @@ describe('AuthGate', () => {
     expect(await screen.findByText(APP)).toBeInTheDocument();
   });
 
-  it('sair derruba a sessão e devolve para o login', async () => {
-    apiMock.getAccount
-      .mockResolvedValueOnce(conta({ accessStatus: 'PENDENTE' }))
-      .mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-
-    renderGate();
-    await userEvent.click(await screen.findByRole('button', { name: /^sair$/i }));
-
-    expect(apiMock.logout).toHaveBeenCalled();
-    expect(await screen.findByRole('link', { name: /entrar com google/i })).toBeInTheDocument();
-  });
-
-  it('sair que falha diz isso, em vez de fingir que a sessão acabou', async () => {
-    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'PENDENTE' }));
-    apiMock.logout.mockRejectedValue(new Error('502 Bad Gateway'));
-
-    renderGate();
-    await userEvent.click(await screen.findByRole('button', { name: /^sair$/i }));
-
-    // A sessão continua viva no servidor: recarregar a conta faria a pessoa achar que saiu.
-    expect(await screen.findByText(/não foi possível sair.*502/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /solicitação registrada/i })).toBeInTheDocument();
-  });
-
-  it('excluir a conta pede confirmação e só então apaga', async () => {
-    apiMock.getAccount
-      .mockResolvedValueOnce(conta({ accessStatus: 'PENDENTE' }))
-      .mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
-
-    renderGate();
-    await userEvent.click(
-      await screen.findByRole('button', { name: /cancelar e apagar meus dados/i }),
-    );
-
-    // Um clique não apaga: a confirmação diz o que se perde antes de existir botão que apaga.
-    expect(apiMock.deleteAccount).not.toHaveBeenCalled();
-    expect(screen.getByText(/não dá para desfazer/i)).toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole('button', { name: /sim, excluir tudo/i }));
-
-    await waitFor(() => expect(apiMock.deleteAccount).toHaveBeenCalled());
-    expect(await screen.findByRole('link', { name: /entrar com google/i })).toBeInTheDocument();
-  });
-
-  it('API fora do ar não vira tela de login: o erro é dito, com nova tentativa', async () => {
+  it('API fora do ar não vira tela de entrada: o erro é dito, com nova tentativa', async () => {
     apiMock.getAccount.mockRejectedValueOnce(new Error('Failed to fetch'));
 
     renderGate();
 
+    // Confundir "backend frio" com "não está logado" mandaria a pessoa fazer um login que não
+    // resolveria nada, e esconderia a causa real.
     expect(await screen.findByText(/não foi possível falar com a API/i)).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /entrar com google/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(ENTRAR)).not.toBeInTheDocument();
 
     apiMock.getAccount.mockResolvedValue(conta());
     await userEvent.click(screen.getByRole('button', { name: /tentar de novo/i }));
@@ -251,22 +125,20 @@ describe('AuthGate', () => {
  *
  * O servidor responde 401, igual a quem nunca entrou — e é a resposta certa: passado o prazo a
  * conta não existe mais para quem está do outro lado. Quem sabe que havia uma demonstração é o
- * navegador, e é isso que separa "faça login" de "a demonstração acabou".
+ * navegador, e é isso que separa "crie uma conta" de "a demonstração acabou".
  */
 describe('AuthGate com demonstração vencida', () => {
   const MARCA = 'fos.demo-conta';
 
-  it('sem marca de demonstração, 401 continua sendo a tela de login', async () => {
+  it('sem marca de demonstração, 401 continua mandando para a entrada', async () => {
     apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
 
     renderGate();
 
-    expect(
-      await screen.findByRole('heading', { name: /entrar no fightossstreak/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(ENTRAR)).toBeInTheDocument();
   });
 
-  it('com marca, a tela explica o que aconteceu em vez de pedir login', async () => {
+  it('com marca, a tela explica o que aconteceu em vez de mandar entrar', async () => {
     sessionStorage.setItem(MARCA, 'sim');
     apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
 
@@ -275,9 +147,7 @@ describe('AuthGate com demonstração vencida', () => {
     expect(
       await screen.findByRole('heading', { name: /a demonstração terminou/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /entrar no fightossstreak/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(ENTRAR)).not.toBeInTheDocument();
   });
 
   it('recomeçar abre outra demonstração e volta para o app', async () => {
@@ -296,20 +166,18 @@ describe('AuthGate com demonstração vencida', () => {
     expect(await screen.findByText(APP)).toBeInTheDocument();
   });
 
-  it('quem quer conta de verdade limpa a marca e cai no login', async () => {
+  it('quem quer conta de verdade limpa a marca e cai na entrada', async () => {
     sessionStorage.setItem(MARCA, 'sim');
     apiMock.getAccount.mockRejectedValue(new ApiError(401, 'nao_autenticado', 'sem sessão'));
 
     renderGate();
     await screen.findByRole('heading', { name: /a demonstração terminou/i });
 
-    await userEvent.click(screen.getByRole('button', { name: /entrar na minha conta/i }));
+    await userEvent.click(screen.getByRole('button', { name: /criar conta ou entrar/i }));
 
     // Sem limpar a marca, o 401 seguinte cairia de novo nesta mesma tela — e a pessoa ficaria
-    // presa num loop de demonstração sem nunca ver o login.
-    expect(
-      await screen.findByRole('heading', { name: /entrar no fightossstreak/i }),
-    ).toBeInTheDocument();
+    // presa num loop de demonstração sem nunca ver a entrada.
+    expect(await screen.findByText(ENTRAR)).toBeInTheDocument();
     expect(sessionStorage.getItem(MARCA)).toBeNull();
   });
 });

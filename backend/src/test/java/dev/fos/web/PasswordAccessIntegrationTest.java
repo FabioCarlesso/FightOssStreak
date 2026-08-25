@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import dev.fos.email.EmailSender;
 import dev.fos.model.AppUser;
-import dev.fos.model.LoginTokenPurpose;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.LoginTokenRepository;
@@ -142,6 +141,8 @@ class PasswordAccessIntegrationTest {
         cadastrar(ENDERECO, SENHA).andExpect(status().isAccepted());
 
         assertThat(identidade(ENDERECO).isEmailVerified()).isFalse();
+        // O nome é opcional e, quando vem, é ele que o app mostra — e não o endereço cru.
+        assertThat(identidade(ENDERECO).getDisplayName()).isEqualTo("Aluno de teste");
         // Sem sessão: quem digitou o endereço ainda não provou que ele é seu. É o passo cuja
         // ausência deixaria alguém entrar no app com a conta pendurada no e-mail de outra pessoa.
         mockMvc.perform(get("/api/me")).andExpect(status().isUnauthorized());
@@ -149,7 +150,6 @@ class PasswordAccessIntegrationTest {
         assertThat(mensagensPara(ENDERECO).getFirst().assunto()).contains("Confirme");
         // Nasce fora de fila nenhuma: com cadastro aberto, aprovação não filtra ninguém (D47).
         assertThat(conta(ENDERECO).isApproved()).isTrue();
-        assertThat(accounts.pendingRequests()).isEmpty();
     }
 
     @Test
@@ -179,7 +179,8 @@ class PasswordAccessIntegrationTest {
         String link = linkDeVerificacao();
 
         mockMvc.perform(get(link)).andExpect(redirectedUrl("/hoje"));
-        mockMvc.perform(get(link)).andExpect(redirectedUrl("/entrar?erro=confirmacao_invalida"));
+        // "Usado", e não "inválido": a tela manda entrar, porque a conta já está confirmada.
+        mockMvc.perform(get(link)).andExpect(redirectedUrl("/confirmar-email?erro=usado"));
     }
 
     @Test
@@ -195,8 +196,8 @@ class PasswordAccessIntegrationTest {
         cadastrar(OUTRO, SENHA);
         String outroLink = linkDeVerificacao(OUTRO);
         CaixaDeSaida.agora = CaixaDeSaida.agora.plus(Duration.ofHours(25));
-        mockMvc.perform(get(outroLink))
-                .andExpect(redirectedUrl("/entrar?erro=confirmacao_invalida"));
+        // "Vencido" leva à tela que oferece reenviar — a saída que um erro genérico esconderia.
+        mockMvc.perform(get(outroLink)).andExpect(redirectedUrl("/confirmar-email?erro=vencido"));
     }
 
     @Test
@@ -436,10 +437,7 @@ class PasswordAccessIntegrationTest {
                         identities.findByProviderAndProviderSubject(
                                 PasswordAuthenticationToken.PROVIDER, ENDERECO))
                 .isEmpty();
-        assertThat(
-                        tokens.findAll().stream()
-                                .filter(t -> t.getPurpose() != LoginTokenPurpose.ENTRADA))
-                .isEmpty();
+        assertThat(tokens.findAll()).isEmpty();
     }
 
     // ------------------------------------------------------------------ auxiliares
@@ -449,7 +447,9 @@ class PasswordAccessIntegrationTest {
                 post("/api/auth/cadastro")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"%s\",\"senha\":\"%s\"}".formatted(email, senha)));
+                        .content(
+                                "{\"email\":\"%s\",\"senha\":\"%s\",\"nome\":\"Aluno de teste\"}"
+                                        .formatted(email, senha)));
     }
 
     private ResultActions entrar(String email, String senha) throws Exception {

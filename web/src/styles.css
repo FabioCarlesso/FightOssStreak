@@ -842,8 +842,48 @@ button.danger {
   gap: 0.5rem;
 }
 
+/*
+ * Cadastro com senha (#82): a regra dita antes do erro, e a força como informação.
+ *
+ * A barra NÃO reprova composição — só o mínimo de comprimento reprova, e quem reprova é o servidor.
+ * Ela existe para dar retorno enquanto se digita, não para virar um segundo portão.
+ */
+.senha__regra {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.senha__forca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.senha__barra {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.senha__barra > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 120ms linear;
+}
+
+.senha__forca--1 .senha__barra > span {
+  background: var(--warn);
+}
+
 /* Botão que se comporta como link: usado onde a ação é secundária e o espaço, curto. */
-/* Entrada por e-mail (#52): alternativa discreta, não concorrente do provedor. */
+/* Telas de fronteira: alternativas discretas, nunca concorrentes da ação principal. */
 .login__alternativa {
   margin-top: 1rem;
   text-align: center;

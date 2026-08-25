@@ -1,6 +1,7 @@
 package dev.fos.config;
 
 import dev.fos.model.AppUser;
+import dev.fos.model.Role;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.OwnerRequiredException;
@@ -9,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * A rota do dono, só para quem é dono.
+ * As rotas de administração, só para quem administra.
  *
  * <p>Repare no que não existe aqui dentro: nenhuma pergunta sobre o caminho da requisição. Onde a
  * regra vale é decidido pelo {@code addPathPatterns} do {@link WebMvcConfig}, que casa contra o
@@ -23,8 +24,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * liberava quem quisesse — o poder que a D36 reserva ao autor, virando transitivo. O caso está
  * preso em {@code AuthIntegrationTest.encodedPathDoesNotBypassTheOwnerCheck}.
  *
- * <p>Continua sendo uma checagem contra {@code fos.auth.owner-emails}, e não um sistema de papéis:
- * a #24 habilita múltiplos usuários sob liberação do autor, não promove o app a multiusuário.
+ * <p>Desde a D48 este é o <b>único</b> ponto do app que pergunta "esta requisição é de
+ * administração?", e a resposta vem de {@code AccountService.roleOf}. Continua sendo uma checagem
+ * contra {@code fos.auth.owner-emails}, sem tabela de papéis: o critério para isso mudar está na
+ * D48 — um segundo administrador, ou uma permissão que não seja "tudo".
  */
 class OwnerOnlyInterceptor implements HandlerInterceptor {
 
@@ -40,7 +43,7 @@ class OwnerOnlyInterceptor implements HandlerInterceptor {
     public boolean preHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler) {
         AppUser user = currentUser.currentUser();
-        if (!accounts.isOwner(user)) {
+        if (accounts.roleOf(user) != Role.ADMIN) {
             throw new OwnerRequiredException();
         }
         return true;

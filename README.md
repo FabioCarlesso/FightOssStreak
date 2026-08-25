@@ -15,7 +15,7 @@ MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalh
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo (D21 em [`07-decisoes.md`](docs/07-decisoes.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |
 | Anotações por nó | Anotação fixada junto ao conceito, mais o histórico do que foi anotado a cada drill (#45) |
-| Contas | Login por Google e Facebook, com **acesso sob aprovação do autor** e exclusão de conta (D36). Apple pendente |
+| Contas | **Cadastro aberto** com e-mail e senha, confirmado por link, mais login por Google e Facebook (D47/D48). Exclusão de conta incluída. Apple pendente |
 | Demonstração pública | Um botão na landing abre o app numa **conta temporária** com dados de exemplo, que grava de verdade e some em duas horas (D39). Depende de `FOS_DEMO_TEMPLATE_EMAIL` |
 | Backend | Spring Boot + Flyway + Spring Security, API documentada em OpenAPI |
 | Web | React + Vite |
@@ -180,7 +180,6 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
 | `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
-| `FOS_PUBLIC_URL` | backend | vazia | URL pública do app para o link no resumo da fila; mesmo valor de `VITE_PUBLIC_URL` |
 
 Detalhes que não são óbvios:
 
@@ -206,10 +205,10 @@ Detalhes que não são óbvios:
   Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
-- **`FOS_OWNER_EMAILS` vazia deixa o app sem dono.** Ninguém é aprovado automaticamente, e a
-  fila de solicitações fica sem quem a decida. É ela também que faz a conta do autor adotar o
+- **`FOS_OWNER_EMAILS` vazia deixa o app sem administração.** Ninguém vê a fila de feedback nem as
+  métricas — o app funciona igual para todo mundo. É ela também que faz a conta do autor adotar o
   progresso pré-existente (D36). Preenchê-la **depois** de já ter entrado uma vez funciona: a
-  regra vale em todo login, então o login seguinte aprova a conta e adota o progresso.
+  regra vale em todo login, então o login seguinte reconhece a conta e adota o progresso.
 - **`FOS_DEMO_TEMPLATE_EMAIL` vazia desliga a demonstração.** O botão não aparece na landing e
   `POST /api/demo/sessao` responde 404 — a aplicação sobe igual. Se ela apontar para um endereço
   que não tem identidade com **e-mail verificado**, o efeito é o mesmo: o recurso simplesmente não
@@ -217,47 +216,51 @@ Detalhes que não são óbvios:
 - **Provedor sem credencial não é registrado.** Não é uma tela de login com botão que falha: o
   provedor simplesmente não existe, e a aplicação sobe sem segredo nenhum (é o modo dev e o CI).
 - **Sem `FOS_EMAIL_API_KEY` não há cadastro por senha.** O cadastro *é* o e-mail de confirmação,
-  então sem provedor de envio ele responde **503** e a tela não o oferece — mesma regra dos
-  provedores de login. A aplicação sobe igual, e dev e CI continuam sem segredo nenhum.
+  então sem provedor de envio ele responde **503** e a tela diz isso — mesma regra dos provedores de
+  login. A aplicação sobe igual, e dev e CI continuam sem segredo nenhum.
+- **`FOS_PUBLIC_URL` não existe mais.** Ela servia só ao resumo horário da fila (D38), que saiu com
+  o portão de aprovação (D48). Os links de confirmação e redefinição saem da URL da própria
+  requisição.
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
 
 ## Acesso e contas
 
-O app **exige login**, e há três caminhos (D47):
+O app **exige login**, e há dois caminhos (D47):
 
-- **Por provedor externo** (Google; Facebook se configurado): entra **direto**, sem fila. Quem
-  chega por ali já teve a identidade verificada por um terceiro, e para essa pessoa o app continua
-  sem ver senha nenhuma.
 - **Com e-mail e senha** (`POST /api/auth/cadastro`): qualquer um cria conta, sem fila e sem
   aprovação. A conta nasce **não verificada e sem sessão** — quem entra é o **link de confirmação**
   que chega por e-mail, vale **24 horas** e funciona uma vez. Senha de no mínimo **12 caracteres**,
   guardada só como hash; *esqueci minha senha* manda um link de **1 hora** que, ao ser usado, queima
   os links pendentes e derruba as sessões abertas da conta.
-- **Por link de e-mail sob aprovação** (D37): o caminho antigo, ainda de pé — o pedido nasce
-  **pendente**, o autor libera pela fila e sai um link de 15 minutos. A fatia 3 da #81 desmonta a
-  fila; até lá ele coexiste com o cadastro.
+- **Por provedor externo** (Google; Facebook se configurado): entra direto. Quem chega por ali já
+  teve a identidade verificada por um terceiro, e para essa pessoa o app continua sem ver senha
+  nenhuma.
 
 **Google e senha no mesmo endereço são a mesma conta**, desde que o e-mail esteja **verificado** dos
 dois lados: a identidade nova se anexa à conta que já existe, com o progresso intacto, em vez de
 criar uma conta vazia. E-mail não verificado nunca vincula nada.
 
-O pedido de acesso em si não dispara e-mail nenhum. Quem decide recebe um **resumo da fila** de hora
-em hora entre **10h e 22h** (horário de Brasília), e só numa janela em que apareceu pedido novo — o
-e-mail lista tudo que ainda espera decisão, não só o que chegou agora (D38).
+**Não há mais fila de aprovação, resumo horário nem link de e-mail como meio de login** (D48). Quem
+entrava por link antes do cadastro aberto continua entrando: basta se cadastrar com o **mesmo
+endereço** — o e-mail já está verificado, então a senha nova se anexa à conta antiga, com o progresso
+onde estava.
+
+**`fos.auth.owner-emails` é a lista de contas de administração** (fila de feedback e métricas), e
+exige e-mail verificado — pelo provedor ou pela confirmação do próprio app. Não há tabela de papéis:
+`GET /api/me` devolve `role` (`ADMIN` ou `USUARIO`), decidido num ponto só.
 
 E um degrau **antes** dos dois (D39): a landing oferece *Ver o app funcionando*, que abre uma
 conta de demonstração temporária, já com progresso de exemplo, sem pedir nada a ninguém.
 
-Sem sessão a API responde `401`; com sessão e sem liberação, `403` com o motivo
-(`acesso_pendente` ou `acesso_recusado`). A decisão e o porquê estão em
-[`docs/07-decisoes.md`](docs/07-decisoes.md) (D36, D37 e D38).
+Sem sessão a API responde `401`. A decisão e o porquê estão em
+[`docs/07-decisoes.md`](docs/07-decisoes.md) — a história completa vai da D36 (login sob aprovação) à
+D48 (o portão desmontado), passando pela D47, que abriu o cadastro.
 
-**Habilitar a entrada por e-mail**: crie a chave no provedor de envio, verifique o domínio do
-remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual e a
-alternativa não aparece na tela de login. O resumo da fila usa as mesmas variáveis mais
-`FOS_OWNER_EMAILS`: sem alguma das três nada é agendado nem enviado, e o pedido entra na fila do
-mesmo jeito. `FOS_PUBLIC_URL` (ex.: `https://seu-dominio`) é opcional e só serve para o resumo
-trazer o link de *Solicitações* — o agendador não tem requisição de onde deduzir o endereço.
+**Habilitar o cadastro com senha**: crie a chave no provedor de envio, verifique o domínio do
+remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual, `POST
+/api/auth/cadastro` responde `503` e a tela diz que o cadastro não existe neste ambiente — sobra a
+entrada por provedor. É a única credencial cuja ausência tira uma **porta de entrada** inteira, e
+não só um botão: o cadastro *é* o e-mail de confirmação.
 
 **Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
 
@@ -284,12 +287,12 @@ deslocadas para que a agenda caia em torno de hoje. A conta-modelo nunca recebe 
 ser inclusive a sua conta de dono, que a cópia não herda poder nenhum. As demonstrações vencidas
 são apagadas quando alguém abre a próxima.
 
-**Aprovar quem pediu**: o resumo da fila chega nos endereços de `FOS_OWNER_EMAILS`. Para decidir,
-entre com a conta de dono e abra *Solicitações* no menu. A fila também está em
-`GET /api/admin/solicitacoes`.
+**Ler o feedback de quem usa**: entre com uma conta de `FOS_OWNER_EMAILS` e abra *Feedback*; a fila
+aparece abaixo do formulário. Também está em `GET /api/admin/feedback`.
 
-**Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, progresso, streak, agenda,
-drills, anotações e aceite — em uma transação, sem volta. Vale para conta pendente e recusada.
+**Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, identidade, hash da senha,
+links pendentes, progresso, streak, agenda, drills, anotações e aceite — em uma transação, sem
+volta.
 
 Em dev, o fluxo real do OAuth é mais simples pelo Compose (`docker compose up --build`) do que
 pelo Vite: o provedor devolve o browser para a origem que o backend recebeu, e atrás do dev server

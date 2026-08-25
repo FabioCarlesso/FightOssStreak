@@ -3,6 +3,7 @@ import { api } from '../api/client.ts';
 import { SHORT_DISCLAIMER } from '../content/disclaimer.ts';
 import {
   APP_PATH,
+  SIGNUP_PATH,
   DEMO,
   DISCLAIMER_DOC_URL,
   DOCS_URL,
@@ -27,8 +28,8 @@ import { useAsync } from '../state/useAsync.ts';
  * Duas coisas a página não pode fazer, e as duas são estruturais. **Não depende da API para
  * renderizar**: era o `DisclaimerGate` que decidia a raiz, e ele depende de `GET /api/disclaimer`
  * para aparecer, então com o backend frio a primeira tela de quem recebia o link era "não foi
- * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de pedir
- * acesso leva a `/hoje`, que continua atrás do aviso.
+ * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de criar
+ * conta leva a `/cadastrar`, e de lá para dentro passa pelo aviso.
  *
  * A regra que mudou com a #62 é a primeira, e mudou para melhor definida: a página *pergunta* se
  * este ambiente tem demonstração, mas nada nela espera a resposta. Backend frio, offline ou sem
@@ -72,8 +73,8 @@ export function LandingPage() {
           </p>
           <p className="landing__cta">
             {/* A demonstração vem primeiro quando existe: é o degrau que a pessoa consegue subir
-                agora, sem pedir nada a ninguém, e é decidindo aqui que ela vai saber se vale
-                pedir acesso. */}
+                agora, sem criar conta nenhuma, e é decidindo aqui que ela vai saber se vale
+                criar uma. */}
             {demoDisponivel && (
               <button
                 type="button"
@@ -84,14 +85,15 @@ export function LandingPage() {
                 {demo.starting ? DEMO.ctaCarregando : DEMO.cta}
               </button>
             )}
-            {/* "Pedir acesso", e não "Abrir o app": desde a #24 o app é de uso pessoal com acesso
-                sob aprovação, e quem chega pelo link não entra sozinho. Copy que promete o que o
-                produto não entrega é o defeito que esta página existe para não ter. */}
+            {/* "Criar conta" desde a D47: até a fatia anterior o app era de uso pessoal com
+                acesso sob aprovação, e a copy dizia "pedir acesso" porque quem chegava pelo link
+                não entrava sozinho. Agora entra — e prometer menos do que o produto entrega é o
+                mesmo defeito que prometer mais. */}
             <Link
               className={`landing__button${demoDisponivel ? ' landing__button--ghost' : ''}`}
-              to={APP_PATH}
+              to={SIGNUP_PATH}
             >
-              Pedir acesso
+              Criar conta
             </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
               Ver o código
@@ -100,8 +102,8 @@ export function LandingPage() {
           {demo.failure && <p className="landing__erro">{demo.failure}</p>}
           <p className="landing__note">
             {demoDisponivel && `${DEMO.nota} `}
-            Acesso sob aprovação e sem cobrança. A entrada é por provedor externo — o app nunca vê
-            sua senha. O aviso de responsabilidade aparece antes da primeira tela.
+            Cadastro aberto e sem cobrança: e-mail e senha, ou a conta do Google. O aviso de
+            responsabilidade aparece antes da primeira tela.
           </p>
         </div>
 
@@ -216,8 +218,8 @@ export function LandingPage() {
           </span>
         </h2>
         <p className="landing__cta">
-          <Link className="landing__button" to={APP_PATH}>
-            Pedir acesso
+          <Link className="landing__button" to={SIGNUP_PATH}>
+            Criar conta
           </Link>
         </p>
       </section>
