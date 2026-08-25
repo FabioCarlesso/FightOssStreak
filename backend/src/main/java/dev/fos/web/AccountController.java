@@ -6,6 +6,7 @@ import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
 import dev.fos.service.EmailAccessService;
+import dev.fos.service.PasswordAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +46,7 @@ public class AccountController {
     private final AccountService accounts;
     private final EmailAccessService emailAccess;
     private final DemoAccessService demoAccess;
+    private final PasswordAccessService passwordAccess;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrations;
 
     public AccountController(
@@ -52,11 +54,13 @@ public class AccountController {
             AccountService accounts,
             EmailAccessService emailAccess,
             DemoAccessService demoAccess,
+            PasswordAccessService passwordAccess,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) {
         this.currentUser = currentUser;
         this.accounts = accounts;
         this.emailAccess = emailAccess;
         this.demoAccess = demoAccess;
+        this.passwordAccess = passwordAccess;
         this.clientRegistrations = clientRegistrations;
     }
 
@@ -75,7 +79,10 @@ public class AccountController {
                                 .toList()
                         : List.of();
         return new AccountDtos.AuthProviders(
-                enabled, emailAccess.isEnabled(), demoAccess.isEnabled());
+                enabled,
+                emailAccess.isEnabled(),
+                demoAccess.isEnabled(),
+                passwordAccess.isEnabled());
     }
 
     @GetMapping("/me")

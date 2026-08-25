@@ -6,6 +6,7 @@ import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.FeedbackNotAllowedException;
 import dev.fos.service.NodeNotFoundException;
 import dev.fos.service.OwnerRequiredException;
+import dev.fos.service.PasswordAccessException;
 import dev.fos.service.QuizStaleException;
 import dev.fos.service.QuizUnavailableException;
 import dev.fos.service.UnauthenticatedException;
@@ -69,6 +70,28 @@ class ApiExceptionHandler {
                     case NAO_CONFIGURADA -> HttpStatus.NOT_FOUND;
                     case LOTADA -> HttpStatus.TOO_MANY_REQUESTS;
                     case SESSAO_EXISTENTE -> HttpStatus.CONFLICT;
+                };
+        return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    /**
+     * Entrada por senha recusada (#81).
+     *
+     * <p>Um status por motivo, e a escolha de cada um é a decisão: <b>401</b> para credencial que
+     * não confere — sem distinguir e-mail inexistente de senha errada, senão o login vira consulta
+     * de quem tem conta; <b>403</b> para senha certa e e-mail ainda não confirmado, porque 401
+     * mandaria a pessoa de volta para o login que ela acabou de fazer certo; <b>429</b> no freio de
+     * tentativas; e <b>503</b> quando o ambiente não tem envio de e-mail, que é indisponibilidade
+     * de infraestrutura e não erro de quem pediu.
+     */
+    @ExceptionHandler(PasswordAccessException.class)
+    ResponseEntity<ApiError> handlePasswordAccess(PasswordAccessException e) {
+        HttpStatus status =
+                switch (e.motivo()) {
+                    case CREDENCIAL_INVALIDA -> HttpStatus.UNAUTHORIZED;
+                    case EMAIL_NAO_VERIFICADO -> HttpStatus.FORBIDDEN;
+                    case MUITAS_TENTATIVAS -> HttpStatus.TOO_MANY_REQUESTS;
+                    case INDISPONIVEL -> HttpStatus.SERVICE_UNAVAILABLE;
                 };
         return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
     }

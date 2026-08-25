@@ -5,6 +5,7 @@ import dev.fos.email.EmailSender;
 import dev.fos.model.AccessStatus;
 import dev.fos.model.AppUser;
 import dev.fos.model.LoginToken;
+import dev.fos.model.LoginTokenPurpose;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.LoginTokenRepository;
@@ -293,7 +294,9 @@ public class EmailAccessService {
     public Optional<String> consume(String rawToken) {
         Instant now = Instant.now(clock);
         return tokens.findByTokenHash(hash(rawToken))
-                .filter(token -> token.consume(now))
+                // Com propósito conferido desde a #81: link de confirmação de cadastro vale 24h e
+                // não pode ser apresentado aqui para valer como entrada de 15 minutos.
+                .filter(token -> token.consume(LoginTokenPurpose.ENTRADA, now))
                 .flatMap(
                         token ->
                                 identities.findByUserId(token.getUserId()).stream()
@@ -319,7 +322,13 @@ public class EmailAccessService {
         }
         Instant now = Instant.now(clock);
         String raw = newToken();
-        tokens.save(new LoginToken(user.getId(), hash(raw), now, now.plus(VALIDADE)));
+        tokens.save(
+                new LoginToken(
+                        user.getId(),
+                        hash(raw),
+                        LoginTokenPurpose.ENTRADA,
+                        now,
+                        now.plus(VALIDADE)));
         String link = baseUrl + "/api/login/email/" + raw;
         sender.send(
                 email,

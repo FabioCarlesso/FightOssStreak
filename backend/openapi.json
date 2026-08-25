@@ -32,6 +32,10 @@
       "description": "Fila de acesso; restrita ao dono do app"
     },
     {
+      "name": "Cadastro e senha",
+      "description": "Conta com e-mail e senha, confirmada por link"
+    },
+    {
       "name": "Atividade",
       "description": "Streak, agenda de revisão e aceite do aviso"
     },
@@ -256,6 +260,146 @@
         }
       }
     },
+    "/api/auth/verificacao/reenviar": {
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Manda outro link de confirmação",
+        "description": "O link anterior deixa de valer. Responde igual para cadastro pendente, confirmado e inexistente.",
+        "operationId": "reenviar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/senha/redefinir/{token}": {
+      "get": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "O link de redefinição ainda vale?",
+        "description": "Consulta que não gasta o link: consumir na abertura da tela o queimaria em qualquer pré-carregamento do navegador ou do cliente de e-mail.",
+        "operationId": "conferir",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Troca a senha",
+        "description": "Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.",
+        "operationId": "redefinir",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SenhaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/senha/esquecida": {
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Manda o link de redefinição",
+        "description": "Responde igual para endereço com conta e sem conta.",
+        "operationId": "esquecida",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Entra com e-mail e senha",
+        "description": "401 sem dizer se o e-mail existe; 403 quando a senha confere mas o endereço ainda não foi confirmado; 429 no freio de tentativas.",
+        "operationId": "entrar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/email/solicitar": {
       "post": {
         "tags": [
@@ -288,12 +432,37 @@
         ],
         "summary": "Pede o link de entrada",
         "description": "Responde igual para endereço inexistente, pendente, recusado e aprovado — do contrário viraria consulta de quem tem conta no app.",
-        "operationId": "entrar",
+        "operationId": "entrar_1",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/cadastro": {
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Cria a conta e manda o link de confirmação",
+        "description": "Não abre sessão: a conta nasce não verificada e só existe de verdade quando o link for aberto. Responde igual para e-mail novo e já cadastrado — do contrário viraria consulta de quem tem conta no app.",
+        "operationId": "cadastrar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CadastroRequest"
               }
             }
           },
@@ -618,6 +787,30 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/auth/verificar/{token}": {
+      "get": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Confirma o e-mail e abre a sessão",
+        "operationId": "verificar",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1011,6 +1204,47 @@
         "type": "object",
         "properties": {
           "email": {
+            "type": "string"
+          }
+        }
+      },
+      "SenhaRequest": {
+        "required": [
+          "senha"
+        ],
+        "type": "object",
+        "properties": {
+          "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": [
+          "email",
+          "senha"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "CadastroRequest": {
+        "required": [
+          "email",
+          "senha"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
             "type": "string"
           }
         }
@@ -1556,6 +1790,14 @@
           }
         }
       },
+      "LinkView": {
+        "type": "object",
+        "properties": {
+          "valido": {
+            "type": "boolean"
+          }
+        }
+      },
       "AuthProviderView": {
         "type": "object",
         "properties": {
@@ -1583,6 +1825,9 @@
             "type": "boolean"
           },
           "demoEnabled": {
+            "type": "boolean"
+          },
+          "passwordEnabled": {
             "type": "boolean"
           }
         }

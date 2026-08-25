@@ -110,7 +110,30 @@ class AuthIntegrationTest {
     void providersAreEmptyWithoutCredentials() throws Exception {
         mockMvc.perform(get("/api/auth/providers"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.providers.length()").value(0));
+                .andExpect(jsonPath("$.providers.length()").value(0))
+                // Sem credencial de envio o cadastro por senha (#81) não existe neste ambiente, e a
+                // tela mostra o que existe em vez de um formulário que falha no envio.
+                .andExpect(jsonPath("$.passwordEnabled").value(false));
+    }
+
+    @Test
+    @DisplayName("sem segredo nenhum a aplicação sobe, e só o cadastro por senha fica indisponível")
+    void withoutAnySecretOnlyPasswordSignupIsUnavailable() throws Exception {
+        // Este contexto é o de dev e do CI: nenhum provedor, nenhuma chave de envio. Que ele suba
+        // é metade da asserção — a outra é o cadastro responder indisponível em vez de estourar.
+        mockMvc.perform(
+                        post("/api/auth/cadastro")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"email\":\"quem-quer@example.test\",\"senha\":\"uma-senha-bem-longa\"}"))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.error").value("cadastro_indisponivel"));
+
+        // E nada mais quebra: o resto do app segue respondendo como sempre respondeu.
+        mockMvc.perform(get("/api/streak").with(as("google", "quem-ja-esta-dentro")))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }
 
     @Test
@@ -208,10 +231,10 @@ class AuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("o segundo dono não sequestra o progresso do primeiro")
+    @DisplayName("outro dono, com outro e-mail, não sequestra o progresso do primeiro")
     void secondOwnerGetsItsOwnAccount() {
         AppUser first = login("google", "dono", "dono@example.test", "Dono");
-        AppUser second = login("facebook", "outro-dono", "dono@example.test", "Dono no Facebook");
+        AppUser second = login("facebook", "outro-dono", "outro-dono@example.test", "Outro dono");
 
         assertThat(first.getId()).isEqualTo(SEEDED_USER_ID);
         assertThat(second.getId()).isNotEqualTo(SEEDED_USER_ID);
@@ -245,12 +268,28 @@ class AuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("o mesmo e-mail em provedores diferentes são duas contas")
-    void emailIsNotIdentity() {
+    @DisplayName("o mesmo e-mail VERIFICADO em provedores diferentes é uma conta só (D47)")
+    void aVerifiedEmailIsTheSameAccount() {
         AppUser google = login("google", "sujeito", "mesmo@example.test", "Sujeito");
         AppUser facebook = login("facebook", "sujeito", "mesmo@example.test", "Sujeito");
 
-        assertThat(facebook.getId()).isNotEqualTo(google.getId());
+        // A D36 dizia o contrário, e estava certa enquanto não havia senha própria: sem ela, duas
+        // contas para a mesma pessoa era um incômodo. Com cadastro aberto (D47) vira o defeito de
+        // quem se cadastra e encontra a árvore em branco.
+        assertThat(facebook.getId()).isEqualTo(google.getId());
+        assertThat(identities.findByUserId(google.getId())).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("e-mail NÃO verificado nunca vincula contas")
+    void anUnverifiedEmailNeverLinksAccounts() {
+        AppUser google = login("google", "dona-do-endereco", "dela@example.test", "Dona");
+        AppUser impostor =
+                accounts.registerLogin("facebook", "impostor", "dela@example.test", false, "Nao");
+
+        // É a metade da D36 que a D47 não toca, e é ela que impede que digitar o endereço de
+        // outra pessoa num provedor que não verifica e-mail entregue a conta dela.
+        assertThat(impostor.getId()).isNotEqualTo(google.getId());
     }
 
     @Test

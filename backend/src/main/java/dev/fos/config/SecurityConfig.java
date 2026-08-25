@@ -12,11 +12,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -41,7 +46,8 @@ class SecurityConfig {
             ObjectMapper objectMapper,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations,
             FosOAuth2UserService oauth2UserService,
-            FosOidcUserService oidcUserService)
+            FosOidcUserService oidcUserService,
+            SessionRegistry sessionRegistry)
             throws Exception {
 
         // Sem isto o Spring 6 adia a geração do token de CSRF, e o cookie só aparece depois que
@@ -57,6 +63,14 @@ class SecurityConfig {
                                                 "/actuator/health",
                                                 "/api/auth/providers",
                                                 "/api/auth/email/**",
+                                                // Cadastro com senha própria (#81): é a porta de
+                                                // quem ainda não tem conta, então exigir sessão
+                                                // aqui seria pedir conta a quem vem criar uma.
+                                                "/api/auth/cadastro",
+                                                "/api/auth/login",
+                                                "/api/auth/verificar/**",
+                                                "/api/auth/verificacao/**",
+                                                "/api/auth/senha/**",
                                                 // A demonstração é degrau ANTES do portão: quem
                                                 // ainda não tem conta é justamente quem a abre
                                                 // (#62).
@@ -77,6 +91,23 @@ class SecurityConfig {
                                         .authenticated()
                                         .anyRequest()
                                         .permitAll())
+                // O registro de sessões existe para a redefinição de senha poder derrubar o que
+                // está aberto (#81). `maximumSessions(-1)` não limita nada — é o que registra o
+                // `ConcurrentSessionFilter`, sem o qual marcar uma sessão como expirada não teria
+                // efeito nenhum na requisição seguinte dela.
+                .sessionManagement(
+                        session ->
+                                session.maximumSessions(-1)
+                                        .sessionRegistry(sessionRegistry)
+                                        .expiredSessionStrategy(
+                                                event ->
+                                                        write(
+                                                                objectMapper,
+                                                                event.getResponse(),
+                                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                                "sessao_encerrada",
+                                                                "Esta sessão foi encerrada. Entre"
+                                                                        + " de novo.")))
                 .csrf(
                         csrf ->
                                 csrf.csrfTokenRepository(
@@ -150,6 +181,42 @@ class SecurityConfig {
         }
 
         return http.build();
+    }
+
+    /**
+     * Codificador de senha (#81).
+     *
+     * <p>O delegador do Spring, e não o bcrypt cru: ele grava o prefixo do algoritmo no próprio
+     * hash ({@code {bcrypt}...}), então trocar de função depois é rehash no login de cada pessoa —
+     * e não uma migration que ninguém consegue escrever, porque hash antigo não se converte. É o
+     * mesmo motivo de a coluna ser larga.
+     */
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    /**
+     * Onde as sessões abertas ficam anotadas.
+     *
+     * <p>Existe para uma coisa só: redefinir a senha precisa encerrar o que está aberto, e sem
+     * registro não há como alcançar uma sessão que não é a da requisição atual. Os logins que a
+     * aplicação faz por conta própria se anotam aqui pelo {@code SessionLogin}; os que passam pela
+     * cadeia de filtros (OAuth) são anotados pelo próprio Spring, por causa do {@code
+     * maximumSessions} acima.
+     */
+    @Bean
+    SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    /**
+     * Sem isto o registro só cresce: é o publisher que avisa a sessão destruída, e o {@code
+     * SessionRegistryImpl} só remove a entrada quando recebe esse evento.
+     */
+    @Bean
+    HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
     /**

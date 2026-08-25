@@ -4,14 +4,12 @@ import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
 import dev.fos.service.DemoAuthenticationToken;
 import dev.fos.service.DemoUnavailableException;
+import dev.fos.service.SessionLogin;
 import dev.fos.web.dto.DemoDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,12 +35,13 @@ public class DemoController {
 
     private final DemoAccessService demo;
     private final CurrentUserProvider currentUser;
-    private final SecurityContextRepository contextRepository =
-            new HttpSessionSecurityContextRepository();
+    private final SessionLogin sessao;
 
-    public DemoController(DemoAccessService demo, CurrentUserProvider currentUser) {
+    public DemoController(
+            DemoAccessService demo, CurrentUserProvider currentUser, SessionLogin sessao) {
         this.demo = demo;
         this.currentUser = currentUser;
+        this.sessao = sessao;
     }
 
     @PostMapping("/sessao")
@@ -67,13 +66,10 @@ public class DemoController {
                             throw DemoUnavailableException.alreadySignedIn();
                         });
 
-        DemoAccessService.DemoSession sessao = demo.create(request.getRemoteAddr());
-        SecurityContextHolder.getContext()
-                .setAuthentication(new DemoAuthenticationToken(sessao.subject()));
-        // Sem gravar no repositório a sessão morre com a requisição, e o visitante cairia na tela
-        // de login logo depois de a demonstração ter sido criada — o sintoma da #51 por outro
-        // caminho.
-        contextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
-        return new DemoDtos.DemoSessionView(DESTINO, sessao.expiresAt());
+        DemoAccessService.DemoSession demonstracao = demo.create(request.getRemoteAddr());
+        // Rotacionar o id, gravar o contexto e anotar a sessão são os três deveres de todo login
+        // que a aplicação faz por conta própria — ver SessionLogin.
+        this.sessao.signIn(new DemoAuthenticationToken(demonstracao.subject()), request, response);
+        return new DemoDtos.DemoSessionView(DESTINO, demonstracao.expiresAt());
     }
 }

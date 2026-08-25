@@ -8,6 +8,7 @@ import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.LoginTokenRepository;
+import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.UserIdentityRepository;
@@ -47,6 +48,7 @@ public class AccountService {
     private final SrsReviewRepository reviews;
     private final DrillLogRepository drills;
     private final LoginTokenRepository loginTokens;
+    private final PasswordCredentialRepository credentials;
     private final QuizAttemptRepository quizAttempts;
     private final DisclaimerAcceptanceRepository disclaimers;
     private final FosProperties.Auth auth;
@@ -59,6 +61,7 @@ public class AccountService {
             SrsReviewRepository reviews,
             DrillLogRepository drills,
             LoginTokenRepository loginTokens,
+            PasswordCredentialRepository credentials,
             QuizAttemptRepository quizAttempts,
             DisclaimerAcceptanceRepository disclaimers,
             FosProperties properties,
@@ -69,6 +72,7 @@ public class AccountService {
         this.reviews = reviews;
         this.drills = drills;
         this.loginTokens = loginTokens;
+        this.credentials = credentials;
         this.quizAttempts = quizAttempts;
         this.disclaimers = disclaimers;
         this.auth = properties.auth();
@@ -99,11 +103,40 @@ public class AccountService {
             UserIdentity identity = known.get();
             identity.registerLogin(now);
             identity.refresh(email, emailVerified, displayName);
-            return promoteIfOwner(identity, label, now);
+            AppUser user = promoteIfOwner(identity, label, now);
+            // Depois de promover, e não antes: a promoção pode trocar a conta da identidade, e
+            // quem fica dona do endereço é a conta que sobrou.
+            claimVerifiedEmail(user, identity.getEmail(), identity.isEmailVerified());
+            return user;
+        }
+
+        // Identidade nova cujo e-mail VERIFICADO já pertence a uma conta se anexa àquela conta,
+        // em vez de criar a segunda (D47). Sem isto, quem usa o app pelo Google e depois se
+        // cadastra com senha no mesmo endereço — ou o contrário — cai numa conta vazia e acha que
+        // perdeu o progresso.
+        Optional<AppUser> daMesmaPessoa = accountOwning(email, emailVerified);
+        if (daMesmaPessoa.isPresent()) {
+            AppUser user = daMesmaPessoa.get();
+            identities.save(
+                    new UserIdentity(
+                            user.getId(),
+                            provider,
+                            subject,
+                            email,
+                            emailVerified,
+                            displayName,
+                            now));
+            log.info(
+                    "Primeiro login de {}:{} anexado à conta {}, dona do e-mail verificado",
+                    provider,
+                    subject,
+                    user.getId());
+            return user;
         }
 
         boolean owner = emailVerified && auth.isOwnerEmail(email);
         AppUser user = owner ? ownerAccount(label, now) : users.save(AppUser.approved(label, now));
+        claimVerifiedEmail(user, email, emailVerified);
         identities.save(
                 new UserIdentity(
                         user.getId(), provider, subject, email, emailVerified, displayName, now));
@@ -180,6 +213,68 @@ public class AccountService {
         log.info(
                 "Conta {} do dono migrada para o progresso pré-existente (app_user {})",
                 user.getId(),
+                target.getId());
+        return target;
+    }
+
+    /**
+     * A conta que já é dona deste e-mail verificado, se houver (D47).
+     *
+     * <p>Endereço não verificado não responde nada: se respondesse, digitar o e-mail de outra
+     * pessoa no cadastro anexaria a identidade nova à conta dela.
+     */
+    @Transactional(readOnly = true)
+    public Optional<AppUser> accountOwning(String email, boolean emailVerified) {
+        if (!emailVerified || email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+        return users.findByPrimaryEmail(EmailAccessService.normalize(email));
+    }
+
+    /**
+     * Declara a conta dona do endereço, quando ele é verificado e ninguém mais o tem.
+     *
+     * <p>Silencioso quando outra conta já o reivindicou: são as contas que nasceram antes da D47,
+     * quando o mesmo endereço podia estar verificado em duas contas de provedores diferentes. A
+     * mais antiga fica com ele (é o que a V11 fez no backfill), e a outra segue funcionando sem
+     * vínculo — nenhuma some, e nada é fundido por trás de ninguém.
+     */
+    @Transactional
+    public void claimVerifiedEmail(AppUser user, String email, boolean emailVerified) {
+        if (!emailVerified || email == null || email.isBlank() || user.getPrimaryEmail() != null) {
+            return;
+        }
+        String normalizado = EmailAccessService.normalize(email);
+        if (users.findByPrimaryEmail(normalizado).isEmpty()) {
+            user.claimPrimaryEmail(normalizado);
+        }
+    }
+
+    /**
+     * Move a identidade para a conta que já é dona do endereço, e apaga a conta que ela deixou.
+     *
+     * <p>Só é chamado na confirmação do e-mail do cadastro por senha (#81), e só quando a conta de
+     * origem está vazia — ela nasceu no cadastro, nunca teve sessão (o cadastro não abre nenhuma) e
+     * portanto não tem o que perder. A guarda existe assim mesmo: apagar conta com dado dentro é o
+     * tipo de erro que ninguém descobre a tempo.
+     */
+    @Transactional
+    public AppUser mergeIdentityInto(UserIdentity identity, AppUser target) {
+        Long origem = identity.getUserId();
+        if (origem.equals(target.getId())) {
+            return target;
+        }
+        identity.moveTo(target.getId());
+        // Flush antes de apagar, pelo mesmo motivo da adoção do progresso semeado: sem ele a
+        // ordem das operações no commit pode tentar remover a conta antiga com a identidade ainda
+        // apontando para ela.
+        identities.saveAndFlush(identity);
+        if (identities.findByUserId(origem).isEmpty() && isEmpty(origem)) {
+            delete(origem);
+        }
+        log.info(
+                "Identidade {} anexada à conta {}, dona do e-mail",
+                identity.getId(),
                 target.getId());
         return target;
     }
@@ -274,13 +369,19 @@ public class AccountService {
      *
      * <p>São sete tabelas com {@code user_id}: {@code quiz_attempt} entrou na V3 e {@code
      * login_token} na V7. Esquecer uma delas não dá erro silencioso — dá violação de FK ao apagar
-     * {@code app_user} —, mas a ordem importa e por isso está explícita.
+     * {@code app_user} —, mas a ordem importa e por isso está explícita. A oitava, {@code
+     * password_credential} (V11), é a única que não tem {@code user_id}: ela pendura na identidade,
+     * e por isso é a primeira a sair.
      *
      * <p>Vale para conta pendente e recusada: quem pediu acesso e não entrou tem o mesmo direito de
      * sumir do banco.
      */
     @Transactional
     public void delete(Long userId) {
+        // A senha mora em `password_credential`, pendurada na IDENTIDADE e não na conta (#81):
+        // sai antes das identidades, senão a remoção delas bate na FK.
+        credentials.deleteByIdentityIdIn(
+                identities.findByUserId(userId).stream().map(UserIdentity::getId).toList());
         loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);

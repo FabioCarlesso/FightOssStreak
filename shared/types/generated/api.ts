@@ -114,6 +114,90 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/verificacao/reenviar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Manda outro link de confirmação
+         * @description O link anterior deixa de valer. Responde igual para cadastro pendente, confirmado e inexistente.
+         */
+        post: operations["reenviar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/senha/redefinir/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * O link de redefinição ainda vale?
+         * @description Consulta que não gasta o link: consumir na abertura da tela o queimaria em qualquer pré-carregamento do navegador ou do cliente de e-mail.
+         */
+        get: operations["conferir"];
+        put?: never;
+        /**
+         * Troca a senha
+         * @description Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.
+         */
+        post: operations["redefinir"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/senha/esquecida": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Manda o link de redefinição
+         * @description Responde igual para endereço com conta e sem conta.
+         */
+        post: operations["esquecida"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entra com e-mail e senha
+         * @description 401 sem dizer se o e-mail existe; 403 quando a senha confere mas o endereço ainda não foi confirmado; 429 no freio de tentativas.
+         */
+        post: operations["entrar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/email/solicitar": {
         parameters: {
             query?: never;
@@ -147,7 +231,27 @@ export interface paths {
          * Pede o link de entrada
          * @description Responde igual para endereço inexistente, pendente, recusado e aprovado — do contrário viraria consulta de quem tem conta no app.
          */
-        post: operations["entrar"];
+        post: operations["entrar_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/cadastro": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cria a conta e manda o link de confirmação
+         * @description Não abre sessão: a conta nasce não verificada e só existe de verdade quando o link for aberto. Responde igual para e-mail novo e já cadastrado — do contrário viraria consulta de quem tem conta no app.
+         */
+        post: operations["cadastrar"];
         delete?: never;
         options?: never;
         head?: never;
@@ -357,6 +461,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/verificar/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Confirma o e-mail e abre a sessão */
+        get: operations["verificar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/providers": {
         parameters: {
             query?: never;
@@ -525,6 +646,17 @@ export interface components {
         };
         EmailRequest: {
             email: string;
+        };
+        SenhaRequest: {
+            senha: string;
+        };
+        LoginRequest: {
+            email: string;
+            senha: string;
+        };
+        CadastroRequest: {
+            email: string;
+            senha: string;
         };
         AccessRequestView: {
             /** Format: int64 */
@@ -717,6 +849,9 @@ export interface components {
             modules?: components["schemas"]["ModuleView"][];
             summary?: components["schemas"]["ProgressSummary"];
         };
+        LinkView: {
+            valido?: boolean;
+        };
         AuthProviderView: {
             id?: string;
             label?: string;
@@ -726,6 +861,7 @@ export interface components {
             providers?: components["schemas"]["AuthProviderView"][];
             emailEnabled?: boolean;
             demoEnabled?: boolean;
+            passwordEnabled?: boolean;
         };
         FeedbackList: {
             items?: components["schemas"]["FeedbackView"][];
@@ -885,7 +1021,75 @@ export interface operations {
             };
         };
     };
-    solicitar: {
+    reenviar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    conferir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LinkView"];
+                };
+            };
+        };
+    };
+    redefinir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SenhaRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    esquecida: {
         parameters: {
             query?: never;
             header?: never;
@@ -916,7 +1120,73 @@ export interface operations {
         };
         requestBody: {
             content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    solicitar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
                 "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    entrar_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cadastrar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CadastroRequest"];
             };
         };
         responses: {
@@ -1178,6 +1448,26 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["TreeView"];
                 };
+            };
+        };
+    };
+    verificar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

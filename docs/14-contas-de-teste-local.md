@@ -6,17 +6,25 @@ configurados — para testar tela autenticada, fila do dono e qualquer coisa que
 
 ## Por que isto existe
 
-Desde a D36/D37 o app **exige login**, e os dois caminhos reais dependem de credencial que
+Desde a D36/D37 o app **exige login**, e todos os caminhos reais dependem de credencial que
 deliberadamente não é versionada: provedor sem `client-id` não é registrado, e envio de e-mail sem
 `FOS_EMAIL_API_KEY` não existe. Isso é proposital — dev e CI sobem sem segredo nenhum. O efeito
 colateral é que a tela de login em `localhost` mostra *"nenhuma forma de entrada está configurada
 neste ambiente"*, e não há como chegar a nada autenticado.
 
+**A D47 não muda isso, e é bom entender por quê.** O cadastro com senha (#81) parece a saída óbvia
+para o problema desta página — criar uma conta local e pronto —, mas ele *é* o e-mail de
+confirmação: sem `FOS_EMAIL_API_KEY` o link nunca sai, a conta fica não verificada para sempre e o
+login por senha responde 403. Por isso `POST /api/auth/cadastro` responde **503** em dev, e os dois
+scripts abaixo continuam sendo o caminho local. Quem quiser exercitar o fluxo de senha de verdade
+precisa de credencial de envio de verdade — ou do roteiro manual no Compose, no fim desta página.
+
 Inserir uma linha em `app_user` não resolve: quem decide se você está logado é a sessão do Spring
 Security, não a presença no banco. O `CurrentUserProvider` só resolve usuário a partir de uma
-autenticação de tipo conhecido (OAuth2, e-mail ou demonstração).
+autenticação de tipo conhecido (OAuth2, e-mail, demonstração ou senha).
 
-O caminho que funciona sem credencial é o da **entrada por e-mail**, fabricada à mão: o
+O caminho que funciona sem credencial é o da **entrada por e-mail** (a do #52, que a fatia 3 da #81
+vai desmontar), fabricada à mão: o
 `login_token` guarda só o SHA-256 do valor que viaja no link, então dá para escolher o valor,
 gravar o hash e abrir `/api/login/email/<valor>`. É exatamente o fluxo de produção, só que sem o
 e-mail no meio.
@@ -99,3 +107,24 @@ e é o link que expira, nunca a conta.)
   origem, então o redirect acerta.)
 - **Para começar do zero**: `docker compose down -v` apaga o volume junto, e aí o roteiro recomeça
   na criação do schema.
+
+## Exercitando o cadastro por senha (#81)
+
+O roteiro acima entra pelo link de e-mail. Para percorrer o fluxo de senha — cadastrar, confirmar,
+entrar, redefinir — não há atalho local: ele exige provedor de envio, porque o cadastro só termina
+quando o link de confirmação chega a uma caixa de verdade.
+
+```bash
+docker compose up --build   # a stack inteira em :8081
+```
+
+Com `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM` preenchidos no ambiente do Compose, o que dá para
+conferir de ponta a ponta é:
+
+1. cadastrar com um endereço seu → `202`, nenhuma sessão, um e-mail na caixa;
+2. abrir o link (vale **24h**, uma vez só) → cai em `/hoje` já dentro;
+3. sair, entrar de novo com a senha;
+4. *esqueci minha senha* → link de **1h**; ao usá-lo, a sessão que estava aberta cai.
+
+Sem essas duas variáveis o passo 1 responde `503 cadastro_indisponivel`, que é o comportamento
+correto e não um defeito do ambiente.

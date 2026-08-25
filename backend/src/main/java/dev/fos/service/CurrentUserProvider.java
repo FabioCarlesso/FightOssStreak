@@ -25,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
  * mantém a resolução idêntica no fluxo real e em teste.
  *
  * <p><b>Todo método de autenticação novo passa por aqui.</b> Quando a entrada por link de e-mail
- * (#52) chegou, foi este {@code instanceof} que precisou crescer — e de novo com a demonstração
- * pública (#62). É o mesmo ponto que, esquecido na #51, fez o login por Google autenticar e o app
- * responder 401 para sempre. Tipo de autenticação que este método não reconhece vira usuário
- * inexistente, em silêncio.
+ * (#52) chegou, foi este {@code instanceof} que precisou crescer — de novo com a demonstração
+ * pública (#62), e de novo com a senha própria (#81). É o mesmo ponto que, esquecido na #51, fez o
+ * login por Google autenticar e o app responder 401 para sempre. Tipo de autenticação que este
+ * método não reconhece vira usuário inexistente, em silêncio.
  *
  * <p>É também aqui que a demonstração vencida deixa de existir: sessão de conta com prazo vencido
  * não resolve usuário nenhum, e o app responde 401 como responderia a quem nunca entrou. Tratar
@@ -84,6 +84,10 @@ public class CurrentUserProvider {
         if (authentication instanceof DemoAuthenticationToken token) {
             return identities.findByProviderAndProviderSubject(
                     DemoAuthenticationToken.PROVIDER, token.getName());
+        }
+        if (authentication instanceof PasswordAuthenticationToken token) {
+            return identities.findByProviderAndProviderSubject(
+                    PasswordAuthenticationToken.PROVIDER, token.getName());
         }
         return Optional.empty();
     }

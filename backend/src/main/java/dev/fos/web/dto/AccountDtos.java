@@ -42,9 +42,15 @@ public final class AccountDtos {
      *     envio ela não aparece na tela, em vez de aparecer e falhar no envio
      * @param demoEnabled se há conta-modelo configurada (#62). Mesma regra: sem ela o botão da
      *     landing não aparece, em vez de aparecer e falhar no clique
+     * @param passwordEnabled se dá para criar conta com e-mail e senha (#81). O cadastro <i>é</i> o
+     *     e-mail de confirmação, então sem credencial de envio a porta não existe — e a tela mostra
+     *     o que existe, em vez de um formulário que falha no envio
      */
     public record AuthProviders(
-            List<AuthProviderView> providers, boolean emailEnabled, boolean demoEnabled) {}
+            List<AuthProviderView> providers,
+            boolean emailEnabled,
+            boolean demoEnabled,
+            boolean passwordEnabled) {}
 
     /**
      * Uma solicitação de acesso na fila do dono.

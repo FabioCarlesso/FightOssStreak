@@ -18,8 +18,11 @@ por quê e por quanto tempo.
 | Data do primeiro e do último login | do próprio app | saber se a conta ainda é usada |
 | Progresso, streak, agenda de revisão, drills e anotações | do uso do app | é o produto |
 | Aceite do aviso de responsabilidade, com data e versão | do uso do app | requisito de produto (`06-disclaimer-responsabilidade.md`) |
+| **Hash da sua senha**, se você criou conta com e-mail e senha | de você, no cadastro | é o que confere a senha na entrada |
 
-**O app nunca vê sua senha.** A autenticação acontece no provedor; o que volta é o mínimo acima.
+**A senha não é guardada — o hash dela é.** Até a D47 o app não via credencial nenhuma: a autenticação acontecia no provedor, e esta seção dizia isso. Com o cadastro aberto (#81) passou a existir uma senha, e o que fica no banco é só o hash (bcrypt, com o prefixo do algoritmo), numa tabela separada da identidade. Do valor que você digita não sobra nada depois da requisição — nem em log, nem em resposta de API. **Quem entra pelo Google continua sem ter senha aqui**, e nada muda para essa pessoa.
+
+**O que a confirmação de e-mail guarda.** Os links de confirmação e de redefinição também vivem só como hash, valem uma vez (24 horas e 1 hora, respectivamente) e são queimados quando a senha muda.
 
 **Nada é vendido, compartilhado ou usado para publicidade.** Não há rastreador de terceiros, nem
 analytics: os números da tela `/progresso` são calculados sobre o próprio banco.
@@ -39,8 +42,8 @@ Quem quiser sumir antes de qualquer decisão tem o botão na própria tela de es
 ## Como apagar tudo
 
 Em *Sua conta* → **Excluir minha conta**, ou `DELETE /api/me`. Apaga, em uma transação, a conta, a
-identidade externa, progresso, agenda de revisão, drills, anotações, tentativas de quiz e o aceite
-do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
+identidade externa, o hash da senha, os links pendentes, progresso, agenda de revisão, drills,
+anotações, tentativas de quiz e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
 
 A rota existe para conta aprovada, pendente e recusada. Ela entrou junto com o login, e não depois,
 porque a loja da Apple recusa app com login e sem deleção (`02-publicacao-ios-desafios.md`) — e

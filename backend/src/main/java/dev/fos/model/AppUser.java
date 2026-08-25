@@ -61,6 +61,23 @@ public class AppUser {
     @Column(name = "demo_expires_at")
     private Instant demoExpiresAt;
 
+    /**
+     * O e-mail VERIFICADO que identifica esta conta, e o único vínculo entre provedores (#81).
+     *
+     * <p>A D36 fixou que a chave da identidade é {@code (provider, subject)} e que e-mail nunca
+     * funde contas — a Apple entrega relay, o Facebook pode não devolver endereço nenhum. Com senha
+     * própria essa regra passou a produzir o defeito que ela evitava: quem entrou pelo Google e
+     * depois se cadastrou com o mesmo endereço ganharia uma segunda conta vazia. Esta coluna é a
+     * exceção mínima — não funde progresso de contas já usadas, só diz de quem é o endereço para
+     * que a identidade nova se anexe à conta certa.
+     *
+     * <p>Nulo em conta de demonstração, em conta de provedor sem e-mail verificado e em cadastro
+     * ainda não confirmado. Endereço não verificado nunca chega aqui: se chegasse, digitar o
+     * endereço de outra pessoa no cadastro daria acesso à conta dela.
+     */
+    @Column(name = "primary_email")
+    private String primaryEmail;
+
     protected AppUser() {
         // JPA
     }
@@ -80,6 +97,18 @@ public class AppUser {
 
     /** Conta do dono (e-mail verificado em {@code fos.auth.owner-emails}): já entra liberada. */
     public static AppUser approved(String label, Instant now) {
+        return new AppUser(label, now, AccessStatus.APROVADO, now);
+    }
+
+    /**
+     * Conta criada por cadastro com senha (#81): nasce liberada, e ainda não verificada.
+     *
+     * <p>{@code APROVADO} sem fila é a decisão da D47: quando qualquer um pode criar conta, a fila
+     * não filtra ninguém — só atrasa. O que segura o cadastro não é a aprovação do autor, é o
+     * e-mail: a conta nasce sem sessão e sem {@code primaryEmail}, e só existe de verdade depois
+     * que o link de confirmação for aberto.
+     */
+    public static AppUser forPassword(String label, Instant now) {
         return new AppUser(label, now, AccessStatus.APROVADO, now);
     }
 
@@ -104,6 +133,16 @@ public class AppUser {
     public void deny(Instant now) {
         this.accessStatus = AccessStatus.RECUSADO;
         this.decidedAt = now;
+    }
+
+    /**
+     * Declara esta conta dona de um endereço verificado.
+     *
+     * <p>Chamado quando um link de confirmação é aberto, ou quando um provedor devolve e-mail
+     * verificado. Só depois disso o endereço vincula identidade nova — ver {@link #primaryEmail}.
+     */
+    public void claimPrimaryEmail(String email) {
+        this.primaryEmail = email;
     }
 
     /** Dá nome à linha semeada pela V2, que nasceu como {@code usuario-local}. */
@@ -171,5 +210,9 @@ public class AppUser {
 
     public Instant getDemoExpiresAt() {
         return demoExpiresAt;
+    }
+
+    public String getPrimaryEmail() {
+        return primaryEmail;
     }
 }

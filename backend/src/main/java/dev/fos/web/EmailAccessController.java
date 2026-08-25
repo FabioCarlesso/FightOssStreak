@@ -3,6 +3,7 @@ package dev.fos.web;
 import dev.fos.service.AccessRateLimiter;
 import dev.fos.service.EmailAccessService;
 import dev.fos.service.EmailAuthenticationToken;
+import dev.fos.service.SessionLogin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,6 @@ import java.time.Duration;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,13 +48,14 @@ public class EmailAccessController {
     private static final String LINK_INVALIDO = "/hoje?erro=link_invalido";
 
     private final EmailAccessService acesso;
+    private final SessionLogin sessao;
     private final AccessRateLimiter freio;
     private final Clock clock;
-    private final SecurityContextRepository contextRepository =
-            new HttpSessionSecurityContextRepository();
 
-    public EmailAccessController(EmailAccessService acesso, AccessRateLimiter freio, Clock clock) {
+    public EmailAccessController(
+            EmailAccessService acesso, SessionLogin sessao, AccessRateLimiter freio, Clock clock) {
         this.acesso = acesso;
+        this.sessao = sessao;
         this.freio = freio;
         this.clock = clock;
     }
@@ -104,11 +103,9 @@ public class EmailAccessController {
             response.sendRedirect(LINK_INVALIDO);
             return;
         }
-        EmailAuthenticationToken authentication = new EmailAuthenticationToken(email);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        // Sem gravar no repositório a sessão morre com a requisição, e o link levaria de volta
-        // para a tela de login — o mesmo sintoma da #51, por outro caminho.
-        contextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+        // Rotacionar o id, gravar o contexto e anotar a sessão são os três deveres de todo login
+        // que a aplicação faz por conta própria — ver SessionLogin.
+        sessao.signIn(new EmailAuthenticationToken(email), request, response);
         response.sendRedirect(APOS_ENTRAR);
     }
 

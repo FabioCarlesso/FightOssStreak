@@ -216,21 +216,34 @@ Detalhes que não são óbvios:
   existe naquele ambiente, em vez de aparecer e falhar no clique.
 - **Provedor sem credencial não é registrado.** Não é uma tela de login com botão que falha: o
   provedor simplesmente não existe, e a aplicação sobe sem segredo nenhum (é o modo dev e o CI).
+- **Sem `FOS_EMAIL_API_KEY` não há cadastro por senha.** O cadastro *é* o e-mail de confirmação,
+  então sem provedor de envio ele responde **503** e a tela não o oferece — mesma regra dos
+  provedores de login. A aplicação sobe igual, e dev e CI continuam sem segredo nenhum.
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
 
 ## Acesso e contas
 
-O app **exige login**, e há dois caminhos (D37):
+O app **exige login**, e há três caminhos (D47):
 
 - **Por provedor externo** (Google; Facebook se configurado): entra **direto**, sem fila. Quem
-  chega por ali já teve a identidade verificada por um terceiro, e o app nunca vê senha.
-- **Por e-mail**, para quem não tem nenhum provedor: o pedido nasce **pendente** e o autor libera
-  pela fila. Só então sai o primeiro e-mail para quem pediu, com um **link de entrada** que vale
-  15 minutos e funciona uma vez.
+  chega por ali já teve a identidade verificada por um terceiro, e para essa pessoa o app continua
+  sem ver senha nenhuma.
+- **Com e-mail e senha** (`POST /api/auth/cadastro`): qualquer um cria conta, sem fila e sem
+  aprovação. A conta nasce **não verificada e sem sessão** — quem entra é o **link de confirmação**
+  que chega por e-mail, vale **24 horas** e funciona uma vez. Senha de no mínimo **12 caracteres**,
+  guardada só como hash; *esqueci minha senha* manda um link de **1 hora** que, ao ser usado, queima
+  os links pendentes e derruba as sessões abertas da conta.
+- **Por link de e-mail sob aprovação** (D37): o caminho antigo, ainda de pé — o pedido nasce
+  **pendente**, o autor libera pela fila e sai um link de 15 minutos. A fatia 3 da #81 desmonta a
+  fila; até lá ele coexiste com o cadastro.
 
-O pedido em si não dispara e-mail nenhum. Quem decide recebe um **resumo da fila** de hora em hora
-entre **10h e 22h** (horário de Brasília), e só numa janela em que apareceu pedido novo — o e-mail
-lista tudo que ainda espera decisão, não só o que chegou agora (D38).
+**Google e senha no mesmo endereço são a mesma conta**, desde que o e-mail esteja **verificado** dos
+dois lados: a identidade nova se anexa à conta que já existe, com o progresso intacto, em vez de
+criar uma conta vazia. E-mail não verificado nunca vincula nada.
+
+O pedido de acesso em si não dispara e-mail nenhum. Quem decide recebe um **resumo da fila** de hora
+em hora entre **10h e 22h** (horário de Brasília), e só numa janela em que apareceu pedido novo — o
+e-mail lista tudo que ainda espera decisão, não só o que chegou agora (D38).
 
 E um degrau **antes** dos dois (D39): a landing oferece *Ver o app funcionando*, que abre uma
 conta de demonstração temporária, já com progresso de exemplo, sem pedir nada a ninguém.
