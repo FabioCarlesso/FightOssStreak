@@ -3,7 +3,8 @@ import { api } from '../api/client.ts';
 import { SHORT_DISCLAIMER } from '../content/disclaimer.ts';
 import {
   APP_PATH,
-  SIGNUP_PATH,
+  CTA,
+  LOGIN_PATH,
   DEMO,
   DISCLAIMER_DOC_URL,
   DOCS_URL,
@@ -28,8 +29,8 @@ import { useAsync } from '../state/useAsync.ts';
  * Duas coisas a página não pode fazer, e as duas são estruturais. **Não depende da API para
  * renderizar**: era o `DisclaimerGate` que decidia a raiz, e ele depende de `GET /api/disclaimer`
  * para aparecer, então com o backend frio a primeira tela de quem recebia o link era "não foi
- * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de criar
- * conta leva a `/cadastrar`, e de lá para dentro passa pelo aviso.
+ * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de entrada
+ * leva a `/entrar`, e de lá para dentro passa pelo aviso.
  *
  * A regra que mudou com a #62 é a primeira, e mudou para melhor definida: a página *pergunta* se
  * este ambiente tem demonstração, mas nada nela espera a resposta. Backend frio, offline ou sem
@@ -75,28 +76,25 @@ export function LandingPage() {
             {/* A demonstração vem primeiro quando existe: é o degrau que a pessoa consegue subir
                 agora, sem criar conta nenhuma, e é decidindo aqui que ela vai saber se vale
                 criar uma. */}
+            {/* Primeiro na linha e sólido, sempre: é a ação primária, e ela não muda de peso
+                conforme a demonstração estar ou não configurada neste ambiente. Antes mudava — com
+                demonstração disponível, o sólido era o dela e este virava fantasma, o que deixava a
+                landing sem um caminho óbvio justamente no ambiente mais completo. */}
+            <Link className="landing__button" to={LOGIN_PATH}>
+              {CTA.conta}
+            </Link>
             {demoDisponivel && (
               <button
                 type="button"
-                className="landing__button"
+                className="landing__button landing__button--ghost"
                 onClick={demo.start}
                 disabled={demo.starting}
               >
                 {demo.starting ? DEMO.ctaCarregando : DEMO.cta}
               </button>
             )}
-            {/* "Criar conta" desde a D47: até a fatia anterior o app era de uso pessoal com
-                acesso sob aprovação, e a copy dizia "pedir acesso" porque quem chegava pelo link
-                não entrava sozinho. Agora entra — e prometer menos do que o produto entrega é o
-                mesmo defeito que prometer mais. */}
-            <Link
-              className={`landing__button${demoDisponivel ? ' landing__button--ghost' : ''}`}
-              to={SIGNUP_PATH}
-            >
-              Criar conta
-            </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
-              Ver o código
+              {CTA.codigo}
             </a>
           </p>
           {demo.failure && <p className="landing__erro">{demo.failure}</p>}
@@ -218,8 +216,8 @@ export function LandingPage() {
           </span>
         </h2>
         <p className="landing__cta">
-          <Link className="landing__button" to={SIGNUP_PATH}>
-            Criar conta
+          <Link className="landing__button" to={LOGIN_PATH}>
+            {CTA.conta}
           </Link>
         </p>
       </section>

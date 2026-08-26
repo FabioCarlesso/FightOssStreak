@@ -21,8 +21,29 @@ export const APP_PATH = '/hoje';
  * Separado do `APP_PATH` de propósito: quem já entrou uma vez cai em `/hoje` e não precisa ver
  * formulário nenhum, e quem está chegando agora precisa de uma tela que diga o que fazer. Apontar
  * os dois para o mesmo lugar faria a primeira visita bater num portão sem explicação.
+ *
+ * É `/entrar`, e não `/cadastrar`, porque **quem decide como entrar é a pessoa, não a landing**.
+ * A tela de cadastro só oferece e-mail e senha; a de entrada oferece as duas coisas — os botões de
+ * provedor e o link para criar conta. Mandar todo mundo para o formulário de senha escondia o
+ * Google de quem chegava pela apresentação, que é justamente quem ainda não tem conta nenhuma.
  */
-export const SIGNUP_PATH = '/cadastrar';
+export const LOGIN_PATH = '/entrar';
+
+/**
+ * Os dois botões da apresentação, e a hierarquia entre eles.
+ *
+ * `conta` é a **ação primária** — uma só por tela, e é ela que fica sólida. Diz o resultado
+ * ("revisar"), e não o mecanismo ("criar conta"): cadastro é trabalho que a pessoa aceita fazer
+ * para conseguir outra coisa, e é a outra coisa que pertence ao botão. O que o clique realmente
+ * abre — entrar por Google ou criar conta com senha — está na nota logo abaixo e na própria tela
+ * de destino, então o rótulo curto não esconde nada de quem vai decidir.
+ *
+ * `codigo` é terciário e continua literal: quem clica ali quer exatamente isso.
+ */
+export const CTA = {
+  conta: 'Começar a revisar',
+  codigo: 'Ver o código',
+} as const;
 
 /**
  * Acesso demonstrativo (#62): o degrau que faltava antes do portão.
@@ -30,12 +51,20 @@ export const SIGNUP_PATH = '/cadastrar';
  * Print não mostra o que o app faz — o produto é o loop de revisão, e isso não cabe em imagem.
  * Este botão abre o app carregado, numa conta temporária onde dá para gravar de verdade.
  *
- * O texto diz as três coisas que a pessoa precisa saber antes de clicar, e nessa ordem: é
+ * É a ação **secundária**: fica ao lado da primária e sem preenchimento. Já foi o botão sólido, e
+ * estava errado — quem chega à landing precisa de um caminho óbvio, e demonstração não é o
+ * caminho, é a saída para quem ainda não quer trilhá-lo.
+ *
+ * O rótulo nomeia a objeção que remove, e não a ação que executa: "Ver o app funcionando" era
+ * verdadeiro e não respondia à pergunta que trava a pessoa nesse instante, que é "vou ter que me
+ * cadastrar?". A resposta cabe no botão.
+ *
+ * A nota diz as três coisas que a pessoa precisa saber antes de clicar, e nessa ordem: é
  * temporária, os dados são de exemplo, e some sozinha. As duas horas são o `VALIDADE` do
  * `DemoAccessService` — mexeu lá, mexa aqui.
  */
 export const DEMO = {
-  cta: 'Ver o app funcionando',
+  cta: 'Ver sem criar conta',
   ctaCarregando: 'Abrindo…',
   nota:
     'A demonstração abre uma conta temporária com progresso de exemplo: dá para responder o' +
