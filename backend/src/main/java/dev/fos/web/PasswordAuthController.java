@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -47,18 +46,6 @@ public class PasswordAuthController {
 
     private static final Duration JANELA_EMAILS = Duration.ofHours(1);
 
-    /** Para onde a confirmação leva quando dá certo. É a primeira tela do app. */
-    private static final String APOS_CONFIRMAR = "/hoje";
-
-    /**
-     * E quando não dá.
-     *
-     * <p>Uma tela própria, e não a de login com um aviso: os três motivos levam a ações diferentes
-     * — vencido oferece reenviar, usado manda entrar, inválido não tem o que oferecer — e isso não
-     * cabe numa faixa de erro em cima do formulário.
-     */
-    private static final String CONFIRMACAO_FALHOU = "/confirmar-email?erro=";
-
     private final PasswordAccessService senha;
     private final SessionLogin sessao;
     private final AccessRateLimiter freio;
@@ -90,7 +77,8 @@ public class PasswordAuthController {
     public record SenhaRequest(@NotBlank String senha) {}
 
     /**
-     * @param valido se o link de redefinição ainda serve; a tela decide entre formulário e aviso
+     * @param valido se o link ainda serve — vale para o de confirmação e para o de redefinição, que
+     *     são consultados do mesmo jeito e pelo mesmo motivo
      * @param motivo por que não serve — {@code vencido}, {@code usado} ou {@code invalido}. Nulo
      *     quando vale. São três telas diferentes: vencido oferece pedir outro, usado manda entrar
      */
@@ -113,17 +101,36 @@ public class PasswordAuthController {
     }
 
     @GetMapping("/verificar/{token}")
-    @Operation(summary = "Confirma o e-mail e abre a sessão")
-    public void verificar(
-            @PathVariable String token, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    @Operation(
+            summary = "O link de confirmação ainda vale?",
+            description =
+                    "Consulta que não gasta o link, como a da redefinição: quem abre a URL do"
+                            + " e-mail nem sempre é quem a recebeu — varredor de link corporativo e"
+                            + " antivírus de caixa de entrada seguem tudo que chega, e um GET que"
+                            + " confirmasse queimaria o link antes do clique.")
+    public LinkView conferirConfirmacao(@PathVariable String token) {
+        PasswordAccessService.Confirmacao confirmacao = senha.checkVerificationLink(token);
+        return new LinkView(confirmacao.ok(), confirmacao.ok() ? null : motivo(confirmacao));
+    }
+
+    @PostMapping("/verificar/{token}")
+    @Operation(
+            summary = "Confirma o e-mail e abre a sessão",
+            description =
+                    "É aqui que a conta passa a existir de verdade. POST, e não GET, porque"
+                            + " confirmar é ato explícito de quem leu o e-mail — nenhuma máquina"
+                            + " que só siga links chega a esta rota.")
+    public ResponseEntity<Void> confirmar(
+            @PathVariable String token, HttpServletRequest request, HttpServletResponse response) {
         PasswordAccessService.Confirmacao confirmacao = senha.verify(token);
         if (!confirmacao.ok()) {
-            response.sendRedirect(CONFIRMACAO_FALHOU + motivo(confirmacao));
-            return;
+            // 400 com a mensagem, como na redefinição: a tela já sabia do GET que o link valia, e
+            // só chega aqui quem perdeu uma corrida — outro clique, ou o prazo virando no meio.
+            throw new IllegalArgumentException(
+                    "Este link de confirmação não vale mais. Peça outro.");
         }
         sessao.signIn(new PasswordAuthenticationToken(confirmacao.email()), request, response);
-        response.sendRedirect(APOS_CONFIRMAR);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/verificacao/reenviar")

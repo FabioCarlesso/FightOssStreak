@@ -223,14 +223,6 @@ public class PasswordAccessService {
     }
 
     /**
-     * Consome o link de confirmação e devolve o e-mail autenticado.
-     *
-     * <p>É aqui, e só aqui, que o cadastro vira conta de verdade: o endereço passa a ser
-     * verificado, a conta reivindica o {@code primary_email} e a sessão pode ser aberta. O
-     * propósito é conferido antes de tudo: link de redefinição apresentado aqui é inválido, não uma
-     * confirmação.
-     */
-    /**
      * Por que um link não serviu.
      *
      * <p>Os três casos existem porque a tela faz coisas diferentes com cada um: <b>vencido</b>
@@ -267,12 +259,45 @@ public class PasswordAccessService {
         }
     }
 
+    /**
+     * O link de confirmação ainda vale — sem gastá-lo.
+     *
+     * <p>É o que a tela consulta ao abrir o link que veio no e-mail, e existe pela mesma razão do
+     * {@link #checkResetLink}: <b>quem abre uma URL não é necessariamente quem a recebeu</b>.
+     * Antivírus de caixa de entrada e varredores de link corporativos (Safe Links e parentes)
+     * seguem toda URL que chega, e um {@code GET} que confirma queimaria o link antes de a pessoa
+     * clicar — ela veria "este link já foi usado" sem nunca o ter usado. Confirmar é ato explícito,
+     * e ato explícito é {@code POST}.
+     *
+     * <p>Devolve string vazia no lugar do e-mail, e não o endereço: quem só tem a URL ainda não
+     * provou nada, e responder de quem é a conta seria entregar isso a quem varreu o link.
+     */
+    @Transactional(readOnly = true)
+    public Confirmacao checkVerificationLink(String rawToken) {
+        Instant now = Instant.now(clock);
+        Optional<LoginToken> encontrado =
+                tokenComProposito(rawToken, LoginTokenPurpose.VERIFICACAO);
+        if (encontrado.isEmpty()) {
+            return Confirmacao.falhou(FalhaDeLink.INVALIDO);
+        }
+        FalhaDeLink falha = motivo(encontrado.get(), now);
+        return falha == null ? Confirmacao.de("") : Confirmacao.falhou(falha);
+    }
+
+    /**
+     * Consome o link de confirmação e devolve o e-mail autenticado.
+     *
+     * <p>É aqui, e só aqui, que o cadastro vira conta de verdade: o endereço passa a ser
+     * verificado, a conta reivindica o {@code primary_email} e a sessão pode ser aberta. O
+     * propósito é conferido antes de tudo: link de redefinição apresentado aqui é inválido, não uma
+     * confirmação.
+     */
     @Transactional
     public Confirmacao verify(String rawToken) {
         Instant now = Instant.now(clock);
-        Optional<LoginToken> encontrado = tokens.findByTokenHash(hash(rawToken));
-        if (encontrado.isEmpty()
-                || encontrado.get().getPurpose() != LoginTokenPurpose.VERIFICACAO) {
+        Optional<LoginToken> encontrado =
+                tokenComProposito(rawToken, LoginTokenPurpose.VERIFICACAO);
+        if (encontrado.isEmpty()) {
             return Confirmacao.falhou(FalhaDeLink.INVALIDO);
         }
         LoginToken token = encontrado.get();
@@ -286,6 +311,17 @@ public class PasswordAccessService {
                 // Conta sem identidade de senha não tem o que confirmar. Não acontece pelo fluxo
                 // normal, e "inválido" é a resposta honesta se acontecer.
                 .orElseGet(() -> Confirmacao.falhou(FalhaDeLink.INVALIDO));
+    }
+
+    /**
+     * O token com este hash, se ele existir <b>e</b> for do propósito pedido.
+     *
+     * <p>O propósito é conferido aqui, e não em cada chamada: link de 24 horas apresentado na
+     * redefinição — ou o contrário — é inválido, não um link do outro tipo.
+     */
+    private Optional<LoginToken> tokenComProposito(String rawToken, LoginTokenPurpose purpose) {
+        return tokens.findByTokenHash(hash(rawToken))
+                .filter(token -> token.getPurpose() == purpose);
     }
 
     /** Nulo quando o token ainda serve. */
@@ -376,9 +412,9 @@ public class PasswordAccessService {
     @Transactional(readOnly = true)
     public Confirmacao checkResetLink(String rawToken) {
         Instant now = Instant.now(clock);
-        Optional<LoginToken> encontrado = tokens.findByTokenHash(hash(rawToken));
-        if (encontrado.isEmpty()
-                || encontrado.get().getPurpose() != LoginTokenPurpose.REDEFINICAO) {
+        Optional<LoginToken> encontrado =
+                tokenComProposito(rawToken, LoginTokenPurpose.REDEFINICAO);
+        if (encontrado.isEmpty()) {
             return Confirmacao.falhou(FalhaDeLink.INVALIDO);
         }
         FalhaDeLink falha = motivo(encontrado.get(), now);
@@ -495,7 +531,7 @@ public class PasswordAccessService {
                 Falta um passo para sua conta existir. Abra o link abaixo para confirmar
                 que este endereço é seu:
 
-                %s/api/auth/verificar/%s
+                %s/confirmar-email/%s
 
                 O link vale por 24 horas e só funciona uma vez.
                 Se não foi você que se cadastrou, ignore este e-mail — nada acontece, e a

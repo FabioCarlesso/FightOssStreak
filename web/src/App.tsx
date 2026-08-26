@@ -44,6 +44,9 @@ export function App() {
         {/* Fronteira: públicas, fora dos portões. `AuthGate` manda para cá quem não tem sessão. */}
         <Route path="/entrar" element={<SignInPage />} />
         <Route path="/cadastrar" element={<SignUpPage />} />
+        {/* Com e sem token: o link do e-mail traz um, e as telas de "venceu"/"inválido" também
+            precisam existir sem ele — é para lá que a pessoa cai depois de pedir outro. */}
+        <Route path="/confirmar-email/:token" element={<ConfirmEmailPage />} />
         <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
         <Route path="/senha/esquecida" element={<ForgotPasswordPage />} />
         <Route path="/senha/redefinir/:token" element={<ResetPasswordPage />} />

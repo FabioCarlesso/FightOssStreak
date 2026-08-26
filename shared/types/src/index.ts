@@ -45,8 +45,13 @@ export type AccountView = Schemas['AccountView'];
 export type Role = NonNullable<AccountView['role']>;
 export type AuthProviderView = Schemas['AuthProviderView'];
 export type AuthProviders = Schemas['AuthProviders'];
-/** Se o link de redefinição ainda vale, e por que não vale (D47). */
-export type ResetLink = Schemas['LinkView'];
+/**
+ * Se um link de e-mail ainda vale, e por que não vale (D47).
+ *
+ * Um tipo para os dois links: confirmação e redefinição são conferidas do mesmo jeito, e pelo
+ * mesmo motivo — abrir a URL não pode gastá-la.
+ */
+export type LinkStatus = Schemas['LinkView'];
 
 export type FeedbackRequest = Schemas['FeedbackRequest'];
 export type FeedbackView = Schemas['FeedbackView'];

@@ -20,7 +20,7 @@ import type {
   PinnedNote,
   QuizResult,
   QuizSubmission,
-  ResetLink,
+  LinkStatus,
   ReviewAgenda,
   StreakView,
   TreeView,
@@ -264,6 +264,21 @@ export function createApiClient(options: ApiClientOptions = {}) {
         body: JSON.stringify({ email, senha }),
       }),
 
+    /**
+     * O link de confirmação ainda vale?
+     *
+     * Consulta que não gasta o link, exatamente como a da redefinição — e pelo mesmo motivo, que
+     * aqui é ainda mais concreto: quem abre a URL de um e-mail nem sempre é a pessoa. Varredor de
+     * link corporativo e antivírus de caixa de entrada seguem tudo que chega, e confirmar no GET
+     * queimaria o link antes do clique.
+     */
+    checkVerificationLink: (token: string) =>
+      request<LinkStatus>(`/api/auth/verificar/${encodeURIComponent(token)}`),
+
+    /** Confirma o e-mail e abre a sessão. É o clique da pessoa, não a abertura da URL. */
+    confirmEmail: (token: string) =>
+      requestNoContent(`/api/auth/verificar/${encodeURIComponent(token)}`, { method: 'POST' }),
+
     /** Outro link de confirmação. Responde igual para cadastro pendente, confirmado e inexistente. */
     resendVerification: (email: string) =>
       requestNoContent('/api/auth/verificacao/reenviar', {
@@ -285,7 +300,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * pré-carregamento do navegador ou do cliente de e-mail.
      */
     checkPasswordResetLink: (token: string) =>
-      request<ResetLink>(`/api/auth/senha/redefinir/${encodeURIComponent(token)}`),
+      request<LinkStatus>(`/api/auth/senha/redefinir/${encodeURIComponent(token)}`),
 
     /**
      * Troca a senha.

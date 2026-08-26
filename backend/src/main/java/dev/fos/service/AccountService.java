@@ -23,10 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Ciclo de vida da conta: login, fila de aprovação e exclusão.
+ * Ciclo de vida da conta: login, vínculo entre identidades, papel e exclusão.
  *
  * <p>Todo o resto do app continua falando em {@code userId} — o que muda com a #24 é de onde esse
- * id vem e se ele pode ser usado. Esta classe é a dona dessas duas respostas.
+ * id vem. A segunda pergunta que esta classe respondia, "essa conta pode usar o app?", deixou de
+ * existir com a fila de aprovação (D48): quem tem sessão está dentro. No lugar dela entrou uma
+ * outra, de escopo bem menor — {@link #roleOf}, que diz quem administra.
  */
 @Service
 public class AccountService {
@@ -337,8 +339,9 @@ public class AccountService {
      * password_credential} (V11), é a única que não tem {@code user_id}: ela pendura na identidade,
      * e por isso é a primeira a sair.
      *
-     * <p>Vale para conta pendente e recusada: quem pediu acesso e não entrou tem o mesmo direito de
-     * sumir do banco.
+     * <p>Não é só o {@code DELETE /api/me}: o mesmo caminho apaga a conta descartável do cadastro
+     * que acabou vinculado a outra (D47) e a demonstração vencida (#62). Nenhum deles tem um humano
+     * do outro lado, e é por isso que a exclusão precisa ser completa sozinha.
      */
     @Transactional
     public void delete(Long userId) {

@@ -21,12 +21,13 @@ precisa de credencial de envio de verdade — ou do roteiro manual no Compose, n
 
 Inserir uma linha em `app_user` não resolve: quem decide se você está logado é a sessão do Spring
 Security, não a presença no banco. O `CurrentUserProvider` só resolve usuário a partir de uma
-autenticação de tipo conhecido (OAuth2, e-mail, demonstração ou senha).
+autenticação de tipo conhecido (OAuth2, demonstração ou senha).
 
 O caminho que funciona sem credencial é o **link de confirmação de e-mail** (D47), fabricado à mão:
 o `login_token` guarda só o SHA-256 do valor que viaja no link, então dá para escolher o valor,
-gravar o hash e abrir `/api/auth/verificar/<valor>`. É exatamente o fluxo de produção, só que sem o
-e-mail no meio — e, como lá, é ele que abre a sessão.
+gravar o hash e abrir `/confirmar-email/<valor>`. É exatamente o fluxo de produção, só que sem o
+e-mail no meio: a tela confere o link, e o botão **Confirmar meu e-mail** é que gasta o token e abre
+a sessão.
 
 ## Por que Postgres local, e não o H2 do perfil dev
 

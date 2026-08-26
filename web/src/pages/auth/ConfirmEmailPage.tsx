@@ -1,23 +1,93 @@
 import { type FormEvent, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api/client.ts';
+import { useAsync } from '../../state/useAsync.ts';
 import { AuthCard } from './AuthCard.tsx';
 import { mensagemDeErro } from './erros.ts';
 
 /**
- * O que aconteceu quando o link de confirmação **não** deu certo.
+ * O fim do cadastro: o link que chegou por e-mail vira conta.
  *
- * Quando dá certo, esta tela não aparece: o backend abre a sessão e redireciona direto para
- * `/hoje`. Ela existe para os três desfechos ruins, e existe separada da tela de entrada porque as
- * ações são diferentes em cada um — **vencido** pede o endereço e reenvia, **usado** manda entrar
- * (a conta já está confirmada), **inválido** não tem o que oferecer além de pedir outro. Amontoar
- * os três numa faixa de erro em cima do formulário de login esconderia a saída em dois deles.
+ * **Abrir esta tela não confirma nada** — é a decisão que ela carrega. Quem abre a URL de um
+ * e-mail nem sempre é a pessoa: varredor de link corporativo (Safe Links e parentes) e antivírus
+ * de caixa de entrada seguem tudo que chega, e quando a confirmação acontecia no `GET` da URL,
+ * bastava um deles para a pessoa receber "este link já foi usado" sem nunca o ter usado. Então a
+ * abertura só *consulta* o link, e confirmar é um clique — a mesma forma que a redefinição de
+ * senha já tinha.
+ *
+ * Os três desfechos ruins continuam separados porque as saídas são diferentes: **vencido** pede o
+ * endereço e reenvia, **usado** manda entrar (a conta já está confirmada), **inválido** não tem o
+ * que oferecer além de pedir outro. Amontoar os três numa faixa de erro esconderia a saída em dois
+ * deles.
  */
 export function ConfirmEmailPage() {
-  const [params] = useSearchParams();
-  const motivo = params.get('erro') ?? 'invalido';
+  const { token } = useParams<{ token: string }>();
 
-  if (motivo === 'usado') {
+  if (!token) {
+    return <LinkInvalido />;
+  }
+  return <Confirmacao token={token} />;
+}
+
+function Confirmacao({ token }: { token: string }) {
+  const link = useAsync(() => api.checkVerificationLink(token), [token]);
+  const navigate = useNavigate();
+  const [confirmando, setConfirmando] = useState(false);
+  const [falha, setFalha] = useState<string | null>(null);
+
+  async function confirmar() {
+    setConfirmando(true);
+    setFalha(null);
+    try {
+      await api.confirmEmail(token);
+      // A sessão já veio no cookie da resposta: navegação do router basta, e recarregar a página
+      // inteira só descartaria o app que acabou de carregar.
+      navigate('/hoje', { replace: true });
+    } catch (cause) {
+      setFalha(mensagemDeErro(cause));
+      setConfirmando(false);
+    }
+  }
+
+  if (link.loading) {
+    return (
+      <AuthCard titulo="Confirmando seu e-mail">
+        <p className="empty">Conferindo o link…</p>
+      </AuthCard>
+    );
+  }
+
+  if (link.error) {
+    return (
+      <AuthCard titulo="Não foi possível conferir o link">
+        <p className="gate__error">{link.error.message}</p>
+        <div className="gate__actions">
+          <button type="button" onClick={link.reload}>
+            Tentar de novo
+          </button>
+        </div>
+      </AuthCard>
+    );
+  }
+
+  if (link.data?.valido) {
+    return (
+      <AuthCard titulo="Confirme seu e-mail">
+        <p>
+          Falta um clique. Ao confirmar, sua conta passa a existir de verdade e você já entra no
+          app.
+        </p>
+        {falha && <p className="gate__error">{falha}</p>}
+        <div className="gate__actions">
+          <button type="button" onClick={() => void confirmar()} disabled={confirmando}>
+            {confirmando ? 'Confirmando…' : 'Confirmar meu e-mail'}
+          </button>
+        </div>
+      </AuthCard>
+    );
+  }
+
+  if (link.data?.motivo === 'usado') {
     return (
       <AuthCard titulo="Este link já foi usado">
         <p>
@@ -33,7 +103,7 @@ export function ConfirmEmailPage() {
     );
   }
 
-  if (motivo === 'vencido') {
+  if (link.data?.motivo === 'vencido') {
     return (
       <Reenviar
         titulo="Este link venceu"
@@ -42,6 +112,10 @@ export function ConfirmEmailPage() {
     );
   }
 
+  return <LinkInvalido />;
+}
+
+function LinkInvalido() {
   return (
     <Reenviar
       titulo="Link inválido"

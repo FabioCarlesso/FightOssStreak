@@ -114,6 +114,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/verificar/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * O link de confirmação ainda vale?
+         * @description Consulta que não gasta o link, como a da redefinição: quem abre a URL do e-mail nem sempre é quem a recebeu — varredor de link corporativo e antivírus de caixa de entrada seguem tudo que chega, e um GET que confirmasse queimaria o link antes do clique.
+         */
+        get: operations["conferirConfirmacao"];
+        put?: never;
+        /**
+         * Confirma o e-mail e abre a sessão
+         * @description É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota.
+         */
+        post: operations["confirmar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/verificacao/reenviar": {
         parameters: {
             query?: never;
@@ -356,23 +380,6 @@ export interface paths {
         };
         /** Árvore completa com estado de bloqueio resolvido para o usuário */
         get: operations["tree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/auth/verificar/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Confirma o e-mail e abre a sessão */
-        get: operations["verificar"];
         put?: never;
         post?: never;
         delete?: never;
@@ -897,6 +904,48 @@ export interface operations {
             };
         };
     };
+    conferirConfirmacao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LinkView"];
+                };
+            };
+        };
+    };
+    confirmar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     reenviar: {
         parameters: {
             query?: never;
@@ -1216,26 +1265,6 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["TreeView"];
                 };
-            };
-        };
-    };
-    verificar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

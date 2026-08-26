@@ -10,7 +10,8 @@
  * produção, que vive num Postgres gerenciado à parte, sem rede nem credencial em comum com este.
  *
  * É um token de **confirmação de e-mail** (D47): o mesmo caminho que o cadastro real percorre, só
- * que sem o e-mail no meio. Ele abre a sessão e vale 24h, como o de produção. Rodar de novo emite
+ * que sem o e-mail no meio. A URL impressa é a do app, não a da API — abrir não confirma nada, quem
+ * confirma (e abre a sessão) é o botão da tela. Vale 24h, como em produção. Rodar de novo emite
  * outro; o que expira é o link, nunca a conta.
  *
  * Códigos de saída:
@@ -75,4 +76,4 @@ psql(
     `VALUES (${Number(userId)}, '${hash}', 'VERIFICACAO', now(), now() + interval '24 hours');`,
 );
 
-console.log(`http://localhost:5173/api/auth/verificar/${token}`);
+console.log(`http://localhost:5173/confirmar-email/${token}`);

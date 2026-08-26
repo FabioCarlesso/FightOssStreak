@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import dev.fos.email.EmailSender;
@@ -157,8 +156,8 @@ class PasswordAccessIntegrationTest {
     void confirmingOpensASessionTheAppRecognises() throws Exception {
         cadastrar(ENDERECO, SENHA);
         MvcResult entrada =
-                mockMvc.perform(get(linkDeVerificacao()))
-                        .andExpect(redirectedUrl("/hoje"))
+                confirmarComToken(tokenDeVerificacao())
+                        .andExpect(status().isNoContent())
                         .andReturn();
 
         // O que de fato prova a costura da #51: a sessão aberta aqui resolve usuário na chamada
@@ -173,31 +172,57 @@ class PasswordAccessIntegrationTest {
     }
 
     @Test
+    @DisplayName("abrir o link não o gasta — quem confirma é o POST do clique")
+    void openingTheLinkDoesNotSpendIt() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        String token = tokenDeVerificacao();
+
+        // O caso existe por um ataque que não é ataque: varredor de link de e-mail corporativo
+        // abre toda URL que chega. Se o GET confirmasse, ele queimaria o link antes do clique e a
+        // pessoa receberia "já foi usado" sem nunca ter usado.
+        mockMvc.perform(get("/api/auth/verificar/" + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valido").value(true));
+        mockMvc.perform(get("/api/auth/verificar/" + token))
+                .andExpect(jsonPath("$.valido").value(true));
+        assertThat(identidade(ENDERECO).isEmailVerified()).isFalse();
+
+        confirmarComToken(token).andExpect(status().isNoContent());
+        assertThat(identidade(ENDERECO).isEmailVerified()).isTrue();
+    }
+
+    @Test
     @DisplayName("o link de confirmação é de uso único")
     void theConfirmationLinkWorksOnlyOnce() throws Exception {
         cadastrar(ENDERECO, SENHA);
-        String link = linkDeVerificacao();
+        String token = tokenDeVerificacao();
 
-        mockMvc.perform(get(link)).andExpect(redirectedUrl("/hoje"));
+        confirmarComToken(token).andExpect(status().isNoContent());
         // "Usado", e não "inválido": a tela manda entrar, porque a conta já está confirmada.
-        mockMvc.perform(get(link)).andExpect(redirectedUrl("/confirmar-email?erro=usado"));
+        mockMvc.perform(get("/api/auth/verificar/" + token))
+                .andExpect(jsonPath("$.valido").value(false))
+                .andExpect(jsonPath("$.motivo").value("usado"));
+        confirmarComToken(token).andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("o link de confirmação vale 24h — 23h ainda entra, 25h não")
     void theConfirmationLinkLastsADay() throws Exception {
         cadastrar(ENDERECO, SENHA);
-        String link = linkDeVerificacao();
+        String token = tokenDeVerificacao();
 
         CaixaDeSaida.agora = CaixaDeSaida.agora.plus(Duration.ofHours(23));
-        mockMvc.perform(get(link)).andExpect(redirectedUrl("/hoje"));
+        confirmarComToken(token).andExpect(status().isNoContent());
 
         CaixaDeSaida.ENVIADOS.clear();
         cadastrar(OUTRO, SENHA);
-        String outroLink = linkDeVerificacao(OUTRO);
+        String outroToken = tokenDeVerificacao(OUTRO);
         CaixaDeSaida.agora = CaixaDeSaida.agora.plus(Duration.ofHours(25));
         // "Vencido" leva à tela que oferece reenviar — a saída que um erro genérico esconderia.
-        mockMvc.perform(get(outroLink)).andExpect(redirectedUrl("/confirmar-email?erro=vencido"));
+        mockMvc.perform(get("/api/auth/verificar/" + outroToken))
+                .andExpect(jsonPath("$.valido").value(false))
+                .andExpect(jsonPath("$.motivo").value("vencido"));
+        confirmarComToken(outroToken).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -495,7 +520,12 @@ class PasswordAccessIntegrationTest {
     }
 
     private void confirmar(String email) throws Exception {
-        mockMvc.perform(get(linkDeVerificacao(email))).andExpect(redirectedUrl("/hoje"));
+        confirmarComToken(tokenDeVerificacao(email)).andExpect(status().isNoContent());
+    }
+
+    /** O clique em "confirmar meu e-mail": é o POST que gasta o link, nunca a abertura da URL. */
+    private ResultActions confirmarComToken(String token) throws Exception {
+        return mockMvc.perform(post("/api/auth/verificar/" + token).with(csrf()));
     }
 
     /** Sessão já autenticada por senha, para as chamadas que só precisam estar dentro. */
@@ -505,15 +535,16 @@ class PasswordAccessIntegrationTest {
         return sessao;
     }
 
-    private String linkDeVerificacao() {
-        return linkDeVerificacao(ENDERECO);
+    private String tokenDeVerificacao() {
+        return tokenDeVerificacao(ENDERECO);
     }
 
-    /** O caminho do link que foi para a caixa de quem se cadastrou. */
-    private String linkDeVerificacao(String email) {
+    /** O token do link que foi para a caixa de quem se cadastrou. */
+    private String tokenDeVerificacao(String email) {
         String corpo = mensagensPara(email).getLast().corpo();
-        int inicio = corpo.indexOf("/api/auth/verificar/");
-        return corpo.substring(inicio).split("\\s+")[0];
+        int inicio = corpo.indexOf("/confirmar-email/");
+        String caminho = corpo.substring(inicio).split("\\s+")[0];
+        return caminho.substring(caminho.lastIndexOf('/') + 1);
     }
 
     private String tokenDeRedefinicao() {

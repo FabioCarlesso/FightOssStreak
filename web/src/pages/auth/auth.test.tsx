@@ -1,4 +1,4 @@
-import type { AuthProviders, ResetLink } from '@fos/types';
+import type { AuthProviders, LinkStatus } from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -31,7 +31,9 @@ const { apiMock } = vi.hoisted(() => ({
     signInWithPassword: vi.fn<(email: string, senha: string) => Promise<void>>(),
     resendVerification: vi.fn<(email: string) => Promise<void>>(),
     requestPasswordReset: vi.fn<(email: string) => Promise<void>>(),
-    checkPasswordResetLink: vi.fn<(token: string) => Promise<ResetLink>>(),
+    checkVerificationLink: vi.fn<(token: string) => Promise<LinkStatus>>(),
+    confirmEmail: vi.fn<(token: string) => Promise<void>>(),
+    checkPasswordResetLink: vi.fn<(token: string) => Promise<LinkStatus>>(),
     resetPassword: vi.fn<(token: string, senha: string) => Promise<void>>(),
   },
 }));
@@ -51,6 +53,7 @@ function renderEm(rota: string) {
       <Routes>
         <Route path="/entrar" element={<SignInPage />} />
         <Route path="/cadastrar" element={<SignUpPage />} />
+        <Route path="/confirmar-email/:token" element={<ConfirmEmailPage />} />
         <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
         <Route path="/senha/esquecida" element={<ForgotPasswordPage />} />
         <Route path="/senha/redefinir/:token" element={<ResetPasswordPage />} />
@@ -75,6 +78,8 @@ beforeEach(() => {
   apiMock.requestPasswordReset.mockResolvedValue(undefined);
   apiMock.resetPassword.mockResolvedValue(undefined);
   apiMock.checkPasswordResetLink.mockResolvedValue({ valido: true });
+  apiMock.checkVerificationLink.mockResolvedValue({ valido: true });
+  apiMock.confirmEmail.mockResolvedValue(undefined);
 });
 
 describe('entrar', () => {
@@ -275,9 +280,27 @@ describe('recuperação de senha', () => {
   });
 });
 
-describe('retorno do link de confirmação', () => {
+describe('link de confirmação', () => {
+  it('abrir o link não confirma nada — quem confirma é o clique', async () => {
+    renderEm('/confirmar-email/tok-123');
+
+    expect(
+      await screen.findByRole('button', { name: /confirmar meu e-mail/i }),
+    ).toBeInTheDocument();
+    // O ponto do caso: até aqui, nada foi consumido. É o que impede um varredor de link de
+    // queimar a confirmação antes de a pessoa clicar.
+    expect(apiMock.confirmEmail).not.toHaveBeenCalled();
+    expect(apiMock.checkVerificationLink).toHaveBeenCalledWith('tok-123');
+
+    await userEvent.click(screen.getByRole('button', { name: /confirmar meu e-mail/i }));
+
+    expect(apiMock.confirmEmail).toHaveBeenCalledWith('tok-123');
+    expect(await screen.findByText(APP)).toBeInTheDocument();
+  });
+
   it('vencido pede o endereço e reenvia', async () => {
-    renderEm('/confirmar-email?erro=vencido');
+    apiMock.checkVerificationLink.mockResolvedValue({ valido: false, motivo: 'vencido' });
+    renderEm('/confirmar-email/tok-vencido');
 
     expect(await screen.findByRole('heading', { name: /este link venceu/i })).toBeInTheDocument();
     await userEvent.type(screen.getByLabelText(/e-mail do cadastro/i), 'ana@example.test');
@@ -290,7 +313,8 @@ describe('retorno do link de confirmação', () => {
   });
 
   it('já usado manda entrar, sem oferecer reenvio', async () => {
-    renderEm('/confirmar-email?erro=usado');
+    apiMock.checkVerificationLink.mockResolvedValue({ valido: false, motivo: 'usado' });
+    renderEm('/confirmar-email/tok-usado');
 
     expect(
       await screen.findByRole('heading', { name: /este link já foi usado/i }),
@@ -300,7 +324,8 @@ describe('retorno do link de confirmação', () => {
   });
 
   it('inválido explica o que pode ter acontecido e oferece outro link', async () => {
-    renderEm('/confirmar-email?erro=invalido');
+    apiMock.checkVerificationLink.mockResolvedValue({ valido: false, motivo: 'invalido' });
+    renderEm('/confirmar-email/tok-qualquer');
 
     expect(await screen.findByRole('heading', { name: /link inválido/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /reenviar o link/i })).toBeInTheDocument();

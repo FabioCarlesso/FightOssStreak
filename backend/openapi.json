@@ -256,6 +256,61 @@
         }
       }
     },
+    "/api/auth/verificar/{token}": {
+      "get": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "O link de confirmação ainda vale?",
+        "description": "Consulta que não gasta o link, como a da redefinição: quem abre a URL do e-mail nem sempre é quem a recebeu — varredor de link corporativo e antivírus de caixa de entrada seguem tudo que chega, e um GET que confirmasse queimaria o link antes do clique.",
+        "operationId": "conferirConfirmacao",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cadastro e senha"
+        ],
+        "summary": "Confirma o e-mail e abre a sessão",
+        "description": "É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota.",
+        "operationId": "confirmar",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/verificacao/reenviar": {
       "post": {
         "tags": [
@@ -643,30 +698,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/auth/verificar/{token}": {
-      "get": {
-        "tags": [
-          "Cadastro e senha"
-        ],
-        "summary": "Confirma o e-mail e abre a sessão",
-        "operationId": "verificar",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }

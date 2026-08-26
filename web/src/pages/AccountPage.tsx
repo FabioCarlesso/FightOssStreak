@@ -31,7 +31,7 @@ export function AccountPage() {
               : (account.email ?? 'não informado pelo provedor')}
           </dd>
           <dt>Entrou por</dt>
-          <dd>{demo ? 'demonstração pública' : (account.provider ?? '—')}</dd>
+          <dd>{demo ? 'demonstração pública' : rotuloDoProvedor(account.provider)}</dd>
         </dl>
       </section>
 
@@ -48,4 +48,25 @@ export function AccountPage() {
       </section>
     </div>
   );
+}
+
+/**
+ * O provedor com o nome que a pessoa reconhece.
+ *
+ * O que vem da API é o id interno — `password`, `google` —, e ele nunca foi feito para ser lido:
+ * "Entrou por: password" é a frase que sobra quando um campo de banco vaza para a tela. Ids que
+ * este mapa não conhecer caem neles mesmos, porque um id estranho ainda diz mais que um traço.
+ *
+ * `email` é a entrada por link da #52, desmontada na D48: ninguém entra mais por ali, mas as
+ * contas de quem entrava continuam no banco até se cadastrarem com senha no mesmo endereço.
+ */
+function rotuloDoProvedor(provider: string | null | undefined): string {
+  if (!provider) return '—';
+  const conhecidos: Record<string, string> = {
+    password: 'e-mail e senha',
+    google: 'Google',
+    facebook: 'Facebook',
+    email: 'link por e-mail (forma antiga de entrar)',
+  };
+  return conhecidos[provider] ?? provider;
 }

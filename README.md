@@ -229,7 +229,9 @@ O app **exige login**, e há dois caminhos (D47):
 
 - **Com e-mail e senha** (`POST /api/auth/cadastro`): qualquer um cria conta, sem fila e sem
   aprovação. A conta nasce **não verificada e sem sessão** — quem entra é o **link de confirmação**
-  que chega por e-mail, vale **24 horas** e funciona uma vez. Senha de no mínimo **12 caracteres**,
+  que chega por e-mail, vale **24 horas** e funciona uma vez. Abrir o link não confirma nada: ele
+  leva a uma tela do app, e quem gasta o link (e abre a sessão) é o clique em *Confirmar meu
+  e-mail* — do contrário, o varredor de links da caixa de entrada confirmaria pela pessoa. Senha de no mínimo **12 caracteres**,
   guardada só como hash; *esqueci minha senha* manda um link de **1 hora** que, ao ser usado, queima
   os links pendentes e derruba as sessões abertas da conta.
 - **Por provedor externo** (Google; Facebook se configurado): entra direto. Quem chega por ali já
