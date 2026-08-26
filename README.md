@@ -262,9 +262,9 @@ confirmação do próprio app — pode virar `ADMIN`. `fos.auth.owner-emails` co
 permissão granular (perfil por recurso) segue fora de escopo.
 
 **Conta abusiva se bloqueia, e o bloqueio vale na hora.** Quem administra move a conta para
-`RECUSADO` pela mesma tela; as sessões abertas dela caem junto, e a próxima requisição recebe `403`
-com o código `acesso_recusado`, que é a tela de conta bloqueada — pelas duas portas, senha e
-provedor. Não é a fila de aprovação de volta (D48): a fila barrava todo mundo antes de saber quem
+`RECUSADO` pela mesma tela, e a próxima requisição da conta recebe `403` com o código
+`acesso_recusado`, que é a tela de conta bloqueada — inclusive numa aba que já estava aberta, porque
+o portão relê o estado a cada requisição, e pelas duas portas, senha e provedor. Não é a fila de aprovação de volta (D48): a fila barrava todo mundo antes de saber quem
 era, o bloqueio barra alguém depois de haver motivo, é reversível e fica registrado com quem decidiu
 e por quê. **Conta bloqueada continua podendo se excluir** (`DELETE /api/me`) — bloquear não pode
 virar sequestro de dado pessoal. Ninguém bloqueia ou rebaixa a si mesmo, nem a última conta de

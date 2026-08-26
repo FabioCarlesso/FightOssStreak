@@ -395,8 +395,9 @@ export function createApiClient(options: ApiClientOptions = {}) {
     /**
      * Bloqueia (`RECUSADO`) ou devolve o acesso (`APROVADO`) a uma conta (#90).
      *
-     * Bloquear derruba as sessões abertas da conta no servidor — a aba de quem foi bloqueado cai na
-     * tela de conta bloqueada na ação seguinte, e não só no próximo login.
+     * Bloquear vale na ação seguinte da conta, e não só no próximo login: o portão do backend relê
+     * o estado a cada requisição, então a aba que já estava aberta cai na tela de conta bloqueada
+     * sem que ninguém precise recarregar nada.
      */
     setAdminUserStatus: (id: number, status: AccessStatus, motivo?: string) =>
       request<AdminUserView>(`/api/admin/usuarios/${id}/status`, {

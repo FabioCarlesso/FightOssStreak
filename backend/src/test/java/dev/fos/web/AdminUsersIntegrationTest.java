@@ -432,8 +432,8 @@ class AdminUsersIntegrationTest {
     // ------------------------------------------------------------------ bloqueio (#90)
 
     @Test
-    @DisplayName("bloquear barra na requisição seguinte e derruba a sessão que estava aberta")
-    void blockingEndsOpenSessionsRightAway() throws Exception {
+    @DisplayName("bloquear barra a aba já aberta na ação seguinte, sem derrubar a sessão")
+    void blockingStopsAnOpenSessionOnTheVeryNextRequest() throws Exception {
         dono();
         cadastrarEConfirmar("ana@example.test");
         MockHttpSession aberta = new MockHttpSession();
@@ -446,14 +446,21 @@ class AdminUsersIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessStatus").value("RECUSADO"));
 
-        // Sem derrubar, o bloqueio só valeria no próximo login — o momento em que menos importa,
-        // porque quem está abusando já está dentro.
-        assertThat(sessionRegistry.getSessionInformation(idDaSessao).isExpired()).isTrue();
+        // A MESMA sessão, que estava aberta e funcionando, é barrada na ação seguinte — e com o
+        // código que diz à web qual tela mostrar. Não é preciso derrubar sessão nenhuma para isso:
+        // o portão relê `access_status` a cada requisição.
         mockMvc.perform(get("/api/streak").session(aberta))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("sessao_encerrada"));
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("acesso_recusado"));
 
-        // E a sessão nova bate no portão, com o código que diz à web qual tela mostrar.
+        // E a sessão NÃO é expirada, de propósito. Se fosse, o ConcurrentSessionFilter responderia
+        // 401 `sessao_encerrada` ANTES do portão: o 403 acima nunca aconteceria, e a web — que lê
+        // 401 como "não há sessão" — devolveria a pessoa bloqueada para a tela de login, que é o
+        // looping que o código no corpo existe para evitar. Foi o defeito da primeira versão da
+        // #90, e é esta linha que impede a volta dele.
+        assertThat(sessionRegistry.getSessionInformation(idDaSessao).isExpired()).isFalse();
+
+        // Sessão nova cai no mesmo lugar — bloqueio não é sobre a sessão, é sobre a conta.
         MockHttpSession nova = new MockHttpSession();
         entrar("ana@example.test", nova).andExpect(status().isNoContent());
         mockMvc.perform(get("/api/streak").session(nova))

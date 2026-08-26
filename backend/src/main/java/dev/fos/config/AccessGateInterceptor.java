@@ -20,8 +20,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * <p>Entre a D48 e a #90 ele não barrou ninguém, e ficou de pé de propósito — a aposta era que o
  * bloqueio reativo entraria por um estado novo, e não por um portão novo. Foi o que aconteceu:
  * {@code POST /api/admin/usuarios/{id}/status} escreve {@code RECUSADO}, e nem uma linha daqui
- * mudou. Quem bloqueia também derruba as sessões abertas da conta, porque bloqueio que só valesse
- * no próximo login valeria no momento em que menos importa.
+ * mudou.
+ *
+ * <p>É por ele reler {@code access_status} <b>a cada requisição</b> que o bloqueio não precisa
+ * encostar na sessão de ninguém: a aba que já estava aberta é barrada na ação seguinte. A primeira
+ * versão da #90 derrubava a sessão junto, e o efeito era o inverso — o {@code
+ * ConcurrentSessionFilter} respondia 401 antes deste interceptor, e a pessoa bloqueada voltava para
+ * a tela de login em vez de ver o motivo. Ver {@code AdminUserService.changeStatus}.
  */
 class AccessGateInterceptor implements HandlerInterceptor {
 

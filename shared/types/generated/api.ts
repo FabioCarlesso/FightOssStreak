@@ -253,7 +253,7 @@ export interface paths {
         put?: never;
         /**
          * Bloqueia (RECUSADO) ou devolve o acesso (APROVADO)
-         * @description Bloquear derruba as sessões abertas da conta na hora. 409 para si mesmo e para a última conta de administração.
+         * @description Bloquear vale na ação seguinte da conta, inclusive numa aba já aberta: o portão relê o estado a cada requisição. 409 para si mesmo e para a última conta de administração.
          */
         post: operations["mudarAcesso"];
         delete?: never;

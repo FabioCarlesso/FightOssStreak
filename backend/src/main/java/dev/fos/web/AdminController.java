@@ -90,8 +90,9 @@ public class AdminController {
     @Operation(
             summary = "Bloqueia (RECUSADO) ou devolve o acesso (APROVADO)",
             description =
-                    "Bloquear derruba as sessões abertas da conta na hora. 409 para si mesmo e para"
-                            + " a última conta de administração.")
+                    "Bloquear vale na ação seguinte da conta, inclusive numa aba já aberta: o"
+                            + " portão relê o estado a cada requisição. 409 para si mesmo e para a"
+                            + " última conta de administração.")
     public AdminUserDtos.AdminUserView mudarAcesso(
             @PathVariable Long id, @Valid @RequestBody AdminUserDtos.AdminStatusRequest request) {
         return adminUsers.changeStatus(

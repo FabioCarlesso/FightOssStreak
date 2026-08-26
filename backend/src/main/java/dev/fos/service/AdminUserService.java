@@ -55,17 +55,12 @@ public class AdminUserService {
 
     private final AppUserRepository users;
     private final UserIdentityRepository identities;
-    private final SessionLogin sessions;
     private final Clock clock;
 
     public AdminUserService(
-            AppUserRepository users,
-            UserIdentityRepository identities,
-            SessionLogin sessions,
-            Clock clock) {
+            AppUserRepository users, UserIdentityRepository identities, Clock clock) {
         this.users = users;
         this.identities = identities;
-        this.sessions = sessions;
         this.clock = clock;
     }
 
@@ -132,11 +127,23 @@ public class AdminUserService {
     /**
      * Bloqueia ou desbloqueia (#90).
      *
-     * <p>O bloqueio <b>derruba as sessões abertas</b> da conta-alvo, e é isso que o separa de um
-     * campo mudado no banco: sem derrubar, ele só valeria no próximo login — o momento em que menos
-     * importa, porque quem está abusando já está dentro. Quem barra é o {@code
-     * AccessGateInterceptor}, que lê {@code access_status} e existe desde a D48 esperando por este
-     * produtor; nenhum portão novo foi escrito.
+     * <p>Uma linha do banco, e nada mais — <b>de propósito</b>. Quem barra é o {@code
+     * AccessGateInterceptor}, que lê {@code access_status} <em>a cada requisição</em> e existe
+     * desde a D48 esperando por este produtor; nenhum portão novo foi escrito, e a sessão aberta da
+     * conta-alvo já é barrada na ação seguinte sem que ninguém precise encostar nela.
+     *
+     * <p><b>Este método não derruba as sessões abertas, e a primeira versão derrubava.</b> A
+     * intenção era boa e o efeito era o contrário do pretendido: {@code SessionLogin.endSessionsOf}
+     * marca a sessão como expirada, e aí quem responde a requisição seguinte é o {@code
+     * ConcurrentSessionFilter} com <b>401 {@code sessao_encerrada}</b> — antes de qualquer
+     * interceptor. O {@code 403 acesso_recusado} nunca acontecia, a web lia o 401 como "não há
+     * sessão" e mandava a pessoa de volta para o login, que é precisamente o looping que o código
+     * no corpo existe para evitar. Derrubar a sessão não adiantava bloqueio nenhum (o portão já
+     * barrava) e custava a única tela que explica o que houve.
+     *
+     * <p>A redefinição de senha continua derrubando sessão, e ali é outro problema: lá o ponto é
+     * expulsar quem entrou com a senha antiga, e 401 é a resposta certa porque a pessoa
+     * <em>deve</em> entrar de novo.
      */
     @Transactional
     public AdminUserDtos.AdminUserView changeStatus(
@@ -147,15 +154,6 @@ public class AdminUserService {
             refuseIfSelf(actorId, alvo);
         }
         alvo.decideAccess(status, actorId, normalize(motivo), Instant.now(clock));
-        if (status == AccessStatus.RECUSADO) {
-            // Subjects, e não ids de conta: é o principal de cada sessão que o registro guarda.
-            // Todos os da conta, e não só o de senha — bloqueio que valesse para uma porta e não
-            // para a outra não é bloqueio.
-            sessions.endSessionsOf(
-                    identities.findByUserId(alvo.getId()).stream()
-                            .map(UserIdentity::getProviderSubject)
-                            .toList());
-        }
         log.info(
                 "Acesso da conta {} decidido como {} pela conta {}", alvo.getId(), status, actorId);
         return toView(alvo);
