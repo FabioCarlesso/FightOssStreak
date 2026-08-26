@@ -3,6 +3,7 @@ import { api } from '../api/client.ts';
 import { SHORT_DISCLAIMER } from '../content/disclaimer.ts';
 import {
   APP_PATH,
+  CTA,
   LOGIN_PATH,
   DEMO,
   DISCLAIMER_DOC_URL,
@@ -75,29 +76,25 @@ export function LandingPage() {
             {/* A demonstração vem primeiro quando existe: é o degrau que a pessoa consegue subir
                 agora, sem criar conta nenhuma, e é decidindo aqui que ela vai saber se vale
                 criar uma. */}
+            {/* Primeiro na linha e sólido, sempre: é a ação primária, e ela não muda de peso
+                conforme a demonstração estar ou não configurada neste ambiente. Antes mudava — com
+                demonstração disponível, o sólido era o dela e este virava fantasma, o que deixava a
+                landing sem um caminho óbvio justamente no ambiente mais completo. */}
+            <Link className="landing__button" to={LOGIN_PATH}>
+              {CTA.conta}
+            </Link>
             {demoDisponivel && (
               <button
                 type="button"
-                className="landing__button"
+                className="landing__button landing__button--ghost"
                 onClick={demo.start}
                 disabled={demo.starting}
               >
                 {demo.starting ? DEMO.ctaCarregando : DEMO.cta}
               </button>
             )}
-            {/* A copy já disse "pedir acesso" (fila da D36) e "Criar conta" (D47). Agora diz as
-                duas saídas porque a tela de destino tem as duas: mandar quem chega da apresentação
-                direto ao formulário de senha escondia o Google de quem ainda não tem conta
-                nenhuma. Prometer menos do que o produto entrega é o mesmo defeito que prometer
-                mais. */}
-            <Link
-              className={`landing__button${demoDisponivel ? ' landing__button--ghost' : ''}`}
-              to={LOGIN_PATH}
-            >
-              Entrar ou criar conta
-            </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
-              Ver o código
+              {CTA.codigo}
             </a>
           </p>
           {demo.failure && <p className="landing__erro">{demo.failure}</p>}
@@ -220,7 +217,7 @@ export function LandingPage() {
         </h2>
         <p className="landing__cta">
           <Link className="landing__button" to={LOGIN_PATH}>
-            Entrar ou criar conta
+            {CTA.conta}
           </Link>
         </p>
       </section>
