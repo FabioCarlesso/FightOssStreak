@@ -242,6 +242,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/usuarios/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bloqueia (RECUSADO) ou devolve o acesso (APROVADO)
+         * @description Bloquear derruba as sessões abertas da conta na hora. 409 para si mesmo e para a última conta de administração.
+         */
+        post: operations["mudarAcesso"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/usuarios/{id}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Promove a ADMIN ou rebaixa a USUARIO
+         * @description 409 quando a conta não confirmou o e-mail, quando alguém tenta rebaixar a si mesmo, e quando a mudança deixaria o app sem administrador.
+         */
+        post: operations["mudarPapel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/feedback/{id}/status": {
         parameters: {
             query?: never;
@@ -408,6 +448,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/usuarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Contas do sistema, da mais nova para a mais antiga
+         * @description Paginada, com teto de tamanho. Filtros e busca combinam entre si. Conta de demonstração (D39) não aparece: ela não é de ninguém e vence sozinha.
+         */
+        get: operations["usuarios"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/feedback": {
         parameters: {
             query?: never;
@@ -551,6 +611,32 @@ export interface components {
             email: string;
             senha: string;
             nome?: string;
+        };
+        AdminStatusRequest: {
+            /** @enum {string} */
+            status: "APROVADO" | "RECUSADO";
+            motivo?: string;
+        };
+        AdminUserView: {
+            /** Format: int64 */
+            id?: number;
+            label?: string;
+            email?: string;
+            emailVerified?: boolean;
+            providers?: string[];
+            /** @enum {string} */
+            role?: "ADMIN" | "USUARIO";
+            /** @enum {string} */
+            accessStatus?: "APROVADO" | "RECUSADO";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            decidedReason?: string;
+        };
+        AdminRoleRequest: {
+            /** @enum {string} */
+            role: "ADMIN" | "USUARIO";
         };
         FeedbackStatusRequest: {
             /** @enum {string} */
@@ -745,6 +831,17 @@ export interface components {
             providers?: components["schemas"]["AuthProviderView"][];
             demoEnabled?: boolean;
             passwordEnabled?: boolean;
+        };
+        AdminUserPage: {
+            items?: components["schemas"]["AdminUserView"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            total?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         FeedbackList: {
             items?: components["schemas"]["FeedbackView"][];
@@ -1080,6 +1177,58 @@ export interface operations {
             };
         };
     };
+    mudarAcesso: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AdminUserView"];
+                };
+            };
+        };
+    };
+    mudarPapel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AdminUserView"];
+                };
+            };
+        };
+    };
     decideFeedback: {
         parameters: {
             query?: never;
@@ -1284,6 +1433,38 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AuthProviders"];
+                };
+            };
+        };
+    };
+    usuarios: {
+        parameters: {
+            query?: {
+                /** @description Filtra por estado de acesso */
+                status?: "APROVADO" | "RECUSADO";
+                /** @description Filtra por papel */
+                role?: "ADMIN" | "USUARIO";
+                /** @description Só contas com (ou sem) e-mail verificado */
+                verificado?: boolean;
+                /** @description Trecho de e-mail ou rótulo */
+                busca?: string;
+                page?: number;
+                /** @description Teto de 100; acima disso vale o teto */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AdminUserPage"];
                 };
             };
         };

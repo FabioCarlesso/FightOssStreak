@@ -1,5 +1,6 @@
 import type {
   AccountView,
+  AdminUserPage,
   AuthProviders,
   DemoSession,
   DisclaimerStatus,
@@ -34,6 +35,7 @@ const { apiMock } = vi.hoisted(() => ({
     getTree: vi.fn<() => Promise<TreeView>>(),
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     startDemo: vi.fn<() => Promise<DemoSession>>(),
+    getAdminUsers: vi.fn<() => Promise<AdminUserPage>>(),
   },
 }));
 
@@ -278,5 +280,63 @@ describe('visitante que já entrou', () => {
     renderEm('/?ver=apresentacao');
 
     expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
+  });
+});
+
+/**
+ * Menu de administração (#91).
+ *
+ * O item existe para quem administra e não existe para quem não administra — e o menu não é o
+ * portão: quem digita `/usuarios` sem ser `ADMIN` volta para a agenda em vez de encontrar uma tela
+ * que só saberia dizer 403.
+ */
+describe('menu de administração', () => {
+  beforeEach(() => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+    apiMock.getAdminUsers.mockResolvedValue({
+      items: [],
+      page: 0,
+      size: 20,
+      total: 0,
+      totalPages: 0,
+    });
+  });
+
+  it('conta comum não vê o item Usuários', async () => {
+    renderEm('/hoje');
+
+    await screen.findByRole('heading', { level: 2, name: /revise hoje/i });
+    expect(screen.queryByRole('link', { name: 'Usuários' })).not.toBeInTheDocument();
+  });
+
+  it('quem administra vê o item Usuários e ele leva à tela', async () => {
+    apiMock.getAccount.mockResolvedValue({
+      displayName: 'Dono',
+      email: 'dono@example.test',
+      provider: 'google',
+      accessStatus: 'APROVADO',
+      role: 'ADMIN',
+    });
+
+    renderEm('/hoje');
+
+    const item = await screen.findByRole('link', { name: 'Usuários' });
+    expect(item).toHaveAttribute('href', '/usuarios');
+
+    await userEvent.click(item);
+    expect(await screen.findByRole('heading', { level: 2, name: 'Usuários' })).toBeInTheDocument();
+  });
+
+  it('a rota direta devolve à agenda quem não administra', async () => {
+    renderEm('/usuarios');
+
+    expect(
+      await screen.findByRole('heading', { level: 2, name: /revise hoje/i }),
+    ).toBeInTheDocument();
+    expect(apiMock.getAdminUsers).not.toHaveBeenCalled();
   });
 });

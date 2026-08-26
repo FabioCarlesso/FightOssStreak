@@ -5,7 +5,10 @@
  * camada de UI é reescrita (docs/03-estrutura-projeto.md).
  */
 import type {
+  AccessStatus,
   AccountView,
+  AdminUserPage,
+  AdminUserView,
   AuthProviders,
   DemoSession,
   DisclaimerStatus,
@@ -17,6 +20,7 @@ import type {
   FeedbackView,
   MvpMetrics,
   NodeDetail,
+  Role,
   PinnedNote,
   QuizResult,
   QuizSubmission,
@@ -116,6 +120,17 @@ export class ApiError extends Error {
   get isAccessDenied(): boolean {
     return this.code === 'acesso_recusado';
   }
+
+  /**
+   * Ação de administração que conflita com o estado atual (#89, #90).
+   *
+   * São quatro guardas com códigos próprios — e-mail não confirmado, ação sobre a própria conta,
+   * última conta de administração, conta de demonstração —, porque cada uma leva quem está do
+   * outro lado a uma decisão diferente. A tela traduz o código; ela não recria a regra.
+   */
+  get isAdminConflict(): boolean {
+    return this.code.startsWith('admin_');
+  }
 }
 
 /**
@@ -132,6 +147,17 @@ function csrfToken(): string | null {
 }
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/** Filtros da listagem de contas (#89). Todos opcionais e combináveis entre si. */
+export interface AdminUsersQuery {
+  readonly status?: AccessStatus;
+  readonly role?: Role;
+  readonly verificado?: boolean;
+  readonly busca?: string;
+  readonly page?: number;
+  /** Teto de 100 no backend; pedir mais devolve o teto, não um erro. */
+  readonly size?: number;
+}
 
 export function createApiClient(options: ApiClientOptions = {}) {
   const baseUrl = (options.baseUrl ?? '').replace(/\/$/, '');
@@ -339,6 +365,43 @@ export function createApiClient(options: ApiClientOptions = {}) {
       request<FeedbackView>(`/api/admin/feedback/${id}/status`, {
         method: 'POST',
         body: JSON.stringify({ status }),
+      }),
+
+    /**
+     * Contas do sistema, paginadas (#89). Só quem administra recebe 200.
+     *
+     * Filtro que não veio não entra na URL: o backend trata ausente e vazio de formas diferentes,
+     * e `?status=` seria um valor de enum inválido em vez de "sem filtro".
+     */
+    getAdminUsers: (query: AdminUsersQuery = {}) => {
+      const params = new URLSearchParams();
+      if (query.status) params.set('status', query.status);
+      if (query.role) params.set('role', query.role);
+      if (query.verificado != null) params.set('verificado', String(query.verificado));
+      if (query.busca?.trim()) params.set('busca', query.busca.trim());
+      if (query.page != null) params.set('page', String(query.page));
+      if (query.size != null) params.set('size', String(query.size));
+      const search = params.toString();
+      return request<AdminUserPage>(`/api/admin/usuarios${search ? `?${search}` : ''}`);
+    },
+
+    /** Promove a `ADMIN` ou rebaixa a `USUARIO` (#89). 409 nas guardas — ver `isAdminConflict`. */
+    setAdminUserRole: (id: number, role: Role) =>
+      request<AdminUserView>(`/api/admin/usuarios/${id}/role`, {
+        method: 'POST',
+        body: JSON.stringify({ role }),
+      }),
+
+    /**
+     * Bloqueia (`RECUSADO`) ou devolve o acesso (`APROVADO`) a uma conta (#90).
+     *
+     * Bloquear derruba as sessões abertas da conta no servidor — a aba de quem foi bloqueado cai na
+     * tela de conta bloqueada na ação seguinte, e não só no próximo login.
+     */
+    setAdminUserStatus: (id: number, status: AccessStatus, motivo?: string) =>
+      request<AdminUserView>(`/api/admin/usuarios/${id}/status`, {
+        method: 'POST',
+        body: JSON.stringify({ status, motivo }),
       }),
   };
 }

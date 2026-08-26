@@ -53,6 +53,17 @@ export type AuthProviders = Schemas['AuthProviders'];
  */
 export type LinkStatus = Schemas['LinkView'];
 
+/**
+ * As contas do sistema, vistas por quem administra (#89, #90).
+ *
+ * É a primeira resposta do app que carrega dado pessoal de outras pessoas — o que entra nela está
+ * registrado em `docs/11-privacidade.md`.
+ */
+export type AdminUserView = Schemas['AdminUserView'];
+export type AdminUserPage = Schemas['AdminUserPage'];
+/** Estado de acesso da conta: `APROVADO` usa o app, `RECUSADO` está bloqueada (#90). */
+export type AccessStatus = NonNullable<AdminUserView['accessStatus']>;
+
 export type FeedbackRequest = Schemas['FeedbackRequest'];
 export type FeedbackView = Schemas['FeedbackView'];
 export type FeedbackList = Schemas['FeedbackList'];

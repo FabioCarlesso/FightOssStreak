@@ -14,11 +14,13 @@ por quanto tempo.
 |---|---|---|
 | Provedor e identificador da conta no provedor (`sub`/`id`) | do provedor, no login | é a identidade: é o par que diz de quem é o progresso |
 | Nome de exibição | do provedor, no primeiro login | identificar a conta na tela |
-| E-mail | de você, no cadastro; ou do provedor, no primeiro login | identifica a conta, é o que vincula Google e senha no mesmo endereço, e decide quem administra (`fos.auth.owner-emails`) |
+| E-mail | de você, no cadastro; ou do provedor, no primeiro login | identifica a conta, é o que vincula Google e senha no mesmo endereço, e é o que quem administra lê para reconhecer uma conta |
 | Data do primeiro e do último login | do próprio app | saber se a conta ainda é usada |
 | Progresso, streak, agenda de revisão, drills e anotações | do uso do app | é o produto |
 | Aceite do aviso de responsabilidade, com data e versão | do uso do app | requisito de produto (`06-disclaimer-responsabilidade.md`) |
 | **Hash da sua senha**, se você criou conta com e-mail e senha | de você, no cadastro | é o que confere a senha na entrada |
+| Papel da conta (`role`), com data e id de quem o mudou | de quem administra, ou da semente `fos.auth.owner-emails` na subida | decide quem vê a administração do app (D49) |
+| Estado de acesso, com data, id de quem decidiu e **o motivo escrito** | de quem administra, ao bloquear ou desbloquear | é a trilha de uma decisão sobre uma conta — bloqueio sem registro de quem e por quê é pior que bloqueio nenhum (D49) |
 
 **A senha não é guardada — o hash dela é.** Até a D47 o app não via credencial nenhuma: a autenticação acontecia no provedor, e esta seção dizia isso. Com o cadastro aberto (#81) passou a existir uma senha, e o que fica no banco é só o hash (bcrypt, com o prefixo do algoritmo), numa tabela separada da identidade. Do valor que você digita não sobra nada depois da requisição — nem em log, nem em resposta de API. **Quem entra pelo Google continua sem ter senha aqui**, e nada muda para essa pessoa.
 
@@ -82,6 +84,39 @@ Nada disso vai para log: o que se registra é o id da conta, nunca o endereço.
 
 A exclusão de conta apaga a identidade, o hash da senha e os links pendentes, na mesma transação do
 resto.
+
+## O que quem administra vê, e o que fica registrado (D49)
+
+Até aqui nenhuma tela do app mostrava dado pessoal de outra pessoa: cada conta via a si mesma, e a
+administração só olhava fila de feedback e as próprias métricas. Com a tela **Usuários** isso muda, e
+está escrito porque é a mudança que mais mexe com este documento.
+
+**Quem tem papel `ADMIN` vê, de todas as contas do app** — não de uma, não sob pedido, mas da lista
+inteira: o rótulo, o **e-mail primário** (ou, para quem se cadastrou e ainda não confirmou, o
+endereço que a identidade trouxe), se esse e-mail é verificado, os **provedores vinculados** (Google,
+Facebook, senha), o papel, o estado de acesso e a data de criação da conta. Também os campos da
+última decisão sobre ela: quando foi e com que motivo. Há busca por trecho de e-mail e rótulo, o que
+significa que procurar alguém pelo endereço é uma ação de um campo de texto.
+
+Duas coisas que **não** estão ali, de propósito: nada de progresso, agenda, drill ou anotação de
+outra pessoa — a administração enxerga a conta, não o uso dela —, e nenhuma forma de editar dado de
+conta alheia. As únicas ações são papel e estado de acesso.
+
+**O bloqueio deixa trilha.** Bloquear ou desbloquear grava, na própria linha da conta afetada,
+`decided_at` (quando), `decided_by` (o id da conta que decidiu) e `decided_reason` (o motivo escrito
+por quem decidiu, até 500 caracteres). Mudar o papel grava o par próprio, `role_changed_at` e
+`role_changed_by`. É registro de uma decisão sobre uma pessoa, e é por isso que existe: bloqueio sem
+quem e sem por quê não é auditável nem revisável.
+
+**Por quanto tempo:** enquanto a conta existir. Os campos vivem na linha do `app_user`, então o
+`DELETE /api/me` os apaga junto com o resto, na mesma transação — e **conta bloqueada continua
+podendo se excluir**, de propósito: bloquear não pode virar sequestro de dado pessoal. O que
+sobrevive é o `id` de quem decidiu, guardado como número na linha de **outra** conta; ele não tem
+chave estrangeira justamente para que quem administrou possa excluir a própria conta sem que a
+trilha alheia quebre — depois disso o número deixa de apontar para alguém.
+
+**Conta de demonstração não aparece nessa lista e não aceita ação** (D39): ela não é de ninguém e
+vence sozinha em duas horas.
 
 ## Conta de demonstração (D39)
 

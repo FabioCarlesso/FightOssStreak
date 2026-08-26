@@ -2,6 +2,8 @@ package dev.fos.web;
 
 import dev.fos.curriculum.CurriculumException;
 import dev.fos.service.AccessNotGrantedException;
+import dev.fos.service.AdminActionException;
+import dev.fos.service.AdminUserNotFoundException;
 import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.FeedbackNotAllowedException;
 import dev.fos.service.NodeNotFoundException;
@@ -47,6 +49,26 @@ class ApiExceptionHandler {
     ResponseEntity<ApiError> handleAccessNotGranted(AccessNotGrantedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    /**
+     * Ação de administração que conflita com o estado atual (#89, #90).
+     *
+     * <p>409, e não 400: o pedido está bem formado e a rota está certa — o que não cabe é a
+     * mudança. O código no corpo diz <em>qual</em> guarda bateu, porque "você não pode se rebaixar"
+     * e "esta é a última conta de administração" levam a decisões diferentes de quem está do outro
+     * lado da tela.
+     */
+    @ExceptionHandler(AdminActionException.class)
+    ResponseEntity<ApiError> handleAdminAction(AdminActionException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    @ExceptionHandler(AdminUserNotFoundException.class)
+    ResponseEntity<ApiError> handleAdminUserNotFound(AdminUserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiError.of("conta_nao_encontrada", e.getMessage()));
     }
 
     @ExceptionHandler(OwnerRequiredException.class)

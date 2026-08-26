@@ -243,13 +243,38 @@ public class AccountService {
      */
     @Transactional
     public void claimVerifiedEmail(AppUser user, String email, boolean emailVerified) {
-        if (!emailVerified || email == null || email.isBlank() || user.getPrimaryEmail() != null) {
+        if (!emailVerified || email == null || email.isBlank()) {
+            return;
+        }
+        // Antes da guarda de "já reivindicado", e de propósito: é aqui que passa TODO caminho em
+        // que um endereço vira verificado — provedor externo e confirmação do próprio app —, e a
+        // semente precisa valer em todo login, não só no primeiro. Sem isso, preencher
+        // `owner-emails` depois de a conta já existir só teria efeito na próxima subida.
+        applyOwnerSeed(user, email);
+        if (user.getPrimaryEmail() != null) {
             return;
         }
         String normalizado = Emails.normalize(email);
         if (users.findByPrimaryEmail(normalizado).isEmpty()) {
             user.claimPrimaryEmail(normalizado);
         }
+    }
+
+    /**
+     * A semente de administração aplicada a uma conta, num login (D49).
+     *
+     * <p>Chamada só com endereço já <b>verificado</b> — quem chama é {@link #claimVerifiedEmail},
+     * que é o funil por onde passam os dois caminhos de verificação. Promove e nunca rebaixa, pelo
+     * mesmo motivo de {@link #seedAdmins()}: tirar um endereço da variável não é ordem de tirar o
+     * papel de ninguém, e um deploy com a lista mal preenchida não pode virar perda de acesso à
+     * administração.
+     */
+    private void applyOwnerSeed(AppUser user, String email) {
+        if (user.isDemo() || user.getRole() == Role.ADMIN || !auth.isOwnerEmail(email)) {
+            return;
+        }
+        user.changeRole(Role.ADMIN, null, Instant.now(clock));
+        log.info("Conta {} promovida a ADMIN por estar em fos.auth.owner-emails", user.getId());
     }
 
     /**
@@ -301,33 +326,59 @@ public class AccountService {
     }
 
     /**
-     * O papel da conta — e o <b>único</b> ponto do app que decide isso (D48).
+     * O papel da conta — e o <b>único</b> ponto do app que decide isso (D48, D49).
      *
-     * <p>A origem continua sendo {@code fos.auth.owner-emails}, e continua exigindo e-mail
-     * <b>verificado</b>. O que mudou com o cadastro aberto é que "verificado" passou a incluir a
-     * confirmação do próprio app, e não só a de um provedor externo: quem confirma o endereço pelo
-     * link do cadastro tem {@code email_verified = true} igual a quem entrou pelo Google. Sem a
-     * exigência de verificação, digitar o endereço do administrador num provedor que não verifica
-     * e-mail daria acesso de administração — que é a razão da regra, e ela não mudou.
+     * <p>O lugar não mudou; a fonte, sim. Até a D48 a resposta era calculada a cada requisição a
+     * partir de {@code fos.auth.owner-emails}, e a consequência era que administrador novo exigia
+     * deploy. Agora ela sai de {@code app_user.role}, que a semente da subida ({@link
+     * #seedAdmins()}) e o próprio app escrevem — e a exigência de e-mail <b>verificado</b> continua
+     * valendo, aplicada onde a promoção acontece em vez de a cada leitura. Sem ela, digitar o
+     * endereço do administrador num provedor que não verifica e-mail daria acesso de administração;
+     * a regra é a mesma da D48, só mudou de momento.
      */
     @Transactional(readOnly = true)
     public Role roleOf(AppUser user) {
-        return isAdmin(user) ? Role.ADMIN : Role.USUARIO;
+        // Guarda explícita, mesmo com a identidade de demonstração nascendo sem e-mail e com a
+        // conta nascendo USUARIO: a cópia vem de uma conta-modelo que pode estar em `owner-emails`,
+        // e um dia alguém pode achar boa ideia copiar mais campos junto. Se isso acontecer, o
+        // defeito é a administração do app aberta para um link público (#62).
+        if (user.isDemo()) {
+            return Role.USUARIO;
+        }
+        return user.getRole();
     }
 
-    private boolean isAdmin(AppUser user) {
-        // Guarda explícita, mesmo com a identidade de demonstração nascendo sem e-mail: a cópia
-        // pode vir de uma conta-modelo que ESTÁ em `owner-emails`, e um dia alguém pode achar boa
-        // ideia copiar a identidade junto. Se isso acontecer, o defeito é a administração do app
-        // aberta para um link público (#62).
-        if (user.isDemo()) {
-            return false;
+    /**
+     * A semente de administração, na subida da aplicação (D49).
+     *
+     * <p>{@code fos.auth.owner-emails} deixou de ser a fonte da verdade do papel e virou isto: a
+     * lista promove, uma vez por subida, quem tem e-mail verificado e ainda é {@code USUARIO}. Ela
+     * <b>não</b> sai — sem ela, ambiente novo sobe sem nenhum administrador e não existe ninguém
+     * para promover o primeiro. É o bootstrap e a saída de emergência, nessa ordem.
+     *
+     * <p>O que ela não faz é rebaixar: tirar um endereço da variável não tira o papel de ninguém.
+     * Rebaixar é ação de quem administra, pela API, com as guardas que a #89 define — e uma
+     * variável que rebaixasse em silêncio na subida transformaria um deploy com a lista mal
+     * preenchida em perda de acesso à administração do app.
+     */
+    @Transactional
+    public void seedAdmins() {
+        for (String email : auth.ownerEmails()) {
+            identities.findByEmailIgnoreCaseAndEmailVerifiedTrue(email).stream()
+                    .map(UserIdentity::getUserId)
+                    .distinct()
+                    .flatMap(userId -> users.findById(userId).stream())
+                    .filter(user -> !user.isDemo())
+                    .filter(user -> user.getRole() != Role.ADMIN)
+                    .forEach(
+                            user -> {
+                                user.changeRole(Role.ADMIN, null, Instant.now(clock));
+                                log.info(
+                                        "Conta {} promovida a ADMIN por estar em"
+                                                + " fos.auth.owner-emails",
+                                        user.getId());
+                            });
         }
-        return identities.findByUserId(user.getId()).stream()
-                .anyMatch(
-                        identity ->
-                                identity.isEmailVerified()
-                                        && auth.isOwnerEmail(identity.getEmail()));
     }
 
     /**

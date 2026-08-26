@@ -17,11 +17,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * <p>A autorização do dono morava aqui junto e saiu para o {@link OwnerOnlyInterceptor}. O motivo
  * não é organização: ela perguntava por caminho, e perguntar por caminho aqui dentro era o defeito.
  *
- * <p><b>Hoje ele não barra ninguém</b>, e é assim de propósito: com o cadastro aberto (D47) toda
- * conta nasce liberada, e a D48 desmontou a fila que produzia o estado intermediário. Fica porque é
- * o lugar certo para o bloqueio reativo entrar quando fizer falta — um app público sem forma de
- * barrar conta abusiva é o risco que a D48 assume por escrito. Tirar o portão faria esse retorno
- * custar um portão novo em vez de um estado novo.
+ * <p>Entre a D48 e a #90 ele não barrou ninguém, e ficou de pé de propósito — a aposta era que o
+ * bloqueio reativo entraria por um estado novo, e não por um portão novo. Foi o que aconteceu:
+ * {@code POST /api/admin/usuarios/{id}/status} escreve {@code RECUSADO}, e nem uma linha daqui
+ * mudou. Quem bloqueia também derruba as sessões abertas da conta, porque bloqueio que só valesse
+ * no próximo login valeria no momento em que menos importa.
  */
 class AccessGateInterceptor implements HandlerInterceptor {
 

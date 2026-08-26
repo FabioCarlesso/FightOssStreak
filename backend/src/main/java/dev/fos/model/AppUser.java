@@ -61,6 +61,38 @@ public class AppUser {
     @Column(name = "primary_email")
     private String primaryEmail;
 
+    /**
+     * O que esta conta pode fazer no app — dado, e não mais configuração (D49).
+     *
+     * <p>Até a D48 o papel saía de {@code fos.auth.owner-emails} a cada requisição, e administrador
+     * novo exigia deploy. A lista continua existindo e virou <b>semente</b>: na subida ela promove
+     * quem ainda é {@code USUARIO}, e é a saída de emergência de um ambiente que ficou sem nenhum
+     * administrador. Quem decide o papel continua sendo um lugar só, {@code AccountService.roleOf}
+     * — o que mudou foi a fonte, não o ponto.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Column(name = "role_changed_at")
+    private Instant roleChangedAt;
+
+    @Column(name = "role_changed_by")
+    private Long roleChangedBy;
+
+    /**
+     * Quem decidiu o estado de acesso atual, e por quê (#90).
+     *
+     * <p>Guarda o id de quem bloqueou ou desbloqueou, sem FK: quem decidiu pode excluir a própria
+     * conta depois, e a trilha não pode sumir junto nem impedir a exclusão. Gravados nas duas
+     * direções — desbloquear também é decisão de alguém.
+     */
+    @Column(name = "decided_by")
+    private Long decidedBy;
+
+    @Column(name = "decided_reason")
+    private String decidedReason;
+
     protected AppUser() {
         // JPA
     }
@@ -71,6 +103,10 @@ public class AppUser {
         this.accessStatus = status;
         this.requestedAt = createdAt;
         this.decidedAt = decidedAt;
+        // Toda conta nasce comum, inclusive a do administrador: quem promove é a semente da
+        // subida ou outro administrador, e as duas exigem e-mail verificado. Nascer ADMIN por
+        // caminho nenhum é o que impede que o rótulo do login decida quem administra o app.
+        this.role = Role.USUARIO;
     }
 
     /** Conta do dono (e-mail verificado em {@code fos.auth.owner-emails}): já entra liberada. */
@@ -129,6 +165,49 @@ public class AppUser {
         this.label = label;
     }
 
+    /**
+     * Promove ou rebaixa, com a trilha de quem decidiu (#89).
+     *
+     * <p>As guardas — e-mail verificado, ninguém se rebaixa, nunca zero administradores — moram no
+     * serviço, e não aqui: são regras sobre o <em>conjunto</em> de contas, e a entidade só conhece
+     * a si mesma.
+     */
+    public void changeRole(Role role, Long decidedBy, Instant now) {
+        this.role = role;
+        this.roleChangedAt = now;
+        this.roleChangedBy = decidedBy;
+    }
+
+    /**
+     * Bloqueia ou desbloqueia a conta (#90).
+     *
+     * <p>É o produtor que faltava para {@code RECUSADO} desde a D48: o estado e o portão que o lê
+     * já existiam, de propósito, esperando por isto. Derrubar as sessões abertas é responsabilidade
+     * de quem chama — a entidade não sabe o que é sessão.
+     */
+    public void decideAccess(AccessStatus status, Long decidedBy, String reason, Instant now) {
+        this.accessStatus = status;
+        this.decidedAt = now;
+        this.decidedBy = decidedBy;
+        this.decidedReason = reason;
+    }
+
+    public boolean isAdmin() {
+        return role == Role.ADMIN;
+    }
+
+    /**
+     * A conta é dona de um e-mail verificado?
+     *
+     * <p>É {@code primary_email} que responde, e ele só é preenchido com endereço verificado (D47)
+     * — por provedor externo ou pela confirmação do próprio app. Cadastro criado e nunca confirmado
+     * responde falso, que é o ponto: sem isto, digitar o endereço de outra pessoa no cadastro e ser
+     * promovido daria acesso de administração a quem nunca provou o endereço.
+     */
+    public boolean hasVerifiedEmail() {
+        return primaryEmail != null;
+    }
+
     public boolean isApproved() {
         return accessStatus == AccessStatus.APROVADO;
     }
@@ -179,5 +258,25 @@ public class AppUser {
 
     public String getPrimaryEmail() {
         return primaryEmail;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public Instant getRoleChangedAt() {
+        return roleChangedAt;
+    }
+
+    public Long getRoleChangedBy() {
+        return roleChangedBy;
+    }
+
+    public Long getDecidedBy() {
+        return decidedBy;
+    }
+
+    public String getDecidedReason() {
+        return decidedReason;
     }
 }
