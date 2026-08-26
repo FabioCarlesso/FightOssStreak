@@ -1173,6 +1173,14 @@ button.landing__button {
   cursor: pointer;
 }
 
+/* E o fantasma precisa da borda de volta, com a mesma especificidade da regra acima (elemento +
+   classe), senão ela vence e o <button> vira texto solto ao lado de um <a> que virou botão. Só
+   apareceu quando o CTA da demonstração deixou de ser o sólido: enquanto ele tinha preenchimento,
+   a borda apagada não fazia falta nenhuma. */
+button.landing__button--ghost {
+  border: 1px solid var(--border);
+}
+
 .landing__erro {
   margin: 0.9rem 0 0;
   color: var(--warn);
