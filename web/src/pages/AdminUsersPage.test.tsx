@@ -103,8 +103,17 @@ function renderPage(account: AccountView = conta()) {
   );
 }
 
+/**
+ * A linha da tabela daquela conta.
+ *
+ * Matcher de função, e não `RegExp`: o e-mail é texto literal, e transformá-lo em expressão regular
+ * obrigaria a escapar todo metacaractere — escapar só o ponto é o tipo de meia-sanitização que o
+ * CodeQL aponta com razão. `includes` faz exatamente o que se quer aqui e não tem o que escapar.
+ */
 function linhaDe(email: string) {
-  return screen.getByRole('row', { name: new RegExp(email.replace(/\./g, '\\.')) });
+  return screen.getByRole('row', {
+    name: (nomeAcessivel: string) => nomeAcessivel.includes(email),
+  });
 }
 
 function ultimaConsulta(): AdminUsersQuery {
