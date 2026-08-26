@@ -1,8 +1,9 @@
 import type { AccountView, AuthProviders, DemoSession } from '@fos/types';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { notifyAccessDenied } from '../state/accessDenied.ts';
 import { AuthGate } from './AuthGate.tsx';
 
 /**
@@ -117,6 +118,83 @@ describe('AuthGate', () => {
     await userEvent.click(screen.getByRole('button', { name: /tentar de novo/i }));
 
     expect(await screen.findByText(APP)).toBeInTheDocument();
+  });
+});
+
+/**
+ * Conta bloqueada (#90, #91).
+ *
+ * O caminho normal é o 200: `/api/me` fica fora do portão do backend, e a conta bloqueada continua
+ * sabendo quem é — o que muda é o `accessStatus`. O 403 das outras chamadas é o caminho de reforço,
+ * e o que não pode acontecer em nenhum dos dois é virar redirecionamento para o login: a pessoa
+ * acabou de entrar, e o login não desbloqueia nada.
+ */
+describe('AuthGate com conta bloqueada', () => {
+  it('sessão viva com acesso recusado cai na tela de bloqueio, não no login', async () => {
+    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'RECUSADO' }));
+
+    renderGate();
+
+    expect(
+      await screen.findByRole('heading', { name: /acesso está bloqueado/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(ENTRAR)).not.toBeInTheDocument();
+    expect(screen.queryByText(APP)).not.toBeInTheDocument();
+  });
+
+  it('403 de acesso recusado também não vira looping de login', async () => {
+    apiMock.getAccount.mockRejectedValue(
+      new ApiError(403, 'acesso_recusado', 'Acesso bloqueado por quem administra o app.'),
+    );
+
+    renderGate();
+
+    expect(
+      await screen.findByRole('heading', { name: /acesso está bloqueado/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(ENTRAR)).not.toBeInTheDocument();
+  });
+
+  it('bloqueio no meio do uso derruba a aba aberta na tela certa', async () => {
+    apiMock.getAccount.mockResolvedValue(conta());
+
+    renderGate();
+    await screen.findByText(APP);
+
+    // O que o servidor faz é derrubar a sessão; a aba só descobre quando a chamada seguinte —
+    // de qualquer tela — volta 403. Recarregar a página não é instrução que se dê a ninguém.
+    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'RECUSADO' }));
+    act(() => notifyAccessDenied());
+
+    expect(
+      await screen.findByRole('heading', { name: /acesso está bloqueado/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(ENTRAR)).not.toBeInTheDocument();
+  });
+
+  it('quem está bloqueado ainda consegue excluir a própria conta', async () => {
+    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'RECUSADO' }));
+
+    renderGate();
+    await screen.findByRole('heading', { name: /acesso está bloqueado/i });
+
+    // Bloquear não pode virar sequestro de dado pessoal: `DELETE /api/me` fica de fora do portão
+    // do backend de propósito, e a tela precisa oferecer a saída.
+    await userEvent.click(screen.getByRole('button', { name: /excluir minha conta/i }));
+    await userEvent.click(screen.getByRole('button', { name: /sim, excluir tudo/i }));
+
+    expect(apiMock.deleteAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it('sair da sessão continua sendo a outra saída', async () => {
+    apiMock.getAccount.mockResolvedValue(conta({ accessStatus: 'RECUSADO' }));
+
+    renderGate();
+    await screen.findByRole('heading', { name: /acesso está bloqueado/i });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sair' }));
+
+    expect(apiMock.logout).toHaveBeenCalledTimes(1);
   });
 });
 

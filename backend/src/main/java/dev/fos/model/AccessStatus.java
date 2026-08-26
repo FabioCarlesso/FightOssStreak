@@ -8,15 +8,18 @@ package dev.fos.model;
  * liberação. A D47 abriu o cadastro e a D48 desmontou a fila — {@code PENDENTE} não tem mais quem o
  * produza, e saiu.
  *
- * <p><b>{@code RECUSADO} fica, e hoje ninguém o produz.</b> É o risco que a D48 assume com todas as
- * letras: um app de cadastro aberto sem nenhuma forma de barrar uma conta abusiva. O estado
- * permanece porque o portão que o lê ({@code AccessGateInterceptor}) é o lugar certo para o
- * bloqueio reativo entrar quando isso incomodar — e porque devolver a fila seria a resposta errada
- * para esse problema.
+ * <p><b>{@code RECUSADO} tem produtor desde a #90</b>, e é bloqueio <em>reativo</em>: quem
+ * administra bloqueia uma conta que já entrou, e a decisão vale na hora — as sessões abertas dela
+ * caem junto. Não é a fila de volta, e a diferença não é de forma: a fila barrava todo mundo antes
+ * de saber quem era, o bloqueio barra alguém depois de haver motivo. O portão que lê este campo
+ * ({@code AccessGateInterceptor}) é o mesmo de sempre — a D48 o deixou de pé exatamente para isto.
  */
 public enum AccessStatus {
     /** Usa o app normalmente. É como toda conta nasce desde a D47. */
     APROVADO,
-    /** Bloqueada. Só resta excluir a própria conta. Nada no app produz este estado hoje. */
+    /**
+     * Bloqueada por decisão de quem administra (#90). Só resta excluir a própria conta — e isso
+     * continua podendo, de propósito: bloquear não pode virar sequestro de dado pessoal.
+     */
     RECUSADO
 }

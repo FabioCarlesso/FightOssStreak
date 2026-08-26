@@ -1,5 +1,7 @@
 import { createApiClient } from '@fos/api-client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { subscribeAccessDenied } from '../state/accessDenied.ts';
+import { api } from './client.ts';
 
 /**
  * O que o cliente acrescenta em cada requisição.
@@ -89,5 +91,58 @@ describe('cliente da API', () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
 
     await expect(client().logout()).resolves.toBeUndefined();
+  });
+});
+
+/**
+ * O aviso de conta bloqueada (#90, #91).
+ *
+ * Este é o único acréscimo do cliente do app sobre o de `shared/`: perceber que **esta** conta foi
+ * bloqueada no meio do uso. Sem ele, o 403 morreria na tela que fez a chamada, e a pessoa ficaria
+ * com uma mensagem de erro no lugar da explicação — o portão só reconsulta se alguém o avisar.
+ */
+describe('aviso de acesso recusado', () => {
+  function resposta403(code: string): Response {
+    return new Response(JSON.stringify({ error: code, message: 'sem acesso' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  it('403 de acesso recusado avisa quem estiver ouvindo', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta403('acesso_recusado')));
+    const ouvinte = vi.fn();
+    const parar = subscribeAccessDenied(ouvinte);
+
+    await expect(api.getStreak()).rejects.toMatchObject({ code: 'acesso_recusado' });
+
+    // O corpo é de uso único: se o aviso o consumisse, o `ApiError` chegaria sem código.
+    expect(ouvinte).toHaveBeenCalledTimes(1);
+    parar();
+    vi.unstubAllGlobals();
+  });
+
+  it('403 de CSRF não é bloqueio e não avisa ninguém', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta403('csrf_invalido')));
+    const ouvinte = vi.fn();
+    const parar = subscribeAccessDenied(ouvinte);
+
+    await expect(api.getStreak()).rejects.toMatchObject({ code: 'csrf_invalido' });
+
+    expect(ouvinte).not.toHaveBeenCalled();
+    parar();
+    vi.unstubAllGlobals();
+  });
+
+  it('403 no próprio /api/me não avisa: seria o portão se reconsultando em laço', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta403('acesso_recusado')));
+    const ouvinte = vi.fn();
+    const parar = subscribeAccessDenied(ouvinte);
+
+    await expect(api.getAccount()).rejects.toMatchObject({ code: 'acesso_recusado' });
+
+    expect(ouvinte).not.toHaveBeenCalled();
+    parar();
+    vi.unstubAllGlobals();
   });
 });

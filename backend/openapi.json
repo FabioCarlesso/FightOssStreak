@@ -16,6 +16,10 @@
   ],
   "tags": [
     {
+      "name": "Administração",
+      "description": "Contas do sistema e fila de feedback; restrita a quem administra"
+    },
+    {
       "name": "Métricas",
       "description": "Critérios de sucesso do MVP medidos sobre o uso real"
     },
@@ -42,10 +46,6 @@
     {
       "name": "Conta",
       "description": "Login social, identidade da conta e exclusão"
-    },
-    {
-      "name": "Administração",
-      "description": "Fila de feedback; restrita à conta de administração"
     }
   ],
   "paths": {
@@ -476,6 +476,92 @@
         }
       }
     },
+    "/api/admin/usuarios/{id}/status": {
+      "post": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Bloqueia (RECUSADO) ou devolve o acesso (APROVADO)",
+        "description": "Bloquear vale na ação seguinte da conta, inclusive numa aba já aberta: o portão relê o estado a cada requisição. 409 para si mesmo e para a última conta de administração.",
+        "operationId": "mudarAcesso",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/usuarios/{id}/role": {
+      "post": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Promove a ADMIN ou rebaixa a USUARIO",
+        "description": "409 quando a conta não confirmou o e-mail, quando alguém tenta rebaixar a si mesmo, e quando a mudança deixaria o app sem administrador.",
+        "operationId": "mudarPapel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/feedback/{id}/status": {
       "post": {
         "tags": [
@@ -717,6 +803,95 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthProviders"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/usuarios": {
+      "get": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Contas do sistema, da mais nova para a mais antiga",
+        "description": "Paginada, com teto de tamanho. Filtros e busca combinam entre si. Conta de demonstração (D39) não aparece: ela não é de ninguém e vence sozinha.",
+        "operationId": "usuarios",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filtra por estado de acesso",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "APROVADO",
+                "RECUSADO"
+              ]
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "Filtra por papel",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ADMIN",
+                "USUARIO"
+              ]
+            }
+          },
+          {
+            "name": "verificado",
+            "in": "query",
+            "description": "Só contas com (ou sem) e-mail verificado",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "busca",
+            "in": "query",
+            "description": "Trecho de e-mail ou rótulo",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Teto de 100; acima disso vale o teto",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserPage"
                 }
               }
             }
@@ -1115,6 +1290,90 @@
           },
           "nome": {
             "type": "string"
+          }
+        }
+      },
+      "AdminStatusRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APROVADO",
+              "RECUSADO"
+            ]
+          },
+          "motivo": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "AdminUserView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "USUARIO"
+            ]
+          },
+          "accessStatus": {
+            "type": "string",
+            "enum": [
+              "APROVADO",
+              "RECUSADO"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedReason": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminRoleRequest": {
+        "required": [
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "USUARIO"
+            ]
           }
         }
       },
@@ -1668,6 +1927,33 @@
           },
           "passwordEnabled": {
             "type": "boolean"
+          }
+        }
+      },
+      "AdminUserPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

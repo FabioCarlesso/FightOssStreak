@@ -1673,6 +1673,193 @@ textarea.feedback-form__control {
   cursor: default;
 }
 
+/*
+ * Usuários (#91)
+ *
+ * A única tabela do app, e ela existe porque é o formato certo aqui: sete campos por conta, lidos
+ * em comparação uns com os outros. O preço é largura, e o preço é pago com rolagem própria — tabela
+ * larga que estoura o `body` arrasta a página inteira para o lado em qualquer celular.
+ */
+.admin-users__filtros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 0.7rem;
+  margin: 0.9rem 0 1rem;
+}
+
+.admin-users__filtro--acoes {
+  display: flex;
+  align-items: end;
+}
+
+.admin-users__rolagem {
+  overflow-x: auto;
+  /* A rolagem é da tabela, não da página: sem isto o `min-width` abaixo empurraria o app inteiro. */
+  max-width: 100%;
+}
+
+.admin-users__tabela {
+  width: 100%;
+  min-width: 54rem;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.admin-users__tabela th,
+.admin-users__tabela td {
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-users__tabela thead th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-users__tabela tbody tr:last-child th,
+.admin-users__tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-users__nome {
+  font-weight: 600;
+}
+
+.admin-users__voce {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Chip neutra por padrão: o realce é para o que foge do normal — bloqueada, não confirmada, admin. */
+.admin-users__chip {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.admin-users__chip--admin {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.admin-users__chip--bloqueada {
+  border-color: var(--warn);
+  background: rgba(217, 83, 79, 0.15);
+  color: var(--warn);
+}
+
+.admin-users__chip--aviso {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.admin-users__acoes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.admin-users__acoes button {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.admin-users__acoes button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-users__acoes button.danger:hover:not(:disabled) {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.admin-users__falha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-users__paginacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.admin-users__paginacao .hint {
+  margin: 0;
+}
+
+/*
+ * Confirmação de ação sobre uma pessoa
+ *
+ * Sobreposição de tela inteira porque é isso que a confirmação precisa fazer: parar o que estava
+ * acontecendo. O e-mail em destaque é o conteúdo, não decoração — é ele que responde "quem?".
+ */
+.dialogo {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background: rgba(15, 17, 21, 0.72);
+}
+
+.dialogo__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  max-width: 440px;
+  width: 100%;
+}
+
+.dialogo__card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+}
+
+.dialogo__alvo {
+  margin: 0 0 0.6rem;
+  overflow-wrap: anywhere;
+}
+
+.dialogo__rotulo {
+  color: var(--muted);
+}
+
+.dialogo__efeito {
+  margin: 0 0 0.9rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.dialogo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 /* ==========================================================================
  * Mobile
  *
@@ -1863,6 +2050,16 @@ textarea.feedback-form__control {
   /* Empilha as opções de recall: em 320px duas colunas deixariam ~120px por opção. */
   .drill__options {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Cinco colunas de filtro em 320px dariam ~50px cada: viram duas, e a busca ocupa a linha. */
+  .admin-users__filtros {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .admin-users__filtro--busca,
+  .admin-users__filtro--acoes {
+    grid-column: 1 / -1;
   }
 
   .landing {

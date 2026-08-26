@@ -172,7 +172,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
 | `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
-| `FOS_OWNER_EMAILS` | backend | vazia | e-mails do dono, separados por vírgula |
+| `FOS_OWNER_EMAILS` | backend | vazia | semente de administração: e-mails que viram `ADMIN` na subida, separados por vírgula |
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID` | backend | — | id do app no Google |
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET` | backend | — | segredo do app no Google |
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_ID` | backend | — | id do app no Meta for Developers |
@@ -205,10 +205,17 @@ Detalhes que não são óbvios:
   Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
-- **`FOS_OWNER_EMAILS` vazia deixa o app sem administração.** Ninguém vê a fila de feedback nem as
-  métricas — o app funciona igual para todo mundo. É ela também que faz a conta do autor adotar o
-  progresso pré-existente (D36). Preenchê-la **depois** de já ter entrado uma vez funciona: a
-  regra vale em todo login, então o login seguinte reconhece a conta e adota o progresso.
+- **`FOS_OWNER_EMAILS` é semente, não fonte da verdade (D49).** Quem administra é `app_user.role`,
+  no banco, mudado pela tela *Usuários* sem deploy. A variável **promove** — na subida e em todo
+  login com e-mail verificado — e **nunca rebaixa**: tirar um endereço dela não tira o papel de
+  ninguém, senão um deploy com a lista mal preenchida viraria perda de acesso à administração.
+  Em banco novo, ela é o único jeito de existir um primeiro `ADMIN`, e num ambiente que ficou sem
+  nenhum (a última conta de administração se excluiu, por exemplo) ela é a saída de emergência:
+  preencher e reiniciar. Vazia num banco novo, o app sobe sem administração nenhuma — ninguém vê
+  contas, feedback nem métricas, e o app funciona igual para todo mundo. É ela também que faz a
+  conta do autor adotar o progresso pré-existente (D36). Preenchê-la **depois** de já ter entrado
+  uma vez funciona: a regra vale em todo login, então o login seguinte reconhece a conta, promove e
+  adota o progresso.
 - **`FOS_DEMO_TEMPLATE_EMAIL` vazia desliga a demonstração.** O botão não aparece na landing e
   `POST /api/demo/sessao` responde 404 — a aplicação sobe igual. Se ela apontar para um endereço
   que não tem identidade com **e-mail verificado**, o efeito é o mesmo: o recurso simplesmente não
@@ -247,16 +254,29 @@ entrava por link antes do cadastro aberto continua entrando: basta se cadastrar 
 endereço** — o e-mail já está verificado, então a senha nova se anexa à conta antiga, com o progresso
 onde estava.
 
-**`fos.auth.owner-emails` é a lista de contas de administração** (fila de feedback e métricas), e
-exige e-mail verificado — pelo provedor ou pela confirmação do próprio app. Não há tabela de papéis:
-`GET /api/me` devolve `role` (`ADMIN` ou `USUARIO`), decidido num ponto só.
+**Quem administra é o papel da conta, `app_user.role` (D49)**, e `GET /api/me` o devolve como `role`
+(`ADMIN` ou `USUARIO`), decidido num ponto só (`AccountService.roleOf`). Promover e rebaixar é ação
+da tela *Usuários*, sem deploy, e só conta com **e-mail verificado** — pelo provedor ou pela
+confirmação do próprio app — pode virar `ADMIN`. `fos.auth.owner-emails` continua existindo como
+**semente**: promove na subida e em todo login verificado, e nunca rebaixa. São dois papéis e ponto;
+permissão granular (perfil por recurso) segue fora de escopo.
+
+**Conta abusiva se bloqueia, e o bloqueio vale na hora.** Quem administra move a conta para
+`RECUSADO` pela mesma tela, e a próxima requisição da conta recebe `403` com o código
+`acesso_recusado`, que é a tela de conta bloqueada — inclusive numa aba que já estava aberta, porque
+o portão relê o estado a cada requisição, e pelas duas portas, senha e provedor. Não é a fila de aprovação de volta (D48): a fila barrava todo mundo antes de saber quem
+era, o bloqueio barra alguém depois de haver motivo, é reversível e fica registrado com quem decidiu
+e por quê. **Conta bloqueada continua podendo se excluir** (`DELETE /api/me`) — bloquear não pode
+virar sequestro de dado pessoal. Ninguém bloqueia ou rebaixa a si mesmo, nem a última conta de
+administração: nesses casos a API responde `409` e nada muda.
 
 E um degrau **antes** dos dois (D39): a landing oferece *Ver o app funcionando*, que abre uma
 conta de demonstração temporária, já com progresso de exemplo, sem pedir nada a ninguém.
 
 Sem sessão a API responde `401`. A decisão e o porquê estão em
 [`docs/07-decisoes.md`](docs/07-decisoes.md) — a história completa vai da D36 (login sob aprovação) à
-D48 (o portão desmontado), passando pela D47, que abriu o cadastro.
+D49 (papel em tabela e bloqueio reativo), passando pela D47, que abriu o cadastro, e pela D48, que
+desmontou o portão.
 
 **Habilitar o cadastro com senha**: crie a chave no provedor de envio, verifique o domínio do
 remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM`. Sem elas o app sobe igual, `POST
@@ -289,8 +309,22 @@ deslocadas para que a agenda caia em torno de hoje. A conta-modelo nunca recebe 
 ser inclusive a sua conta de dono, que a cópia não herda poder nenhum. As demonstrações vencidas
 são apagadas quando alguém abre a próxima.
 
-**Ler o feedback de quem usa**: entre com uma conta de `FOS_OWNER_EMAILS` e abra *Feedback*; a fila
-aparece abaixo do formulário. Também está em `GET /api/admin/feedback`.
+**Ler o feedback de quem usa**: entre com uma conta `ADMIN` e abra *Feedback*; a fila aparece abaixo
+do formulário. Também está em `GET /api/admin/feedback`.
+
+**Administrar as contas**: com uma conta `ADMIN`, o menu mostra *Usuários* (`/usuarios`), com busca,
+filtros e paginação sobre as contas do app. As rotas por trás, todas sob `/api/admin/**` e portanto
+`403` para quem não administra:
+
+| Rota | O que faz |
+|---|---|
+| `GET /api/admin/usuarios` | lista as contas, da mais nova para a mais antiga; filtros `status`, `role` e `verificado`, busca por trecho de e-mail ou rótulo, `page`/`size` com teto de 100 |
+| `POST /api/admin/usuarios/{id}/role` | promove a `ADMIN` ou rebaixa a `USUARIO` |
+| `POST /api/admin/usuarios/{id}/status` | bloqueia (`RECUSADO`) ou devolve o acesso (`APROVADO`), com motivo |
+| `GET /api/admin/feedback` | fila de feedback |
+| `POST /api/admin/feedback/{id}/status` | decide um feedback |
+
+A conta de demonstração (D39) não aparece na lista e não aceita nenhuma dessas ações.
 
 **Excluir a conta**: em *Sua conta*, ou `DELETE /api/me`. Apaga conta, identidade, hash da senha,
 links pendentes, progresso, streak, agenda, drills, anotações e aceite — em uma transação, sem

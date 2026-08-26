@@ -4,8 +4,9 @@ package dev.fos.service;
  * Rota de administração pedida por conta que não é dona. Vira 403 em {@link
  * dev.fos.web.ApiExceptionHandler}.
  *
- * <p>Ser dono é ter e-mail verificado em {@code fos.auth.owner-emails} — uma checagem contra
- * configuração, não um sistema de papéis (#24 põe roles fora de escopo).
+ * <p>Administrar é ter {@code app_user.role = ADMIN} (D49) — papel em tabela, com dois valores e
+ * sem permissão por recurso. A configuração {@code fos.auth.owner-emails} continua existindo como
+ * semente da subida, não como fonte da verdade.
  */
 public class OwnerRequiredException extends RuntimeException {
 

@@ -17,11 +17,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * <p>A autorização do dono morava aqui junto e saiu para o {@link OwnerOnlyInterceptor}. O motivo
  * não é organização: ela perguntava por caminho, e perguntar por caminho aqui dentro era o defeito.
  *
- * <p><b>Hoje ele não barra ninguém</b>, e é assim de propósito: com o cadastro aberto (D47) toda
- * conta nasce liberada, e a D48 desmontou a fila que produzia o estado intermediário. Fica porque é
- * o lugar certo para o bloqueio reativo entrar quando fizer falta — um app público sem forma de
- * barrar conta abusiva é o risco que a D48 assume por escrito. Tirar o portão faria esse retorno
- * custar um portão novo em vez de um estado novo.
+ * <p>Entre a D48 e a #90 ele não barrou ninguém, e ficou de pé de propósito — a aposta era que o
+ * bloqueio reativo entraria por um estado novo, e não por um portão novo. Foi o que aconteceu:
+ * {@code POST /api/admin/usuarios/{id}/status} escreve {@code RECUSADO}, e nem uma linha daqui
+ * mudou.
+ *
+ * <p>É por ele reler {@code access_status} <b>a cada requisição</b> que o bloqueio não precisa
+ * encostar na sessão de ninguém: a aba que já estava aberta é barrada na ação seguinte. A primeira
+ * versão da #90 derrubava a sessão junto, e o efeito era o inverso — o {@code
+ * ConcurrentSessionFilter} respondia 401 antes deste interceptor, e a pessoa bloqueada voltava para
+ * a tela de login em vez de ver o motivo. Ver {@code AdminUserService.changeStatus}.
  */
 class AccessGateInterceptor implements HandlerInterceptor {
 

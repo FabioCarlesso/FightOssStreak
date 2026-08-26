@@ -9,8 +9,8 @@ import dev.fos.model.AccessStatus;
  * o que a pessoa acabou de fazer — o resultado seria um looping. O código no corpo ({@code
  * acesso_recusado}) é o que diz qual tela mostrar.
  *
- * <p>Desde a D48 nada no app produz {@link AccessStatus#RECUSADO}, então este caminho não é
- * percorrido — ver o javadoc de {@code AccessStatus} para por que ele continua de pé.
+ * <p>Quem produz {@link AccessStatus#RECUSADO} é o bloqueio de quem administra (#90). Entre a D48 e
+ * ela este caminho existia sem ninguém que o percorresse — ver o javadoc de {@code AccessStatus}.
  */
 public class AccessNotGrantedException extends RuntimeException {
 

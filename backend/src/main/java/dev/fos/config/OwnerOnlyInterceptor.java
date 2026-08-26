@@ -25,9 +25,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * preso em {@code AuthIntegrationTest.encodedPathDoesNotBypassTheOwnerCheck}.
  *
  * <p>Desde a D48 este é o <b>único</b> ponto do app que pergunta "esta requisição é de
- * administração?", e a resposta vem de {@code AccountService.roleOf}. Continua sendo uma checagem
- * contra {@code fos.auth.owner-emails}, sem tabela de papéis: o critério para isso mudar está na
- * D48 — um segundo administrador, ou uma permissão que não seja "tudo".
+ * administração?", e a resposta vem de {@code AccountService.roleOf}. O que mudou com a D49 foi
+ * onde {@code roleOf} busca a resposta — {@code app_user.role} em vez de {@code
+ * fos.auth.owner-emails} —, e este arquivo não precisou saber disso, que era o ponto de ter um
+ * lugar só. Continuam sendo dois papéis: permissão granular segue fora de escopo.
  */
 class OwnerOnlyInterceptor implements HandlerInterceptor {
 
