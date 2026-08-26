@@ -29,7 +29,7 @@ function renderPage(overrides: Partial<AccountView> = {}) {
     email: 'aluno@example.test',
     provider: 'google',
     accessStatus: 'APROVADO',
-    owner: false,
+    role: 'USUARIO',
     ...overrides,
   };
   return render(
@@ -66,7 +66,7 @@ beforeEach(() => {
 });
 
 describe('FeedbackPage', () => {
-  it('conta comum manda feedback e não vê a fila do dono', async () => {
+  it('conta comum manda feedback e não vê a fila de administração', async () => {
     renderPage();
 
     expect(screen.queryByText('Fila de feedback')).not.toBeInTheDocument();
@@ -89,7 +89,7 @@ describe('FeedbackPage', () => {
   });
 
   it('o dono vê a fila e muda o status para resolvido', async () => {
-    renderPage({ owner: true });
+    renderPage({ role: 'ADMIN' });
 
     expect(await screen.findByText('app trava ao abrir')).toBeInTheDocument();
 
@@ -100,7 +100,7 @@ describe('FeedbackPage', () => {
   });
 
   it('falha ao decidir aparece na tela em vez de sumir', async () => {
-    renderPage({ owner: true });
+    renderPage({ role: 'ADMIN' });
     apiMock.decideFeedback.mockRejectedValue(new Error('403 Forbidden'));
 
     await userEvent.click(await screen.findByRole('button', { name: 'Resolvido' }));

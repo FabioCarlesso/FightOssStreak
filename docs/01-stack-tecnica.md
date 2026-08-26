@@ -33,6 +33,8 @@ Sem geração automática de tipos, `shared/types` diverge do backend em duas se
 ### Autenticação
 Não estava definida e afeta o schema. Para MVP de uso pessoal, o mais simples resolve (usuário único, ou OAuth via Google). Mas registre desde já: **a Apple exige exclusão de conta** em apps com login — se houver conta, precisa haver rota de deleção antes da publicação iOS.
 
+**O que aconteceu depois.** A D36 trouxe login social com acesso sob aprovação, e a promessa que vinha junto era que *o app nunca vê credencial* — a autenticação acontecia no provedor, e a D37 recusou senha própria explicitamente por isso. **Desde a D47 essa frase não é mais verdadeira**: com o cadastro aberto (#81), o app guarda hash de senha (`password_credential`, `DelegatingPasswordEncoder` com prefixo `{bcrypt}`) e opera recuperação por e-mail. Foi troca consciente — a fila de aprovação tinha virado o gargalo de um app que quer usuários —, e os riscos que a D37 evitava (hash vazado, recuperação como vetor de tomada de conta, força bruta) passaram a existir e a ser mitigados em vez de evitados. Detalhe de implementação que vale como regra: o hash **nunca** aparece em resposta de API, e a senha em claro só existe dentro do request que a recebeu.
+
 ## Complexidade por camada
 
 | Camada | Complexidade | Motivo |

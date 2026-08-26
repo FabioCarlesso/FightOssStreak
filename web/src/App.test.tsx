@@ -59,7 +59,6 @@ beforeEach(() => {
 
   apiMock.getAuthProviders.mockResolvedValue({
     providers: [],
-    emailEnabled: false,
     demoEnabled: false,
   });
   apiMock.startDemo.mockResolvedValue({ destino: '/hoje', expiraEm: '2026-08-18T12:00:00Z' });
@@ -69,7 +68,7 @@ beforeEach(() => {
     email: 'autor@example.test',
     provider: 'google',
     accessStatus: 'APROVADO',
-    owner: false,
+    role: 'USUARIO',
   });
   apiMock.getDisclaimer.mockResolvedValue({ accepted: false, currentVersion: '2026-08' });
   apiMock.getStreak.mockResolvedValue({
@@ -111,11 +110,13 @@ describe('rota pública', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('o botão de entrar aponta para o app, não para dentro do conteúdo', async () => {
+  it('o botão de entrar leva ao cadastro, não para dentro do conteúdo', async () => {
     renderEm('/');
 
-    const entrar = await screen.findAllByRole('link', { name: /pedir acesso/i });
-    expect(entrar[0]).toHaveAttribute('href', '/hoje');
+    // "Criar conta" desde a D47, e apontando para `/cadastrar`: quem chega pela apresentação ainda
+    // não tem conta, e mandá-lo direto para `/hoje` seria um portão sem explicação.
+    const entrar = await screen.findAllByRole('link', { name: /criar conta/i });
+    expect(entrar[0]).toHaveAttribute('href', '/cadastrar');
   });
 });
 
@@ -132,7 +133,6 @@ describe('acesso demonstrativo (#62)', () => {
   it('com conta-modelo, o botão abre a sessão e entra no app', async () => {
     apiMock.getAuthProviders.mockResolvedValue({
       providers: [],
-      emailEnabled: false,
       demoEnabled: true,
     });
 
@@ -149,7 +149,6 @@ describe('acesso demonstrativo (#62)', () => {
   it('a demonstração não pula o aviso de responsabilidade', async () => {
     apiMock.getAuthProviders.mockResolvedValue({
       providers: [],
-      emailEnabled: false,
       demoEnabled: true,
     });
     apiMock.getAccount.mockResolvedValue({
@@ -157,7 +156,7 @@ describe('acesso demonstrativo (#62)', () => {
       email: undefined,
       provider: 'demo',
       accessStatus: 'APROVADO',
-      owner: false,
+      role: 'USUARIO',
       demoExpiresAt: '2026-08-18T12:00:00Z',
     });
 
@@ -179,7 +178,7 @@ describe('acesso demonstrativo (#62)', () => {
       email: undefined,
       provider: 'demo',
       accessStatus: 'APROVADO',
-      owner: false,
+      role: 'USUARIO',
       demoExpiresAt: '2026-08-18T12:00:00Z',
     });
 
@@ -202,7 +201,7 @@ describe('acesso demonstrativo (#62)', () => {
       email: undefined,
       provider: 'demo',
       accessStatus: 'APROVADO',
-      owner: false,
+      role: 'USUARIO',
       demoExpiresAt: '2026-08-18T12:00:00Z',
     });
 
@@ -212,7 +211,7 @@ describe('acesso demonstrativo (#62)', () => {
 
     renderEm('/');
 
-    // A apresentação é o que existe para convencer alguém a pedir acesso. Escondê-la de quem
+    // A apresentação é o que existe para convencer alguém a criar conta. Escondê-la de quem
     // acabou de experimentar — e que por definição ainda não tem conta — inverte a intenção.
     expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
   });

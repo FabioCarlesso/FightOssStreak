@@ -72,7 +72,7 @@ function schemaMigrado() {
 
 function seedConta({ email, label }) {
   const jaExiste = psql(
-    `SELECT 1 FROM user_identity WHERE provider = 'email' AND provider_subject = '${email}'`,
+    `SELECT 1 FROM user_identity WHERE provider = 'password' AND provider_subject = '${email}'`,
   ).trim();
   if (jaExiste) {
     console.log(`já existia: ${email}`);
@@ -80,13 +80,13 @@ function seedConta({ email, label }) {
   }
   psql(`
     WITH nova_conta AS (
-      INSERT INTO app_user (label, created_at, access_status, requested_at, decided_at)
-      VALUES ('${label}', now(), 'APROVADO', now(), now())
+      INSERT INTO app_user (label, created_at, access_status, requested_at, decided_at, primary_email)
+      VALUES ('${label}', now(), 'APROVADO', now(), now(), '${email}')
       RETURNING id
     )
     INSERT INTO user_identity
       (user_id, provider, provider_subject, email, email_verified, display_name, created_at, last_login_at)
-    SELECT id, 'email', '${email}', '${email}', true, '${label}', now(), now() FROM nova_conta;
+    SELECT id, 'password', '${email}', '${email}', true, '${label}', now(), now() FROM nova_conta;
   `);
   console.log(`criada: ${email}`);
 }

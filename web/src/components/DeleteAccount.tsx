@@ -6,8 +6,7 @@ import { api } from '../api/client.ts';
  *
  * Não é item de polimento: app com login precisa ter rota de deleção, e a exigência é da própria
  * loja da Apple (docs/02-publicacao-ios-desafios.md) — por isso ela entrou junto com o login, e não
- * depois. Vale também para quem está na fila ou foi recusado: pediu acesso e não entrou, tem o
- * mesmo direito de sumir do banco.
+ * depois.
  *
  * A confirmação é em dois passos de propósito. O texto diz o que se perde, porque um botão que
  * apaga streak, progresso e agenda de revisão não pode ser do tamanho de um "cancelar".

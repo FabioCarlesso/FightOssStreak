@@ -114,27 +114,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/email/solicitar": {
+    "/api/auth/verificar/{token}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * O link de confirmação ainda vale?
+         * @description Consulta que não gasta o link, como a da redefinição: quem abre a URL do e-mail nem sempre é quem a recebeu — varredor de link corporativo e antivírus de caixa de entrada seguem tudo que chega, e um GET que confirmasse queimaria o link antes do clique.
+         */
+        get: operations["conferirConfirmacao"];
         put?: never;
         /**
-         * Registra um pedido de acesso
-         * @description A conta nasce pendente e entra na fila do dono. Nenhum e-mail sai aqui: o dono recebe o resumo da fila na próxima janela do dia (10h às 22h), e quem pediu só recebe algo quando for aprovado.
+         * Confirma o e-mail e abre a sessão
+         * @description É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota.
          */
-        post: operations["solicitar"];
+        post: operations["confirmar"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/auth/email/entrar": {
+    "/api/auth/verificacao/reenviar": {
         parameters: {
             query?: never;
             header?: never;
@@ -144,8 +148,72 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Pede o link de entrada
-         * @description Responde igual para endereço inexistente, pendente, recusado e aprovado — do contrário viraria consulta de quem tem conta no app.
+         * Manda outro link de confirmação
+         * @description O link anterior deixa de valer. Responde igual para cadastro pendente, confirmado e inexistente.
+         */
+        post: operations["reenviar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/senha/redefinir/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * O link de redefinição ainda vale?
+         * @description Consulta que não gasta o link: consumir na abertura da tela o queimaria em qualquer pré-carregamento do navegador ou do cliente de e-mail.
+         */
+        get: operations["conferir"];
+        put?: never;
+        /**
+         * Troca a senha
+         * @description Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.
+         */
+        post: operations["redefinir"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/senha/esquecida": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Manda o link de redefinição
+         * @description Responde igual para endereço com conta e sem conta.
+         */
+        post: operations["esquecida"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entra com e-mail e senha
+         * @description 401 sem dizer se o e-mail existe; 403 quando a senha confere mas o endereço ainda não foi confirmado; 429 no freio de tentativas.
          */
         post: operations["entrar"];
         delete?: never;
@@ -154,7 +222,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/solicitacoes/{id}/recusar": {
+    "/api/auth/cadastro": {
         parameters: {
             query?: never;
             header?: never;
@@ -164,30 +232,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Recusa a conta; devolve a fila já sem ela
-         * @description A conta recusada continua recusada nos logins seguintes e só pode se excluir.
+         * Cria a conta e manda o link de confirmação
+         * @description Não abre sessão: a conta nasce não verificada e só existe de verdade quando o link for aberto. Responde igual para e-mail novo e já cadastrado — do contrário viraria consulta de quem tem conta no app.
          */
-        post: operations["deny"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/solicitacoes/{id}/aprovar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Libera a conta; devolve a fila já sem ela
-         * @description Quem pediu por e-mail recebe aqui o primeiro link de entrada — é o único momento em que o app escreve para um endereço que ainda não entrou.
-         */
-        post: operations["approve"];
+        post: operations["cadastrar"];
         delete?: never;
         options?: never;
         head?: never;
@@ -298,26 +346,9 @@ export interface paths {
         post?: never;
         /**
          * Exclui a conta e todo o dado dela
-         * @description Irreversível. Vale para conta aprovada, pendente ou recusada. A sessão é invalidada junto.
+         * @description Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes e todo o progresso. A sessão é invalidada junto.
          */
         delete: operations["deleteMe"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/login/email/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Consome o link e abre a sessão */
-        get: operations["consumir"];
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -369,23 +400,6 @@ export interface paths {
          * @description Só os que têm credencial configurada. Sem nenhum, a lista vem vazia e a tela de login não mostra botão — a aplicação sobe sem segredo nenhum.
          */
         get: operations["providers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/admin/solicitacoes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Contas aguardando liberação, da mais antiga para a mais nova */
-        get: operations["pending"];
         put?: never;
         post?: never;
         delete?: never;
@@ -526,17 +540,17 @@ export interface components {
         EmailRequest: {
             email: string;
         };
-        AccessRequestView: {
-            /** Format: int64 */
-            id?: number;
-            displayName?: string;
-            email?: string;
-            provider?: string;
-            /** Format: date-time */
-            requestedAt?: string;
+        SenhaRequest: {
+            senha: string;
         };
-        AccessRequests: {
-            requests?: components["schemas"]["AccessRequestView"][];
+        LoginRequest: {
+            email: string;
+            senha: string;
+        };
+        CadastroRequest: {
+            email: string;
+            senha: string;
+            nome?: string;
         };
         FeedbackStatusRequest: {
             /** @enum {string} */
@@ -674,8 +688,9 @@ export interface components {
             email?: string;
             provider?: string;
             /** @enum {string} */
-            accessStatus?: "PENDENTE" | "APROVADO" | "RECUSADO";
-            owner?: boolean;
+            accessStatus?: "APROVADO" | "RECUSADO";
+            /** @enum {string} */
+            role?: "ADMIN" | "USUARIO";
             /** Format: date-time */
             demoExpiresAt?: string;
         };
@@ -717,6 +732,10 @@ export interface components {
             modules?: components["schemas"]["ModuleView"][];
             summary?: components["schemas"]["ProgressSummary"];
         };
+        LinkView: {
+            valido?: boolean;
+            motivo?: string;
+        };
         AuthProviderView: {
             id?: string;
             label?: string;
@@ -724,8 +743,8 @@ export interface components {
         };
         AuthProviders: {
             providers?: components["schemas"]["AuthProviderView"][];
-            emailEnabled?: boolean;
             demoEnabled?: boolean;
+            passwordEnabled?: boolean;
         };
         FeedbackList: {
             items?: components["schemas"]["FeedbackView"][];
@@ -885,7 +904,117 @@ export interface operations {
             };
         };
     };
-    solicitar: {
+    conferirConfirmacao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LinkView"];
+                };
+            };
+        };
+    };
+    confirmar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    reenviar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    conferir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LinkView"];
+                };
+            };
+        };
+    };
+    redefinir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SenhaRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    esquecida: {
         parameters: {
             query?: never;
             header?: never;
@@ -916,7 +1045,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["EmailRequest"];
+                "application/json": components["schemas"]["LoginRequest"];
             };
         };
         responses: {
@@ -929,47 +1058,25 @@ export interface operations {
             };
         };
     };
-    deny: {
+    cadastrar: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: number;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CadastroRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["AccessRequests"];
-                };
-            };
-        };
-    };
-    approve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["AccessRequests"];
-                };
+                content?: never;
             };
         };
     };
@@ -1121,26 +1228,6 @@ export interface operations {
             };
         };
     };
-    consumir: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     disclaimer: {
         parameters: {
             query?: never;
@@ -1197,26 +1284,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AuthProviders"];
-                };
-            };
-        };
-    };
-    pending: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["AccessRequests"];
                 };
             };
         };

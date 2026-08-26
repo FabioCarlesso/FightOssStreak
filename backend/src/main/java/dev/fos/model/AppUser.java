@@ -13,9 +13,9 @@ import java.time.Instant;
 /**
  * Conta da aplicação.
  *
- * <p>Desde a #24 a conta é criada por um login social bem-sucedido e nasce {@link
- * AccessStatus#PENDENTE}: autenticar não é entrar. Quem libera é o autor, pela fila de
- * solicitações.
+ * <p>Desde a D47 ela nasce {@link AccessStatus#APROVADO} por qualquer caminho: cadastro com senha,
+ * login por provedor ou demonstração. A fila de aprovação que a D36 criou saiu inteira na D48 —
+ * quando qualquer um pode criar conta, aprovação não filtra ninguém, só atrasa.
  */
 @Entity
 @Table(name = "app_user")
@@ -41,25 +41,25 @@ public class AppUser {
     @Column(name = "decided_at")
     private Instant decidedAt;
 
-    /**
-     * Quando esta conta pendente entrou num resumo já enviado ao dono (#54).
-     *
-     * <p>Nulo é "ainda não anunciada", e é o que faz a janela da hora ter ou não novidade. Fica
-     * aqui, junto do pedido, em vez de num relógio global: assim o estado do aviso sobrevive a
-     * reinício e a deploy sem depender de o agendador ter rodado.
-     */
-    @Column(name = "queue_notice_sent_at")
-    private Instant queueNoticeSentAt;
-
-    /**
-     * Prazo de vida de uma conta de demonstração (#62); nulo em toda conta de gente de verdade.
-     *
-     * <p>É a conta que expira, não uma sessão dela: passado o prazo não sobra progresso, identidade
-     * nem sessão para guardar. Enquanto vale, a conta é comum em tudo o mais — grava de verdade, e
-     * o que a distingue é ser descartável, não ser limitada.
-     */
     @Column(name = "demo_expires_at")
     private Instant demoExpiresAt;
+
+    /**
+     * O e-mail VERIFICADO que identifica esta conta, e o único vínculo entre provedores (#81).
+     *
+     * <p>A D36 fixou que a chave da identidade é {@code (provider, subject)} e que e-mail nunca
+     * funde contas — a Apple entrega relay, o Facebook pode não devolver endereço nenhum. Com senha
+     * própria essa regra passou a produzir o defeito que ela evitava: quem entrou pelo Google e
+     * depois se cadastrou com o mesmo endereço ganharia uma segunda conta vazia. Esta coluna é a
+     * exceção mínima — não funde progresso de contas já usadas, só diz de quem é o endereço para
+     * que a identidade nova se anexe à conta certa.
+     *
+     * <p>Nulo em conta de demonstração, em conta de provedor sem e-mail verificado e em cadastro
+     * ainda não confirmado. Endereço não verificado nunca chega aqui: se chegasse, digitar o
+     * endereço de outra pessoa no cadastro daria acesso à conta dela.
+     */
+    @Column(name = "primary_email")
+    private String primaryEmail;
 
     protected AppUser() {
         // JPA
@@ -73,13 +73,20 @@ public class AppUser {
         this.decidedAt = decidedAt;
     }
 
-    /** Conta recém-criada por um login: entra na fila. */
-    public static AppUser pending(String label, Instant now) {
-        return new AppUser(label, now, AccessStatus.PENDENTE, null);
-    }
-
     /** Conta do dono (e-mail verificado em {@code fos.auth.owner-emails}): já entra liberada. */
     public static AppUser approved(String label, Instant now) {
+        return new AppUser(label, now, AccessStatus.APROVADO, now);
+    }
+
+    /**
+     * Conta criada por cadastro com senha (#81): nasce liberada, e ainda não verificada.
+     *
+     * <p>{@code APROVADO} sem fila é a decisão da D47: quando qualquer um pode criar conta, a fila
+     * não filtra ninguém — só atrasa. O que segura o cadastro não é a aprovação do autor, é o
+     * e-mail: a conta nasce sem sessão e sem {@code primaryEmail}, e só existe de verdade depois
+     * que o link de confirmação for aberto.
+     */
+    public static AppUser forPassword(String label, Instant now) {
         return new AppUser(label, now, AccessStatus.APROVADO, now);
     }
 
@@ -96,29 +103,30 @@ public class AppUser {
         return user;
     }
 
+    /**
+     * Libera a conta.
+     *
+     * <p>Sobrou de uma época em que havia o que liberar. Continua sendo chamado no bootstrap do
+     * dono, onde a conta semeada pela V2 é adotada — ali ele é idempotente e só carimba a data.
+     */
     public void approve(Instant now) {
         this.accessStatus = AccessStatus.APROVADO;
         this.decidedAt = now;
     }
 
-    public void deny(Instant now) {
-        this.accessStatus = AccessStatus.RECUSADO;
-        this.decidedAt = now;
+    /**
+     * Declara esta conta dona de um endereço verificado.
+     *
+     * <p>Chamado quando um link de confirmação é aberto, ou quando um provedor devolve e-mail
+     * verificado. Só depois disso o endereço vincula identidade nova — ver {@link #primaryEmail}.
+     */
+    public void claimPrimaryEmail(String email) {
+        this.primaryEmail = email;
     }
 
     /** Dá nome à linha semeada pela V2, que nasceu como {@code usuario-local}. */
     public void rename(String label) {
         this.label = label;
-    }
-
-    /** Registra que esta conta já saiu num resumo da fila. */
-    public void markQueueNoticeSent(Instant now) {
-        this.queueNoticeSentAt = now;
-    }
-
-    /** Pendente que o dono ainda não viu em nenhum resumo. */
-    public boolean isQueueNoticePending() {
-        return queueNoticeSentAt == null;
     }
 
     public boolean isApproved() {
@@ -165,11 +173,11 @@ public class AppUser {
         return decidedAt;
     }
 
-    public Instant getQueueNoticeSentAt() {
-        return queueNoticeSentAt;
-    }
-
     public Instant getDemoExpiresAt() {
         return demoExpiresAt;
+    }
+
+    public String getPrimaryEmail() {
+        return primaryEmail;
     }
 }
