@@ -110,13 +110,15 @@ describe('rota pública', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('o botão de entrar leva ao cadastro, não para dentro do conteúdo', async () => {
+  it('o botão de entrada leva ao login, não para dentro do conteúdo', async () => {
     renderEm('/');
 
-    // "Criar conta" desde a D47, e apontando para `/cadastrar`: quem chega pela apresentação ainda
-    // não tem conta, e mandá-lo direto para `/hoje` seria um portão sem explicação.
-    const entrar = await screen.findAllByRole('link', { name: /criar conta/i });
-    expect(entrar[0]).toHaveAttribute('href', '/cadastrar');
+    // `/entrar` e não `/hoje`: quem chega pela apresentação ainda não tem sessão, e mandá-lo para
+    // dentro seria um portão sem explicação. E `/entrar` e não `/cadastrar`: só a tela de entrada
+    // oferece as duas saídas — provedor externo e criar conta com senha —, e quem escolhe é a
+    // pessoa.
+    const entrar = await screen.findAllByRole('link', { name: /entrar ou criar conta/i });
+    expect(entrar[0]).toHaveAttribute('href', '/entrar');
   });
 });
 

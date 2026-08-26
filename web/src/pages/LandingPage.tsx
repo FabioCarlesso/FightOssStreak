@@ -3,7 +3,7 @@ import { api } from '../api/client.ts';
 import { SHORT_DISCLAIMER } from '../content/disclaimer.ts';
 import {
   APP_PATH,
-  SIGNUP_PATH,
+  LOGIN_PATH,
   DEMO,
   DISCLAIMER_DOC_URL,
   DOCS_URL,
@@ -28,8 +28,8 @@ import { useAsync } from '../state/useAsync.ts';
  * Duas coisas a página não pode fazer, e as duas são estruturais. **Não depende da API para
  * renderizar**: era o `DisclaimerGate` que decidia a raiz, e ele depende de `GET /api/disclaimer`
  * para aparecer, então com o backend frio a primeira tela de quem recebia o link era "não foi
- * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de criar
- * conta leva a `/cadastrar`, e de lá para dentro passa pelo aviso.
+ * possível falar com a API". E **não é caminho para dentro do app sem aceite**: o botão de entrada
+ * leva a `/entrar`, e de lá para dentro passa pelo aviso.
  *
  * A regra que mudou com a #62 é a primeira, e mudou para melhor definida: a página *pergunta* se
  * este ambiente tem demonstração, mas nada nela espera a resposta. Backend frio, offline ou sem
@@ -85,15 +85,16 @@ export function LandingPage() {
                 {demo.starting ? DEMO.ctaCarregando : DEMO.cta}
               </button>
             )}
-            {/* "Criar conta" desde a D47: até a fatia anterior o app era de uso pessoal com
-                acesso sob aprovação, e a copy dizia "pedir acesso" porque quem chegava pelo link
-                não entrava sozinho. Agora entra — e prometer menos do que o produto entrega é o
-                mesmo defeito que prometer mais. */}
+            {/* A copy já disse "pedir acesso" (fila da D36) e "Criar conta" (D47). Agora diz as
+                duas saídas porque a tela de destino tem as duas: mandar quem chega da apresentação
+                direto ao formulário de senha escondia o Google de quem ainda não tem conta
+                nenhuma. Prometer menos do que o produto entrega é o mesmo defeito que prometer
+                mais. */}
             <Link
               className={`landing__button${demoDisponivel ? ' landing__button--ghost' : ''}`}
-              to={SIGNUP_PATH}
+              to={LOGIN_PATH}
             >
-              Criar conta
+              Entrar ou criar conta
             </Link>
             <a className="landing__button landing__button--ghost" href={REPO_URL}>
               Ver o código
@@ -218,8 +219,8 @@ export function LandingPage() {
           </span>
         </h2>
         <p className="landing__cta">
-          <Link className="landing__button" to={SIGNUP_PATH}>
-            Criar conta
+          <Link className="landing__button" to={LOGIN_PATH}>
+            Entrar ou criar conta
           </Link>
         </p>
       </section>

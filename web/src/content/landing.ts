@@ -21,8 +21,13 @@ export const APP_PATH = '/hoje';
  * Separado do `APP_PATH` de propósito: quem já entrou uma vez cai em `/hoje` e não precisa ver
  * formulário nenhum, e quem está chegando agora precisa de uma tela que diga o que fazer. Apontar
  * os dois para o mesmo lugar faria a primeira visita bater num portão sem explicação.
+ *
+ * É `/entrar`, e não `/cadastrar`, porque **quem decide como entrar é a pessoa, não a landing**.
+ * A tela de cadastro só oferece e-mail e senha; a de entrada oferece as duas coisas — os botões de
+ * provedor e o link para criar conta. Mandar todo mundo para o formulário de senha escondia o
+ * Google de quem chegava pela apresentação, que é justamente quem ainda não tem conta nenhuma.
  */
-export const SIGNUP_PATH = '/cadastrar';
+export const LOGIN_PATH = '/entrar';
 
 /**
  * Acesso demonstrativo (#62): o degrau que faltava antes do portão.
