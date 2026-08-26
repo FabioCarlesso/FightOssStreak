@@ -105,9 +105,7 @@ describe('rota pública', () => {
     renderEm('/');
 
     expect(await screen.findByRole('heading', { level: 1, name: MANCHETE })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /ver o app funcionando/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /ver sem criar conta/i })).not.toBeInTheDocument();
   });
 
   it('o botão de entrada leva ao login, não para dentro do conteúdo', async () => {
@@ -117,7 +115,7 @@ describe('rota pública', () => {
     // dentro seria um portão sem explicação. E `/entrar` e não `/cadastrar`: só a tela de entrada
     // oferece as duas saídas — provedor externo e criar conta com senha —, e quem escolhe é a
     // pessoa.
-    const entrar = await screen.findAllByRole('link', { name: /entrar ou criar conta/i });
+    const entrar = await screen.findAllByRole('link', { name: /começar a revisar/i });
     expect(entrar[0]).toHaveAttribute('href', '/entrar');
   });
 });
@@ -127,9 +125,7 @@ describe('acesso demonstrativo (#62)', () => {
     renderEm('/');
 
     await screen.findByRole('heading', { level: 1, name: MANCHETE });
-    expect(
-      screen.queryByRole('button', { name: /ver o app funcionando/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /ver sem criar conta/i })).not.toBeInTheDocument();
   });
 
   it('com conta-modelo, o botão abre a sessão e entra no app', async () => {
@@ -139,7 +135,7 @@ describe('acesso demonstrativo (#62)', () => {
     });
 
     renderEm('/');
-    const botao = await screen.findByRole('button', { name: /ver o app funcionando/i });
+    const botao = await screen.findByRole('button', { name: /ver sem criar conta/i });
     await userEvent.click(botao);
 
     expect(apiMock.startDemo).toHaveBeenCalledTimes(1);
@@ -163,7 +159,7 @@ describe('acesso demonstrativo (#62)', () => {
     });
 
     renderEm('/');
-    await userEvent.click(await screen.findByRole('button', { name: /ver o app funcionando/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /ver sem criar conta/i }));
 
     expect(await screen.findByRole('button', { name: /li e concordo/i })).toBeInTheDocument();
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
