@@ -41,8 +41,17 @@ class WebMvcConfig implements WebMvcConfigurer {
                 // `/api/me` continua excluído mesmo com o portão não barrando mais ninguém (D48):
                 // é dele que a web tira quem está logado, e o dia em que o bloqueio reativo entrar
                 // pela mesma porta, a tela precisa poder dizer o que houve.
+                //
+                // `/api/telemetria/**` (#84) sai pelo mesmo motivo das rotas de entrada: ela conta
+                // acesso de quem ainda não tem conta. Passar pelo portão faria a coleta existir só
+                // para quem já entrou — e responder 401 na landing, que é onde ela mais importa.
                 .excludePathPatterns(
-                        "/api/me", "/api/logout", "/api/auth/**", "/api/login/**", "/api/demo/**");
+                        "/api/me",
+                        "/api/logout",
+                        "/api/auth/**",
+                        "/api/login/**",
+                        "/api/demo/**",
+                        "/api/telemetria/**");
 
         // Depois do portão de aprovação, e não antes: a ordem de registro é a de execução, e
         // "esta conta está liberada?" precisa ser respondida antes de "esta conta é a dona?".

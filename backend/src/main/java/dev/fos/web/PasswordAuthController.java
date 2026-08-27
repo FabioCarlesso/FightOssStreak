@@ -1,10 +1,12 @@
 package dev.fos.web;
 
+import dev.fos.model.UsageEventType;
 import dev.fos.service.AccessRateLimiter;
 import dev.fos.service.Emails;
 import dev.fos.service.PasswordAccessService;
 import dev.fos.service.PasswordAuthenticationToken;
 import dev.fos.service.SessionLogin;
+import dev.fos.service.UsageCollector;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,15 +51,18 @@ public class PasswordAuthController {
     private final PasswordAccessService senha;
     private final SessionLogin sessao;
     private final AccessRateLimiter freio;
+    private final UsageCollector uso;
     private final Clock clock;
 
     public PasswordAuthController(
             PasswordAccessService senha,
             SessionLogin sessao,
             AccessRateLimiter freio,
+            UsageCollector uso,
             Clock clock) {
         this.senha = senha;
         this.sessao = sessao;
+        this.uso = uso;
         this.freio = freio;
         this.clock = clock;
     }
@@ -96,7 +101,12 @@ public class PasswordAuthController {
         if (!freiar(request, body.email())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        senha.register(body.email(), body.senha(), body.nome(), baseUrl());
+        // Emitido do controller, e não de dentro do serviço, por um motivo prático: aqui não há
+        // transação em curso, então um evento que falhe ao gravar não pode arrastar o cadastro
+        // junto. Vale para os quatro eventos de funil (#84, D50).
+        if (senha.register(body.email(), body.senha(), body.nome(), baseUrl())) {
+            uso.funnel(UsageEventType.CADASTRO_CRIADO);
+        }
         return ResponseEntity.accepted().build();
     }
 
@@ -130,6 +140,9 @@ public class PasswordAuthController {
                     "Este link de confirmação não vale mais. Peça outro.");
         }
         sessao.signIn(new PasswordAuthenticationToken(confirmacao.email()), request, response);
+        // Depois do login, e não antes: só aqui existe conta na requisição, e é o que faz o evento
+        // sair com `user_id` em vez de anônimo (#84, D50).
+        uso.funnel(UsageEventType.EMAIL_VERIFICADO);
         return ResponseEntity.noContent().build();
     }
 

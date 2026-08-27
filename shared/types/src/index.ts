@@ -64,6 +64,15 @@ export type AdminUserPage = Schemas['AdminUserPage'];
 /** Estado de acesso da conta: `APROVADO` usa o app, `RECUSADO` está bloqueada (#90). */
 export type AccessStatus = NonNullable<AdminUserView['accessStatus']>;
 
+/**
+ * O que a coleta de uso manda a cada mudança de rota (#84, D50).
+ *
+ * A lista é curta porque o servidor não confia no cliente: dispositivo, navegador, sistema,
+ * idioma e país são derivados da própria requisição, e os eventos de funil são emitidos pelo
+ * backend. O que o navegador manda é só o que só ele sabe.
+ */
+export type UsageEventRequest = Schemas['EventRequest'];
+
 export type FeedbackRequest = Schemas['FeedbackRequest'];
 export type FeedbackView = Schemas['FeedbackView'];
 export type FeedbackList = Schemas['FeedbackList'];

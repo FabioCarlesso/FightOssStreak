@@ -74,6 +74,10 @@ class SecurityConfig {
                                                 // ainda não tem conta é justamente quem a abre
                                                 // (#62).
                                                 "/api/demo/**",
+                                                // A coleta de uso (#84) mede quem AINDA NÃO tem
+                                                // conta: a landing é a página que recebe o link.
+                                                // Exigir sessão aqui mediria só quem já entrou.
+                                                "/api/telemetria/**",
                                                 "/api/oauth2/**",
                                                 "/api/login/**")
                                         .permitAll()
@@ -111,7 +115,17 @@ class SecurityConfig {
                         csrf ->
                                 csrf.csrfTokenRepository(
                                                 CookieCsrfTokenRepository.withHttpOnlyFalse())
-                                        .csrfTokenRequestHandler(csrfHandler))
+                                        .csrfTokenRequestHandler(csrfHandler)
+                                        // A coleta de uso (#84) é a única escrita fora do CSRF, e
+                                        // por um motivo e não por conveniência: a primeira coisa
+                                        // que o app faz é registrar o acesso à landing, ANTES de
+                                        // qualquer resposta ter deixado o cookie de token — o
+                                        // primeiro evento de toda visita morreria em 403. E não há
+                                        // o que proteger: o endpoint não lê nem muda estado de
+                                        // conta nenhuma, e já aceita requisição sem sessão de
+                                        // qualquer origem. Forjá-lo suja a métrica de quem forjou,
+                                        // que é o que o freio por chave de visita limita.
+                                        .ignoringRequestMatchers("/api/telemetria/**"))
                 .exceptionHandling(
                         handling ->
                                 handling.authenticationEntryPoint(

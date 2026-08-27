@@ -14,10 +14,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param auth administradores do app e credenciais de provedor de login
  * @param email envio de e-mail: confirmação de cadastro e redefinição de senha (D47)
  * @param demo conta-modelo do acesso demonstrativo (#62)
+ * @param usage coleta de uso do app (#84, D50)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
-        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email, Demo demo) {
+        String disclaimerVersion,
+        Curriculum curriculum,
+        Auth auth,
+        Email email,
+        Demo demo,
+        Usage usage) {
 
     public FosProperties {
         if (auth == null) {
@@ -28,6 +34,34 @@ public record FosProperties(
         }
         if (email == null) {
             email = new Email(null, null);
+        }
+        if (usage == null) {
+            usage = new Usage(true, null, 0);
+        }
+    }
+
+    /**
+     * Coleta de uso (#84, D50).
+     *
+     * <p>Nenhuma das três é segredo, e nenhuma precisa estar preenchida: sem base de geolocalização
+     * o app coleta tudo menos país, que é como dev e CI rodam. É o mesmo desenho do provedor de
+     * login e do envio de e-mail — funcionalidade que falta se anuncia como ausente, não como erro.
+     *
+     * @param enabled desligar para de gravar evento; a aplicação segue igual em todo o resto. É a
+     *     saída para quem sobe este código e não quer coleta nenhuma
+     * @param geoipDatabase caminho do CSV de faixas de IP (DB-IP Lite ou equivalente). Vazio = país
+     *     desconhecido para todo mundo
+     * @param retentionDays dias de retenção da tabela crua. Zero ou negativo usa o default de 90 —
+     *     o agregado, que não tem dado pessoal, não expira
+     */
+    public record Usage(boolean enabled, String geoipDatabase, int retentionDays) {
+
+        /** Os 90 dias da D50. Mudar aqui muda a promessa escrita em docs/11-privacidade.md. */
+        public static final int DEFAULT_RETENTION_DAYS = 90;
+
+        public Usage {
+            geoipDatabase = geoipDatabase == null ? "" : geoipDatabase.trim();
+            retentionDays = retentionDays > 0 ? retentionDays : DEFAULT_RETENTION_DAYS;
         }
     }
 

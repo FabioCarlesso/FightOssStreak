@@ -26,6 +26,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/telemetria/evento": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Registra um acesso a uma rota do app
+         * @description O servidor deriva dispositivo, navegador, sistema, idioma e país da própria requisição e ignora qualquer um desses campos no corpo. O endereço de IP é usado para derivar país e compor a chave de visita, e é descartado — não há coluna de IP em tabela nenhuma (docs/11-privacidade.md).
+         */
+        post: operations["evento"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/nodes/{code}/quiz": {
         parameters: {
             query?: never;
@@ -496,6 +516,14 @@ export interface components {
             nodeCode?: string;
             note?: string;
         };
+        /** @description Uma mudança de rota no app. Nada aqui identifica quem navega. */
+        EventRequest: {
+            caminho?: string;
+            referrer?: string;
+            utmSource?: string;
+            utmMedium?: string;
+            utmCampaign?: string;
+        };
         Answer: {
             /** Format: int64 */
             questionId: number;
@@ -878,6 +906,28 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["PinnedNoteView"];
                 };
+            };
+        };
+    };
+    evento: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EventRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

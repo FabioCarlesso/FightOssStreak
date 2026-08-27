@@ -40,6 +40,10 @@
       "description": "Streak, agenda de revisão e aceite do aviso"
     },
     {
+      "name": "Uso",
+      "description": "Coleta de acesso, sem cookie de rastreio e sem guardar IP"
+    },
+    {
       "name": "Currículo",
       "description": "Árvore de currículo, nós, quiz e registro de drill"
     },
@@ -86,6 +90,30 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/telemetria/evento": {
+      "post": {
+        "tags": [
+          "Uso"
+        ],
+        "summary": "Registra um acesso a uma rota do app",
+        "description": "O servidor deriva dispositivo, navegador, sistema, idioma e país da própria requisição e ignora qualquer um desses campos no corpo. O endereço de IP é usado para derivar país e compor a chave de visita, e é descartado — não há coluna de IP em tabela nenhuma (docs/11-privacidade.md).",
+        "operationId": "evento",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -943,6 +971,37 @@
             "type": "string"
           }
         }
+      },
+      "EventRequest": {
+        "type": "object",
+        "properties": {
+          "caminho": {
+            "maxLength": 300,
+            "minLength": 0,
+            "type": "string"
+          },
+          "referrer": {
+            "maxLength": 300,
+            "minLength": 0,
+            "type": "string"
+          },
+          "utmSource": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "utmMedium": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "utmCampaign": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "description": "Uma mudança de rota no app. Nada aqui identifica quem navega."
       },
       "Answer": {
         "required": [

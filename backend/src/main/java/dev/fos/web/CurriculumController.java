@@ -5,6 +5,7 @@ import dev.fos.service.CurriculumQueryService;
 import dev.fos.service.DrillService;
 import dev.fos.service.NodeNoteService;
 import dev.fos.service.QuizService;
+import dev.fos.service.UsageCollector;
 import dev.fos.web.dto.ActivityDtos;
 import dev.fos.web.dto.CurriculumDtos;
 import dev.fos.web.dto.QuizDtos;
@@ -31,6 +32,7 @@ public class CurriculumController {
     private final DrillService drillService;
     private final NodeNoteService nodeNoteService;
     private final CurrentUserProvider currentUser;
+    private final UsageCollector uso;
     private final Clock clock;
 
     public CurriculumController(
@@ -39,12 +41,14 @@ public class CurriculumController {
             DrillService drillService,
             NodeNoteService nodeNoteService,
             CurrentUserProvider currentUser,
+            UsageCollector uso,
             Clock clock) {
         this.curriculumQueryService = curriculumQueryService;
         this.quizService = quizService;
         this.drillService = drillService;
         this.nodeNoteService = nodeNoteService;
         this.currentUser = currentUser;
+        this.uso = uso;
         this.clock = clock;
     }
 
@@ -71,7 +75,12 @@ public class CurriculumController {
     @Operation(summary = "Registra 'treinei isso hoje' — alimenta streak e reagenda o SRS")
     public ActivityDtos.DrillResult logDrill(
             @PathVariable String code, @Valid @RequestBody ActivityDtos.DrillRequest request) {
-        return drillService.log(currentUser.currentUserId(), code, request, today());
+        Long userId = currentUser.currentUserId();
+        ActivityDtos.DrillResult resultado = drillService.log(userId, code, request, today());
+        // Depois do registro, e fora da transação dele: "primeiro drill" é `count == 1`, e quem
+        // decide isso é o próprio coletor (#84, D50). Registrar nada é o caso comum aqui.
+        uso.firstDrill(userId);
+        return resultado;
     }
 
     /**

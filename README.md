@@ -180,6 +180,9 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
 | `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
+| `FOS_USAGE_ENABLED` | backend | `true` | desliga a coleta de uso (D50) sem mexer em mais nada |
+| `FOS_USAGE_GEOIP_DATABASE` | backend | vazia | caminho do CSV local de faixas de IP → país; vazia = país desconhecido |
+| `FOS_USAGE_RETENTION_DAYS` | backend | `90` | retenção da tabela **crua** de eventos; o agregado não expira |
 
 Detalhes que não são óbvios:
 
@@ -228,6 +231,15 @@ Detalhes que não são óbvios:
 - **`FOS_PUBLIC_URL` não existe mais.** Ela servia só ao resumo horário da fila (D38), que saiu com
   o portão de aprovação (D48). Os links de confirmação e redefinição saem da URL da própria
   requisição.
+- **A coleta de uso sobe sem base de geolocalização (D50).** Sem `FOS_USAGE_GEOIP_DATABASE` o app
+  coleta tudo menos país, que vira `ZZ` — é como dev e CI rodam, e não é erro. A base é um **arquivo
+  local** (DB-IP Lite, CC BY 4.0, ou equivalente com licença compatível com a MIT do projeto), no
+  formato CSV `início,fim,país[,região]`, aceito também em `.gz`; ela não é versionada, e nunca há
+  chamada a serviço externo por requisição — o IP de quem usa o app não sai daqui. Se o caminho
+  estiver errado ou o arquivo ilegível, a subida continua e o log avisa.
+- **Nada da coleta guarda endereço de IP.** O IP deriva país e compõe a chave de visita, e é
+  descartado no mesmo método: não há coluna, não há log, e há teste que reprova o build se uma
+  coluna com cara de IP aparecer em qualquer migration. Detalhes em `docs/11-privacidade.md`.
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
 
 ## Acesso e contas

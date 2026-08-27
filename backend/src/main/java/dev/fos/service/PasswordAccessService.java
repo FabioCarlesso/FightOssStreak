@@ -163,9 +163,14 @@ public class PasswordAccessService {
      *   <li><b>Conta já confirmada</b>: nada é criado, e sai um aviso para a caixa do dono. Só ele
      *       vê esse e-mail, então ele não conta nada a quem tentou.
      * </ul>
+     *
+     * <p>Devolve se uma conta <b>nova</b> nasceu, e isso não afrouxa a indistinção da D37: quem
+     * chama responde {@code 202} nos três casos de qualquer jeito. O sinal existe para o evento de
+     * funil da coleta de uso (#84, D50) — sem ele, "cadastros criados" contaria também cada
+     * tentativa de cadastrar um endereço que já tem conta, que é o número que a issue NÃO pediu.
      */
     @Transactional
-    public void register(String rawEmail, String rawPassword, String rawNome, String baseUrl) {
+    public boolean register(String rawEmail, String rawPassword, String rawNome, String baseUrl) {
         exigirEnvioConfigurado();
         String email = Emails.normalize(rawEmail);
         String nome = nomeOuNulo(rawNome);
@@ -184,7 +189,7 @@ public class PasswordAccessService {
             } else {
                 enviarVerificacao(identity.getUserId(), email, baseUrl, now);
             }
-            return;
+            return false;
         }
 
         // O rótulo é o nome quando ele veio, e o endereço quando não veio: o cabeçalho do app
@@ -207,6 +212,7 @@ public class PasswordAccessService {
         credentials.save(new PasswordCredential(identity.getId(), hash, now));
         enviarVerificacao(user.getId(), email, baseUrl, now);
         log.info("Cadastro por senha registrado — conta {}, à espera de confirmação", user.getId());
+        return true;
     }
 
     /** Outro link de confirmação, para quem não recebeu o primeiro. Responde igual sempre. */

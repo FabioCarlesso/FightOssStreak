@@ -7,6 +7,7 @@ import type {
   ReviewAgenda,
   StreakView,
   TreeView,
+  UsageEventRequest,
 } from '@fos/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,6 +37,7 @@ const { apiMock } = vi.hoisted(() => ({
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     startDemo: vi.fn<() => Promise<DemoSession>>(),
     getAdminUsers: vi.fn<() => Promise<AdminUserPage>>(),
+    recordUsage: vi.fn<(event: UsageEventRequest) => Promise<void>>(),
   },
 }));
 
@@ -59,6 +61,7 @@ beforeEach(() => {
   localStorage.clear();
   sessionStorage.clear();
 
+  apiMock.recordUsage.mockResolvedValue(undefined);
   apiMock.getAuthProviders.mockResolvedValue({
     providers: [],
     demoEnabled: false,

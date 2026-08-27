@@ -43,6 +43,21 @@ fos:
     # sobe igual, o botão não aparece na landing e o endpoint responde que não há demonstração
     # neste ambiente. Mesma regra dos provedores de login e do envio de e-mail.
     template-email: ${FOS_DEMO_TEMPLATE_EMAIL:}
+  usage:
+    # Coleta de uso do app (#84, D50): quantas pessoas chegam, de onde vêm e com o quê.
+    # Nada aqui é segredo e nada precisa estar preenchido.
+    #
+    # Desligar para de gravar evento; o resto do app funciona igual. É a saída para quem sobe
+    # este código e não quer coleta nenhuma.
+    enabled: ${FOS_USAGE_ENABLED:true}
+    # Base de geolocalização LOCAL (DB-IP Lite, CC BY 4.0, ou equivalente): CSV de
+    # `início,fim,país[,região]`, aceito também em .gz. Vazio por default — dev e CI sobem sem
+    # base e coletam tudo menos país, que vira 'ZZ'. Nunca há chamada a serviço externo por
+    # requisição: o IP de quem usa o app não vai para lugar nenhum (docs/11-privacidade.md).
+    geoip-database: ${FOS_USAGE_GEOIP_DATABASE:}
+    # Retenção da tabela CRUA, em dias. O agregado não expira — ele não tem chave de visita nem
+    # id de conta. Mudar isto muda a promessa escrita em docs/11-privacidade.md.
+    retention-days: ${FOS_USAGE_RETENTION_DAYS:90}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

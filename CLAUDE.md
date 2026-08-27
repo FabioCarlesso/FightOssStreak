@@ -15,7 +15,21 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 5. **Disclaimer é requisito de produto**, não enfeite. Textos em `docs/06-disclaimer-responsabilidade.md`; mudança material no texto exige subir a versão do aceite.
 6. **`main` só muda por PR com CI verde** (D18). Nunca commitar direto em `main` — trabalhe em branch e abra PR. As regras são versionadas em `.github/rulesets/main.json`; mudança nelas entra por PR como qualquer outra, e depois roda `./scripts/apply-repo-rules.sh`.
 7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/09-regras-repositorio.md`). O caso de renome não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão. Já **acrescentar `paths:` ao `pull_request:`** derruba a proteção do mesmo jeito e a guarda não pega — não introduza (D19).
-8. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
+8. **Coleta de uso não guarda IP, não cria cookie e não chama terceiro** (D50). O IP é lido na
+   requisição, deriva país e compõe a `visit_key`, e é descartado no mesmo método — **não existe
+   coluna de IP em tabela nenhuma**, e `UsageSemIpTest` reprova o build se uma aparecer em qualquer
+   migration. A `visit_key` é `hash(sal do dia + IP + User-Agent)` com o sal **sorteado por dia e
+   nunca persistido**: é o que conta pessoas sem cookie e sem identificador estável, e é o que
+   dispensa banner de consentimento. Geolocalização é **arquivo local**, ausente em dev e CI — país
+   desconhecido é categoria, não erro. O cliente só manda o que só ele sabe (rota, host do referrer,
+   os três `utm_*`); dispositivo, navegador, sistema, idioma e país são **derivados** da requisição,
+   e os quatro eventos de funil são emitidos pelo **backend** — do cliente seriam forjáveis. O
+   caminho é normalizado contra a lista de rotas em `UsagePaths` antes de virar linha: rota nova do
+   app precisa entrar lá, e segmento variável nunca é gravado (senão token de confirmação acabaria
+   em tabela de métrica). Cru vive 90 dias, agregado fica, `DELETE /api/me` leva o cru da conta.
+   Nada disso pode quebrar tela: evento que falha é evento perdido. Mexer em qualquer uma dessas
+   linhas exige reescrever `docs/11-privacidade.md` — a promessa está lá por escrito.
+9. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 
