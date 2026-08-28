@@ -65,13 +65,26 @@ class ClientIpTest {
     }
 
     @Test
-    @DisplayName("cadeia mais curta que o configurado cai no primeiro elemento, não estoura")
-    void aShorterChainFallsBackToTheFirstElement() {
+    @DisplayName("cadeia mais curta que o configurado cai no último elemento, não estoura")
+    void aShorterChainFallsBackToTheLastElement() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(ClientIp.HEADER, "10.250.0.3");
 
         // Topologia diferente da declarada: todo mundo divide a chave, que é o extremo seguro.
         assertThat(clientIp(3).of(request)).isEqualTo("10.250.0.3");
+    }
+
+    @Test
+    @DisplayName("saltos a mais não devolvem a chave para quem chama: vale o salto mais próximo")
+    void aChainShorterThanConfiguredNeverYieldsTheClientWrittenHead() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        // A cadeia do Compose (só o nginx na frente) chegando a um backend configurado como se
+        // houvesse borda: o que o cliente escreveu está na cabeça, o peer que o nginx viu no fim.
+        request.addHeader(ClientIp.HEADER, "203.0.113.9, 172.18.0.9");
+
+        // Cair na cabeça aqui seria o defeito da #77 de volta — número errado para cima abrindo
+        // a porta em silêncio, em vez de colapsar a chave como errar para baixo faz.
+        assertThat(clientIp(3).of(request)).isEqualTo("172.18.0.9");
     }
 
     @Test

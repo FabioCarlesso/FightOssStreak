@@ -228,10 +228,12 @@ Detalhes que não são óbvios:
   CGNAT da Railway) e o backend recebe três. Com `2` a chave seria o nó de borda —
   **o mesmo para todo mundo que entra por ele**.
 
-  **Errar o número não abre a porta em silêncio**: pequeno demais e todo mundo cai na mesma
-  chave, e os freios passam a recusar gente legítima — ruído visível, não bypass. Mas é
-  degradação de verdade, então **a variável entra no mesmo deploy que este código**: sem ela o
-  default `1` vale, e o default é o Compose. Pôr uma CDN na frente do domínio acrescenta um salto
+  **Errar o número não abre a porta em silêncio**, para nenhum dos dois lados: pequeno demais e
+  todo mundo cai na mesma chave, e os freios passam a recusar gente legítima; grande demais e a
+  cadeia fica mais curta que o configurado, e aí vale o **último** elemento — o endereço que o
+  salto mais próximo escreveu —, nunca a cabeça da lista, que é o que quem chama escreveu.
+  Nos dois casos é ruído visível, não bypass — mas é degradação de verdade, então **a variável
+  entra no mesmo deploy que este código**: sem ela o default `1` vale, e o default é o Compose. Pôr uma CDN na frente do domínio acrescenta um salto
   e pede o número novo. Ver D51 em [`07-decisoes.md`](docs/07-decisoes.md).
 - **`FOS_OWNER_EMAILS` é semente, não fonte da verdade (D49).** Quem administra é `app_user.role`,
   no banco, mudado pela tela *Usuários* sem deploy. A variável **promove** — na subida e em todo

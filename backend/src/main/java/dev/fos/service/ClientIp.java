@@ -74,16 +74,27 @@ public class ClientIp {
     /**
      * Conta do fim para o começo, pulando os saltos que são nossos.
      *
-     * <p>Cadeia mais curta que o configurado é topologia diferente da declarada — nesse caso vale o
-     * primeiro elemento, que é o mais distante da aplicação que existe ali. É o extremo seguro: no
-     * pior caso todo mundo divide a chave.
+     * <p>Cadeia mais curta que o configurado é topologia diferente da declarada: {@code
+     * trusted-hops} maior que a realidade, ou alguém alcançando o nginx sem passar pela borda que
+     * se supôs na frente. Nesse caso vale o <b>último</b> elemento, e não o primeiro — o último foi
+     * escrito pelo salto mais próximo, que é infraestrutura nossa; o primeiro é o que quem chama
+     * escreveu no {@code X-Forwarded-For}, porque o {@code $proxy_add_x_forwarded_for} acrescenta
+     * ao valor recebido. Cair no primeiro devolveria a chave para o cliente exatamente no cenário
+     * de configuração errada, e em silêncio — o defeito que a #77 existe para eliminar. Com o
+     * último, todo mundo atrás daquele salto divide a chave: o freio recusa gente legítima, que é
+     * ruído visível.
+     *
+     * <p>Errar o número <b>para baixo</b> já era assim (a chave vira um endereço de
+     * infraestrutura); esta linha é o que faz errar <b>para cima</b> degradar do mesmo jeito, em
+     * vez de reabrir a porta.
      */
     private String doFimDaCadeia(String cadeia) {
         if (cadeia == null || cadeia.isBlank()) {
             return "";
         }
         String[] saltos = cadeia.split(",");
-        return saltos[Math.max(0, saltos.length - saltosConfiaveis)].trim();
+        int posicao = saltos.length - saltosConfiaveis;
+        return saltos[posicao < 0 ? saltos.length - 1 : posicao].trim();
     }
 
     /** O peer da conexão, por baixo de todo wrapper que tenha reescrito o endereço no caminho. */
