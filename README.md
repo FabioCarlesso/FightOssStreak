@@ -183,6 +183,8 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_USAGE_ENABLED` | backend | `true` | desliga a coleta de uso (D50) sem mexer em mais nada |
 | `FOS_USAGE_GEOIP_DATABASE` | backend | vazia | caminho do CSV local de faixas de IP → país; vazia = país desconhecido |
 | `FOS_USAGE_RETENTION_DAYS` | backend | `90` | retenção da tabela **crua** de eventos; o agregado não expira |
+| `FOS_USAGE_DAILY_CAP` | backend | `50000` | teto de acessos gravados por dia; junto com a retenção, é o que limita o tamanho da tabela crua |
+| `FOS_USAGE_CRON` | backend | `0 17 3 * * *` | quando o job agrega e expurga; `-` desliga só o agendamento |
 
 Detalhes que não são óbvios:
 
