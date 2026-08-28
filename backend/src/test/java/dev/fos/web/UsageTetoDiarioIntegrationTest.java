@@ -26,15 +26,14 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * O teto diário da coleta (#84, D50) — o único limite que não depende do cliente.
  *
- * <p>O freio por visita é chaveado na {@code VisitKey}, que é hash de IP + {@code User-Agent}.
- * Enquanto a #77 não corrigir a origem do IP, variar qualquer um dos dois dá chave nova a cada
- * requisição, e aquele teto nunca é alcançado — foi medido em uma instância de verdade: 400
- * requisições do mesmo IP com {@code User-Agent} rodando gravaram as 400. Este teste garante que
- * existe um limite que essa manobra não contorna.
+ * <p>O freio por visita é chaveado na {@code VisitKey}, que é hash de IP + {@code User-Agent}. A
+ * #77 tirou o IP das mãos de quem chama, mas o {@code User-Agent} é do cliente por definição:
+ * variá-lo dá chave nova a cada requisição, e aquele teto nunca é alcançado — foi medido em uma
+ * instância de verdade: 400 requisições do mesmo IP com {@code User-Agent} rodando gravaram as 400.
+ * Este teste garante que existe um limite que essa manobra não contorna.
  *
  * <p>Ele não é filtro de abuso: quem abusa gasta o orçamento do dia e a coleta legítima para junto.
- * É <b>teto de estrago</b> — a tabela deixa de crescer sem limite —, não substituto do conserto da
- * #77.
+ * É <b>teto de estrago</b> — a tabela deixa de crescer sem limite.
  *
  * <p>Um método só, e não dois, porque o contador do dia vive no {@code UsageCollector} e o contexto
  * é compartilhado entre os testes da classe: separá-los faria o segundo começar com o orçamento que

@@ -171,7 +171,11 @@ sessão entre dias, e não há funil por pessoa.
 ### O IP é usado e descartado
 
 O endereço de IP é lido na requisição, serve para **derivar país e região** e para **compor a chave
-de visita**, e é descartado ali mesmo. **Não existe coluna de IP em tabela nenhuma, e ele não vai
+de visita**, e é descartado ali mesmo. Ele vem de onde a **infraestrutura** diz — o proxy do próprio
+app escreve a origem da conexão, e o backend conta a partir do salto mais próximo dele —, e não do
+header que quem faz a requisição pode escrever. Isso importa aqui por dois motivos: um endereço
+escolhido por quem chama poria um país inventado na estatística, e faria a chave de visita mudar a
+cada requisição, transformando uma pessoa em cem. **Não existe coluna de IP em tabela nenhuma, e ele não vai
 para log de aplicação.** Há teste automatizado que varre o schema migrado e o texto de todas as
 migrations e reprova o build se uma coluna com cara de endereço aparecer — hoje ou daqui a dois
 anos.
@@ -220,14 +224,16 @@ O primeiro é **por visita**: acima de 300 acessos em dez minutos, a mesma chave
 ser gravada. É folgado porque navegar rápido pelo app não pode virar evento perdido.
 
 O segundo é um **teto por dia** (`FOS_USAGE_DAILY_CAP`, 5 000 por padrão), e ele existe porque o
-primeiro não basta: a chave de visita é derivada do IP e do `User-Agent`, e enquanto a
-[#77](https://github.com/FabioCarlesso/FightOssStreak/issues/77) não corrigir de onde o IP é lido,
-quem variar qualquer um dos dois tem uma chave nova a cada requisição e passa pelo freio por visita
+primeiro não basta: a chave de visita é derivada do IP e do `User-Agent`. O IP deixou de ser
+escolhido por quem faz a requisição com a
+[#77](https://github.com/FabioCarlesso/FightOssStreak/issues/77) — ele passou a vir de onde a
+infraestrutura diz, e não de um header que qualquer um escreve —, mas o `User-Agent` é do cliente
+por definição: quem o variar tem uma chave nova a cada requisição e passa pelo freio por visita
 inteiro. O teto do dia não pergunta de quem veio o acesso — conta quantos foram gravados e para.
 
 **O que isso significa para quem lê o número**: um dia que bate no teto tem contagem incompleta, e
 sai um aviso no log dizendo qual dia foi. O teto é para a tabela parar de crescer se alguém apontar
-um laço para o endpoint; ele não impede o abuso, limita o estrago. O conserto de verdade é a #77.
+um laço para o endpoint; ele não impede o abuso, limita o estrago.
 
 O número tem uma conta atrás dele: **uma linha custa 273 bytes medidos** (tabela mais os três
 índices), então 5 000 por dia × 90 dias de retenção ≈ 123 MB no pior caso. E o que se ocupa em

@@ -171,6 +171,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_DB_PASSWORD` | backend | `fos` | `${{Postgres.PGPASSWORD}}` |
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
+| `FOS_PROXY_TRUSTED_HOPS` | backend | `1` | `2` — a borda da plataforma está na frente do nginx |
 | `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
 | `FOS_OWNER_EMAILS` | backend | vazia | semente de administração: e-mails que viram `ADMIN` na subida, separados por vírgula |
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID` | backend | — | id do app no Google |
@@ -210,6 +211,14 @@ Detalhes que não são óbvios:
   Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
+- **`FOS_PROXY_TRUSTED_HOPS` é o que faz o freio por IP existir.** Ela diz quantos proxies **nossos**
+  a requisição atravessa até chegar ao backend, contando o nginx — cada um anexa um endereço ao fim
+  da cadeia do `X-Forwarded-For`, e é de trás para frente que se acha quem está navegando. No
+  Compose só o nginx está na frente (`1`); na Railway a borda da plataforma anexa o visitante antes
+  e o nginx anexa o endereço dela depois, então lá o valor é `2`. **Errar o número não abre a porta
+  em silêncio**: pequeno demais e todo mundo cai na mesma chave, e os freios passam a recusar gente
+  legítima — ruído visível, não bypass. Pôr uma CDN na frente do domínio acrescenta um salto e pede
+  o número novo no mesmo deploy. Ver D51 em [`07-decisoes.md`](docs/07-decisoes.md).
 - **`FOS_OWNER_EMAILS` é semente, não fonte da verdade (D49).** Quem administra é `app_user.role`,
   no banco, mudado pela tela *Usuários* sem deploy. A variável **promove** — na subida e em todo
   login com e-mail verificado — e **nunca rebaixa**: tirar um endereço dela não tira o papel de

@@ -27,14 +27,23 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    caminho é normalizado contra a lista de rotas em `UsagePaths` antes de virar linha: rota nova do
    app precisa entrar lá, e segmento variável nunca é gravado (senão token de confirmação acabaria
    em tabela de métrica). Cru vive 90 dias, agregado fica, `DELETE /api/me` leva o cru da conta.
-   O freio por visita **não segura quem varia o `User-Agent`** enquanto a #77 estiver aberta — quem
-   segura o tamanho da tabela é o **teto diário** (`fos.usage.daily-cap`), que não depende de chave
-   nenhuma; não troque um pelo outro. A coleta é o único consumidor do `AccessRateLimiter` que roda
-   em toda navegação: ela varre o mapa **por prefixo**, porque varrer tudo com a janela curta dela
-   apagaria o contador de força bruta de senha.
+   O freio por visita **não segura quem varia o `User-Agent`** — essa metade da chave é do cliente
+   por definição, e a #77 só consertou a outra. Quem segura o tamanho da tabela é o **teto diário**
+   (`fos.usage.daily-cap`), que não depende de chave nenhuma; não troque um pelo outro. A coleta é
+   o único consumidor do `AccessRateLimiter` que roda em toda navegação: ela varre o mapa **por
+   prefixo**, porque varrer tudo com a janela curta dela apagaria o contador de força bruta de
+   senha.
    Nada disso pode quebrar tela: evento que falha é evento perdido. Mexer em qualquer uma dessas
    linhas exige reescrever `docs/11-privacidade.md` — a promessa está lá por escrito.
-9. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
+9. **O endereço de quem chama sai do `ClientIp`, nunca do `getRemoteAddr()`** (D51, #77). Atrás do
+   nginx o segundo devolve o **primeiro** elemento do `X-Forwarded-For` — que é o que o cliente
+   escreveu —, e com ele todo freio por IP vira decoração: basta um endereço novo por requisição.
+   O que vale é o `X-Fos-Forwarded-For`, escrito pelo nginx em toda requisição proxiada, lido **do
+   fim para o começo** pulando `fos.proxy.trusted-hops` saltos. Endpoint público novo que precise
+   de freio por origem chama o `ClientIp` — não copie a expressão. Mudou a topologia (CDN na
+   frente, proxy a mais)? O conserto é a variável `FOS_PROXY_TRUSTED_HOPS`, e ela está na tabela
+   do README.
+10. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 

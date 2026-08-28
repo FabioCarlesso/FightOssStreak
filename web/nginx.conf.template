@@ -68,6 +68,25 @@ server {
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        # A cadeia de endereços de novo, sob um nome nosso — e é dela que sai a chave dos freios
+        # do backend (#77). Duas razões para não reaproveitar o `X-Forwarded-For` acima:
+        #
+        # 1. O `forward-headers-strategy: framework` faz o Spring REMOVER todos os `X-Forwarded-*`
+        #    da requisição antes de qualquer código da aplicação vê-los. O que ele deixa no lugar é
+        #    o `getRemoteAddr()`, e ali ele põe o PRIMEIRO elemento da lista — que, como o
+        #    `$proxy_add_x_forwarded_for` ACRESCENTA em vez de substituir, é exatamente o que o
+        #    cliente escreveu. Um endereço novo por requisição zerava o freio de senha e o da
+        #    demonstração.
+        # 2. Aqui o nginx não sabe a resposta certa, e por isso não fixa como faz com o
+        #    `X-Forwarded-Host` abaixo: atrás da borda da plataforma o `$remote_addr` é o endereço
+        #    dela, igual para todo mundo. Quem sabe quantos saltos pular é o ambiente, e isso é
+        #    configuração do backend (`FOS_PROXY_TRUSTED_HOPS`) — ver dev.fos.service.ClientIp.
+        #
+        # O que faz este header ser da infraestrutura e não de quem chama é o `proxy_set_header`:
+        # o que o cliente mandar com este nome é descartado, e o que ele mandar no
+        # `X-Forwarded-For` entra na CABEÇA da lista, enquanto a leitura conta a partir do fim.
+        proxy_set_header X-Fos-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $forwarded_proto;
 
         # Os outros três headers que o backend usa para montar URL, fixados aqui para que o

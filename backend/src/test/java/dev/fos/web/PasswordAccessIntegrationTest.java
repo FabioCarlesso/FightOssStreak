@@ -18,6 +18,7 @@ import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.service.AccessRateLimiter;
 import dev.fos.service.AccountService;
+import dev.fos.service.ClientIp;
 import dev.fos.service.PasswordAuthenticationToken;
 import java.time.Clock;
 import java.time.Duration;
@@ -42,6 +43,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -465,6 +467,38 @@ class PasswordAccessIntegrationTest {
         assertThat(tokens.findAll()).isEmpty();
     }
 
+    // ------------------------------------------------------------- origem da requisição
+
+    @Test
+    @DisplayName("X-Forwarded-For inventado a cada requisição não contorna o freio por IP (#77)")
+    void aForgedForwardedForDoesNotResetTheRateLimit() throws Exception {
+        // O ataque que a #77 descreve: o freio é por IP, então o atacante escreve um IP novo em
+        // cada requisição. Como o header é do cliente, ele nunca chega ao limite.
+        for (int i = 0; i < PasswordAuthController.MAX_EMAILS_POR_JANELA; i++) {
+            esquecida("pessoa-%d@example.test".formatted(i), forjando("203.0.113." + i))
+                    .andExpect(status().isAccepted());
+        }
+
+        esquecida("pessoa-99@example.test", forjando("203.0.113.99"))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
+    @DisplayName("visitantes distintos que a borda distingue continuam com cotas separadas")
+    void distinctOriginsKeepSeparateQuotas() throws Exception {
+        for (int i = 0; i < PasswordAuthController.MAX_EMAILS_POR_JANELA; i++) {
+            esquecida("pessoa-%d@example.test".formatted(i), daBorda("203.0.113.7"))
+                    .andExpect(status().isAccepted());
+        }
+        esquecida("pessoa-98@example.test", daBorda("203.0.113.7"))
+                .andExpect(status().isTooManyRequests());
+
+        // O outro visitante não paga pela cota do primeiro — senão o conserto do freio viraria
+        // negação de serviço para quem passou por perto.
+        esquecida("pessoa-99@example.test", daBorda("198.51.100.9"))
+                .andExpect(status().isAccepted());
+    }
+
     // ------------------------------------------------------------------ auxiliares
 
     private ResultActions cadastrar(String email, String senha) throws Exception {
@@ -497,6 +531,31 @@ class PasswordAccessIntegrationTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"%s\"}".formatted(email)));
+    }
+
+    private ResultActions esquecida(String email, RequestPostProcessor origem) throws Exception {
+        return mockMvc.perform(
+                post("/api/auth/senha/esquecida")
+                        .with(origem)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"%s\"}".formatted(email)));
+    }
+
+    /** O que o cliente escreve. Não é origem nenhuma: é texto que ele escolheu. */
+    private static RequestPostProcessor forjando(String ip) {
+        return request -> {
+            request.addHeader("X-Forwarded-For", ip);
+            return request;
+        };
+    }
+
+    /** O que o nginx escreve — a única lista em que o app confia. Ver ClientIp. */
+    private static RequestPostProcessor daBorda(String ip) {
+        return request -> {
+            request.addHeader(ClientIp.HEADER, ip);
+            return request;
+        };
     }
 
     private ResultActions reenviar(String email) throws Exception {

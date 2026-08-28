@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param email envio de e-mail: confirmação de cadastro e redefinição de senha (D47)
  * @param demo conta-modelo do acesso demonstrativo (#62)
  * @param usage coleta de uso do app (#84, D50)
+ * @param proxy o que há entre quem navega e a aplicação (#77)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
@@ -23,7 +24,8 @@ public record FosProperties(
         Auth auth,
         Email email,
         Demo demo,
-        Usage usage) {
+        Usage usage,
+        Proxy proxy) {
 
     public FosProperties {
         if (auth == null) {
@@ -37,6 +39,30 @@ public record FosProperties(
         }
         if (usage == null) {
             usage = new Usage(true, null, 0, 0);
+        }
+        if (proxy == null) {
+            proxy = new Proxy(0);
+        }
+    }
+
+    /**
+     * A topologia entre quem navega e a aplicação (#77).
+     *
+     * <p>É configuração e não código porque muda com o ambiente, e não com o programa: no Compose
+     * só o nginx está na frente; na Railway a borda da plataforma está antes dele; pôr uma CDN na
+     * frente acrescentaria mais um. Ver {@code dev.fos.service.ClientIp}.
+     *
+     * @param trustedHops quantos proxies <b>nossos</b> a requisição atravessa até chegar aqui,
+     *     contando o nginx. Cada um anexa um endereço ao fim da cadeia, e é de trás para frente que
+     *     o endereço de quem navega é encontrado. Zero ou negativo usa o default
+     */
+    public record Proxy(int trustedHops) {
+
+        /** Só o nginx na frente — o caso do Compose e o menos surpreendente para quem sobe isto. */
+        public static final int DEFAULT_TRUSTED_HOPS = 1;
+
+        public Proxy {
+            trustedHops = trustedHops > 0 ? trustedHops : DEFAULT_TRUSTED_HOPS;
         }
     }
 
