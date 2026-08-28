@@ -1,6 +1,7 @@
 package dev.fos.web;
 
 import dev.fos.model.UsageEventType;
+import dev.fos.service.ClientIp;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
 import dev.fos.service.DemoAuthenticationToken;
@@ -39,16 +40,19 @@ public class DemoController {
     private final CurrentUserProvider currentUser;
     private final SessionLogin sessao;
     private final UsageCollector uso;
+    private final ClientIp clientIp;
 
     public DemoController(
             DemoAccessService demo,
             CurrentUserProvider currentUser,
             SessionLogin sessao,
-            UsageCollector uso) {
+            UsageCollector uso,
+            ClientIp clientIp) {
         this.demo = demo;
         this.currentUser = currentUser;
         this.sessao = sessao;
         this.uso = uso;
+        this.clientIp = clientIp;
     }
 
     @PostMapping("/sessao")
@@ -73,7 +77,9 @@ public class DemoController {
                             throw DemoUnavailableException.alreadySignedIn();
                         });
 
-        DemoAccessService.DemoSession demonstracao = demo.create(request.getRemoteAddr());
+        // ClientIp, e não getRemoteAddr(): atrás do nginx o segundo é o que o cliente escreveu no
+        // X-Forwarded-For, e um endereço novo por requisição zerava o freio por IP daqui (#77).
+        DemoAccessService.DemoSession demonstracao = demo.create(clientIp.of(request));
         // Rotacionar o id, gravar o contexto e anotar a sessão são os três deveres de todo login
         // que a aplicação faz por conta própria — ver SessionLogin.
         this.sessao.signIn(new DemoAuthenticationToken(demonstracao.subject()), request, response);

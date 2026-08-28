@@ -2,6 +2,7 @@ package dev.fos.web;
 
 import dev.fos.model.UsageEventType;
 import dev.fos.service.AccessRateLimiter;
+import dev.fos.service.ClientIp;
 import dev.fos.service.Emails;
 import dev.fos.service.PasswordAccessService;
 import dev.fos.service.PasswordAuthenticationToken;
@@ -44,7 +45,7 @@ public class PasswordAuthController {
     /**
      * Poucos por janela: cadastrar, reenviar e recuperar são ações raras, e todas mandam e-mail.
      */
-    private static final int MAX_EMAILS_POR_JANELA = 5;
+    static final int MAX_EMAILS_POR_JANELA = 5;
 
     private static final Duration JANELA_EMAILS = Duration.ofHours(1);
 
@@ -52,6 +53,7 @@ public class PasswordAuthController {
     private final SessionLogin sessao;
     private final AccessRateLimiter freio;
     private final UsageCollector uso;
+    private final ClientIp clientIp;
     private final Clock clock;
 
     public PasswordAuthController(
@@ -59,11 +61,13 @@ public class PasswordAuthController {
             SessionLogin sessao,
             AccessRateLimiter freio,
             UsageCollector uso,
+            ClientIp clientIp,
             Clock clock) {
         this.senha = senha;
         this.sessao = sessao;
         this.uso = uso;
         this.freio = freio;
+        this.clientIp = clientIp;
         this.clock = clock;
     }
 
@@ -171,7 +175,7 @@ public class PasswordAuthController {
             @Valid @RequestBody LoginRequest body,
             HttpServletRequest request,
             HttpServletResponse response) {
-        String email = senha.authenticate(body.email(), body.senha(), request.getRemoteAddr());
+        String email = senha.authenticate(body.email(), body.senha(), clientIp.of(request));
         sessao.signIn(new PasswordAuthenticationToken(email), request, response);
         return ResponseEntity.noContent().build();
     }
@@ -219,17 +223,15 @@ public class PasswordAuthController {
      * Freio por IP <b>e</b> por e-mail, como nas rotas da #52.
      *
      * <p>Os dois recortes cobrem ataques diferentes: o de e-mail impede encher uma caixa alheia, o
-     * de IP impede varrer endereços. O segundo vale o que a chave valer enquanto a #77 não corrigir
-     * a origem do IP atrás do nginx.
+     * de IP impede varrer endereços. O segundo só vale porque o endereço vem do {@link ClientIp} e
+     * não do {@code getRemoteAddr()}: com este, escrever um {@code X-Forwarded-For} diferente por
+     * requisição zerava a contagem (#77).
      */
     private boolean freiar(HttpServletRequest request, String email) {
         Instant agora = Instant.now(clock);
         freio.evictOlderThan(JANELA_EMAILS, agora);
         return freio.tryAcquire(
-                        "ip:" + request.getRemoteAddr(),
-                        MAX_EMAILS_POR_JANELA,
-                        JANELA_EMAILS,
-                        agora)
+                        "ip:" + clientIp.of(request), MAX_EMAILS_POR_JANELA, JANELA_EMAILS, agora)
                 && freio.tryAcquire(
                         "email:" + Emails.normalize(email),
                         MAX_EMAILS_POR_JANELA,

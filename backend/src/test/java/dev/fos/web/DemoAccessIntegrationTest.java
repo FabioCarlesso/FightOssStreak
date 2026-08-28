@@ -357,6 +357,23 @@ class DemoAccessIntegrationTest {
     }
 
     @Test
+    @DisplayName("X-Forwarded-For inventado a cada requisição não contorna o freio por IP (#77)")
+    void aForgedForwardedForDoesNotResetTheRateLimit() throws Exception {
+        // Endereço novo a cada requisição é o que o cliente escreve, não de onde ele veio: o
+        // freio conta todas na mesma chave.
+        for (int i = 0; i < DemoAccessService.MAX_POR_IP; i++) {
+            abrirDemo(forjando("203.0.113." + i));
+        }
+        long antes = users.count();
+
+        mockMvc.perform(post("/api/demo/sessao").with(forjando("203.0.113.99")).with(csrf()))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.error").value("demo_lotado"));
+
+        assertThat(users.count()).isEqualTo(antes);
+    }
+
+    @Test
     @DisplayName("o teto de demonstrações vivas recusa sem criar conta")
     void theCapRefusesWithoutCreatingAnything() throws Exception {
         for (int i = 0; i < DemoAccessService.MAX_VIVAS; i++) {
@@ -453,6 +470,14 @@ class DemoAccessIntegrationTest {
     private static RequestPostProcessor deOutroIp(String ip) {
         return request -> {
             request.setRemoteAddr(ip);
+            return request;
+        };
+    }
+
+    /** O que o cliente escreve. Não é origem nenhuma: é texto que ele escolheu (#77). */
+    private static RequestPostProcessor forjando(String ip) {
+        return request -> {
+            request.addHeader("X-Forwarded-For", ip);
             return request;
         };
     }

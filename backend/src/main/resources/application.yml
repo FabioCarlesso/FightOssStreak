@@ -62,8 +62,9 @@ fos:
     # id de conta. Mudar isto muda a promessa escrita em docs/11-privacidade.md.
     retention-days: ${FOS_USAGE_RETENTION_DAYS:90}
     # Teto de acessos gravados por dia. É o único limite da coleta que não depende de nada que o
-    # cliente possa escolher: o freio por visita é chaveado no IP + User-Agent, e enquanto a #77
-    # não corrigir a origem do IP, variar o User-Agent já contorna aquele. Folgado de propósito —
+    # cliente possa escolher: o freio por visita é chaveado no IP + User-Agent, e o User-Agent é
+    # do cliente — variá-lo dá chave nova e contorna aquele, mesmo com o IP já consertado pela
+    # #77. Folgado de propósito —
     # não é para moldar a métrica, é para a tabela parar de crescer se alguém apontar um laço para
     # o endpoint. Bateu no teto, sai aviso no log.
     # 5 000/dia x 90 dias de retenção ~ 123 MB no pior caso (273 bytes por linha, medidos, já
@@ -74,6 +75,17 @@ fos:
     # adiantá-lo para conferir os dois numa máquina de desenvolvimento. `-` desliga o agendamento.
     # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.
     cron: ${FOS_USAGE_CRON:0 17 3 * * *}
+  proxy:
+    # Quantos endereços a requisição ganha na cadeia até chegar aqui (#77). É o que diz de qual
+    # posição sai quem está navegando: cada salto anexa um endereço ao FIM da lista, então a
+    # leitura conta de trás para frente. 1 é o Compose, onde só o nginx está na frente.
+    #
+    # Na Railway o valor é 3, e isso foi MEDIDO no log de acesso do nginx em produção, não
+    # deduzido: a borda da plataforma DESCARTA o X-Forwarded-For de quem chama e entrega
+    # `<visitante>, <nó de borda>`; o nginx anexa o próprio peer e o backend recebe três
+    # elementos. Com 2 a chave seria o nó de borda — o mesmo para todo mundo que entra por ele.
+    # Ver dev.fos.service.ClientIp e a D51.
+    trusted-hops: ${FOS_PROXY_TRUSTED_HOPS:1}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

@@ -81,10 +81,10 @@ public class PasswordAccessService {
      * E por IP.
      *
      * <p>Mais folgado que o de e-mail porque um IP legítimo é compartilhado — uma academia inteira
-     * atrás do mesmo NAT erra senha mais que uma pessoa. <b>Este recorte só vale o que a chave
-     * valer</b>: enquanto a #77 não corrigir a origem do IP, {@code getRemoteAddr()} atrás do nginx
-     * pode ser o mesmo para todo mundo. O freio por e-mail é o que segura o ataque dirigido, e ele
-     * não depende disso.
+     * atrás do mesmo NAT erra senha mais que uma pessoa. O endereço vem do {@code ClientIp} (#77):
+     * com {@code getRemoteAddr()} este recorte não valia nada atrás do nginx, porque quem tentava
+     * escolhia a própria chave. O freio por e-mail é o que segura o ataque dirigido, e ele não
+     * depende disso.
      */
     static final int MAX_TENTATIVAS_IP = 30;
 

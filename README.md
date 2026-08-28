@@ -171,6 +171,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_DB_PASSWORD` | backend | `fos` | `${{Postgres.PGPASSWORD}}` |
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
+| `FOS_PROXY_TRUSTED_HOPS` | backend | `1` | `3` — **medido**, ver abaixo |
 | `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
 | `FOS_OWNER_EMAILS` | backend | vazia | semente de administração: e-mails que viram `ADMIN` na subida, separados por vírgula |
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID` | backend | — | id do app no Google |
@@ -210,6 +211,30 @@ Detalhes que não são óbvios:
   Confirme o endereço na doc da Railway antes de colar — é o tipo de detalhe que muda.
 - **`TZ`.** O streak usa a data do servidor. Em UTC, um drill às 22h de Brasília contaria como
   do dia seguinte.
+- **`FOS_PROXY_TRUSTED_HOPS` é o que faz o freio por IP existir.** Ela diz quantos endereços a
+  cadeia do `X-Forwarded-For` ganha até chegar ao backend — cada salto anexa um ao fim, e é de trás
+  para frente que se acha quem está navegando. No Compose só o nginx está na frente (`1`).
+  **Na Railway são `3`, e isto foi medido, não deduzido** — o log de acesso do nginx registra
+  `$http_x_forwarded_for` como ele chega, e em produção ele chega assim:
+
+  ```
+  100.64.0.11 - - [...] "GET /robots.txt" 200 "-" "FOS-SONDA" "104.28.228.100, 152.233.23.193"
+                                                               └ visitante ┘  └ borda mia1 ┘
+  ```
+
+  A borda da plataforma **descarta** o `X-Forwarded-For` de quem chama (a sonda mandou `9.9.9.9`
+  e ele não chegou) e entrega dois elementos: o visitante e ela mesma (`152.233.22.0/23`, rede
+  CDN77 — o `x-railway-edge: mia1` da resposta). O nginx anexa o próprio peer (`100.64.0.x`,
+  CGNAT da Railway) e o backend recebe três. Com `2` a chave seria o nó de borda —
+  **o mesmo para todo mundo que entra por ele**.
+
+  **Errar o número não abre a porta em silêncio**, para nenhum dos dois lados: pequeno demais e
+  todo mundo cai na mesma chave, e os freios passam a recusar gente legítima; grande demais e a
+  cadeia fica mais curta que o configurado, e aí vale o **último** elemento — o endereço que o
+  salto mais próximo escreveu —, nunca a cabeça da lista, que é o que quem chama escreveu.
+  Nos dois casos é ruído visível, não bypass — mas é degradação de verdade, então **a variável
+  entra no mesmo deploy que este código**: sem ela o default `1` vale, e o default é o Compose. Pôr uma CDN na frente do domínio acrescenta um salto
+  e pede o número novo. Ver D51 em [`07-decisoes.md`](docs/07-decisoes.md).
 - **`FOS_OWNER_EMAILS` é semente, não fonte da verdade (D49).** Quem administra é `app_user.role`,
   no banco, mudado pela tela *Usuários* sem deploy. A variável **promove** — na subida e em todo
   login com e-mail verificado — e **nunca rebaixa**: tirar um endereço dela não tira o papel de

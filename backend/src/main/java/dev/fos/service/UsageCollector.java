@@ -56,11 +56,11 @@ public class UsageCollector {
      * propósito — navegar rápido pelo app não pode virar evento perdido —, e o que ele impede é um
      * laço enchendo a tabela.
      *
-     * <p><b>Ele só vale o que a chave valer, e hoje a chave é forjável.</b> A {@link VisitKey} é
-     * derivada do IP e do {@code User-Agent}, e enquanto a #77 não corrigir a origem do IP (ver
-     * {@link ClientIp}) quem quiser passar por cima só precisa variar um dos dois — um {@code
-     * User-Agent} diferente por requisição já é chave diferente por requisição. É por isso que
-     * existe o {@link #TETO_DIARIO} abaixo: um freio que não dependa de nada que o cliente escolha.
+     * <p><b>Ele só vale o que a chave valer, e a chave tem uma metade que o cliente escolhe.</b> A
+     * {@link VisitKey} é derivada do IP e do {@code User-Agent}. O IP deixou de ser forjável com a
+     * #77 (ver {@link ClientIp}), mas o {@code User-Agent} é do cliente por definição: um diferente
+     * por requisição já é chave diferente por requisição. É por isso que existe o {@link
+     * #TETO_DIARIO} abaixo: um freio que não dependa de nada que o cliente escolha.
      */
     private static final int TETO_POR_VISITA = 300;
 
@@ -75,6 +75,7 @@ public class UsageCollector {
     private final GeoIpDatabase geoIp;
     private final CurrentUserProvider currentUser;
     private final AccessRateLimiter rateLimiter;
+    private final ClientIp clientIp;
     private final FosProperties.Usage config;
     private final Clock clock;
 
@@ -94,6 +95,7 @@ public class UsageCollector {
             GeoIpDatabase geoIp,
             CurrentUserProvider currentUser,
             AccessRateLimiter rateLimiter,
+            ClientIp clientIp,
             FosProperties properties,
             Clock clock) {
         this.events = events;
@@ -102,6 +104,7 @@ public class UsageCollector {
         this.geoIp = geoIp;
         this.currentUser = currentUser;
         this.rateLimiter = rateLimiter;
+        this.clientIp = clientIp;
         this.config = properties.usage();
         this.clock = clock;
     }
@@ -172,7 +175,7 @@ public class UsageCollector {
         try {
             // O IP nasce e morre neste método: vira país e vira hash, e nenhuma das duas coisas
             // volta a ser IP. Não passe esta variável adiante.
-            String ip = ClientIp.of(request);
+            String ip = clientIp.of(request);
             String userAgent = request.getHeader("User-Agent");
             String chave = visitKey.of(ip, userAgent);
 
@@ -224,12 +227,12 @@ public class UsageCollector {
     /**
      * O teto do dia — o único limite que não depende de nada que o cliente escolha.
      *
-     * <p>O freio por visita acima é chaveado na {@link VisitKey}, e enquanto a #77 estiver aberta
-     * quem varia o {@code User-Agent} tem uma chave nova a cada requisição e passa por ele inteiro.
-     * Este teto não pergunta de quem veio o acesso: conta quantos foram gravados hoje e para. Não é
-     * filtro de abuso — quem abusar gasta o orçamento do dia e a coleta legítima para junto —, é
-     * <b>teto de estrago</b>: a tabela deixa de crescer sem limite, e o aviso no log diz que houve
-     * um dia assim.
+     * <p>O freio por visita acima é chaveado na {@link VisitKey}, e quem varia o {@code User-Agent}
+     * tem uma chave nova a cada requisição e passa por ele inteiro — o conserto da #77 tirou o IP
+     * das mãos do cliente, e a outra metade da chave continua sendo dele. Este teto não pergunta de
+     * quem veio o acesso: conta quantos foram gravados hoje e para. Não é filtro de abuso — quem
+     * abusar gasta o orçamento do dia e a coleta legítima para junto —, é <b>teto de estrago</b>: a
+     * tabela deixa de crescer sem limite, e o aviso no log diz que houve um dia assim.
      *
      * <p>Só acessos de tela. Evento de funil não passa por aqui: ele já é limitado pela ação de
      * verdade que o produz, e perdê-lo seria perder justamente o número que a issue existe para
