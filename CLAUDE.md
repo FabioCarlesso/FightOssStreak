@@ -27,6 +27,11 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    caminho é normalizado contra a lista de rotas em `UsagePaths` antes de virar linha: rota nova do
    app precisa entrar lá, e segmento variável nunca é gravado (senão token de confirmação acabaria
    em tabela de métrica). Cru vive 90 dias, agregado fica, `DELETE /api/me` leva o cru da conta.
+   O freio por visita **não segura quem varia o `User-Agent`** enquanto a #77 estiver aberta — quem
+   segura o tamanho da tabela é o **teto diário** (`fos.usage.daily-cap`), que não depende de chave
+   nenhuma; não troque um pelo outro. A coleta é o único consumidor do `AccessRateLimiter` que roda
+   em toda navegação: ela varre o mapa **por prefixo**, porque varrer tudo com a janela curta dela
+   apagaria o contador de força bruta de senha.
    Nada disso pode quebrar tela: evento que falha é evento perdido. Mexer em qualquer uma dessas
    linhas exige reescrever `docs/11-privacidade.md` — a promessa está lá por escrito.
 9. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.

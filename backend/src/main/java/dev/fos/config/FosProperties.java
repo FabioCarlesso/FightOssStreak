@@ -36,16 +36,16 @@ public record FosProperties(
             email = new Email(null, null);
         }
         if (usage == null) {
-            usage = new Usage(true, null, 0);
+            usage = new Usage(true, null, 0, 0);
         }
     }
 
     /**
      * Coleta de uso (#84, D50).
      *
-     * <p>Nenhuma das três é segredo, e nenhuma precisa estar preenchida: sem base de geolocalização
-     * o app coleta tudo menos país, que é como dev e CI rodam. É o mesmo desenho do provedor de
-     * login e do envio de e-mail — funcionalidade que falta se anuncia como ausente, não como erro.
+     * <p>Nenhuma delas é segredo, e nenhuma precisa estar preenchida: sem base de geolocalização o
+     * app coleta tudo menos país, que é como dev e CI rodam. É o mesmo desenho do provedor de login
+     * e do envio de e-mail — funcionalidade que falta se anuncia como ausente, não como erro.
      *
      * @param enabled desligar para de gravar evento; a aplicação segue igual em todo o resto. É a
      *     saída para quem sobe este código e não quer coleta nenhuma
@@ -53,15 +53,28 @@ public record FosProperties(
      *     desconhecido para todo mundo
      * @param retentionDays dias de retenção da tabela crua. Zero ou negativo usa o default de 90 —
      *     o agregado, que não tem dado pessoal, não expira
+     * @param dailyCap teto de acessos gravados por dia. Zero ou negativo usa o default. É o único
+     *     limite da coleta que não depende de nada que o cliente possa escolher — ver {@code
+     *     UsageCollector}
      */
-    public record Usage(boolean enabled, String geoipDatabase, int retentionDays) {
+    public record Usage(boolean enabled, String geoipDatabase, int retentionDays, int dailyCap) {
 
         /** Os 90 dias da D50. Mudar aqui muda a promessa escrita em docs/11-privacidade.md. */
         public static final int DEFAULT_RETENTION_DAYS = 90;
 
+        /**
+         * Teto diário de acessos gravados.
+         *
+         * <p>Folgado de propósito: ele não é para moldar a métrica, e sim para que a tabela pare de
+         * crescer se alguém apontar um laço para o endpoint. Um dia real deste app não chega perto
+         * — se chegar, o número está pequeno e é isso que o aviso no log quer dizer.
+         */
+        public static final int DEFAULT_DAILY_CAP = 50_000;
+
         public Usage {
             geoipDatabase = geoipDatabase == null ? "" : geoipDatabase.trim();
             retentionDays = retentionDays > 0 ? retentionDays : DEFAULT_RETENTION_DAYS;
+            dailyCap = dailyCap > 0 ? dailyCap : DEFAULT_DAILY_CAP;
         }
     }
 

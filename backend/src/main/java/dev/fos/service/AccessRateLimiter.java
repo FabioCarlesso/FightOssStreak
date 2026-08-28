@@ -78,12 +78,36 @@ public class AccessRateLimiter {
         return recent.size();
     }
 
-    /** Some com chaves que não são tocadas há tempo, para o mapa não crescer sem fim. */
+    /**
+     * Some com chaves que não são tocadas há tempo, para o mapa não crescer sem fim.
+     *
+     * <p><b>Varre o mapa inteiro</b>, e é por isso que existe a variante com prefixo abaixo: são
+     * quatro consumidores com janelas diferentes (15 min para tentativa de senha, uma hora para
+     * e-mail e demonstração, dez minutos para a coleta de uso) dividindo este mapa. Quem varre com
+     * a janela curta apaga o contador do vizinho de janela longa — e um freio apagado não avisa que
+     * parou de frear.
+     */
     public void evictOlderThan(Duration window, Instant now) {
+        evictOlderThan("", window, now);
+    }
+
+    /**
+     * O mesmo, restrito às chaves de um prefixo.
+     *
+     * <p>É o que a coleta de uso (#84) usa. Ela é o único consumidor que roda em <b>toda
+     * navegação</b> de qualquer visitante, e com a janela de dez minutos dela: varrendo o mapa
+     * inteiro, um acesso anônimo qualquer zeraria o contador de força bruta de senha (#81) de quem
+     * errou há mais de dez minutos, e o freio da senha viraria enfeite. Com o prefixo, cada
+     * consumidor limpa a própria sujeira e não a do outro.
+     */
+    public void evictOlderThan(String prefixo, Duration window, Instant now) {
         Instant limite = now.minus(window);
         hits.entrySet()
                 .removeIf(
                         entry -> {
+                            if (!entry.getKey().startsWith(prefixo)) {
+                                return false;
+                            }
                             Deque<Instant> recent = entry.getValue();
                             synchronized (recent) {
                                 return recent.isEmpty() || recent.peekLast().isBefore(limite);

@@ -208,10 +208,28 @@ Duas tabelas, duas vidas:
 permanece, e é de propósito: sem identificação nele, apagá-lo faria a exclusão de **uma** conta
 reescrever o histórico de uso de todo mundo.
 
+### Quanto é gravado, no máximo
+
+A coleta tem dois limites, e vale saber que eles existem por motivos diferentes.
+
+O primeiro é **por visita**: acima de 300 acessos em dez minutos, a mesma chave de visita para de
+ser gravada. É folgado porque navegar rápido pelo app não pode virar evento perdido.
+
+O segundo é um **teto por dia** (`FOS_USAGE_DAILY_CAP`, 50 000 por padrão), e ele existe porque o
+primeiro não basta: a chave de visita é derivada do IP e do `User-Agent`, e enquanto a
+[#77](https://github.com/FabioCarlesso/FightOssStreak/issues/77) não corrigir de onde o IP é lido,
+quem variar qualquer um dos dois tem uma chave nova a cada requisição e passa pelo freio por visita
+inteiro. O teto do dia não pergunta de quem veio o acesso — conta quantos foram gravados e para.
+
+**O que isso significa para quem lê o número**: um dia que bate no teto tem contagem incompleta, e
+sai um aviso no log dizendo qual dia foi. O teto é para a tabela parar de crescer se alguém apontar
+um laço para o endpoint; ele não impede o abuso, limita o estrago. O conserto de verdade é a #77.
+
 ### Como desligar
 
 Quem sobe este código e não quer coleta nenhuma define `FOS_USAGE_ENABLED=false`. Nenhum evento é
-gravado, e o resto do app funciona igual.
+gravado, e o resto do app funciona igual. `FOS_USAGE_CRON=-` desliga só o job diário de agregação e
+expurgo, sem parar a coleta.
 
 ## Conta de demonstração (D39)
 

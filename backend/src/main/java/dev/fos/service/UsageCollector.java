@@ -55,10 +55,19 @@ public class UsageCollector {
      * <p>Por chave de visita, não por conta: quem abusaria disto não tem conta. O teto é folgado de
      * propósito — navegar rápido pelo app não pode virar evento perdido —, e o que ele impede é um
      * laço enchendo a tabela.
+     *
+     * <p><b>Ele só vale o que a chave valer, e hoje a chave é forjável.</b> A {@link VisitKey} é
+     * derivada do IP e do {@code User-Agent}, e enquanto a #77 não corrigir a origem do IP (ver
+     * {@link ClientIp}) quem quiser passar por cima só precisa variar um dos dois — um {@code
+     * User-Agent} diferente por requisição já é chave diferente por requisição. É por isso que
+     * existe o {@link #TETO_DIARIO} abaixo: um freio que não dependa de nada que o cliente escolha.
      */
     private static final int TETO_POR_VISITA = 300;
 
     private static final Duration JANELA = Duration.ofMinutes(10);
+
+    /** Prefixo das chaves desta coleta no freio compartilhado. */
+    private static final String PREFIXO_DO_FREIO = "uso:";
 
     private final UsageEventRepository events;
     private final DrillLogRepository drills;
@@ -68,6 +77,12 @@ public class UsageCollector {
     private final AccessRateLimiter rateLimiter;
     private final FosProperties.Usage config;
     private final Clock clock;
+
+    /** Estado do teto diário. Protegido por {@code this}: é escrito em toda navegação. */
+    private LocalDate diaDoTeto;
+
+    private int gravadosNoDia;
+    private boolean tetoJaAvisado;
 
     public UsageCollector(
             UsageEventRepository events,
@@ -162,15 +177,29 @@ public class UsageCollector {
             String chave = visitKey.of(ip, userAgent);
 
             Instant agora = Instant.now(clock);
-            if (comFreio
-                    && !rateLimiter.tryAcquire("uso:" + chave, TETO_POR_VISITA, JANELA, agora)) {
-                return;
+            LocalDate hoje = LocalDate.now(clock);
+            if (comFreio) {
+                // Varrer ANTES de contar, e só as chaves da coleta: sem isto, cada dia deposita um
+                // conjunto novo de chaves `uso:` que nunca sai do mapa — a `visit_key` roda por
+                // dia, então nem as de ontem voltam a ser tocadas. Com prefixo porque a varredura
+                // sem ele apagaria o contador de força bruta de senha (#81), que tem janela maior
+                // — ver AccessRateLimiter.
+                rateLimiter.evictOlderThan(PREFIXO_DO_FREIO, JANELA, agora);
+                if (!rateLimiter.tryAcquire(
+                        PREFIXO_DO_FREIO + chave, TETO_POR_VISITA, JANELA, agora)) {
+                    return;
+                }
+                // Depois do freio por visita, e não antes: acesso que aquele já recusou não pode
+                // gastar orçamento do dia.
+                if (!cabeNoTetoDiario(hoje)) {
+                    return;
+                }
             }
 
             events.save(
                     new UsageEvent(
                             agora,
-                            LocalDate.now(clock),
+                            hoje,
                             tipo,
                             caminho,
                             chave,
@@ -190,6 +219,44 @@ public class UsageCollector {
             // por requisição transformaria um problema de métrica em um problema de operação.
             log.debug("Evento de uso {} não registrado", tipo, falha);
         }
+    }
+
+    /**
+     * O teto do dia — o único limite que não depende de nada que o cliente escolha.
+     *
+     * <p>O freio por visita acima é chaveado na {@link VisitKey}, e enquanto a #77 estiver aberta
+     * quem varia o {@code User-Agent} tem uma chave nova a cada requisição e passa por ele inteiro.
+     * Este teto não pergunta de quem veio o acesso: conta quantos foram gravados hoje e para. Não é
+     * filtro de abuso — quem abusar gasta o orçamento do dia e a coleta legítima para junto —, é
+     * <b>teto de estrago</b>: a tabela deixa de crescer sem limite, e o aviso no log diz que houve
+     * um dia assim.
+     *
+     * <p>Só acessos de tela. Evento de funil não passa por aqui: ele já é limitado pela ação de
+     * verdade que o produz, e perdê-lo seria perder justamente o número que a issue existe para
+     * produzir.
+     */
+    private synchronized boolean cabeNoTetoDiario(LocalDate hoje) {
+        if (!hoje.equals(diaDoTeto)) {
+            diaDoTeto = hoje;
+            gravadosNoDia = 0;
+            tetoJaAvisado = false;
+        }
+        if (gravadosNoDia >= config.dailyCap()) {
+            if (!tetoJaAvisado) {
+                // Uma vez por dia, e `warn`: ao contrário da falha de gravação, isto não é ruído de
+                // requisição — é o número do dia deixando de ser confiável, e quem lê o painel
+                // (fatia 2) precisa saber que aquele dia bateu no teto.
+                log.warn(
+                        "Coleta de uso: teto de {} acessos atingido em {}; o resto do dia não será"
+                                + " gravado",
+                        config.dailyCap(),
+                        hoje);
+                tetoJaAvisado = true;
+            }
+            return false;
+        }
+        gravadosNoDia++;
+        return true;
     }
 
     /**

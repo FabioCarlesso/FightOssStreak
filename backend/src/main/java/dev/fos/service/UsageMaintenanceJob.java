@@ -16,6 +16,12 @@ import org.springframework.stereotype.Component;
  *
  * <p>De madrugada e em horário quebrado: o dia que ele fecha é o de ontem, então rodar cedo demais
  * depois da virada não muda nada, e um minuto qualquer evita competir com o topo da hora.
+ *
+ * <p>O horário vem de {@code fos.usage.cron} e não de uma constante: era literal, e por isso não
+ * havia como adiantar o job para conferir agregação e expurgo em uma máquina de desenvolvimento — a
+ * única forma de exercitá-los era o teste. Com a property, o valor especial {@code -} também
+ * desliga o agendamento, que é o que faltava para {@code fos.usage.enabled=false} parar o recurso
+ * inteiro em vez de só a escrita.
  */
 @Component
 public class UsageMaintenanceJob {
@@ -28,7 +34,7 @@ public class UsageMaintenanceJob {
         this.aggregator = aggregator;
     }
 
-    @Scheduled(cron = "0 17 3 * * *")
+    @Scheduled(cron = "${fos.usage.cron:0 17 3 * * *}")
     public void run() {
         try {
             int fechados = aggregator.aggregatePending();

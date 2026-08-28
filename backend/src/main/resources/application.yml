@@ -58,6 +58,16 @@ fos:
     # Retenção da tabela CRUA, em dias. O agregado não expira — ele não tem chave de visita nem
     # id de conta. Mudar isto muda a promessa escrita em docs/11-privacidade.md.
     retention-days: ${FOS_USAGE_RETENTION_DAYS:90}
+    # Teto de acessos gravados por dia. É o único limite da coleta que não depende de nada que o
+    # cliente possa escolher: o freio por visita é chaveado no IP + User-Agent, e enquanto a #77
+    # não corrigir a origem do IP, variar o User-Agent já contorna aquele. Folgado de propósito —
+    # não é para moldar a métrica, é para a tabela parar de crescer se alguém apontar um laço para
+    # o endpoint. Bateu no teto, sai aviso no log.
+    daily-cap: ${FOS_USAGE_DAILY_CAP:50000}
+    # Quando o job de agregação e expurgo roda. Era constante no código, e por isso não havia como
+    # adiantá-lo para conferir os dois numa máquina de desenvolvimento. `-` desliga o agendamento.
+    # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.
+    cron: ${FOS_USAGE_CRON:0 17 3 * * *}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte
