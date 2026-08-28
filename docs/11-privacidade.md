@@ -26,8 +26,15 @@ por quanto tempo.
 
 **O que a confirmação de e-mail guarda.** Os links de confirmação e de redefinição também vivem só como hash, valem uma vez (24 horas e 1 hora, respectivamente) e são queimados quando a senha muda.
 
-**Nada é vendido, compartilhado ou usado para publicidade.** Não há rastreador de terceiros, nem
-analytics: os números da tela `/progresso` são calculados sobre o próprio banco.
+**Nada é vendido, compartilhado ou usado para publicidade.** Não há rastreador de terceiros: nenhum
+script de outra empresa entra na página, e nenhum dado sai do banco do projeto. Os números da tela
+`/progresso` são calculados sobre esse banco.
+
+**Desde a D50 existe coleta de uso — e ela tem seção própria mais abaixo.** Até essa decisão este
+documento dizia "nem analytics", e a frase caiu junto com ela. O que existe agora é medição de
+acesso feita pelo próprio app: sem cookie de rastreio, sem terceiro e **sem guardar endereço de
+IP**. O quadro completo, incluindo o que **não** é coletado, está em
+[Coleta de uso do app (D50)](#coleta-de-uso-do-app-d50).
 
 O e-mail pode não existir: o Facebook pode não devolver e-mail nenhum, e a Apple entrega um endereço
 de relay quando a pessoa escolhe esconder o dela. O app funciona igual — e-mail não é identidade.
@@ -117,6 +124,126 @@ trilha alheia quebre — depois disso o número deixa de apontar para alguém.
 
 **Conta de demonstração não aparece nessa lista e não aceita ação** (D39): ela não é de ninguém e
 vence sozinha em duas horas.
+
+## Coleta de uso do app (D50)
+
+O projeto não sabia se alguém usa o app. Com o cadastro aberto, "quantas pessoas chegaram esta
+semana", "de qual link vieram" e "isso está sendo aberto no celular ou no desktop" deixaram de ser
+curiosidade e viraram a única forma de saber se a abertura funcionou. Esta seção existe porque a
+resposta custou uma promessa: a frase "nem analytics" que estava acima **caiu**.
+
+O desenho inteiro existe para alterá-la o mínimo possível. **Nada sai do banco do projeto, nenhum
+script de terceiro entra na página, nenhum cookie de rastreio é criado, e nenhum endereço de IP é
+gravado em lugar nenhum.**
+
+### O que é coletado
+
+| Dado | De onde vem | Por que existe |
+|---|---|---|
+| Caminho da rota, normalizado contra a lista de rotas do app | do navegador, a cada mudança de tela | é o acesso: responde quantas telas são abertas e quais |
+| Host de onde você veio, e `utm_source`/`utm_medium`/`utm_campaign` quando houver | do navegador | responde de qual link a pessoa chegou |
+| Celular, tablet ou desktop; família do navegador; família do sistema | **derivado** do `User-Agent` da requisição | responde em que tipo de aparelho o app é usado |
+| Idioma | **derivado** do `Accept-Language` | mesma pergunta, para texto |
+| País e região | **derivados do IP, que não é guardado** (ver abaixo) | responde de onde as pessoas chegam |
+| Chave de visita | hash de (IP + `User-Agent` + **sal do dia**) | separa "100 acessos de uma pessoa" de "100 pessoas" — e nada mais |
+| Id da conta, **só quando há sessão** | do próprio app | é o que faz `DELETE /api/me` alcançar estes registros |
+| Quatro degraus de funil: demonstração aberta, cadastro criado, e-mail confirmado, primeiro drill | do **backend**, no ponto em que o fato acontece | responde "a abertura funcionou?" — vindos do navegador seriam forjáveis |
+
+### A chave de visita não identifica ninguém, e isso é verificável
+
+Para contar pessoas em vez de cliques é preciso algum agrupamento. O jeito comum é um cookie de
+visitante, e ele traz junto o que este projeto não quer: identificador estável, banner de
+consentimento e a possibilidade de reconstruir a navegação de alguém ao longo de meses.
+
+Aqui a chave é `hash(sal do dia + IP + User-Agent)`, e **o sal é sorteado por dia e nunca é
+gravado**. Três consequências, as três de propósito:
+
+- O hash **não é reversível**, nem por quem tenha o banco inteiro.
+- A mesma pessoa em dois dias diferentes produz chaves **diferentes**: não há como ligar sua visita
+  de ontem com a de hoje.
+- **Reiniciar a aplicação** sorteia outro sal, então nem o próprio app consegue recomputar a chave
+  de um evento passado.
+
+É por isso que o app continua **sem precisar de banner de consentimento**. Isso é resultado do
+desenho, não sorte, e é a razão de o preço estar pago por escrito: o dado é mais grosso, não há
+sessão entre dias, e não há funil por pessoa.
+
+### O IP é usado e descartado
+
+O endereço de IP é lido na requisição, serve para **derivar país e região** e para **compor a chave
+de visita**, e é descartado ali mesmo. **Não existe coluna de IP em tabela nenhuma, e ele não vai
+para log de aplicação.** Há teste automatizado que varre o schema migrado e o texto de todas as
+migrations e reprova o build se uma coluna com cara de endereço aparecer — hoje ou daqui a dois
+anos.
+
+A geolocalização usa uma **base local**, baixada quando a imagem do backend é construída
+([DB-IP Lite](https://db-ip.com), CC BY 4.0). **Não há chamada a serviço externo por requisição**: a
+única conversa com o db-ip.com acontece na máquina que constrói a imagem, e o IP de quem navega
+nunca sai daqui — consultar terceiro a cada acesso colocaria esse IP na mão de outra empresa, que é
+exatamente o que este documento promete que não acontece.
+
+Ambiente sem base — o caso de desenvolvimento e do CI, e também o de um build em que o db-ip.com
+estivesse fora do ar — coleta tudo **menos** país, que fica como desconhecido. A base gratuita traz
+só país: **região é sempre desconhecida** com ela.
+
+### O que NÃO é coletado
+
+- **Nada de conteúdo.** Anotação fixada, nota de drill e resposta de quiz não entram em evento
+  nenhum.
+- **Nenhum segmento variável de URL.** O caminho é normalizado contra a lista de rotas conhecidas
+  antes de virar linha: `/confirmar-email/<token>` é gravado como `/confirmar-email/{token}`, e
+  rota desconhecida vira `/outro`. Token de confirmação e de redefinição **nunca** entram na
+  tabela.
+- **Query string**, fora os três `utm_*`.
+- **Nenhuma impressão digital**: sem canvas, sem lista de fontes, sem resolução de tela, sem
+  qualquer sinal além dos da tabela acima.
+- **Nenhum cookie novo.** A coleta não cria cookie de visitante nem abre sessão para quem não tem.
+
+### Por quanto tempo
+
+Duas tabelas, duas vidas:
+
+- **`usage_event`** é a linha crua, com chave de visita e às vezes id de conta. Vive **90 dias**, e
+  um job diário apaga o que passar disso.
+- **`usage_daily`** é a contagem por dia × dimensão. Não tem chave de visita, id de conta nem nada
+  que aponte para alguém — e por isso **fica**.
+
+**`DELETE /api/me` apaga os eventos crus da conta**, na mesma transação do resto. O agregado
+permanece, e é de propósito: sem identificação nele, apagá-lo faria a exclusão de **uma** conta
+reescrever o histórico de uso de todo mundo.
+
+### Quanto é gravado, no máximo
+
+A coleta tem dois limites, e vale saber que eles existem por motivos diferentes.
+
+O primeiro é **por visita**: acima de 300 acessos em dez minutos, a mesma chave de visita para de
+ser gravada. É folgado porque navegar rápido pelo app não pode virar evento perdido.
+
+O segundo é um **teto por dia** (`FOS_USAGE_DAILY_CAP`, 5 000 por padrão), e ele existe porque o
+primeiro não basta: a chave de visita é derivada do IP e do `User-Agent`, e enquanto a
+[#77](https://github.com/FabioCarlesso/FightOssStreak/issues/77) não corrigir de onde o IP é lido,
+quem variar qualquer um dos dois tem uma chave nova a cada requisição e passa pelo freio por visita
+inteiro. O teto do dia não pergunta de quem veio o acesso — conta quantos foram gravados e para.
+
+**O que isso significa para quem lê o número**: um dia que bate no teto tem contagem incompleta, e
+sai um aviso no log dizendo qual dia foi. O teto é para a tabela parar de crescer se alguém apontar
+um laço para o endpoint; ele não impede o abuso, limita o estrago. O conserto de verdade é a #77.
+
+O número tem uma conta atrás dele: **uma linha custa 273 bytes medidos** (tabela mais os três
+índices), então 5 000 por dia × 90 dias de retenção ≈ 123 MB no pior caso. E o que se ocupa em
+disco é a **marca d'água**, não a contagem de hoje — o expurgo apaga as linhas, mas o Postgres só
+devolve o espaço ao sistema com `VACUUM FULL`. Um único dia de abuso fixa disco que os 90 dias não
+recuperam sozinhos.
+
+### Como desligar
+
+Quem sobe este código e não quer coleta nenhuma define `FOS_USAGE_ENABLED=false`. Nenhum evento é
+gravado, o endpoint passa a responder **503 `coleta_desligada`**, e o navegador **para de mandar**
+ao ver esse código — desligado significa desligado, e não "grava nada mas continua sendo chamado a
+cada navegação". O resto do app funciona igual.
+
+O job diário continua rodando mesmo com a coleta desligada, e é de propósito: desligar a coleta não
+pode deixar o que já foi gravado sem expurgo. Para parar só o job, `FOS_USAGE_CRON=-`.
 
 ## Conta de demonstração (D39)
 

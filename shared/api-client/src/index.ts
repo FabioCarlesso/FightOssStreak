@@ -28,6 +28,7 @@ import type {
   ReviewAgenda,
   StreakView,
   TreeView,
+  UsageEventRequest,
 } from '@fos/types';
 
 export interface ApiClientOptions {
@@ -98,6 +99,16 @@ export class ApiError extends Error {
   /** Freio de tentativas: por e-mail e por IP. Passa sozinho — a tela pede para esperar. */
   get isTooManyAttempts(): boolean {
     return this.code === 'muitas_tentativas';
+  }
+
+  /**
+   * Ambiente com a coleta de uso desligada (`fos.usage.enabled=false`).
+   *
+   * É o código, e não o 503, que importa: 503 sem código é o que o proxy devolve enquanto o
+   * backend reinicia, e aquele não pode desligar a coleta do resto da visita.
+   */
+  get isUsageDisabled(): boolean {
+    return this.code === 'coleta_desligada';
   }
 
   /**
@@ -192,6 +203,14 @@ export function createApiClient(options: ApiClientOptions = {}) {
   async function requestNoContent(path: string, init?: RequestInit): Promise<void> {
     await send(path, init);
   }
+
+  /**
+   * O servidor já disse que a coleta está desligada aqui.
+   *
+   * Por cliente e em memória: some com o recarregar da página, que é o momento certo de perguntar
+   * de novo — é quando um deploy que religou a coleta passaria a valer.
+   */
+  let usoDesligado = false;
 
   async function toApiError(response: Response): Promise<ApiError> {
     let code = 'unknown_error';
@@ -347,6 +366,37 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * sabe o que a sessão recém-aberta já pode ver é quem a abriu.
      */
     startDemo: () => request<DemoSession>('/api/demo/sessao', { method: 'POST' }),
+
+    /**
+     * Registra um acesso a uma rota do app (#84, D50).
+     *
+     * **Nunca rejeita, e é por isso que devolve `void`.** A landing (D33) não pode passar a
+     * depender da coleta para renderizar: evento que falha é evento perdido, nunca tela quebrada.
+     * Quem chama não tem o que fazer com o erro, então ele não sobe.
+     *
+     * O que vai no corpo é só o que o navegador sabe — em que rota está, de que site veio, com que
+     * campanha. Dispositivo, navegador, sistema, idioma e país o servidor deriva da requisição, e
+     * um corpo que trouxesse esses campos seria ignorado.
+     */
+    recordUsage: async (event: UsageEventRequest): Promise<void> => {
+      // Ambiente com a coleta desligada já se anunciou: não insista. Sem esta guarda,
+      // `FOS_USAGE_ENABLED=false` significaria só "não grava" — o navegador seguiria mandando uma
+      // requisição por navegação, para sempre, para um servidor que as joga fora.
+      if (usoDesligado) return;
+      try {
+        await requestNoContent('/api/telemetria/evento', {
+          method: 'POST',
+          body: JSON.stringify(event),
+        });
+      } catch (erro) {
+        if (erro instanceof ApiError && erro.isUsageDisabled) {
+          usoDesligado = true;
+          return;
+        }
+        // Offline, backend frio, 429 do freio: nada disso é problema de quem navega, e nada disso
+        // desliga a coleta — só o código explícito desliga.
+      }
+    },
 
     /**
      * Envia um feedback: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).

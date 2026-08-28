@@ -21,6 +21,7 @@ import { SignUpPage } from './pages/auth/SignUpPage.tsx';
 import { DemoModeProvider } from './state/DemoModeProvider.tsx';
 import { useAccount } from './state/account.ts';
 import { markAppVisited } from './state/appVisit.ts';
+import { useUsageTracking } from './state/usage.ts';
 
 /**
  * Duas superfícies, e a fronteira entre elas são os portões.
@@ -37,6 +38,11 @@ import { markAppVisited } from './state/appVisit.ts';
  * não entrou.
  */
 export function App() {
+  // Aqui em cima, e fora dos portões: o acesso que mais importa contar é o da landing, de quem
+  // ainda não tem conta (#84, D50). Nada do que ele faz é lido pela árvore abaixo — coleta que
+  // pudesse quebrar tela seria coleta errada.
+  useUsageTracking();
+
   return (
     <DemoModeProvider>
       <Routes>

@@ -90,6 +90,12 @@ jobs:
           file: backend/Dockerfile
           # Sem push: não há consumidor de imagem publicada hoje, a Railway builda do repositório.
           push: false
+          # Sem baixar a base de geolocalização (#84): este passo existe para provar que o
+          # Dockerfile não quebrou, e puxar alguns MB de um terceiro a cada push não serve a
+          # isso — só acrescenta tempo e uma dependência de rede que o CI não controla. O
+          # caminho do download é exercitado no build de verdade, que é o da Railway.
+          build-args: |
+            GEOIP=false
           # Cache de camadas entre runs, senão o passo baixaria o mundo do Maven toda vez.
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend,ignore-error=true

@@ -11,6 +11,7 @@ import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
+import dev.fos.repo.UsageEventRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.repo.UserProgressRepository;
 import java.time.Clock;
@@ -53,6 +54,7 @@ public class AccountService {
     private final PasswordCredentialRepository credentials;
     private final QuizAttemptRepository quizAttempts;
     private final DisclaimerAcceptanceRepository disclaimers;
+    private final UsageEventRepository usageEvents;
     private final FosProperties.Auth auth;
     private final Clock clock;
 
@@ -66,6 +68,7 @@ public class AccountService {
             PasswordCredentialRepository credentials,
             QuizAttemptRepository quizAttempts,
             DisclaimerAcceptanceRepository disclaimers,
+            UsageEventRepository usageEvents,
             FosProperties properties,
             Clock clock) {
         this.users = users;
@@ -77,6 +80,7 @@ public class AccountService {
         this.credentials = credentials;
         this.quizAttempts = quizAttempts;
         this.disclaimers = disclaimers;
+        this.usageEvents = usageEvents;
         this.auth = properties.auth();
         this.clock = clock;
     }
@@ -393,6 +397,11 @@ public class AccountService {
      * <p>Não é só o {@code DELETE /api/me}: o mesmo caminho apaga a conta descartável do cadastro
      * que acabou vinculado a outra (D47) e a demonstração vencida (#62). Nenhum deles tem um humano
      * do outro lado, e é por isso que a exclusão precisa ser completa sozinha.
+     *
+     * <p>A nona é {@code usage_event} (V14, D50), e ela é a única que não daria erro se fosse
+     * esquecida: não tem FK, de propósito. Sai daqui porque foi prometido por escrito que sairia —
+     * o agregado <b>fica</b>, porque não tem chave de visita nem id de conta, e apagá-lo faria a
+     * exclusão de uma conta reescrever o histórico de uso de todo mundo.
      */
     @Transactional
     public void delete(Long userId) {
@@ -400,6 +409,7 @@ public class AccountService {
         // sai antes das identidades, senão a remoção delas bate na FK.
         credentials.deleteByIdentityIdIn(
                 identities.findByUserId(userId).stream().map(UserIdentity::getId).toList());
+        usageEvents.deleteByUserId(userId);
         loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);

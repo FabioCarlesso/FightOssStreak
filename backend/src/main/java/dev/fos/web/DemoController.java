@@ -1,10 +1,12 @@
 package dev.fos.web;
 
+import dev.fos.model.UsageEventType;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
 import dev.fos.service.DemoAuthenticationToken;
 import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.SessionLogin;
+import dev.fos.service.UsageCollector;
 import dev.fos.web.dto.DemoDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,12 +38,17 @@ public class DemoController {
     private final DemoAccessService demo;
     private final CurrentUserProvider currentUser;
     private final SessionLogin sessao;
+    private final UsageCollector uso;
 
     public DemoController(
-            DemoAccessService demo, CurrentUserProvider currentUser, SessionLogin sessao) {
+            DemoAccessService demo,
+            CurrentUserProvider currentUser,
+            SessionLogin sessao,
+            UsageCollector uso) {
         this.demo = demo;
         this.currentUser = currentUser;
         this.sessao = sessao;
+        this.uso = uso;
     }
 
     @PostMapping("/sessao")
@@ -70,6 +77,9 @@ public class DemoController {
         // Rotacionar o id, gravar o contexto e anotar a sessão são os três deveres de todo login
         // que a aplicação faz por conta própria — ver SessionLogin.
         this.sessao.signIn(new DemoAuthenticationToken(demonstracao.subject()), request, response);
+        // Depois do login: é o que faz o evento sair com a conta descartável em `user_id`, e ela
+        // leva os eventos dela junto quando vence (#84, D50).
+        uso.funnel(UsageEventType.DEMONSTRACAO_ABERTA);
         return new DemoDtos.DemoSessionView(DESTINO, demonstracao.expiresAt());
     }
 }

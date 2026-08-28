@@ -43,6 +43,37 @@ fos:
     # sobe igual, o botão não aparece na landing e o endpoint responde que não há demonstração
     # neste ambiente. Mesma regra dos provedores de login e do envio de e-mail.
     template-email: ${FOS_DEMO_TEMPLATE_EMAIL:}
+  usage:
+    # Coleta de uso do app (#84, D50): quantas pessoas chegam, de onde vêm e com o quê.
+    # Nada aqui é segredo e nada precisa estar preenchido.
+    #
+    # Desligar para de gravar evento; o resto do app funciona igual. É a saída para quem sobe
+    # este código e não quer coleta nenhuma.
+    # Desligar para de gravar evento E faz o endpoint responder 503, que é como o navegador
+    # descobre que não precisa mais mandar nada. Sem isso, um app com a coleta desligada seguiria
+    # fazendo uma requisição por navegação para um servidor que as joga fora.
+    enabled: ${FOS_USAGE_ENABLED:true}
+    # Base de geolocalização LOCAL (DB-IP Lite, CC BY 4.0, ou equivalente): CSV de
+    # `início,fim,país[,região]`, aceito também em .gz. Vazio por default — dev e CI sobem sem
+    # base e coletam tudo menos país, que vira 'ZZ'. Nunca há chamada a serviço externo por
+    # requisição: o IP de quem usa o app não vai para lugar nenhum (docs/11-privacidade.md).
+    geoip-database: ${FOS_USAGE_GEOIP_DATABASE:}
+    # Retenção da tabela CRUA, em dias. O agregado não expira — ele não tem chave de visita nem
+    # id de conta. Mudar isto muda a promessa escrita em docs/11-privacidade.md.
+    retention-days: ${FOS_USAGE_RETENTION_DAYS:90}
+    # Teto de acessos gravados por dia. É o único limite da coleta que não depende de nada que o
+    # cliente possa escolher: o freio por visita é chaveado no IP + User-Agent, e enquanto a #77
+    # não corrigir a origem do IP, variar o User-Agent já contorna aquele. Folgado de propósito —
+    # não é para moldar a métrica, é para a tabela parar de crescer se alguém apontar um laço para
+    # o endpoint. Bateu no teto, sai aviso no log.
+    # 5 000/dia x 90 dias de retenção ~ 123 MB no pior caso (273 bytes por linha, medidos, já
+    # com os índices). O que se paga é a marca d'água e não a contagem de hoje: o expurgo apaga
+    # as linhas, mas o Postgres só devolve o disco com VACUUM FULL.
+    daily-cap: ${FOS_USAGE_DAILY_CAP:5000}
+    # Quando o job de agregação e expurgo roda. Era constante no código, e por isso não havia como
+    # adiantá-lo para conferir os dois numa máquina de desenvolvimento. `-` desliga o agendamento.
+    # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.
+    cron: ${FOS_USAGE_CRON:0 17 3 * * *}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

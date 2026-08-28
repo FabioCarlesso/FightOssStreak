@@ -14,10 +14,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param auth administradores do app e credenciais de provedor de login
  * @param email envio de e-mail: confirmação de cadastro e redefinição de senha (D47)
  * @param demo conta-modelo do acesso demonstrativo (#62)
+ * @param usage coleta de uso do app (#84, D50)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
-        String disclaimerVersion, Curriculum curriculum, Auth auth, Email email, Demo demo) {
+        String disclaimerVersion,
+        Curriculum curriculum,
+        Auth auth,
+        Email email,
+        Demo demo,
+        Usage usage) {
 
     public FosProperties {
         if (auth == null) {
@@ -28,6 +34,54 @@ public record FosProperties(
         }
         if (email == null) {
             email = new Email(null, null);
+        }
+        if (usage == null) {
+            usage = new Usage(true, null, 0, 0);
+        }
+    }
+
+    /**
+     * Coleta de uso (#84, D50).
+     *
+     * <p>Nenhuma delas é segredo, e nenhuma precisa estar preenchida: sem base de geolocalização o
+     * app coleta tudo menos país, que é como dev e CI rodam. É o mesmo desenho do provedor de login
+     * e do envio de e-mail — funcionalidade que falta se anuncia como ausente, não como erro.
+     *
+     * @param enabled desligar para de gravar evento; a aplicação segue igual em todo o resto. É a
+     *     saída para quem sobe este código e não quer coleta nenhuma
+     * @param geoipDatabase caminho do CSV de faixas de IP (DB-IP Lite ou equivalente). Vazio = país
+     *     desconhecido para todo mundo
+     * @param retentionDays dias de retenção da tabela crua. Zero ou negativo usa o default de 90 —
+     *     o agregado, que não tem dado pessoal, não expira
+     * @param dailyCap teto de acessos gravados por dia. Zero ou negativo usa o default. É o único
+     *     limite da coleta que não depende de nada que o cliente possa escolher — ver {@code
+     *     UsageCollector}
+     */
+    public record Usage(boolean enabled, String geoipDatabase, int retentionDays, int dailyCap) {
+
+        /** Os 90 dias da D50. Mudar aqui muda a promessa escrita em docs/11-privacidade.md. */
+        public static final int DEFAULT_RETENTION_DAYS = 90;
+
+        /**
+         * Teto diário de acessos gravados.
+         *
+         * <p>Folgado o bastante para não moldar a métrica, e apertado o bastante para o pior caso
+         * caber num plano barato. A conta que define o número: <b>uma linha de {@code usage_event}
+         * custa 273 bytes medidos</b> (tabela + os três índices), então 5 000/dia × 90 dias de
+         * retenção ≈ 450 mil linhas ≈ <b>123 MB</b> no teto. Com 50 000, o valor anterior, o mesmo
+         * teto dava 1,2 GB — grande demais para o que este app é.
+         *
+         * <p>E o que se paga é a <b>marca d'água</b>, não a contagem de hoje: o expurgo apaga as
+         * linhas, mas o Postgres só devolve o espaço ao sistema com {@code VACUUM FULL}. Um único
+         * dia de abuso fixa disco que os 90 dias não recuperam sozinhos — é por isso que o teto
+         * importa mesmo num app de tráfego pequeno.
+         */
+        public static final int DEFAULT_DAILY_CAP = 5_000;
+
+        public Usage {
+            geoipDatabase = geoipDatabase == null ? "" : geoipDatabase.trim();
+            retentionDays = retentionDays > 0 ? retentionDays : DEFAULT_RETENTION_DAYS;
+            dailyCap = dailyCap > 0 ? dailyCap : DEFAULT_DAILY_CAP;
         }
     }
 
