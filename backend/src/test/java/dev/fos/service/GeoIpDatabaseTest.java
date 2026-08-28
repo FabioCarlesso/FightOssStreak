@@ -6,8 +6,11 @@ import dev.fos.model.UsageEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * País e região a partir do IP, com base local (#84, D50).
@@ -37,6 +40,23 @@ class GeoIpDatabaseTest {
         assertThat(GeoIpDatabase.load("/caminho/que/nao/existe.csv").isEmpty()).isTrue();
         assertThat(GeoIpDatabase.load("").isEmpty()).isTrue();
         assertThat(GeoIpDatabase.load(null).isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("arquivo .gz vazio ou corrompido é base vazia, não subida derrubada")
+    void unreadableFileIsNotAFailure(@TempDir Path pasta) throws IOException {
+        // Este é exatamente o que o `backend/Dockerfile` deixa quando o download da base falha ou
+        // é pulado (`--build-arg GEOIP=false`, como o CI faz): o arquivo existe, com zero byte, e
+        // `FOS_USAGE_GEOIP_DATABASE` aponta para ele. Se isso derrubasse a subida,
+        // indisponibilidade
+        // do db-ip.com viraria deploy falho — que é o oposto do que a D50 combinou.
+        Path vazio = pasta.resolve("geoip.csv.gz");
+        Files.write(vazio, new byte[0]);
+        assertThat(GeoIpDatabase.load(vazio.toString()).isEmpty()).isTrue();
+
+        Path lixo = pasta.resolve("corrompida.csv.gz");
+        Files.writeString(lixo, "isto não é gzip nenhum");
+        assertThat(GeoIpDatabase.load(lixo.toString()).isEmpty()).isTrue();
     }
 
     @Test

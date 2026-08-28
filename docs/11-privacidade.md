@@ -176,11 +176,15 @@ para log de aplicação.** Há teste automatizado que varre o schema migrado e o
 migrations e reprova o build se uma coluna com cara de endereço aparecer — hoje ou daqui a dois
 anos.
 
-A geolocalização usa uma **base local**, embarcada no ambiente e atualizada por PR (DB-IP Lite, CC
-BY 4.0). Não há chamada a serviço externo por requisição: consultar terceiro colocaria o IP de quem
-usa o app na mão de outra empresa, que é exatamente o que este documento promete que não acontece.
-Ambiente sem base — o caso de desenvolvimento e do CI — coleta tudo **menos** país, que fica como
-desconhecido.
+A geolocalização usa uma **base local**, baixada quando a imagem do backend é construída
+([DB-IP Lite](https://db-ip.com), CC BY 4.0). **Não há chamada a serviço externo por requisição**: a
+única conversa com o db-ip.com acontece na máquina que constrói a imagem, e o IP de quem navega
+nunca sai daqui — consultar terceiro a cada acesso colocaria esse IP na mão de outra empresa, que é
+exatamente o que este documento promete que não acontece.
+
+Ambiente sem base — o caso de desenvolvimento e do CI, e também o de um build em que o db-ip.com
+estivesse fora do ar — coleta tudo **menos** país, que fica como desconhecido. A base gratuita traz
+só país: **região é sempre desconhecida** com ela.
 
 ### O que NÃO é coletado
 
