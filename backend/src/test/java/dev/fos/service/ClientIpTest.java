@@ -17,7 +17,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
  */
 class ClientIpTest {
 
-    private static final String CADEIA_RAILWAY = "1.2.3.4, 198.51.100.7, 10.250.0.3";
+    /**
+     * A cadeia como ela chega em produção, copiada do log de acesso do nginx na Railway: a borda
+     * descarta o {@code X-Forwarded-For} de quem chama e entrega {@code <visitante>, <nó de
+     * borda>}; o nginx anexa o próprio peer.
+     */
+    private static final String CADEIA_RAILWAY = "104.28.228.100, 152.233.23.193, 100.64.0.11";
 
     @Test
     @DisplayName("sem o header da borda vale o peer da conexão")
@@ -39,12 +44,24 @@ class ClientIpTest {
     }
 
     @Test
-    @DisplayName("dois saltos confiáveis: o penúltimo, que é o visitante atrás da borda")
-    void twoTrustedHopsReadTheVisitorBehindTheEdge() {
+    @DisplayName("três saltos: o visitante atrás da borda da Railway, como medido em produção")
+    void threeTrustedHopsReadTheVisitorBehindTheEdge() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(ClientIp.HEADER, CADEIA_RAILWAY);
 
-        assertThat(clientIp(2).of(request)).isEqualTo("198.51.100.7");
+        assertThat(clientIp(3).of(request)).isEqualTo("104.28.228.100");
+    }
+
+    @Test
+    @DisplayName("o número errado colapsa todo mundo no nó de borda — ruído visível, não bypass")
+    void aWrongHopCountCollapsesEveryoneOnAnInfrastructureAddress() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(ClientIp.HEADER, CADEIA_RAILWAY);
+
+        // Com 2 a chave vira o nó de borda da plataforma, que é o mesmo para todo mundo que
+        // entra por ele: os freios passam a recusar gente legítima. É por isso que a variável
+        // entra no mesmo deploy que o código.
+        assertThat(clientIp(2).of(request)).isEqualTo("152.233.23.193");
     }
 
     @Test

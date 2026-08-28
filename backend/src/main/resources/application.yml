@@ -76,11 +76,15 @@ fos:
     # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.
     cron: ${FOS_USAGE_CRON:0 17 3 * * *}
   proxy:
-    # Quantos proxies NOSSOS a requisição atravessa até chegar aqui, contando o nginx (#77).
-    # É o que diz de qual posição da cadeia de endereços sai quem está navegando: cada proxy
-    # anexa um endereço ao FIM dela, então a leitura conta de trás para frente. 1 é o Compose,
-    # onde só o nginx está na frente; na Railway a borda da plataforma anexa o visitante antes
-    # e o nginx anexa o endereço dela depois, então lá o valor é 2. Ver dev.fos.service.ClientIp.
+    # Quantos endereços a requisição ganha na cadeia até chegar aqui (#77). É o que diz de qual
+    # posição sai quem está navegando: cada salto anexa um endereço ao FIM da lista, então a
+    # leitura conta de trás para frente. 1 é o Compose, onde só o nginx está na frente.
+    #
+    # Na Railway o valor é 3, e isso foi MEDIDO no log de acesso do nginx em produção, não
+    # deduzido: a borda da plataforma DESCARTA o X-Forwarded-For de quem chama e entrega
+    # `<visitante>, <nó de borda>`; o nginx anexa o próprio peer e o backend recebe três
+    # elementos. Com 2 a chave seria o nó de borda — o mesmo para todo mundo que entra por ele.
+    # Ver dev.fos.service.ClientIp e a D51.
     trusted-hops: ${FOS_PROXY_TRUSTED_HOPS:1}
   curriculum:
     index: 'classpath:curriculum/modules.json'

@@ -27,10 +27,12 @@ import org.springframework.stereotype.Component;
  *
  * <p><b>Quantos elementos pular é configuração</b> ({@code fos.proxy.trusted-hops}), porque depende
  * da topologia e não do código: no Compose só o nginx está na frente e o último elemento é quem
- * navega; na Railway a borda da plataforma anexa o visitante antes, e o nginx anexa o endereço dela
- * depois — o visitante é o penúltimo. Errar o número não abre a porta em silêncio: com número
- * pequeno demais todo mundo cai na mesma chave e o freio recusa gente legítima, que é ruído
- * visível, e não bypass.
+ * navega. Na Railway o número é <b>3</b>, medido no log de acesso do nginx em produção: a borda da
+ * plataforma descarta o {@code X-Forwarded-For} de quem chama e entrega {@code <visitante>, <nó de
+ * borda>}, e o nginx anexa o próprio peer — o visitante é o antepenúltimo. Errar o número não abre
+ * a porta em silêncio: com número pequeno demais todo mundo cai na mesma chave e o freio recusa
+ * gente legítima, que é ruído visível, e não bypass — mas é degradação, então a variável entra no
+ * mesmo deploy que este código.
  *
  * <p>Sem o header — dev direto no {@code :8080}, teste, qualquer coisa que não passe pelo nginx —
  * vale o peer de verdade da conexão, lido do request <b>de baixo</b> dos wrappers. O {@code
