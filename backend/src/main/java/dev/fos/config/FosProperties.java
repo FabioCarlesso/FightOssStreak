@@ -65,11 +65,18 @@ public record FosProperties(
         /**
          * Teto diário de acessos gravados.
          *
-         * <p>Folgado de propósito: ele não é para moldar a métrica, e sim para que a tabela pare de
-         * crescer se alguém apontar um laço para o endpoint. Um dia real deste app não chega perto
-         * — se chegar, o número está pequeno e é isso que o aviso no log quer dizer.
+         * <p>Folgado o bastante para não moldar a métrica, e apertado o bastante para o pior caso
+         * caber num plano barato. A conta que define o número: <b>uma linha de {@code usage_event}
+         * custa 273 bytes medidos</b> (tabela + os três índices), então 5 000/dia × 90 dias de
+         * retenção ≈ 450 mil linhas ≈ <b>123 MB</b> no teto. Com 50 000, o valor anterior, o mesmo
+         * teto dava 1,2 GB — grande demais para o que este app é.
+         *
+         * <p>E o que se paga é a <b>marca d'água</b>, não a contagem de hoje: o expurgo apaga as
+         * linhas, mas o Postgres só devolve o espaço ao sistema com {@code VACUUM FULL}. Um único
+         * dia de abuso fixa disco que os 90 dias não recuperam sozinhos — é por isso que o teto
+         * importa mesmo num app de tráfego pequeno.
          */
-        public static final int DEFAULT_DAILY_CAP = 50_000;
+        public static final int DEFAULT_DAILY_CAP = 5_000;
 
         public Usage {
             geoipDatabase = geoipDatabase == null ? "" : geoipDatabase.trim();

@@ -134,6 +134,49 @@ describe('aviso de acesso recusado', () => {
     vi.unstubAllGlobals();
   });
 
+  it('coleta desligada no servidor: para de mandar depois do primeiro 503 com código', async () => {
+    // Desligar precisa significar desligado. Sem esta parada, `FOS_USAGE_ENABLED=false` só diria
+    // "não grava", e o navegador seguiria mandando uma requisição por navegação para sempre.
+    const desligada = () =>
+      new Response(JSON.stringify({ error: 'coleta_desligada', message: 'desligada' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    const fetchDesligado = vi.fn().mockResolvedValue(desligada());
+    const cliente = createApiClient({
+      fetch: fetchDesligado as unknown as typeof globalThis.fetch,
+    });
+
+    await cliente.recordUsage({ caminho: '/' });
+    await cliente.recordUsage({ caminho: '/hoje' });
+    await cliente.recordUsage({ caminho: '/arvore' });
+
+    expect(fetchDesligado).toHaveBeenCalledTimes(1);
+  });
+
+  it('503 sem código não desliga a coleta — é o proxy enquanto o backend reinicia', async () => {
+    const fetchInstavel = vi
+      .fn()
+      .mockResolvedValue(new Response('<html>502 Bad Gateway</html>', { status: 503 }));
+    const cliente = createApiClient({
+      fetch: fetchInstavel as unknown as typeof globalThis.fetch,
+    });
+
+    await cliente.recordUsage({ caminho: '/' });
+    await cliente.recordUsage({ caminho: '/hoje' });
+
+    expect(fetchInstavel).toHaveBeenCalledTimes(2);
+  });
+
+  it('recordUsage nunca rejeita, nem offline', async () => {
+    const fetchOffline = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
+    const cliente = createApiClient({
+      fetch: fetchOffline as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(cliente.recordUsage({ caminho: '/' })).resolves.toBeUndefined();
+  });
+
   it('403 no próprio /api/me não avisa: seria o portão se reconsultando em laço', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta403('acesso_recusado')));
     const ouvinte = vi.fn();

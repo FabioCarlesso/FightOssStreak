@@ -215,7 +215,7 @@ A coleta tem dois limites, e vale saber que eles existem por motivos diferentes.
 O primeiro é **por visita**: acima de 300 acessos em dez minutos, a mesma chave de visita para de
 ser gravada. É folgado porque navegar rápido pelo app não pode virar evento perdido.
 
-O segundo é um **teto por dia** (`FOS_USAGE_DAILY_CAP`, 50 000 por padrão), e ele existe porque o
+O segundo é um **teto por dia** (`FOS_USAGE_DAILY_CAP`, 5 000 por padrão), e ele existe porque o
 primeiro não basta: a chave de visita é derivada do IP e do `User-Agent`, e enquanto a
 [#77](https://github.com/FabioCarlesso/FightOssStreak/issues/77) não corrigir de onde o IP é lido,
 quem variar qualquer um dos dois tem uma chave nova a cada requisição e passa pelo freio por visita
@@ -225,11 +225,21 @@ inteiro. O teto do dia não pergunta de quem veio o acesso — conta quantos for
 sai um aviso no log dizendo qual dia foi. O teto é para a tabela parar de crescer se alguém apontar
 um laço para o endpoint; ele não impede o abuso, limita o estrago. O conserto de verdade é a #77.
 
+O número tem uma conta atrás dele: **uma linha custa 273 bytes medidos** (tabela mais os três
+índices), então 5 000 por dia × 90 dias de retenção ≈ 123 MB no pior caso. E o que se ocupa em
+disco é a **marca d'água**, não a contagem de hoje — o expurgo apaga as linhas, mas o Postgres só
+devolve o espaço ao sistema com `VACUUM FULL`. Um único dia de abuso fixa disco que os 90 dias não
+recuperam sozinhos.
+
 ### Como desligar
 
 Quem sobe este código e não quer coleta nenhuma define `FOS_USAGE_ENABLED=false`. Nenhum evento é
-gravado, e o resto do app funciona igual. `FOS_USAGE_CRON=-` desliga só o job diário de agregação e
-expurgo, sem parar a coleta.
+gravado, o endpoint passa a responder **503 `coleta_desligada`**, e o navegador **para de mandar**
+ao ver esse código — desligado significa desligado, e não "grava nada mas continua sendo chamado a
+cada navegação". O resto do app funciona igual.
+
+O job diário continua rodando mesmo com a coleta desligada, e é de propósito: desligar a coleta não
+pode deixar o que já foi gravado sem expurgo. Para parar só o job, `FOS_USAGE_CRON=-`.
 
 ## Conta de demonstração (D39)
 

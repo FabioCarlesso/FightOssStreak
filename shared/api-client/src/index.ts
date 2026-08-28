@@ -102,6 +102,16 @@ export class ApiError extends Error {
   }
 
   /**
+   * Ambiente com a coleta de uso desligada (`fos.usage.enabled=false`).
+   *
+   * É o código, e não o 503, que importa: 503 sem código é o que o proxy devolve enquanto o
+   * backend reinicia, e aquele não pode desligar a coleta do resto da visita.
+   */
+  get isUsageDisabled(): boolean {
+    return this.code === 'coleta_desligada';
+  }
+
+  /**
    * Ambiente sem provedor de envio de e-mail: não há cadastro por senha aqui.
    *
    * É o caso de dev e do CI, onde a aplicação sobe sem segredo nenhum. A tela precisa dizer isso
@@ -193,6 +203,14 @@ export function createApiClient(options: ApiClientOptions = {}) {
   async function requestNoContent(path: string, init?: RequestInit): Promise<void> {
     await send(path, init);
   }
+
+  /**
+   * O servidor já disse que a coleta está desligada aqui.
+   *
+   * Por cliente e em memória: some com o recarregar da página, que é o momento certo de perguntar
+   * de novo — é quando um deploy que religou a coleta passaria a valer.
+   */
+  let usoDesligado = false;
 
   async function toApiError(response: Response): Promise<ApiError> {
     let code = 'unknown_error';
@@ -361,13 +379,22 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * um corpo que trouxesse esses campos seria ignorado.
      */
     recordUsage: async (event: UsageEventRequest): Promise<void> => {
+      // Ambiente com a coleta desligada já se anunciou: não insista. Sem esta guarda,
+      // `FOS_USAGE_ENABLED=false` significaria só "não grava" — o navegador seguiria mandando uma
+      // requisição por navegação, para sempre, para um servidor que as joga fora.
+      if (usoDesligado) return;
       try {
         await requestNoContent('/api/telemetria/evento', {
           method: 'POST',
           body: JSON.stringify(event),
         });
-      } catch {
-        // Offline, backend frio, 429 do freio: nada disso é problema de quem navega.
+      } catch (erro) {
+        if (erro instanceof ApiError && erro.isUsageDisabled) {
+          usoDesligado = true;
+          return;
+        }
+        // Offline, backend frio, 429 do freio: nada disso é problema de quem navega, e nada disso
+        // desliga a coleta — só o código explícito desliga.
       }
     },
 

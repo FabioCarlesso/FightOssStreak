@@ -25,6 +25,16 @@ public final class UsageDtos {
      * @param utmMedium meio da campanha
      * @param utmCampaign nome da campanha
      */
+    /**
+     * O corpo do 503 de ambiente com a coleta desligada.
+     *
+     * <p>Mesmo formato dos outros erros da API ({@code error} + {@code message}), porque é assim
+     * que o cliente lê o código — e é o código, e não o 503, que o faz parar de mandar evento: 503
+     * sem código é o que o proxy devolve enquanto o backend reinicia.
+     */
+    @Schema(description = "A coleta está desligada neste ambiente (fos.usage.enabled=false).")
+    public record ColetaDesligada(String error, String message) {}
+
     @Schema(description = "Uma mudança de rota no app. Nada aqui identifica quem navega.")
     public record EventRequest(
             @Size(max = 300) String caminho,

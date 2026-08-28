@@ -49,6 +49,9 @@ fos:
     #
     # Desligar para de gravar evento; o resto do app funciona igual. É a saída para quem sobe
     # este código e não quer coleta nenhuma.
+    # Desligar para de gravar evento E faz o endpoint responder 503, que é como o navegador
+    # descobre que não precisa mais mandar nada. Sem isso, um app com a coleta desligada seguiria
+    # fazendo uma requisição por navegação para um servidor que as joga fora.
     enabled: ${FOS_USAGE_ENABLED:true}
     # Base de geolocalização LOCAL (DB-IP Lite, CC BY 4.0, ou equivalente): CSV de
     # `início,fim,país[,região]`, aceito também em .gz. Vazio por default — dev e CI sobem sem
@@ -63,7 +66,10 @@ fos:
     # não corrigir a origem do IP, variar o User-Agent já contorna aquele. Folgado de propósito —
     # não é para moldar a métrica, é para a tabela parar de crescer se alguém apontar um laço para
     # o endpoint. Bateu no teto, sai aviso no log.
-    daily-cap: ${FOS_USAGE_DAILY_CAP:50000}
+    # 5 000/dia x 90 dias de retenção ~ 123 MB no pior caso (273 bytes por linha, medidos, já
+    # com os índices). O que se paga é a marca d'água e não a contagem de hoje: o expurgo apaga
+    # as linhas, mas o Postgres só devolve o disco com VACUUM FULL.
+    daily-cap: ${FOS_USAGE_DAILY_CAP:5000}
     # Quando o job de agregação e expurgo roda. Era constante no código, e por isso não havia como
     # adiantá-lo para conferir os dois numa máquina de desenvolvimento. `-` desliga o agendamento.
     # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.

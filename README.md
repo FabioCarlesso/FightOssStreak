@@ -180,10 +180,10 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
 | `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
-| `FOS_USAGE_ENABLED` | backend | `true` | desliga a coleta de uso (D50) sem mexer em mais nada |
+| `FOS_USAGE_ENABLED` | backend | `true` | `false` desliga a coleta de uso (D50) por inteiro: nada é gravado **e** o endpoint responde 503, que é como o navegador para de mandar evento |
 | `FOS_USAGE_GEOIP_DATABASE` | backend | vazia | caminho do CSV local de faixas de IP → país; vazia = país desconhecido |
 | `FOS_USAGE_RETENTION_DAYS` | backend | `90` | retenção da tabela **crua** de eventos; o agregado não expira |
-| `FOS_USAGE_DAILY_CAP` | backend | `50000` | teto de acessos gravados por dia; junto com a retenção, é o que limita o tamanho da tabela crua |
+| `FOS_USAGE_DAILY_CAP` | backend | `5000` | teto de acessos gravados por dia. Uma linha custa 273 bytes medidos, então 5 000 × 90 dias ≈ 123 MB no pior caso — baixe se o disco for apertado |
 | `FOS_USAGE_CRON` | backend | `0 17 3 * * *` | quando o job agrega e expurga; `-` desliga só o agendamento |
 
 Detalhes que não são óbvios:
