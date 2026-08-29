@@ -147,7 +147,7 @@ gravado em lugar nenhum.**
 | País e região | **derivados do IP, que não é guardado** (ver abaixo) | responde de onde as pessoas chegam |
 | Chave de visita | hash de (IP + `User-Agent` + **sal do dia**) | separa "100 acessos de uma pessoa" de "100 pessoas" — e nada mais |
 | Id da conta, **só quando há sessão** | do próprio app | é o que faz `DELETE /api/me` alcançar estes registros |
-| Quatro degraus de funil: demonstração aberta, cadastro criado, e-mail confirmado, primeiro drill | do **backend**, no ponto em que o fato acontece | responde "a abertura funcionou?" — vindos do navegador seriam forjáveis |
+| Cinco degraus de funil: demonstração aberta, cadastro criado, e-mail confirmado, primeiro drill, retorno em 7 dias | do **backend**, no ponto em que o fato acontece | responde "a abertura funcionou?" — vindos do navegador seriam forjáveis |
 
 ### A chave de visita não identifica ninguém, e isso é verificável
 
@@ -240,6 +240,38 @@ O número tem uma conta atrás dele: **uma linha custa 273 bytes medidos** (tabe
 disco é a **marca d'água**, não a contagem de hoje — o expurgo apaga as linhas, mas o Postgres só
 devolve o espaço ao sistema com `VACUUM FULL`. Um único dia de abuso fixa disco que os 90 dias não
 recuperam sozinhos.
+
+### Quem vê isso, e o que essa pessoa vê (D50, #85)
+
+A coleta existe para ser lida, e quem a lê é a administração do app, na tela *Painel*
+(`/admin/painel`, atrás de `GET /api/admin/painel`). Vale a pena ser explícito sobre o que essa
+tela **é**, porque é ela que poderia desfazer na prática o cuidado descrito acima.
+
+**O painel é agregado e de ninguém.** Ele lê `usage_daily` — a contagem por dia × dimensão — e
+**nunca** `usage_event`, que é a tabela com chave de visita e às vezes id de conta. Nenhuma resposta
+dele carrega e-mail, nome ou id de conta; há teste que varre o corpo inteiro da resposta e reprova o
+build se uma arroba aparecer nele.
+
+O que ele mostra: quantos acessos e quantos visitantes por dia, com o comparativo do período
+anterior; os seis degraus do funil, com a conversão de cada um; de onde as pessoas vieram; com que
+dispositivo, navegador, idioma e país; quais telas foram abertas; e três números sobre as contas
+(total, criadas no período, ativas no período).
+
+O que ele **não** mostra, e não por falta de tela: lista de pessoas, sessão individual, "últimos
+acessos de fulano", ou qualquer recorte que ligue um comportamento a uma conta. Duas coisas que
+saem de fora da coleta — os totais de contas e "quantas registraram drill no período" — devolvem
+**número**, nunca linha.
+
+Duas leituras que a tela precisa declarar, e declara:
+
+- **Visitante é contado por dia.** A soma do período é a soma dos dias, e não pessoas distintas no
+  mês: o sal da chave de visita roda por dia, e ligar a mesma pessoa entre dois dias é justamente o
+  que esta coleta não faz.
+- **O período termina ontem.** O dia corrente ainda recebe evento e não é fechado — um número
+  publicado que muda depois de lido seria pior que um número que falta.
+
+Se um dia o painel precisar de uma visão por pessoa, isso não é ajuste de tela: é a D50 sendo
+revertida, e passa por reescrever este documento antes de escrever a consulta.
 
 ### Como desligar
 

@@ -2182,3 +2182,215 @@ textarea.feedback-form__control {
   margin-top: 0.2rem;
   font-size: 0.7rem;
 }
+
+/*
+ * Painel do administrador (#85)
+ *
+ * Os gráficos são SVG escrito à mão, sem biblioteca: o web tem três dependências de runtime e uma
+ * linha com umas barras não justifica a quarta no bundle de quem abre a landing. O que a folha de
+ * estilo faz aqui é só cor e espaçamento — a geometria é calculada no componente, porque ela
+ * depende do dado.
+ */
+.painel__periodos {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.painel__periodo {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.painel__periodo:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.painel__periodo--ativo {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Aviso de estado da coleta, não de erro: a agregação atrasada é normal, e a cor precisa dizer
+   "leia antes de concluir" em vez de "algo quebrou". */
+.painel__aviso {
+  margin: 0.6rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--surface-2);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.painel__numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.8rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.painel__numero-bloco {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.painel__numero-titulo {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.painel__numero-valor {
+  margin: 0.1rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.painel__numero-comparativo {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.painel__variacao {
+  font-weight: 600;
+}
+
+.painel__variacao--sobe {
+  color: var(--ok);
+}
+
+.painel__variacao--desce {
+  color: var(--warn);
+}
+
+.painel__grafico {
+  margin-bottom: 0.4rem;
+}
+
+.painel__linha {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.painel__linha polyline {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  /* `non-scaling-stroke`: o viewBox é esticado até a largura do card, e sem isto a espessura do
+     traço seria esticada junto. */
+  vector-effect: non-scaling-stroke;
+}
+
+.painel__linha-visitas {
+  stroke: var(--accent);
+}
+
+.painel__linha-visitantes {
+  stroke: var(--muted);
+}
+
+.painel__legenda {
+  display: flex;
+  gap: 0.9rem;
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.painel__chave::before {
+  content: '';
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.15rem;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+.painel__chave--visitas::before {
+  background: var(--accent);
+}
+
+.painel__chave--visitantes::before {
+  background: var(--muted);
+}
+
+/* Três colunas fixas: rótulo elástico, barra elástica, número alinhado à direita. A grade é a
+   mesma no funil e nos rankings de propósito — comparar duas listas exige que elas se pareçam. */
+.painel__lista,
+.painel__funil {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.painel__item,
+.painel__degrau {
+  display: grid;
+  grid-template-columns: minmax(6rem, 11rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+  font-size: 0.85rem;
+}
+
+.painel__degrau {
+  grid-template-columns: minmax(6rem, 13rem) minmax(0, 1fr) auto auto;
+}
+
+.painel__rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.painel__barra {
+  display: block;
+  width: 100%;
+  height: 0.55rem;
+}
+
+.painel__barra rect {
+  fill: var(--accent);
+}
+
+.painel__numero {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  min-width: 3rem;
+}
+
+.painel__conversao {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  text-align: right;
+  min-width: 3.2rem;
+}
+
+.painel__perfil {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+}
+
+.painel__coluna-titulo {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}

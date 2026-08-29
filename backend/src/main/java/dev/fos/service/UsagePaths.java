@@ -36,7 +36,8 @@ public final class UsagePaths {
                     "/progresso",
                     "/conta",
                     "/feedback",
-                    "/usuarios");
+                    "/usuarios",
+                    "/admin/painel");
 
     private UsagePaths() {}
 

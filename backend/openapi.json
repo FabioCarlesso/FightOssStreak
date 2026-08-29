@@ -16,10 +16,6 @@
   ],
   "tags": [
     {
-      "name": "Administração",
-      "description": "Contas do sistema e fila de feedback; restrita a quem administra"
-    },
-    {
       "name": "Métricas",
       "description": "Critérios de sucesso do MVP medidos sobre o uso real"
     },
@@ -50,6 +46,10 @@
     {
       "name": "Conta",
       "description": "Login social, identidade da conta e exclusão"
+    },
+    {
+      "name": "Administração",
+      "description": "Painel de uso, contas do sistema e fila de feedback; restrita a quem administra"
     }
   ],
   "paths": {
@@ -927,6 +927,41 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/AdminUserPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/painel": {
+      "get": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Acessos, funil, origem e perfil de uso do app",
+        "description": "Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa — não há e-mail, nome nem id de conta. Lê apenas a contagem diária (`usage_daily`), nunca a tabela crua de eventos (docs/11-privacidade.md). O período termina ontem: hoje ainda recebe evento e não foi fechado.",
+        "operationId": "painel",
+        "parameters": [
+          {
+            "name": "dias",
+            "in": "query",
+            "description": "Tamanho do período: 7, 30 ou 90 dias",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PanelView"
                 }
               }
             }
@@ -2020,6 +2055,191 @@
           "totalPages": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "AccessPoint": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "visits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "visitors": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AccessSeries": {
+        "type": "object",
+        "properties": {
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessPoint"
+            }
+          },
+          "visits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "visitors": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousVisits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousVisitors": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AccountTotals": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdInPeriod": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "activeInPeriod": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "FunnelStep": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "percentOfPrevious": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PanelView": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "previousFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "previousTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "aggregatedThrough": {
+            "type": "string",
+            "format": "date"
+          },
+          "access": {
+            "$ref": "#/components/schemas/AccessSeries"
+          },
+          "funnel": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FunnelStep"
+            }
+          },
+          "origins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          },
+          "accounts": {
+            "$ref": "#/components/schemas/AccountTotals"
+          },
+          "geoIpCredit": {
+            "type": "string"
+          }
+        },
+        "description": "Acessos, funil, origem e perfil de uso — agregado, e de ninguém."
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          },
+          "browsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            }
+          }
+        }
+      },
+      "Slice": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "visitors": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },

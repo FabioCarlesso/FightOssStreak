@@ -24,5 +24,18 @@ public interface DrillLogRepository extends JpaRepository<DrillLog, Long> {
 
     long countByUserId(Long userId);
 
+    /**
+     * Quantas contas registraram drill no período — o "ativas" do painel (#85).
+     *
+     * <p>Sai daqui, e não da coleta de uso, porque o painel não toca a tabela crua de eventos: é lá
+     * que existe {@code user_id}, e a promessa da D50 é que o painel seja agregado e de ninguém. O
+     * drill é registro de progresso da própria conta, que ela já vê na tela dela, e aqui só o
+     * <em>número</em> de contas distintas sai — nenhum id atravessa este método.
+     */
+    @Query(
+            "select count(distinct d.userId) from DrillLog d"
+                    + " where d.drilledOn between :from and :to")
+    long countDistinctUsersBetween(@Param("from") LocalDate from, @Param("to") LocalDate to);
+
     void deleteByUserId(Long userId);
 }
