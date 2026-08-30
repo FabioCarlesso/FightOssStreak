@@ -53,7 +53,13 @@ public class UsagePanelService {
      */
     private static final int FATIAS = 8;
 
-    /** O rótulo da cauda somada. Não colide com valor de dimensão: nenhum deles tem espaço. */
+    /**
+     * O rótulo da cauda somada.
+     *
+     * <p>É uma palavra comum, e nada impede que ela seja também um valor de dimensão de verdade —
+     * {@code utm_source=outros} é um link que alguém pode escrever. Quando isso acontece, as duas
+     * viram uma linha só; ver {@link #comCauda}.
+     */
     private static final String OUTROS = "outros";
 
     /**
@@ -267,6 +273,30 @@ public class UsagePanelService {
         for (AdminPanelDtos.Slice fatia : ordenadas.subList(FATIAS, ordenadas.size())) {
             total += fatia.total();
             visitantes += fatia.visitors();
+        }
+        return comCauda(topo, total, visitantes);
+    }
+
+    /**
+     * Acrescenta a cauda ao topo — ou a funde na fatia que já se chama {@link #OUTROS}.
+     *
+     * <p>Duas fatias com o mesmo valor na mesma lista não podem sair daqui: a tela identifica cada
+     * linha pelo valor, e duas linhas "outros" não teriam como ser lidas de qualquer forma. Somar
+     * as duas é a saída que mantém o total fechando — e fechar é a razão de a cauda existir. O
+     * preço é que, no período em que uma origem se chamar literalmente "outros", ela aparece junto
+     * com a cauda, o que é menos errado que aparecer duas vezes.
+     */
+    private static List<AdminPanelDtos.Slice> comCauda(
+            List<AdminPanelDtos.Slice> topo, long total, long visitantes) {
+        for (int i = 0; i < topo.size(); i++) {
+            AdminPanelDtos.Slice fatia = topo.get(i);
+            if (OUTROS.equals(fatia.value())) {
+                topo.set(
+                        i,
+                        new AdminPanelDtos.Slice(
+                                OUTROS, fatia.total() + total, fatia.visitors() + visitantes));
+                return topo;
+            }
         }
         topo.add(new AdminPanelDtos.Slice(OUTROS, total, visitantes));
         return topo;

@@ -2394,3 +2394,16 @@ textarea.feedback-form__control {
   letter-spacing: 0.05em;
   color: var(--muted);
 }
+
+/* A grade dos rankings largos não cabe aqui: uma coluna do perfil tem uns 250px, e 11rem de
+   rótulo mais 3rem de número mais os gaps deixariam 8px para a barra — que então desenharia
+   igual para 150 e para 90, dizendo o contrário do que existe para dizer. Rótulo e número mais
+   curtos devolvem a barra à escala. */
+.painel__coluna .painel__item {
+  grid-template-columns: minmax(3rem, 7rem) minmax(2.5rem, 1fr) auto;
+  gap: 0.4rem;
+}
+
+.painel__coluna .painel__numero {
+  min-width: 2rem;
+}

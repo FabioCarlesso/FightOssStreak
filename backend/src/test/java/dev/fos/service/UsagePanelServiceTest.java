@@ -79,6 +79,35 @@ class UsagePanelServiceTest {
     }
 
     @Test
+    @DisplayName("origem chamada 'outros' não vira duas linhas com o mesmo nome")
+    void anOriginNamedOthersIsMergedIntoTheTail() {
+        LocalDate ontem = HOJE.minusDays(1);
+        // Uma origem literalmente chamada "outros" — `utm_source=outros` é um link que alguém pode
+        // escrever — e grande o bastante para ficar no topo do ranking.
+        plantar(ontem, UsageDimension.ORIGEM, "outros", 100, 50);
+        for (int i = 1; i <= 12; i++) {
+            plantar(ontem, UsageDimension.ORIGEM, "origem-" + i, i, i);
+        }
+
+        List<AdminPanelDtos.Slice> origens = painel.painel(7).origins();
+
+        // Uma linha só com esse nome: a tela identifica cada linha pelo valor, e duas iguais
+        // quebrariam a lista sem que nenhuma soma denunciasse.
+        assertThat(origens).extracting(AdminPanelDtos.Slice::value).containsOnlyOnce("outros");
+        // 100 da origem de verdade + 1 + 2 + 3 + 4 + 5 da cauda: ela foi somada, e não descartada.
+        assertThat(origens)
+                .filteredOn(fatia -> "outros".equals(fatia.value()))
+                .singleElement()
+                .satisfies(
+                        fatia -> {
+                            assertThat(fatia.total()).isEqualTo(115);
+                            assertThat(fatia.visitors()).isEqualTo(65);
+                        });
+        // E o total continua fechando com tudo que foi plantado: 100 + (1..12).
+        assertThat(origens.stream().mapToLong(AdminPanelDtos.Slice::total).sum()).isEqualTo(178);
+    }
+
+    @Test
     @DisplayName("país sem base de geolocalização vira categoria legível, não código")
     void unknownCountryIsACategory() {
         plantar(HOJE.minusDays(1), UsageDimension.PAIS, UsageEvent.PAIS_DESCONHECIDO, 5, 3);
