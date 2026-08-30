@@ -20,6 +20,7 @@ import type {
   FeedbackView,
   MvpMetrics,
   NodeDetail,
+  PanelView,
   Role,
   PinnedNote,
   QuizResult,
@@ -158,6 +159,14 @@ function csrfToken(): string | null {
 }
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/**
+ * Os três recortes do painel (#85).
+ *
+ * União de literais, e não `number`: o backend aceita exatamente estes três, e um tipo mais largo
+ * empurraria para a tela a chance de pedir um período que sempre volta `400`.
+ */
+export type PanelDays = 7 | 30 | 90;
 
 /** Filtros da listagem de contas (#89). Todos opcionais e combináveis entre si. */
 export interface AdminUsersQuery {
@@ -407,6 +416,15 @@ export function createApiClient(options: ApiClientOptions = {}) {
         method: 'POST',
         body: JSON.stringify(feedback),
       }),
+
+    /**
+     * Painel de uso do app (#85). Só quem administra recebe 200.
+     *
+     * `dias` é um dos três presets — 7, 30 ou 90. Qualquer outro valor é `400` no backend, de
+     * propósito: período livre está fora de escopo, e aceitar aqui o que o servidor recusa só
+     * moveria o erro para mais longe de quem o causou.
+     */
+    getAdminPanel: (dias: PanelDays = 7) => request<PanelView>(`/api/admin/painel?dias=${dias}`),
 
     /** Fila de feedback. Só a conta de administração (D48) recebe 200 aqui. */
     getFeedbackQueue: () => request<FeedbackList>('/api/admin/feedback'),

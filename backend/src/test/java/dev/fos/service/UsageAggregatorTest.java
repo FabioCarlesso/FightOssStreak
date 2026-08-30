@@ -166,6 +166,30 @@ class UsageAggregatorTest {
     }
 
     @Test
+    @DisplayName("navegador e idioma são dimensões do agregado — dado novo, sem migration")
+    void browserAndLanguageAreDimensions() {
+        LocalDate ontem = HOJE.minusDays(1);
+        plantar(ontem, "visita-a", UsageEventType.PAGINA, "/", "BR", DeviceClass.CELULAR, null);
+        plantar(ontem, "visita-b", UsageEventType.PAGINA, "/hoje", "BR", DeviceClass.DESKTOP, null);
+
+        aggregator.aggregatePending();
+
+        // As duas entraram com o painel (#85) e são o "perfil de quem chega" dele. Estão aqui, e
+        // não numa migration, porque o formato longo desta tabela existe justamente para isso.
+        assertThat(linha(ontem, UsageDimension.NAVEGADOR, "chrome"))
+                .get()
+                .satisfies(
+                        l -> {
+                            assertThat(l.getEvents()).isEqualTo(2);
+                            assertThat(l.getVisits()).isEqualTo(2);
+                        });
+        assertThat(linha(ontem, UsageDimension.IDIOMA, "pt"))
+                .get()
+                .extracting(UsageDaily::getEvents)
+                .isEqualTo(2L);
+    }
+
+    @Test
     @DisplayName("o dia de hoje não é fechado: ele ainda recebe evento")
     void todayIsNotClosed() {
         plantar(HOJE, "visita-a", UsageEventType.PAGINA, "/", "BR", DeviceClass.CELULAR, null);

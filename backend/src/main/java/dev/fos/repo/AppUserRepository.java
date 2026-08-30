@@ -35,6 +35,19 @@ public interface AppUserRepository
     long countByDemoExpiresAtIsNotNull();
 
     /**
+     * Quantas contas de gente de verdade existem — o "total" do painel (#85).
+     *
+     * <p>Demonstração fora, pelo mesmo motivo da guarda do último {@code ADMIN}: ela não é de
+     * ninguém e vence em duas horas (D39), e contá-la faria o painel dizer que o app tem contas que
+     * ele não tem.
+     */
+    long countByDemoExpiresAtIsNull();
+
+    /** As que nasceram dentro do período do painel (#85). Fim exclusivo. */
+    long countByDemoExpiresAtIsNullAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
+            Instant from, Instant to);
+
+    /**
      * Quantas contas de gente de verdade têm este papel.
      *
      * <p>É a guarda do último {@code ADMIN} (#89, #90): o app não pode ficar sem ninguém que

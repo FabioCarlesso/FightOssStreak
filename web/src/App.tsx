@@ -6,6 +6,7 @@ import { DemoModeBanner } from './components/DemoModeBanner.tsx';
 import { DisclaimerGate } from './components/DisclaimerGate.tsx';
 import { SignOutButton } from './components/SignOutButton.tsx';
 import { AccountPage } from './pages/AccountPage.tsx';
+import { AdminPanelPage } from './pages/AdminPanelPage.tsx';
 import { AdminUsersPage } from './pages/AdminUsersPage.tsx';
 import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { HomePage } from './pages/HomePage.tsx';
@@ -68,6 +69,7 @@ export function App() {
           {/* A própria tela redireciona quem não administra (#91): a rota existe para todo mundo
               porque o menu não é o portão — quem digita a URL precisa cair em algum lugar. */}
           <Route path="/usuarios" element={<AdminUsersPage />} />
+          <Route path="/admin/painel" element={<AdminPanelPage />} />
           <Route path="*" element={<p className="empty">Página não encontrada.</p>} />
         </Route>
       </Routes>
@@ -125,7 +127,12 @@ function AppChrome() {
           <NavLink to="/progresso">Progresso</NavLink>
           {/* Administração no mesmo menu, e só para quem administra: uma barra separada faria o
               app parecer dois produtos para quem tem os dois papéis (#91). */}
-          {account.role === 'ADMIN' && <NavLink to="/usuarios">Usuários</NavLink>}
+          {account.role === 'ADMIN' && (
+            <>
+              <NavLink to="/admin/painel">Painel</NavLink>
+              <NavLink to="/usuarios">Usuários</NavLink>
+            </>
+          )}
         </nav>
         <div className="app__account">
           <Link to="/conta" className="app__account-name">

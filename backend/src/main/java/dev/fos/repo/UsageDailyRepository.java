@@ -14,6 +14,25 @@ public interface UsageDailyRepository extends JpaRepository<UsageDaily, Long> {
     boolean existsByOccurredOn(LocalDate occurredOn);
 
     /**
+     * As contagens de uma faixa de dias — a única leitura que o painel (#85) faz.
+     *
+     * <p>Uma consulta para o período pedido <b>e</b> o anterior de mesmo tamanho, e não duas: o
+     * comparativo precisa dos dois de qualquer forma, e a faixa inteira de 90 + 90 dias são poucas
+     * centenas de linhas nesta escala. Repare que o painel nunca chega em {@code usage_event}: o
+     * cru tem chave de visita e às vezes {@code user_id}, e o painel é agregado e de ninguém.
+     */
+    List<UsageDaily> findByOccurredOnBetween(LocalDate from, LocalDate to);
+
+    /**
+     * O dia mais recente que já tem contagem — {@code null} quando a agregação nunca rodou.
+     *
+     * <p>O painel mostra este valor porque a diferença entre "ninguém acessou" e "o job ainda não
+     * fechou o dia" não é visível no número: as duas dão zero.
+     */
+    @Query("select max(d.occurredOn) from UsageDaily d")
+    LocalDate ultimoDiaAgregado();
+
+    /**
      * Reagregar um dia começa apagando o que havia dele: o job precisa ser idempotente.
      *
      * <p>{@code delete} em JPQL, e não o derivado que carrega e remove entidade por entidade: o

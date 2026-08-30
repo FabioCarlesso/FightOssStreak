@@ -17,6 +17,12 @@ public enum UsageDimension {
     /** Celular, tablet, desktop ou desconhecido. */
     DISPOSITIVO,
 
+    /** Família do navegador — Chrome, Safari, Firefox, ou desconhecido. */
+    NAVEGADOR,
+
+    /** Idioma preferido declarado pelo navegador, reduzido à etiqueta principal. */
+    IDIOMA,
+
     /** De onde a pessoa veio: {@code utm_source}, o host do referrer, ou {@code direto}. */
     ORIGEM,
 

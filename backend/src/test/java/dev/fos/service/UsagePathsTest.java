@@ -35,6 +35,8 @@ class UsagePathsTest {
     void allowlist() {
         assertThat(UsagePaths.normalize("/arvore")).isEqualTo("/arvore");
         assertThat(UsagePaths.normalize("/usuarios")).isEqualTo("/usuarios");
+        // Rota do painel (#85): rota nova do app precisa entrar na lista para aparecer nele.
+        assertThat(UsagePaths.normalize("/admin/painel")).isEqualTo("/admin/painel");
         assertThat(UsagePaths.normalize("/rota-que-nao-existe")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize("/../../etc/passwd")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize(null)).isEqualTo(UsagePaths.OUTRO);

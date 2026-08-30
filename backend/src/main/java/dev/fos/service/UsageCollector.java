@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,11 @@ public class UsageCollector {
     /** Prefixo das chaves desta coleta no freio compartilhado. */
     private static final String PREFIXO_DO_FREIO = "uso:";
 
+    /**
+     * Janela do degrau de retorno do funil (#85). Sete dias, contados do primeiro dia com drill.
+     */
+    private static final int DIAS_DA_JANELA_DE_RETORNO = 7;
+
     private final UsageEventRepository events;
     private final DrillLogRepository drills;
     private final VisitKey visitKey;
@@ -87,9 +93,9 @@ public class UsageCollector {
 
     public UsageCollector(
             UsageEventRepository events,
-            // A pergunta "este é o primeiro drill desta conta?" mora aqui, e não no controller,
-            // porque é parte da DEFINIÇÃO do evento de funil — quem chama só sabe que um drill
-            // acabou de ser registrado.
+            // As perguntas "este é o primeiro drill desta conta?" e "esta conta voltou?" moram
+            // aqui, e não no controller, porque são parte da DEFINIÇÃO dos eventos de funil — quem
+            // chama só sabe que um drill acabou de ser registrado.
             DrillLogRepository drills,
             VisitKey visitKey,
             GeoIpDatabase geoIp,
@@ -144,19 +150,32 @@ public class UsageCollector {
     }
 
     /**
-     * O primeiro drill desta conta — e só o primeiro.
+     * Os dois degraus de funil que um drill pode produzir — e cada um sai uma vez só por conta.
      *
-     * <p>Chamado depois que o drill foi gravado, então "primeiro" é {@code count == 1}. Sem memória
-     * própria de propósito: a tabela crua vive 90 dias, e um "já emiti este evento" lido dela
-     * reemitiria tudo passados três meses.
+     * <p>Chamado depois que o drill foi gravado, então "primeiro" é {@code count == 1}, e "voltou"
+     * é o dia distinto de número dois. Sem memória própria nos dois casos, e de propósito: a tabela
+     * crua vive 90 dias, e um "já emiti este evento" lido dela reemitiria tudo passados três meses.
+     * O estado que decide é o do próprio histórico de drills, que não expira.
      */
-    public void firstDrill(Long userId) {
+    public void drillRegistered(Long userId) {
+        if (userId == null) {
+            return;
+        }
         try {
-            if (userId != null && drills.countByUserId(userId) == 1) {
+            if (drills.countByUserId(userId) == 1) {
                 funnel(UsageEventType.PRIMEIRO_DRILL);
+                return;
+            }
+            // Da mais nova para a mais antiga (é a ordem da consulta). Exatamente dois dias
+            // distintos é o instante em que a conta voltou pela primeira vez: com um não voltou,
+            // com três já foi contada.
+            List<LocalDate> dias = drills.findDistinctDrillDates(userId);
+            if (dias.size() == 2
+                    && !dias.get(1).plusDays(DIAS_DA_JANELA_DE_RETORNO).isBefore(dias.get(0))) {
+                funnel(UsageEventType.RETORNO_EM_7_DIAS);
             }
         } catch (RuntimeException falha) {
-            log.debug("Evento de primeiro drill não registrado", falha);
+            log.debug("Evento de funil do drill não registrado", falha);
         }
     }
 

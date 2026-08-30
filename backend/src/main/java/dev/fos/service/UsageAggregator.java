@@ -101,6 +101,11 @@ public class UsageAggregator {
         linhas.addAll(contar(dia, UsageDimension.ORIGEM, paginas, UsageEvent::origin));
         linhas.addAll(contar(dia, UsageDimension.PAIS, doDia, UsageEvent::getCountry));
         linhas.addAll(contar(dia, UsageDimension.DISPOSITIVO, doDia, e -> e.getDevice().name()));
+        // Navegador e idioma entraram com o painel (#85), que pede o perfil de quem chega — e
+        // entraram como dado, sem migration, que era o ponto do formato longo desta tabela. O dia
+        // já fechado antes disto continua sem as duas linhas: contagem publicada não se reescreve.
+        linhas.addAll(contar(dia, UsageDimension.NAVEGADOR, doDia, UsageEvent::getBrowser));
+        linhas.addAll(contar(dia, UsageDimension.IDIOMA, doDia, UsageEvent::getLanguage));
         linhas.addAll(contar(dia, UsageDimension.EVENTO, doDia, e -> e.getEventType().name()));
         daily.saveAll(linhas);
     }

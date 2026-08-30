@@ -65,6 +65,20 @@ export type AdminUserPage = Schemas['AdminUserPage'];
 export type AccessStatus = NonNullable<AdminUserView['accessStatus']>;
 
 /**
+ * O painel de uso do app (#85, D50).
+ *
+ * Agregado e de ninguém: não há um campo aqui que identifique uma pessoa, e essa ausência é o que
+ * mantém verdadeiro o desenho de privacidade da coleta — ver `docs/11-privacidade.md`.
+ */
+export type PanelView = Schemas['PanelView'];
+export type PanelAccessSeries = Schemas['AccessSeries'];
+export type PanelAccessPoint = Schemas['AccessPoint'];
+export type PanelFunnelStep = Schemas['FunnelStep'];
+export type PanelSlice = Schemas['Slice'];
+export type PanelProfile = Schemas['Profile'];
+export type PanelAccountTotals = Schemas['AccountTotals'];
+
+/**
  * O que a coleta de uso manda a cada mudança de rota (#84, D50).
  *
  * A lista é curta porque o servidor não confia no cliente: dispositivo, navegador, sistema,

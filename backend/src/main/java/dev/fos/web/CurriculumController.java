@@ -77,9 +77,10 @@ public class CurriculumController {
             @PathVariable String code, @Valid @RequestBody ActivityDtos.DrillRequest request) {
         Long userId = currentUser.currentUserId();
         ActivityDtos.DrillResult resultado = drillService.log(userId, code, request, today());
-        // Depois do registro, e fora da transação dele: "primeiro drill" é `count == 1`, e quem
-        // decide isso é o próprio coletor (#84, D50). Registrar nada é o caso comum aqui.
-        uso.firstDrill(userId);
+        // Depois do registro, e fora da transação dele: quais degraus de funil este drill
+        // produz — o primeiro da conta, o retorno dela — é decisão do próprio coletor (#84, D50;
+        // #85). Registrar nada é o caso comum aqui.
+        uso.drillRegistered(userId);
         return resultado;
     }
 

@@ -5,6 +5,8 @@ import dev.fos.model.Role;
 import dev.fos.service.AdminUserService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.FeedbackService;
+import dev.fos.service.UsagePanelService;
+import dev.fos.web.dto.AdminPanelDtos;
 import dev.fos.web.dto.AdminUserDtos;
 import dev.fos.web.dto.FeedbackDtos;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,20 +38,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 @Tag(
         name = "Administração",
-        description = "Contas do sistema e fila de feedback; restrita a quem administra")
+        description =
+                "Painel de uso, contas do sistema e fila de feedback; restrita a quem administra")
 public class AdminController {
 
     private final CurrentUserProvider currentUser;
     private final FeedbackService feedbackService;
     private final AdminUserService adminUsers;
+    private final UsagePanelService painelDeUso;
 
     public AdminController(
             CurrentUserProvider currentUser,
             FeedbackService feedbackService,
-            AdminUserService adminUsers) {
+            AdminUserService adminUsers,
+            UsagePanelService painelDeUso) {
         this.currentUser = currentUser;
         this.feedbackService = feedbackService;
         this.adminUsers = adminUsers;
+        this.painelDeUso = painelDeUso;
+    }
+
+    @GetMapping("/painel")
+    @Operation(
+            summary = "Acessos, funil, origem e perfil de uso do app",
+            description =
+                    "Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa —"
+                            + " não há e-mail, nome nem id de conta. Lê apenas a contagem diária"
+                            + " (`usage_daily`), nunca a tabela crua de eventos"
+                            + " (docs/11-privacidade.md). O período termina ontem: hoje ainda"
+                            + " recebe evento e não foi fechado.")
+    public AdminPanelDtos.PanelView painel(
+            @Parameter(description = "Tamanho do período: 7, 30 ou 90 dias")
+                    @RequestParam(defaultValue = "7")
+                    int dias) {
+        return painelDeUso.painel(dias);
     }
 
     @GetMapping("/usuarios")

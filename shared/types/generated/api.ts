@@ -488,6 +488,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/painel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Acessos, funil, origem e perfil de uso do app
+         * @description Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa — não há e-mail, nome nem id de conta. Lê apenas a contagem diária (`usage_daily`), nunca a tabela crua de eventos (docs/11-privacidade.md). O período termina ontem: hoje ainda recebe evento e não foi fechado.
+         */
+        get: operations["painel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/feedback": {
         parameters: {
             query?: never;
@@ -870,6 +890,76 @@ export interface components {
             total?: number;
             /** Format: int32 */
             totalPages?: number;
+        };
+        AccessPoint: {
+            /** Format: date */
+            day?: string;
+            /** Format: int64 */
+            visits?: number;
+            /** Format: int64 */
+            visitors?: number;
+        };
+        AccessSeries: {
+            series?: components["schemas"]["AccessPoint"][];
+            /** Format: int64 */
+            visits?: number;
+            /** Format: int64 */
+            visitors?: number;
+            /** Format: int64 */
+            previousVisits?: number;
+            /** Format: int64 */
+            previousVisitors?: number;
+        };
+        AccountTotals: {
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            createdInPeriod?: number;
+            /** Format: int64 */
+            activeInPeriod?: number;
+        };
+        FunnelStep: {
+            step?: string;
+            label?: string;
+            /** Format: int64 */
+            total?: number;
+            /** Format: int32 */
+            percentOfPrevious?: number;
+        };
+        /** @description Acessos, funil, origem e perfil de uso — agregado, e de ninguém. */
+        PanelView: {
+            /** Format: int32 */
+            days?: number;
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: date */
+            previousFrom?: string;
+            /** Format: date */
+            previousTo?: string;
+            /** Format: date */
+            aggregatedThrough?: string;
+            access?: components["schemas"]["AccessSeries"];
+            funnel?: components["schemas"]["FunnelStep"][];
+            origins?: components["schemas"]["Slice"][];
+            profile?: components["schemas"]["Profile"];
+            content?: components["schemas"]["Slice"][];
+            accounts?: components["schemas"]["AccountTotals"];
+            geoIpCredit?: string;
+        };
+        Profile: {
+            devices?: components["schemas"]["Slice"][];
+            browsers?: components["schemas"]["Slice"][];
+            languages?: components["schemas"]["Slice"][];
+            countries?: components["schemas"]["Slice"][];
+        };
+        Slice: {
+            value?: string;
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            visitors?: number;
         };
         FeedbackList: {
             items?: components["schemas"]["FeedbackView"][];
@@ -1517,6 +1607,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AdminUserPage"];
+                };
+            };
+        };
+    };
+    painel: {
+        parameters: {
+            query?: {
+                /** @description Tamanho do período: 7, 30 ou 90 dias */
+                dias?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PanelView"];
                 };
             };
         };

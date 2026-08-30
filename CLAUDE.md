@@ -35,6 +35,12 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    senha.
    Nada disso pode quebrar tela: evento que falha é evento perdido. Mexer em qualquer uma dessas
    linhas exige reescrever `docs/11-privacidade.md` — a promessa está lá por escrito.
+   **Quem lê tudo isso é o painel** (`/admin/painel`, D52), e ele é **agregado e de ninguém**: lê
+   `usage_daily` e **nunca** `usage_event`. Nada na resposta dele identifica pessoa — não há
+   e-mail, nome nem `user_id`, e há teste que varre o corpo inteiro atrás de uma arroba. Visão por
+   pessoa, sessão individual ou funil por conta não é ajuste de tela: é a D50 revertida, e passa
+   por reescrever `docs/11-privacidade.md` antes de escrever a consulta. Dimensão nova do painel é
+   **linha no `UsageAggregator`**, nunca migration — foi assim que navegador e idioma entraram.
 9. **O endereço de quem chama sai do `ClientIp`, nunca do `getRemoteAddr()`** (D51, #77). Atrás do
    nginx o segundo devolve o **primeiro** elemento do `X-Forwarded-For` — que é o que o cliente
    escreveu —, e com ele todo freio por IP vira decoração: basta um endereço novo por requisição.

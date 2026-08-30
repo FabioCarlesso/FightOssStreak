@@ -9,13 +9,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import dev.fos.model.AppUser;
 import dev.fos.model.DeviceClass;
+import dev.fos.model.DrillLog;
+import dev.fos.model.Recall;
 import dev.fos.model.UsageEvent;
 import dev.fos.model.UsageEventType;
+import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.UsageEventRepository;
 import dev.fos.service.AccountService;
 import dev.fos.service.UsageCollector;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,8 +71,12 @@ class UsageCollectionIntegrationTest {
         }
     }
 
+    /** Hoje, no relógio fixo acima. Os dias plantados nos testes são relativos a ele. */
+    private static final LocalDate HOJE = LocalDate.of(2026, 8, 27);
+
     @Autowired private MockMvc mockMvc;
     @Autowired private UsageEventRepository events;
+    @Autowired private DrillLogRepository drills;
     @Autowired private AccountService accounts;
 
     @BeforeEach
@@ -206,10 +214,63 @@ class UsageCollectionIntegrationTest {
         assertThat(funil.getPath()).isEqualTo(UsageCollector.SEM_CAMINHO);
         assertThat(funil.getUserId()).isEqualTo(conta.getId());
 
-        // O segundo drill não emite nada: o evento é "primeiro drill", não "drill".
+        // O segundo drill do MESMO dia não emite nada: nem "primeiro drill", que já saiu, nem
+        // retorno, que é sobre voltar em outro dia.
         mockMvc.perform(drill("M0.2")).andExpect(status().isOk());
 
         assertThat(tipos()).containsExactly(UsageEventType.PRIMEIRO_DRILL);
+    }
+
+    @Test
+    @DisplayName("drillar num segundo dia dentro de 7 vira o degrau de retorno — e só uma vez")
+    void comingBackWithinSevenDaysIsAFunnelEvent() throws Exception {
+        AppUser conta =
+                accounts.registerLogin("google", "aluno", "aluno@example.test", true, "Aluno");
+        plantarDrill(conta.getId(), HOJE.minusDays(3));
+
+        mockMvc.perform(drill("M0.1")).andExpect(status().isOk());
+
+        assertThat(tipos()).containsExactly(UsageEventType.RETORNO_EM_7_DIAS);
+        assertThat(unico().getPath()).isEqualTo(UsageCollector.SEM_CAMINHO);
+
+        // O terceiro dia distinto não reemite: quem já voltou já foi contado.
+        events.deleteAll();
+        plantarDrill(conta.getId(), HOJE.minusDays(1));
+        mockMvc.perform(drill("M0.2")).andExpect(status().isOk());
+
+        assertThat(tipos()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("voltar depois de mais de 7 dias não conta como retorno")
+    void comingBackTooLateIsNotTheStep() throws Exception {
+        AppUser conta =
+                accounts.registerLogin("google", "aluno", "aluno@example.test", true, "Aluno");
+        plantarDrill(conta.getId(), HOJE.minusDays(8));
+
+        mockMvc.perform(drill("M0.1")).andExpect(status().isOk());
+
+        // Nem retorno (fora da janela) nem primeiro drill (já houve um).
+        assertThat(tipos()).isEmpty();
+    }
+
+    /**
+     * Um drill de um dia passado, direto no repositório.
+     *
+     * <p>Pela API seria preciso mover o relógio, que é fixo no contexto — e o que se está testando
+     * não é o registro do drill, e sim o degrau de funil que o histórico dele produz.
+     */
+    private void plantarDrill(Long userId, LocalDate dia) {
+        drills.save(
+                new DrillLog(
+                        userId,
+                        1L,
+                        dia,
+                        Recall.OK,
+                        null,
+                        false,
+                        null,
+                        dia.atStartOfDay(ZoneOffset.UTC).toInstant()));
     }
 
     private static MockHttpServletRequestBuilder drill(String codigo) {

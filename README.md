@@ -354,12 +354,21 @@ são apagadas quando alguém abre a próxima.
 **Ler o feedback de quem usa**: entre com uma conta `ADMIN` e abra *Feedback*; a fila aparece abaixo
 do formulário. Também está em `GET /api/admin/feedback`.
 
+**Ver se o app está sendo usado**: com uma conta `ADMIN`, o menu mostra *Painel*
+(`/admin/painel`), com acessos por dia, funil de seis degraus, origem, perfil de uso, telas mais
+abertas e três números sobre as contas — em 7, 30 ou 90 dias, sempre com o comparativo do período
+anterior. O painel é **agregado e de ninguém**: ele lê só a contagem diária (`usage_daily`), nunca a
+tabela crua de eventos, e nenhum campo da resposta identifica alguém (`docs/11-privacidade.md`). O
+período termina **ontem** — o dia corrente ainda recebe evento e só entra na contagem depois de
+fechado, então um painel recém-instalado fica zerado até o job diário rodar pela primeira vez.
+
 **Administrar as contas**: com uma conta `ADMIN`, o menu mostra *Usuários* (`/usuarios`), com busca,
 filtros e paginação sobre as contas do app. As rotas por trás, todas sob `/api/admin/**` e portanto
 `403` para quem não administra:
 
 | Rota | O que faz |
 |---|---|
+| `GET /api/admin/painel` | acessos, funil, origem e perfil de uso; `dias` é 7, 30 ou 90 (qualquer outro valor é `400`) |
 | `GET /api/admin/usuarios` | lista as contas, da mais nova para a mais antiga; filtros `status`, `role` e `verificado`, busca por trecho de e-mail ou rótulo, `page`/`size` com teto de 100 |
 | `POST /api/admin/usuarios/{id}/role` | promove a `ADMIN` ou rebaixa a `USUARIO` |
 | `POST /api/admin/usuarios/{id}/status` | bloqueia (`RECUSADO`) ou devolve o acesso (`APROVADO`), com motivo |
