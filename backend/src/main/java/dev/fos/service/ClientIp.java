@@ -1,6 +1,5 @@
 package dev.fos.service;
 
-import dev.fos.config.FosProperties;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,10 +55,12 @@ public class ClientIp {
      */
     public static final String HEADER = "X-Fos-Forwarded-For";
 
+    private final ProxyTopology topology;
     private final int saltosConfiaveis;
 
-    public ClientIp(FosProperties properties) {
-        this.saltosConfiaveis = properties.proxy().trustedHops();
+    public ClientIp(ProxyTopology topology) {
+        this.topology = topology;
+        this.saltosConfiaveis = topology.declaredHops();
     }
 
     /** Nunca nulo: requisição sem endereço conhecido vira string vazia, não NPE. */
@@ -84,6 +85,11 @@ public class ClientIp {
      * último, todo mundo atrás daquele salto divide a chave: o freio recusa gente legítima, que é
      * ruído visível.
      *
+     * <p>O comportamento seguro, porém, é o que esconde o erro: a chave sai de um lugar que não é o
+     * declarado e nada aparece. Quem conta essa história é o {@link ProxyTopology}, chamado aqui
+     * com o tamanho da cadeia — o {@code WARN} é a única coisa que a #97 acrescentou, e a escolha
+     * do elemento continua exatamente a mesma.
+     *
      * <p>Errar o número <b>para baixo</b> já era assim (a chave vira um endereço de
      * infraestrutura); esta linha é o que faz errar <b>para cima</b> degradar do mesmo jeito, em
      * vez de reabrir a porta.
@@ -93,6 +99,7 @@ public class ClientIp {
             return "";
         }
         String[] saltos = cadeia.split(",");
+        topology.observe(saltos.length);
         int posicao = saltos.length - saltosConfiaveis;
         return saltos[posicao < 0 ? saltos.length - 1 : posicao].trim();
     }

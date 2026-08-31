@@ -228,6 +228,14 @@ Detalhes que não são óbvios:
   CGNAT da Railway) e o backend recebe três. Com `2` a chave seria o nó de borda —
   **o mesmo para todo mundo que entra por ele**.
 
+  **Errar o número não é mais silencioso.** O backend conta os elementos que chegam e, quando o
+  número não bate com o declarado, escreve um `WARN` nomeando `FOS_PROXY_TRUSTED_HOPS`, o valor
+  configurado e o observado (uma vez por hora, não a cada requisição). Foi o que faltou no deploy
+  da #96: a variável não subiu junto com o código, o app ficou com o default `1` e nada apareceu.
+  Se o aviso pedir um número **maior** que o configurado, confira a topologia antes de mudá-lo —
+  cadeia mais longa também é o que se vê quando alguém escreve `X-Forwarded-For` e não há borda
+  que saneie.
+
   **Errar o número não abre a porta em silêncio**, para nenhum dos dois lados: pequeno demais e
   todo mundo cai na mesma chave, e os freios passam a recusar gente legítima; grande demais e a
   cadeia fica mais curta que o configurado, e aí vale o **último** elemento — o endereço que o

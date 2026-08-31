@@ -48,7 +48,14 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    fim para o começo** pulando `fos.proxy.trusted-hops` saltos. Endpoint público novo que precise
    de freio por origem chama o `ClientIp` — não copie a expressão. Mudou a topologia (CDN na
    frente, proxy a mais)? O conserto é a variável `FOS_PROXY_TRUSTED_HOPS`, e ela está na tabela
-   do README.
+   do README. **Código e variável só funcionam juntos e entram por caminhos diferentes** — o
+   código por PR, a variável por clique no painel —, e no deploy da #96 ela não veio: o app rodou
+   com o default `1` em silêncio, porque `1` é valor válido. Por isso o `ProxyTopology` confere a
+   cadeia observada contra a declarada e emite `WARN` quando não batem (D53), uma vez por hora e
+   sem endereço nenhum no texto. Ele **não** adivinha o número nem impede a subida: aviso, não
+   portão. E o aviso de cadeia **mais longa** pede conferência em vez de mandar copiar o número —
+   cadeia longa também é o que se vê quando quem chama forja `X-Forwarded-For` sem borda que
+   saneie.
 10. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
