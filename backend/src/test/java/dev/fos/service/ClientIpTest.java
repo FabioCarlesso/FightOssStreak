@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import dev.fos.config.FosProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import java.time.Clock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -124,7 +125,15 @@ class ClientIpTest {
 
     private static ClientIp clientIp(int saltos) {
         return new ClientIp(
-                new FosProperties(
-                        "test", null, null, null, null, null, new FosProperties.Proxy(saltos)));
+                new ProxyTopology(
+                        new FosProperties(
+                                "test",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                new FosProperties.Proxy(saltos)),
+                        Clock.systemUTC()));
     }
 }
