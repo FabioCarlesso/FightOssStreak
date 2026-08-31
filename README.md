@@ -232,9 +232,10 @@ Detalhes que não são óbvios:
   número não bate com o declarado, escreve um `WARN` nomeando `FOS_PROXY_TRUSTED_HOPS`, o valor
   configurado e o observado (uma vez por hora, não a cada requisição). Foi o que faltou no deploy
   da #96: a variável não subiu junto com o código, o app ficou com o default `1` e nada apareceu.
-  Se o aviso pedir um número **maior** que o configurado, confira a topologia antes de mudá-lo —
-  cadeia mais longa também é o que se vê quando alguém escreve `X-Forwarded-For` e não há borda
-  que saneie.
+  O aviso **não manda copiar o número observado**, nos dois sentidos: cadeia mais longa é o que se
+  vê quando alguém escreve `X-Forwarded-For` sem borda que saneie, e cadeia mais curta, num backend
+  declarado acima da topologia real, também pode trazer um elemento forjado dentro dela. O valor
+  certo é quantos saltos **seus** a requisição atravessa — confira antes de mudar.
 
   **Errar o número não abre a porta em silêncio**, para nenhum dos dois lados: pequeno demais e
   todo mundo cai na mesma chave, e os freios passam a recusar gente legítima; grande demais e a

@@ -53,9 +53,9 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    com o default `1` em silêncio, porque `1` é valor válido. Por isso o `ProxyTopology` confere a
    cadeia observada contra a declarada e emite `WARN` quando não batem (D53), uma vez por hora e
    sem endereço nenhum no texto. Ele **não** adivinha o número nem impede a subida: aviso, não
-   portão. E o aviso de cadeia **mais longa** pede conferência em vez de mandar copiar o número —
-   cadeia longa também é o que se vê quando quem chama forja `X-Forwarded-For` sem borda que
-   saneie.
+   portão. E **nenhum dos dois lados manda copiar o número observado** — cadeia longa é o que se vê
+   quando quem chama forja `X-Forwarded-For` sem borda que saneie, e cadeia curta, num backend
+   declarado acima da topologia real, também pode trazer elemento forjado dentro dela.
 10. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura

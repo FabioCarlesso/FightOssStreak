@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * O deploy em que o código e a variável não vieram juntos precisa se anunciar (#97).
@@ -72,13 +73,32 @@ class ProxyTopologyTest {
     }
 
     @Test
-    @DisplayName("o lado longo não manda copiar o número: cadeia longa também é header forjado")
-    void aLongerChainAsksForAnInspectionInsteadOfANewValue() {
-        // Onde nenhuma borda saneia o X-Forwarded-For, quem chama consegue alongar a cadeia. Um
-        // aviso mandando ajustar a variável para o que chegou seria mandar entregar a chave.
+    @DisplayName("nenhum dos dois lados manda copiar o número: os dois pedem conferência")
+    void neitherSideTellsTheReaderToCopyTheObservedNumber() {
+        // Onde nenhuma borda saneia o X-Forwarded-For, quem chama consegue alongar a cadeia — e
+        // com trusted-hops declarado acima da topologia real, um elemento forjado ainda cabe
+        // embaixo do declarado. Um aviso mandando copiar o número seria mandar entregar a chave.
         topology(1).observe(4);
+        assertThat(mensagens()).singleElement().asString().contains("Confira a topologia");
 
-        assertThat(mensagens()).singleElement().asString().doesNotContain("ajuste");
+        avisos.list.clear();
+        topology(3).observe(2);
+        assertThat(mensagens()).singleElement().asString().contains("Confira a topologia");
+    }
+
+    @Test
+    @DisplayName("é o ClientIp quem conta: ler uma cadeia divergente avisa")
+    void theWarningComesFromReadingARealRequest() {
+        // Sem este teste, apagar a chamada a observe() do ClientIp deixaria o resto verde e o
+        // aviso sumiria do app inteiro — que é exatamente o silêncio que a #97 veio remover.
+        ProxyTopology topology = topology(3);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(ClientIp.HEADER, "203.0.113.9, 172.18.0.9");
+
+        String chave = new ClientIp(topology).of(request);
+
+        assertThat(chave).isEqualTo("172.18.0.9");
+        assertThat(mensagens()).singleElement().asString().contains("FOS_PROXY_TRUSTED_HOPS");
     }
 
     @Test

@@ -82,11 +82,16 @@ public class ProxyTopology {
      * a ser um endereço de infraestrutura, o mesmo para todo mundo que entra por ele. Nos dois
      * casos quem conserta é a variável, e é por isso que o aviso a nomeia.
      *
-     * <p><b>Só o lado curto ganha um número para copiar.</b> Cadeia mais curta que o declarado é
-     * topologia, e nada além dela pode encurtá-la — o valor observado é o conserto. Mais longa pode
-     * ser proxy novo na frente <em>ou</em> alguém escrevendo {@code X-Forwarded-For} onde não há
-     * borda que saneie, e mandar ajustar a variável para o que chegou seria mandar entregar a chave
-     * a quem chama. Aí o aviso pede conferência da topologia, não obediência.
+     * <p><b>Nenhum dos dois lados manda copiar o número de olhos fechados.</b> Cadeia mais
+     * <b>longa</b> pode ser proxy novo na frente <em>ou</em> quem chama escrevendo {@code
+     * X-Forwarded-For} onde não há borda que saneie — o {@code $proxy_add_x_forwarded_for}
+     * acrescenta ao valor recebido. Mais <b>curta</b> parece imune a isso, porque forjar header só
+     * alonga a cadeia; mas com {@code trusted-hops} declarado <em>acima</em> da topologia real um
+     * elemento forjado ainda cabe embaixo do declarado — cadeia de 2 contra 3 configurados pode ser
+     * "nginx e mais nada" com um elemento escrito por quem chama, e aí seguir o número observado
+     * poria a chave justamente nesse elemento, que é o defeito da #77 de volta. Por isso os dois
+     * textos pedem conferência da topologia; o que muda entre eles é quanto se pode dizer sobre o
+     * número.
      *
      * @param observados quantos elementos vieram na cadeia desta requisição
      */
@@ -102,7 +107,9 @@ public class ProxyTopology {
                     "Topologia observada não bate com a declarada: a cadeia de {} chegou com {}"
                             + " elemento(s) e {} está em {}. Enquanto não baterem, o endereço que"
                             + " chaveia os freios sai do salto mais próximo e todo mundo divide a"
-                            + " chave — ajuste {} para {}",
+                            + " chave. Confira a topologia antes de ajustar {}: o valor certo é"
+                            + " quantos saltos seus a requisição atravessa, e {} só é a resposta"
+                            + " se a cadeia inteira for infraestrutura sua",
                     ClientIp.HEADER,
                     observados,
                     VARIAVEL,
