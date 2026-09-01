@@ -79,6 +79,18 @@ export type PanelProfile = Schemas['Profile'];
 export type PanelAccountTotals = Schemas['AccountTotals'];
 
 /**
+ * A saúde do site (#86).
+ *
+ * Agregado como o painel de uso, e pela mesma razão: não há aqui campo que identifique pessoa.
+ * O que ele **não** responde é se o site ficou fora do ar — app parado não escreve estatística, e
+ * essa pergunta é da verificação externa (`.github/workflows/saude.yml`).
+ */
+export type HealthView = Schemas['HealthView'];
+export type HealthPoint = Schemas['HealthPoint'];
+export type HealthRoute = Schemas['RouteHealth'];
+export type HealthStart = Schemas['StartView'];
+
+/**
  * O que a coleta de uso manda a cada mudança de rota (#84, D50).
  *
  * A lista é curta porque o servidor não confia no cliente: dispositivo, navegador, sistema,

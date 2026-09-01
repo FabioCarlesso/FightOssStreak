@@ -5,7 +5,9 @@ import dev.fos.model.Role;
 import dev.fos.service.AdminUserService;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.FeedbackService;
+import dev.fos.service.SiteHealthService;
 import dev.fos.service.UsagePanelService;
+import dev.fos.web.dto.AdminHealthDtos;
 import dev.fos.web.dto.AdminPanelDtos;
 import dev.fos.web.dto.AdminUserDtos;
 import dev.fos.web.dto.FeedbackDtos;
@@ -46,16 +48,19 @@ public class AdminController {
     private final FeedbackService feedbackService;
     private final AdminUserService adminUsers;
     private final UsagePanelService painelDeUso;
+    private final SiteHealthService saudeDoSite;
 
     public AdminController(
             CurrentUserProvider currentUser,
             FeedbackService feedbackService,
             AdminUserService adminUsers,
-            UsagePanelService painelDeUso) {
+            UsagePanelService painelDeUso,
+            SiteHealthService saudeDoSite) {
         this.currentUser = currentUser;
         this.feedbackService = feedbackService;
         this.adminUsers = adminUsers;
         this.painelDeUso = painelDeUso;
+        this.saudeDoSite = saudeDoSite;
     }
 
     @GetMapping("/painel")
@@ -72,6 +77,24 @@ public class AdminController {
                     @RequestParam(defaultValue = "7")
                     int dias) {
         return painelDeUso.painel(dias);
+    }
+
+    @GetMapping("/saude")
+    @Operation(
+            summary = "Requisições, erro e latência do próprio app",
+            description =
+                    "Agregado como o painel de uso, e pela mesma razão: nenhum campo identifica"
+                            + " pessoa — não há e-mail, nome, id de conta nem endereço. A rota é"
+                            + " sempre o *padrão* casado pelo roteamento, nunca um caminho com"
+                            + " segmento preenchido. Inclui a hora corrente, ao contrário do"
+                            + " painel: aqui a leitura é operacional. Não responde se o site"
+                            + " ficou fora do ar — app parado não escreve estatística; quem"
+                            + " responde isso é a verificação externa em cron.")
+    public AdminHealthDtos.HealthView saude(
+            @Parameter(description = "Tamanho do período em horas: 24, 72 ou 168")
+                    @RequestParam(defaultValue = "24")
+                    int horas) {
+        return saudeDoSite.saude(horas);
     }
 
     @GetMapping("/usuarios")

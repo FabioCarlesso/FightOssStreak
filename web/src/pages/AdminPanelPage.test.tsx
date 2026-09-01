@@ -1,5 +1,5 @@
-import type { PanelDays } from '@fos/api-client';
-import type { AccountView, PanelView } from '@fos/types';
+import type { HealthHours, PanelDays } from '@fos/api-client';
+import type { AccountView, HealthView, PanelView } from '@fos/types';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -19,6 +19,9 @@ import { AdminPanelPage } from './AdminPanelPage.tsx';
 const { apiMock } = vi.hoisted(() => ({
   apiMock: {
     getAdminPanel: vi.fn<(dias?: PanelDays) => Promise<PanelView>>(),
+    // A seção de saúde (#86) mora nesta página e carrega o próprio dado. Ela precisa estar aqui
+    // mesmo que nenhum caso teste saúde: sem o mock, a página inteira quebra no render.
+    getAdminHealth: vi.fn<(horas?: HealthHours) => Promise<HealthView>>(),
   },
 }));
 
@@ -85,6 +88,26 @@ function painel(overrides: Partial<PanelView> = {}): PanelView {
   };
 }
 
+/** A saúde não é o assunto destes casos — só precisa carregar sem erro. Ver `SiteHealth.test.tsx`. */
+function saudeVazia(): HealthView {
+  return {
+    hours: 24,
+    from: '2026-08-26T11:00:00Z',
+    to: '2026-08-27T10:00:00Z',
+    requests: 0,
+    serverErrors: 0,
+    clientErrors: 0,
+    availabilityPercent: 100,
+    p95Ms: -1,
+    latencyCeilingMs: 2500,
+    hourly: [],
+    routes: [],
+    slowest: [],
+    startsInPeriod: 0,
+    starts: [],
+  };
+}
+
 function conta(overrides: Partial<AccountView> = {}): AccountView {
   return {
     displayName: 'Dono',
@@ -114,6 +137,7 @@ describe('AdminPanelPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMock.getAdminPanel.mockResolvedValue(painel());
+    apiMock.getAdminHealth.mockResolvedValue(saudeVazia());
   });
 
   it('não abre para quem não administra, e nem chega a consultar o painel', async () => {
@@ -121,6 +145,7 @@ describe('AdminPanelPage', () => {
 
     expect(await screen.findByText(AGENDA)).toBeInTheDocument();
     expect(apiMock.getAdminPanel).not.toHaveBeenCalled();
+    expect(apiMock.getAdminHealth).not.toHaveBeenCalled();
   });
 
   it('mostra acessos, comparativo, perfil, conteúdo e contas', async () => {
@@ -212,6 +237,7 @@ describe('AdminPanelPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('rede fora');
 
     apiMock.getAdminPanel.mockResolvedValue(painel());
+    apiMock.getAdminHealth.mockResolvedValue(saudeVazia());
     await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }));
 
     expect(await screen.findByRole('heading', { name: 'Acessos' })).toBeInTheDocument();

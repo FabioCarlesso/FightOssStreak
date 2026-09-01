@@ -1,0 +1,200 @@
+name: saude
+
+# Verificação de vida vinda de FORA (#86).
+#
+# O ponto do arquivo inteiro está numa frase: **quem avisa que o site caiu não pode ser o site.**
+# O alerta por e-mail que a aplicação manda (dev.fos.service.IncidentAlerts) cobre o app
+# respondendo errado; ele é, por construção, incapaz de cobrir o app não respondendo — o processo
+# que morreu não roda o job que avisaria. Esta metade mora aqui, num runner que não é a máquina do
+# app e numa conta que não é a da plataforma de deploy.
+#
+# Este job **não** é required check da ruleset de `main` (.github/rulesets/main.json), e não deve
+# virar um — pelo mesmo motivo do workflow `videos`: o site fora do ar não é razão para travar o
+# merge de código, e é justamente quando o site cai que a correção precisa passar. Por isso ele
+# vive fora dos jobs `backend` e `web` e não roda em `pull_request`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL a verificar (vazio usa a variável URL_PUBLICA do repositório)'
+        required: false
+        type: string
+  schedule:
+    # A cada dez minutos. O cron do Actions custa minuto de runner, e a diferença prática entre
+    # descobrir uma queda em 10 e em 1 minuto, num app pessoal, não paga seis vezes o custo.
+    # Subir a frequência é mudar este número — e olhar a fatura antes.
+    - cron: '*/10 * * * *'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: saude
+  cancel-in-progress: false
+
+jobs:
+  saude:
+    runs-on: ubuntu-latest
+    steps:
+      # Sem checkout e sem `npm ci`: o job não precisa do repositório, só de `curl` e da API do
+      # GitHub. Manter isso assim é o que faz uma execução custar segundos.
+      - name: Verificar a URL pública
+        id: verificacao
+        env:
+          URL: ${{ inputs.url || vars.URL_PUBLICA }}
+        run: |
+          set -uo pipefail
+
+          if [ -z "${URL}" ]; then
+            # Sem URL configurada não há o que verificar, e falhar aqui encheria a caixa de quem
+            # clonou o repositório de execuções vermelhas por uma variável que ele não tem.
+            echo "estado=sem-url" >> "$GITHUB_OUTPUT"
+            echo "::notice::Defina a variável de repositório URL_PUBLICA para ligar a verificação."
+            exit 0
+          fi
+
+          # Três tentativas dentro da MESMA execução, espaçadas: o objetivo é não abrir incidente
+          # por um pico de latência isolado ou por um deploy passando. A regra das "duas falhas
+          # seguidas" da issue é entre execuções, e está no passo seguinte — esta é a primeira
+          # peneira, e ela é de graça.
+          estado=fora
+          codigo=000
+          tempo=0
+          for tentativa in 1 2 3; do
+            resposta=$(curl --silent --show-error --location --max-time 20 \
+              --write-out '%{http_code} %{time_total}' --output /dev/null "${URL}" 2>/dev/null) || resposta="000 0"
+            codigo=$(echo "${resposta}" | awk '{print $1}')
+            tempo=$(echo "${resposta}" | awk '{print $2}')
+            echo "tentativa ${tentativa}: HTTP ${codigo} em ${tempo}s"
+            if [ "${codigo}" = "200" ]; then
+              estado=no-ar
+              break
+            fi
+            if [ "${tentativa}" -lt 3 ]; then sleep 15; fi
+          done
+
+          {
+            echo "estado=${estado}"
+            echo "codigo=${codigo}"
+            echo "tempo=${tempo}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Abrir ou atualizar a issue de incidente
+        if: steps.verificacao.outputs.estado == 'fora'
+        uses: actions/github-script@v7
+        env:
+          CODIGO: ${{ steps.verificacao.outputs.codigo }}
+          TEMPO: ${{ steps.verificacao.outputs.tempo }}
+          ALVO: ${{ inputs.url || vars.URL_PUBLICA }}
+        with:
+          script: |
+            // Marcador invisível: é por ele que a execução seguinte reconhece a issue que já
+            // existe, em vez de abrir uma a cada dez minutos enquanto o incidente durar. Mesmo
+            // desenho do workflow `videos`.
+            const MARCADOR = '<!-- fos:site-fora-do-ar -->';
+            const TITULO = 'Site fora do ar';
+            const execucao = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const agora = new Date().toISOString();
+            const codigo = process.env.CODIGO === '000' ? 'sem resposta' : `HTTP ${process.env.CODIGO}`;
+
+            const abertas = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existente = abertas.find((issue) => (issue.body ?? '').includes(MARCADOR));
+
+            if (existente) {
+              // Comentário, e não issue nova: o critério de aceite da #86 é justamente que o
+              // incidente em curso não vire uma issue por ciclo.
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existente.number,
+                body: `Continua fora às ${agora} — ${codigo}. [execução](${execucao})`,
+              });
+              core.notice(`Issue #${existente.number} atualizada; o incidente continua.`);
+              return;
+            }
+
+            // Duas falhas SEGUIDAS, e não uma: um deploy da plataforma derruba o app por alguns
+            // segundos, e abrir incidente nisso ensina a ignorar o aviso. A execução anterior é a
+            // memória — o job fica vermelho quando a verificação falha, então a conclusão dela
+            // responde "a de dez minutos atrás também falhou?" sem precisar guardar estado.
+            const anteriores = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'saude.yml',
+              status: 'completed',
+              per_page: 1,
+            });
+            const anterior = anteriores.data.workflow_runs[0];
+            if (anterior?.conclusion !== 'failure') {
+              core.notice('Primeira falha seguida; a issue abre se a próxima execução também falhar.');
+              return;
+            }
+
+            const corpo = [
+              MARCADOR,
+              `A verificação externa não obteve \`200\` de ${process.env.ALVO} em duas execuções seguidas.`,
+              '',
+              `- Última resposta: **${codigo}** em ${process.env.TEMPO}s`,
+              `- Primeira detecção: ${agora}`,
+              `- [Execução que abriu](${execucao})`,
+              '',
+              'Esta issue fecha sozinha quando a verificação voltar a passar.',
+              '',
+              'O que a aplicação mede sobre si mesma continua em `/admin/painel`, seção Saúde —',
+              'mas repare que ela não responde esta pergunta: app parado não escreve estatística,',
+              'e é exatamente por isso que esta verificação vem de fora.',
+            ].join('\n');
+
+            const { data } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: TITULO,
+              body: corpo,
+            });
+            core.notice(`Issue #${data.number} aberta: o site está fora do ar.`);
+
+      - name: Fechar a issue quando o site voltar
+        if: steps.verificacao.outputs.estado == 'no-ar'
+        uses: actions/github-script@v7
+        env:
+          TEMPO: ${{ steps.verificacao.outputs.tempo }}
+        with:
+          script: |
+            const MARCADOR = '<!-- fos:site-fora-do-ar -->';
+            const abertas = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existente = abertas.find((issue) => (issue.body ?? '').includes(MARCADOR));
+            if (!existente) return;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: existente.number,
+              body: `O site voltou a responder \`200\` às ${new Date().toISOString()} (${process.env.TEMPO}s). Fechando.`,
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: existente.number,
+              state: 'closed',
+              state_reason: 'completed',
+            });
+
+      # A execução vermelha é o segundo canal de aviso — e é ela que a execução SEGUINTE lê para
+      # decidir se a falha foi a segunda seguida. Sem este passo, o passo acima não teria memória.
+      - name: Falhar a execução quando o site não responde
+        if: steps.verificacao.outputs.estado == 'fora'
+        run: |
+          echo "::error::A URL pública não respondeu 200 (${{ steps.verificacao.outputs.codigo }})"
+          exit 1

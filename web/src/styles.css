@@ -2407,3 +2407,51 @@ textarea.feedback-form__control {
 .painel__coluna .painel__numero {
   min-width: 2rem;
 }
+
+/* --- Saúde do site (#86) ---------------------------------------------------------------- */
+
+.saude__linha-erros {
+  stroke: var(--danger, #c0392b);
+}
+
+.saude__chave--erros::before {
+  background: var(--danger, #c0392b);
+}
+
+/* Três colunas: caminho elástico, qualificador, número à direita. O caminho é `code` porque é
+   literalmente um padrão de rota — e quebra em qualquer ponto, senão `/api/admin/usuarios/{id}`
+   estoura a largura do card no celular. */
+.saude__rota,
+.saude__subida {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1fr) auto auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.saude__subida {
+  grid-template-columns: auto 1fr;
+}
+
+.saude__rota:last-child,
+.saude__subida:last-child {
+  border-bottom: none;
+}
+
+.saude__caminho {
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.saude__erro,
+.saude__latencia,
+.saude__perfis {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.saude__perfis {
+  text-align: right;
+}

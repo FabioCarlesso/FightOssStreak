@@ -133,7 +133,8 @@ class ClientIpTest {
                                 null,
                                 null,
                                 null,
-                                new FosProperties.Proxy(saltos)),
+                                new FosProperties.Proxy(saltos),
+                                null),
                         Clock.systemUTC()));
     }
 }

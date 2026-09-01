@@ -186,6 +186,13 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_USAGE_RETENTION_DAYS` | backend | `90` | retenção da tabela **crua** de eventos; o agregado não expira |
 | `FOS_USAGE_DAILY_CAP` | backend | `5000` | teto de acessos gravados por dia. Uma linha custa 273 bytes medidos, então 5 000 × 90 dias ≈ 123 MB no pior caso — baixe se o disco for apertado |
 | `FOS_USAGE_CRON` | backend | `0 17 3 * * *` | quando o job agrega e expurga; `-` desliga só o agendamento |
+| `FOS_HEALTH_WINDOW_MINUTES` | backend | `15` | janela que o alerta de incidente observa (#86); lida da memória do processo |
+| `FOS_HEALTH_ERROR_RATE_PERCENT` | backend | `10` | taxa de 5xx na janela que caracteriza incidente |
+| `FOS_HEALTH_MIN_REQUESTS` | backend | `20` | piso de requisições para a taxa querer dizer algo — sem ele, 1 erro em 1 requisição é "100%" |
+| `FOS_HEALTH_AUTH_REJECTS` | backend | `50` | quantas respostas 401/403 na janela caracterizam pico |
+| `FOS_HEALTH_RETENTION_DAYS` | backend | `90` | retenção de `http_stat_hourly` e `app_start` |
+| `FOS_HEALTH_CRON` | backend | `0 */5 * * * *` | quando a medição é gravada e o incidente verificado; `-` desliga as duas |
+| `FOS_HEALTH_PURGE_CRON` | backend | `0 27 3 * * *` | quando o expurgo das tabelas de saúde roda |
 
 Detalhes que não são óbvios:
 
@@ -276,7 +283,24 @@ Detalhes que não são óbvios:
   vira `ZZ`. É assim que dev e CI rodam — o CI passa `--build-arg GEOIP=false` de propósito. Para
   usar outra base, aponte a variável para um CSV `início,fim,país[,região]` (aceita `.gz`); para
   ficar sem nenhuma, defina-a vazia. **Crédito**: dado de país por DB-IP, sob CC BY 4.0.
-- **Nada da coleta guarda endereço de IP.** O IP deriva país e compõe a chave de visita, e é
+- **O monitoramento tem duas metades, e a de fora não mora aqui (#86).** O que a aplicação
+  observa sobre si mesma — requisições, status e latência por rota, subidas, alerta por e-mail — é
+  código deste repositório e aparece em `/admin/painel`, seção *Saúde*. **Quem avisa que o site
+  caiu não pode ser o site**: essa metade é o workflow `saude` (`.github/workflows/saude.yml`), que
+  bate na URL pública a cada dez minutos de um runner do GitHub. Ele lê a variável de repositório
+  **`URL_PUBLICA`** (Settings → Secrets and variables → Actions → Variables); sem ela o workflow não
+  faz nada e não fica vermelho, que é o que se quer em um clone. Duas execuções seguidas sem `200`
+  abrem uma issue; a volta comenta e fecha a mesma issue, nunca abre outra. Nenhum serviço externo
+  pago e nenhuma conta nova em terceiro.
+- **O alerta por e-mail é um por incidente, não um por janela.** Taxa de 5xx acima do limiar e pico
+  de 401/403 avisam **uma vez**, para os endereços de `FOS_OWNER_EMAILS`; enquanto a condição durar,
+  nada mais sai, e um alerta novo só depois de ela passar. Sem `FOS_EMAIL_API_KEY` nada é enviado e
+  a aplicação sobe igual — mas a **gravação** da estatística continua, de propósito: um ambiente sem
+  provedor de envio não pode ficar sem histórico nenhum.
+- **A resposta 500 carrega um identificador de correlação.** Oito caracteres, no corpo e no log, para
+  que "deu erro ao salvar" vire uma busca em vez de uma adivinhação. A mensagem da exceção **não** vai
+  no corpo: erro não previsto é justamente aquele cujo texto ninguém revisou.
+- **Nada da coleta nem da medição de saúde guarda endereço de IP.** O IP deriva país e compõe a chave de visita, e é
   descartado no mesmo método: não há coluna, não há log, e há teste que reprova o build se uma
   coluna com cara de IP aparecer em qualquer migration. Detalhes em `docs/11-privacidade.md`.
 - **As credenciais `fos/fos/fos` do Compose são de conveniência local.** Não reaproveitar.
@@ -378,6 +402,7 @@ filtros e paginação sobre as contas do app. As rotas por trás, todas sob `/ap
 | Rota | O que faz |
 |---|---|
 | `GET /api/admin/painel` | acessos, funil, origem e perfil de uso; `dias` é 7, 30 ou 90 (qualquer outro valor é `400`) |
+| `GET /api/admin/saude` | requisições, erro e latência do próprio app; `horas` é 24, 72 ou 168. Não responde se o site ficou fora do ar — app parado não mede |
 | `GET /api/admin/usuarios` | lista as contas, da mais nova para a mais antiga; filtros `status`, `role` e `verificado`, busca por trecho de e-mail ou rótulo, `page`/`size` com teto de 100 |
 | `POST /api/admin/usuarios/{id}/role` | promove a `ADMIN` ou rebaixa a `USUARIO` |
 | `POST /api/admin/usuarios/{id}/status` | bloqueia (`RECUSADO`) ou devolve o acesso (`APROVADO`), com motivo |

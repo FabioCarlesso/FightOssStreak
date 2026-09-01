@@ -12,11 +12,15 @@ import dev.fos.service.PasswordAccessException;
 import dev.fos.service.QuizStaleException;
 import dev.fos.service.QuizUnavailableException;
 import dev.fos.service.UnauthenticatedException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,11 +30,42 @@ class ApiExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-    /** Corpo de erro uniforme — o cliente trata uma forma só. */
-    record ApiError(String error, String message, Instant timestamp) {
+    /**
+     * O alfabeto do identificador de correlação: dígitos e letras sem os pares que se confundem à
+     * mão ({@code 0/O}, {@code 1/I/l}). Ele existe para ser <b>lido em voz alta ou copiado de um
+     * print</b> por quem está relatando o erro — se ele fosse um UUID, ninguém o transcreveria.
+     */
+    private static final char[] ALFABETO = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ".toCharArray();
+
+    private static final int TAMANHO_DA_CORRELACAO = 8;
+
+    private static final SecureRandom SORTEIO = new SecureRandom();
+
+    /**
+     * Corpo de erro uniforme — o cliente trata uma forma só.
+     *
+     * @param correlationId preenchido <b>só</b> no 500 (#86). É o que liga um relato de usuário à
+     *     linha do log: sem ele, "deu erro ao salvar" é impossível de achar num log de um dia
+     *     inteiro. Nulo nos demais erros de propósito — 404 e 409 são respostas esperadas, e um
+     *     identificador em cada uma delas treinaria quem lê a ignorá-lo justamente onde importa
+     */
+    record ApiError(String error, String message, Instant timestamp, String correlationId) {
         static ApiError of(String error, String message) {
-            return new ApiError(error, message, Instant.now());
+            return new ApiError(error, message, Instant.now(), null);
         }
+
+        static ApiError of(String error, String message, String correlationId) {
+            return new ApiError(error, message, Instant.now(), correlationId);
+        }
+    }
+
+    /** Curto, sorteado e sem significado: ele endereça uma linha de log, não descreve nada. */
+    private static String novaCorrelacao() {
+        StringBuilder id = new StringBuilder(TAMANHO_DA_CORRELACAO);
+        for (int i = 0; i < TAMANHO_DA_CORRELACAO; i++) {
+            id.append(ALFABETO[SORTEIO.nextInt(ALFABETO.length)]);
+        }
+        return id.toString();
     }
 
     @ExceptionHandler(UnauthenticatedException.class)
@@ -124,6 +159,25 @@ class ApiExceptionHandler {
                 .body(ApiError.of("feedback_nao_permitido", e.getMessage()));
     }
 
+    /**
+     * Recusa da cadeia de segurança que estourou <em>dentro</em> do dispatch.
+     *
+     * <p>Normalmente estas duas são tratadas por filtro, antes de chegar ao MVC — mas se uma delas
+     * chegar aqui, o {@code @ExceptionHandler(Exception.class)} abaixo a transformaria num 500, e
+     * uma recusa <b>certa</b> viraria alarme de incidente.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiError.of("nao_autorizado", e.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<ApiError> handleAuthentication(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiError.of("nao_autenticado", e.getMessage()));
+    }
+
     @ExceptionHandler(NodeNotFoundException.class)
     ResponseEntity<ApiError> handleNotFound(NodeNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -159,8 +213,51 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(CurriculumException.class)
     ResponseEntity<ApiError> handleCurriculum(CurriculumException e) {
-        log.error("Currículo inválido", e);
+        String correlacao = novaCorrelacao();
+        log.error("[{}] Currículo inválido", correlacao, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiError.of("curriculum_invalid", e.getMessage()));
+                .body(ApiError.of("curriculum_invalid", e.getMessage(), correlacao));
+    }
+
+    /**
+     * O que não estava previsto (#86).
+     *
+     * <p>Existe por causa do identificador de correlação, não para esconder a exceção: sem este
+     * método o Spring responde a página de erro padrão, sem código estruturado e sem nada que ligue
+     * o que a pessoa viu à linha do log. Com ele, o relato "deu erro e apareceu K7QF3M2P" acha a
+     * exceção num log de um dia inteiro — que é a diferença entre investigar e adivinhar.
+     *
+     * <p><b>A mensagem da exceção não vai no corpo.</b> Erro não previsto é justamente aquele cujo
+     * texto ninguém revisou, e ele pode carregar SQL, caminho de arquivo ou valor de configuração.
+     * O corpo diz que houve um erro e diz o identificador; o resto fica no log, que é de quem
+     * opera.
+     *
+     * <p>Só pega o que chega ao {@code DispatcherServlet}. O que a cadeia de segurança recusa antes
+     * disso responde sem passar por aqui — e é por isso que o alerta de incidente conta status pelo
+     * filtro, e não por este método.
+     *
+     * <p><b>O desvio de 4xx no começo é o que impede este método de piorar as coisas.</b> Um
+     * {@code @ExceptionHandler(Exception.class)} tem precedência sobre o {@code
+     * DefaultHandlerExceptionResolver} do Spring, e sem o desvio o JSON malformado, o método HTTP
+     * errado e o parâmetro faltando — todos hoje 400 — passariam a ser 500. Isso não seria só uma
+     * resposta errada: cada um deles entraria na taxa de erro que dispara o alerta, e o
+     * monitoramento passaria a avisar sobre requisições malfeitas de quem chama.
+     */
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ApiError> handleUnexpected(Exception e) {
+        if (e instanceof ErrorResponse erro && erro.getStatusCode().is4xxClientError()) {
+            return ResponseEntity.status(erro.getStatusCode())
+                    .body(ApiError.of("requisicao_invalida", e.getMessage()));
+        }
+        String correlacao = novaCorrelacao();
+        log.error("[{}] Erro não tratado ao atender a requisição", correlacao, e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ApiError.of(
+                                "erro_interno",
+                                "Não foi possível concluir. Se for relatar, informe o código "
+                                        + correlacao
+                                        + ".",
+                                correlacao));
     }
 }

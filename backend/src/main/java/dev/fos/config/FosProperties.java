@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param demo conta-modelo do acesso demonstrativo (#62)
  * @param usage coleta de uso do app (#84, D50)
  * @param proxy o que há entre quem navega e a aplicação (#77)
+ * @param health o que a aplicação observa sobre si mesma, e quando ela avisa (#86)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
@@ -25,7 +26,8 @@ public record FosProperties(
         Email email,
         Demo demo,
         Usage usage,
-        Proxy proxy) {
+        Proxy proxy,
+        Health health) {
 
     public FosProperties {
         if (auth == null) {
@@ -42,6 +44,63 @@ public record FosProperties(
         }
         if (proxy == null) {
             proxy = new Proxy(0);
+        }
+        if (health == null) {
+            health = new Health(0, 0, 0, 0, 0);
+        }
+    }
+
+    /**
+     * Saúde do site: o que a aplicação observa sobre si mesma, e quando ela avisa (#86).
+     *
+     * <p>Nenhuma delas é segredo, e nenhuma precisa estar preenchida. O que <b>é</b> segredo é a
+     * credencial de envio, e ela não está aqui de propósito: sem {@code fos.email.*} nada é enviado
+     * e a aplicação sobe igual, como manda a regra 4 do {@code CLAUDE.md}. Estes números dizem
+     * <em>quando</em> avisar, não <em>se</em> há como avisar.
+     *
+     * @param windowMinutes tamanho da janela que o alerta observa. Zero ou negativo usa o default
+     * @param errorRatePercent taxa de 5xx, em pontos percentuais, que caracteriza incidente
+     * @param minRequests requisições mínimas na janela para a taxa querer dizer alguma coisa. Sem
+     *     este piso, uma única requisição que falhasse de madrugada seria "100% de erro" — o alerta
+     *     mais barulhento e menos informativo possível
+     * @param authRejects quantas respostas 401/403 na janela caracterizam pico. É o sinal de
+     *     varredura de credencial, e por isso conta separado do 5xx: ali o app está errando, aqui
+     *     ele está recusando certo
+     * @param retentionDays retenção das tabelas de estatística e de subidas
+     */
+    public record Health(
+            int windowMinutes,
+            int errorRatePercent,
+            int minRequests,
+            int authRejects,
+            int retentionDays) {
+
+        public static final int DEFAULT_WINDOW_MINUTES = 15;
+
+        /**
+         * 10% de 5xx na janela.
+         *
+         * <p>Alto o bastante para não disparar com o erro isolado que todo app tem, e baixo o
+         * bastante para uma rota quebrada por deploy aparecer no mesmo quarto de hora — a rota
+         * quebrada erra 100% das suas requisições, e basta ela ser 10% do tráfego.
+         */
+        public static final int DEFAULT_ERROR_RATE_PERCENT = 10;
+
+        /** Abaixo disto a taxa é ruído: 1 erro em 3 requisições não é incidente, é a madrugada. */
+        public static final int DEFAULT_MIN_REQUESTS = 20;
+
+        /** Recusa legítima acontece o tempo todo; cinquenta em quinze minutos não. */
+        public static final int DEFAULT_AUTH_REJECTS = 50;
+
+        /** Os mesmos 90 dias da coleta de uso, pelo mesmo motivo: histórico sem dado pessoal. */
+        public static final int DEFAULT_RETENTION_DAYS = 90;
+
+        public Health {
+            windowMinutes = windowMinutes > 0 ? windowMinutes : DEFAULT_WINDOW_MINUTES;
+            errorRatePercent = errorRatePercent > 0 ? errorRatePercent : DEFAULT_ERROR_RATE_PERCENT;
+            minRequests = minRequests > 0 ? minRequests : DEFAULT_MIN_REQUESTS;
+            authRejects = authRejects > 0 ? authRejects : DEFAULT_AUTH_REJECTS;
+            retentionDays = retentionDays > 0 ? retentionDays : DEFAULT_RETENTION_DAYS;
         }
     }
 
