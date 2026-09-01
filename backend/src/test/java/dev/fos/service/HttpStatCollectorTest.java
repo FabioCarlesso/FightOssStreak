@@ -1,6 +1,12 @@
 package dev.fos.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import dev.fos.model.HttpStatHourly;
 import dev.fos.repo.HttpStatHourlyRepository;
@@ -8,9 +14,11 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -113,6 +121,40 @@ class HttpStatCollectorTest {
         // e o que foi gravado tem granularidade de hora.
         collector.flush();
         assertThat(collector.janela(15).requests()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("descarga que falha devolve a medição ao buffer, e a seguinte grava tudo")
+    void aFailedFlushGivesTheMeasurementBack() {
+        // O banco fora do ar é a causa mais provável de a escrita falhar — e é a mesma causa dos
+        // 5xx daquela rodada. Descartá-la perderia justamente o registro do incidente que este
+        // código existe para registrar, e o painel mostraria um buraco onde houve a pior meia hora
+        // do mês. Por isso a rodada volta para o buffer.
+        HttpStatHourlyRepository instavel = mock(HttpStatHourlyRepository.class);
+        when(instavel.findByHourStartAndPath(any(), any())).thenReturn(Optional.empty());
+        when(instavel.saveAll(any()))
+                .thenThrow(new IllegalStateException("banco fora do ar"))
+                .thenAnswer(chamada -> chamada.getArgument(0));
+
+        HttpStatCollector durante = new HttpStatCollector(instavel, RELOGIO);
+        durante.record("/api/hoje", 500, 40);
+        durante.record("/api/hoje", 200, 10);
+
+        assertThatThrownBy(durante::flush).isInstanceOf(IllegalStateException.class);
+
+        // Uma requisição que chegou enquanto o banco estava fora: ela soma à rodada devolvida, e
+        // não a substitui — sobrescrever trocaria uma perda por outra.
+        durante.record("/api/hoje", 500, 20);
+
+        assertThat(durante.flush()).isEqualTo(1);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<HttpStatHourly>> gravadas = ArgumentCaptor.forClass(List.class);
+        verify(instavel, times(2)).saveAll(gravadas.capture());
+        HttpStatHourly linha = gravadas.getValue().get(0);
+        assertThat(linha.getRequests()).isEqualTo(3);
+        assertThat(linha.getServerErrors()).isEqualTo(2);
+        assertThat(linha.getTotalMs()).isEqualTo(70);
     }
 
     @Test

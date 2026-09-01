@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Os agendamentos da saúde do site (#86): descarregar a medição, avisar, expurgar.
@@ -98,9 +97,15 @@ public class SiteHealthJob {
      *
      * <p>Nada aqui tem dado pessoal — é por isso que a retenção é generosa e não é a promessa de
      * privacidade que a define, ao contrário da tabela crua de uso (D50).
+     *
+     * <p>Sem {@code @Transactional} aqui, e isso não é esquecimento: o {@code try/catch} existe
+     * porque o agendador do Spring engole a exceção e para de logar depois da primeira. Capturar
+     * <em>dentro</em> de um método transacional deixaria a transação marcada para rollback e a
+     * {@code UnexpectedRollbackException} estouraria no commit — depois do {@code catch}, que não
+     * pegaria nada. A transação é de cada consulta de expurgo; ver {@code
+     * HttpStatHourlyRepository}.
      */
     @Scheduled(cron = "${fos.health.purge-cron:0 27 3 * * *}")
-    @Transactional
     public void expurgar() {
         try {
             Instant limite = Instant.now(clock).minus(Duration.ofDays(config.retentionDays()));

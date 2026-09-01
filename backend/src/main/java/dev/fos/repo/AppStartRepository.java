@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface AppStartRepository extends JpaRepository<AppStart, Long> {
 
@@ -21,7 +22,9 @@ public interface AppStartRepository extends JpaRepository<AppStart, Long> {
      */
     long countByStartedAtGreaterThanEqual(Instant from);
 
+    /** Transação própria pelo mesmo motivo do expurgo das estatísticas. */
     @Modifying
+    @Transactional
     @Query("delete from AppStart s where s.startedAt < :limite")
     int deleteByStartedAtBefore(Instant limite);
 }

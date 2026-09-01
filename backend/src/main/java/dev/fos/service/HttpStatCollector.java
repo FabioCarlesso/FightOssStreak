@@ -182,9 +182,15 @@ public class HttpStatCollector {
      * Descarrega o buffer no banco e devolve quantas (hora, rota) foram escritas.
      *
      * <p>Tira a chave do mapa <b>antes</b> de escrever: requisição que chegar durante a escrita
-     * começa um acumulado novo em vez de ter a contagem apagada por baixo. O preço é que uma falha
-     * de banco perde a rodada — e perder medição é o comportamento certo aqui, contra segurar
-     * memória à espera de um banco que pode não voltar.
+     * começa um acumulado novo em vez de ter a contagem apagada por baixo.
+     *
+     * <p><b>E devolve tudo ao buffer se a escrita falhar.</b> A versão anterior descartava a
+     * rodada, com o argumento de que perder medição é melhor que segurar memória — e o argumento
+     * está certo <em>em geral</em> e errado <em>exatamente aqui</em>: o banco fora do ar é a causa
+     * mais provável de a escrita falhar, e é também a causa mais provável dos 5xx daquela rodada.
+     * Descartar significaria perder justamente o registro do incidente que este código existe para
+     * registrar, e o painel mostraria um buraco onde houve a pior meia hora do mês. A memória
+     * segurada é limitada pelo {@link #TETO_DE_ROTAS} de qualquer forma.
      *
      * <p>Soma na linha existente quando ela já está lá: o job roda várias vezes dentro da mesma
      * hora, e reiniciar o app no meio dela deixa metade da hora escrita.
@@ -222,32 +228,66 @@ public class HttpStatCollector {
             }
         }
 
-        List<HttpStatHourly> linhas = new ArrayList<>(numeros.size());
+        try {
+            List<HttpStatHourly> linhas = new ArrayList<>(numeros.size());
+            numeros.forEach(
+                    (chave, valores) -> {
+                        long[] histograma = histogramas.get(chave);
+                        HttpStatHourly linha =
+                                repository
+                                        .findByHourStartAndPath(chave.hora(), chave.path())
+                                        .orElse(null);
+                        if (linha == null) {
+                            linhas.add(
+                                    new HttpStatHourly(
+                                            chave.hora(),
+                                            chave.path(),
+                                            valores[0],
+                                            valores[1],
+                                            valores[2],
+                                            valores[3],
+                                            valores[4],
+                                            histograma));
+                            return;
+                        }
+                        linha.somar(
+                                valores[0],
+                                valores[1],
+                                valores[2],
+                                valores[3],
+                                valores[4],
+                                histograma);
+                        linhas.add(linha);
+                    });
+            repository.saveAll(linhas);
+            return linhas.size();
+        } catch (RuntimeException falha) {
+            devolverAoBuffer(numeros, histogramas);
+            throw falha;
+        }
+    }
+
+    /**
+     * Devolve ao buffer o que não conseguiu ser escrito, somando ao que chegou nesse meio-tempo.
+     *
+     * <p>Soma, e não substitui: entre o {@code remove} e esta linha uma requisição pode ter criado
+     * um acumulado novo para a mesma (hora, rota), e sobrescrevê-lo trocaria uma perda por outra.
+     */
+    private void devolverAoBuffer(Map<Chave, long[]> numeros, Map<Chave, long[]> histogramas) {
         numeros.forEach(
                 (chave, valores) -> {
-                    long[] histograma = histogramas.get(chave);
-                    HttpStatHourly linha =
-                            repository
-                                    .findByHourStartAndPath(chave.hora(), chave.path())
-                                    .orElse(null);
-                    if (linha == null) {
-                        linhas.add(
-                                new HttpStatHourly(
-                                        chave.hora(),
-                                        chave.path(),
-                                        valores[0],
-                                        valores[1],
-                                        valores[2],
-                                        valores[3],
-                                        valores[4],
-                                        histograma));
-                        return;
+                    Acumulado destino = buffer.computeIfAbsent(chave, ignorado -> new Acumulado());
+                    synchronized (destino) {
+                        destino.requests += valores[0];
+                        destino.clientErrors += valores[1];
+                        destino.serverErrors += valores[2];
+                        destino.totalMs += valores[3];
+                        destino.maxMs = Math.max(destino.maxMs, valores[4]);
+                        long[] histograma = histogramas.get(chave);
+                        for (int i = 0; i < histograma.length; i++) {
+                            destino.histograma[i] += histograma[i];
+                        }
                     }
-                    linha.somar(
-                            valores[0], valores[1], valores[2], valores[3], valores[4], histograma);
-                    linhas.add(linha);
                 });
-        repository.saveAll(linhas);
-        return linhas.size();
     }
 }
