@@ -56,7 +56,29 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    portão. E **nenhum dos dois lados manda copiar o número observado** — cadeia longa é o que se vê
    quando quem chama forja `X-Forwarded-For` sem borda que saneie, e cadeia curta, num backend
    declarado acima da topologia real, também pode trazer elemento forjado dentro dela.
-10. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
+10. **Quem avisa que o site caiu não pode ser o site** (D54, #86). O monitoramento tem duas
+    metades e elas não se substituem. **De fora**: o workflow `saude` bate na URL pública a cada
+    dez minutos de um runner do GitHub, e **duas execuções seguidas** sem `200` abrem uma issue —
+    a volta comenta e fecha **a mesma**, nunca abre outra. Ele lê a variável de repositório
+    `URL_PUBLICA`; sem ela não faz nada e não fica vermelho. Não é required check, e não deve
+    virar: o site fora do ar não pode travar o merge da correção. **De dentro**: o `HttpStatFilter`
+    conta requisição, status e latência, agrega em memória e grava por hora em `http_stat_hourly` —
+    sem Prometheus, sem Grafana, sem container novo (D22). Filtro e não interceptor **porque o 401
+    da cadeia de segurança nunca chega ao MVC**, e é justamente o pico de 401 que o alerta procura.
+    A rota gravada é o **padrão** que o roteamento casou, nunca o caminho que chegou: é a guarda do
+    `UsagePaths` por outra porta, e sem ela token de confirmação acabaria em tabela de métrica.
+    Latência vira **histograma de escada fixa** (`HttpStats`) porque percentil não é somável —
+    trocar a escada é migration, ao contrário das dimensões da coleta. O alerta por e-mail tem
+    **trava por incidente, não por janela** (o defeito que a D38 já pagou), sai para
+    `fos.auth.owner-emails` e só existe com credencial de envio; **a gravação não depende dela** —
+    herdar a condição da D38 deixaria dev, CI e qualquer instalação sem provedor sem histórico
+    nenhum. Nada disso guarda IP, conta ou chave de visita: contar requisição não é observar
+    pessoa, e a D50 vale igual. O 500 carrega **identificador de correlação** no corpo e no log, e a
+    mensagem da exceção fica só no log. O `@ExceptionHandler(Exception.class)` que o produz tem
+    precedência sobre o resolvedor do Spring — o desvio de 4xx no começo dele é o que impede JSON
+    malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. Mexer nisso exige
+    reescrever a seção de saúde de `docs/11-privacidade.md`.
+11. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 

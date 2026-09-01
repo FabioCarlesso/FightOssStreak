@@ -185,7 +185,14 @@ class ProxyTopologyTest {
     private static ProxyTopology topology(int saltos, Clock clock) {
         return new ProxyTopology(
                 new FosProperties(
-                        "test", null, null, null, null, null, new FosProperties.Proxy(saltos)),
+                        "test",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new FosProperties.Proxy(saltos),
+                        null),
                 clock);
     }
 

@@ -75,6 +75,38 @@ fos:
     # adiantá-lo para conferir os dois numa máquina de desenvolvimento. `-` desliga o agendamento.
     # Lido por `@Scheduled` via placeholder (UsageMaintenanceJob), não pelo FosProperties.
     cron: ${FOS_USAGE_CRON:0 17 3 * * *}
+  health:
+    # Saúde do site (#86): o que a aplicação observa sobre si mesma, e quando ela avisa.
+    #
+    # Nada aqui é segredo. O que é segredo é a credencial de envio, e ela mora em fos.email.* —
+    # sem ela a aplicação sobe igual e nenhum alerta é enviado, como manda a regra 4 do CLAUDE.md.
+    # Estes números dizem QUANDO avisar, não SE há como avisar.
+    #
+    # Janela que o alerta observa, em minutos. Ela é lida da memória do processo (o que foi
+    # gravado tem granularidade de hora), então mudá-la não mexe em nada que já esteja no banco.
+    window-minutes: ${FOS_HEALTH_WINDOW_MINUTES:15}
+    # Taxa de 5xx, em pontos percentuais, que caracteriza incidente. Alta o bastante para não
+    # disparar com o erro isolado que todo app tem; baixa o bastante para uma rota quebrada por
+    # deploy aparecer no mesmo quarto de hora.
+    error-rate-percent: ${FOS_HEALTH_ERROR_RATE_PERCENT:10}
+    # Piso de requisições na janela para a taxa querer dizer alguma coisa. Sem ele, uma única
+    # requisição que falhasse às 4h da manhã seria "100% de erro".
+    min-requests: ${FOS_HEALTH_MIN_REQUESTS:20}
+    # Quantas respostas 401/403 na janela caracterizam pico. Conta separado do 5xx de propósito:
+    # ali o app está errando, aqui ele está recusando certo — e o que isso denuncia é varredura
+    # de credencial, não defeito.
+    auth-rejects: ${FOS_HEALTH_AUTH_REJECTS:50}
+    # Retenção das tabelas de estatística e de subidas. Nenhuma delas tem dado pessoal, então
+    # aqui a retenção é economia de disco e não promessa de privacidade — ao contrário da
+    # tabela crua de uso (D50).
+    retention-days: ${FOS_HEALTH_RETENTION_DAYS:90}
+    # Quando o buffer de medição é descarregado no banco e o incidente é verificado. `-` desliga
+    # o agendamento — e desliga as duas coisas, porque quem não quer gravar não quer alerta.
+    # Lido por @Scheduled via placeholder (SiteHealthJob), não pelo FosProperties.
+    cron: ${FOS_HEALTH_CRON:0 */5 * * * *}
+    # Quando o expurgo roda. Horário quebrado para não competir com o topo da hora nem com o job
+    # da coleta de uso.
+    purge-cron: ${FOS_HEALTH_PURGE_CRON:0 27 3 * * *}
   proxy:
     # Quantos endereços a requisição ganha na cadeia até chegar aqui (#77). É o que diz de qual
     # posição sai quem está navegando: cada salto anexa um endereço ao FIM da lista, então a

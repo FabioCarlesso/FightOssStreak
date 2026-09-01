@@ -18,6 +18,7 @@ import type {
   FeedbackRequest,
   FeedbackStatus,
   FeedbackView,
+  HealthView,
   MvpMetrics,
   NodeDetail,
   PanelView,
@@ -167,6 +168,14 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
  * empurraria para a tela a chance de pedir um período que sempre volta `400`.
  */
 export type PanelDays = 7 | 30 | 90;
+
+/**
+ * Os três recortes da seção de saúde (#86), em horas.
+ *
+ * Horas e não dias, ao contrário do painel de uso: a leitura aqui é operacional — o incidente que
+ * interessa é o de agora, e um recorte de 7 dias como menor unidade o esconderia dentro da média.
+ */
+export type HealthHours = 24 | 72 | 168;
 
 /** Filtros da listagem de contas (#89). Todos opcionais e combináveis entre si. */
 export interface AdminUsersQuery {
@@ -425,6 +434,15 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * moveria o erro para mais longe de quem o causou.
      */
     getAdminPanel: (dias: PanelDays = 7) => request<PanelView>(`/api/admin/painel?dias=${dias}`),
+
+    /**
+     * Saúde do site (#86). Só quem administra recebe 200.
+     *
+     * Mesma regra do painel: os presets são os três que o backend aceita, e qualquer outro valor é
+     * `400` lá — aceitar aqui o que o servidor recusa só afastaria o erro de quem o causou.
+     */
+    getAdminHealth: (horas: HealthHours = 24) =>
+      request<HealthView>(`/api/admin/saude?horas=${horas}`),
 
     /** Fila de feedback. Só a conta de administração (D48) recebe 200 aqui. */
     getFeedbackQueue: () => request<FeedbackList>('/api/admin/feedback'),

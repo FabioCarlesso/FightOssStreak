@@ -488,6 +488,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/saude": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Requisições, erro e latência do próprio app
+         * @description Agregado como o painel de uso, e pela mesma razão: nenhum campo identifica pessoa — não há e-mail, nome, id de conta nem endereço. A rota é sempre o *padrão* casado pelo roteamento, nunca um caminho com segmento preenchido. Inclui a hora corrente, ao contrário do painel: aqui a leitura é operacional. Não responde se o site ficou fora do ar — app parado não escreve estatística; quem responde isso é a verificação externa em cron.
+         */
+        get: operations["saude"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/painel": {
         parameters: {
             query?: never;
@@ -890,6 +910,65 @@ export interface components {
             total?: number;
             /** Format: int32 */
             totalPages?: number;
+        };
+        HealthPoint: {
+            /** Format: date-time */
+            hour?: string;
+            /** Format: int64 */
+            requests?: number;
+            /** Format: int64 */
+            serverErrors?: number;
+            /** Format: int64 */
+            clientErrors?: number;
+        };
+        /** @description Requisições, erro e latência do próprio app — agregado, e de ninguém. */
+        HealthView: {
+            /** Format: int32 */
+            hours?: number;
+            /** Format: date-time */
+            from?: string;
+            /** Format: date-time */
+            to?: string;
+            /** Format: date-time */
+            collectedThrough?: string;
+            /** Format: int64 */
+            requests?: number;
+            /** Format: int64 */
+            serverErrors?: number;
+            /** Format: int64 */
+            clientErrors?: number;
+            /** Format: double */
+            availabilityPercent?: number;
+            /** Format: int64 */
+            p95Ms?: number;
+            /** Format: int64 */
+            latencyCeilingMs?: number;
+            hourly?: components["schemas"]["HealthPoint"][];
+            routes?: components["schemas"]["RouteHealth"][];
+            slowest?: components["schemas"]["RouteHealth"][];
+            /** Format: int64 */
+            startsInPeriod?: number;
+            starts?: components["schemas"]["StartView"][];
+        };
+        RouteHealth: {
+            path?: string;
+            /** Format: int64 */
+            requests?: number;
+            /** Format: int64 */
+            serverErrors?: number;
+            /** Format: double */
+            errorPercent?: number;
+            /** Format: int64 */
+            p95Ms?: number;
+            /** Format: int64 */
+            avgMs?: number;
+            /** Format: int64 */
+            maxMs?: number;
+        };
+        StartView: {
+            /** Format: date-time */
+            startedAt?: string;
+            profiles?: string;
         };
         AccessPoint: {
             /** Format: date */
@@ -1607,6 +1686,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AdminUserPage"];
+                };
+            };
+        };
+    };
+    saude: {
+        parameters: {
+            query?: {
+                /** @description Tamanho do período em horas: 24, 72 ou 168 */
+                horas?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["HealthView"];
                 };
             };
         };

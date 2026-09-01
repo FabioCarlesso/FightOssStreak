@@ -934,6 +934,41 @@
         }
       }
     },
+    "/api/admin/saude": {
+      "get": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Requisições, erro e latência do próprio app",
+        "description": "Agregado como o painel de uso, e pela mesma razão: nenhum campo identifica pessoa — não há e-mail, nome, id de conta nem endereço. A rota é sempre o *padrão* casado pelo roteamento, nunca um caminho com segmento preenchido. Inclui a hora corrente, ao contrário do painel: aqui a leitura é operacional. Não responde se o site ficou fora do ar — app parado não escreve estatística; quem responde isso é a verificação externa em cron.",
+        "operationId": "saude",
+        "parameters": [
+          {
+            "name": "horas",
+            "in": "query",
+            "description": "Tamanho do período em horas: 24, 72 ou 168",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 24
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/painel": {
       "get": {
         "tags": [
@@ -2055,6 +2090,145 @@
           "totalPages": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "HealthPoint": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverErrors": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientErrors": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "HealthView": {
+        "type": "object",
+        "properties": {
+          "hours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "collectedThrough": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverErrors": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientErrors": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "availabilityPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "p95Ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "latencyCeilingMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hourly": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HealthPoint"
+            }
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteHealth"
+            }
+          },
+          "slowest": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteHealth"
+            }
+          },
+          "startsInPeriod": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "starts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StartView"
+            }
+          }
+        },
+        "description": "Requisições, erro e latência do próprio app — agregado, e de ninguém."
+      },
+      "RouteHealth": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverErrors": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "errorPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "p95Ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "avgMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxMs": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StartView": {
+        "type": "object",
+        "properties": {
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "profiles": {
+            "type": "string"
           }
         }
       },

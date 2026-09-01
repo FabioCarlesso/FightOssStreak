@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import type { PanelDays } from '@fos/api-client';
 import type { PanelAccessPoint, PanelFunnelStep, PanelSlice, PanelView } from '@fos/types';
+import { SiteHealth } from '../components/SiteHealth.tsx';
 import { api } from '../api/client.ts';
 import { useAccount } from '../state/account.ts';
 import { useAsync } from '../state/useAsync.ts';
@@ -93,6 +94,11 @@ function Painel() {
       )}
 
       {dados && <Conteudo painel={dados} />}
+
+      {/* Fora do `dados &&`: a saúde carrega o próprio dado, com a própria janela, e precisa
+          aparecer justamente quando o painel de uso falhou — que costuma ser quando algo está
+          errado com o app. */}
+      <SiteHealth />
     </div>
   );
 }
