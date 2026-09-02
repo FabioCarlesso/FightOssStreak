@@ -14,8 +14,15 @@ public final class ActivityDtos {
     private ActivityDtos() {}
 
     /**
+     * @param currentStreak dias com treino na corrente atual; dia coberto por freeze mantém a
+     *     corrente e não conta
      * @param activeDaysLast30 dias com registro nos últimos 30 — a métrica do critério de sucesso
      * @param targetDaysLast30 meta declarada em docs/05-mvp-web-plano.md (12 de 30)
+     * @param freezesPerMonth saldo cheio do mês (#99, D55); zero = perdão desligado nesta
+     *     instalação, e a tela não mostra nada sobre freeze
+     * @param freezesRemaining o que sobra do saldo no mês corrente
+     * @param lastFrozenOn dia mais recente da corrente atual coberto por freeze; {@code null} =
+     *     nenhum. É o que responde "um freeze foi consumido" sem a tela precisar de outra chamada
      */
     public record StreakView(
             int currentStreak,
@@ -23,7 +30,10 @@ public final class ActivityDtos {
             boolean drilledToday,
             int activeDaysLast30,
             int targetDaysLast30,
-            LocalDate today) {}
+            LocalDate today,
+            int freezesPerMonth,
+            int freezesRemaining,
+            LocalDate lastFrozenOn) {}
 
     /**
      * @param drilledOn data do treino; ausente = hoje. Permite registrar o treino de ontem sem

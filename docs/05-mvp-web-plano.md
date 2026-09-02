@@ -12,7 +12,9 @@ React e React Native compartilham modelo mental (JSX, hooks, estado). Lógica de
 ## Escopo do MVP (o que entra)
 - Árvore de currículo navegável com nós bloqueados/desbloqueados
 - Detalhe do nó: conceito + vídeo embutido + quiz
-- Registro de drill ("treinei hoje") e streak
+- Registro de drill ("treinei hoje") e streak, com **freeze**: até dois dias perdidos por mês de
+  calendário são perdoados sem quebrar a sequência (#99, D55). Dia coberto mantém a corrente e não
+  conta como dia de treino, e o saldo do mês aparece na home
 - Agenda de revisão por SRS na home ("revise hoje: X, Y")
 
 ## O que fica de fora do MVP

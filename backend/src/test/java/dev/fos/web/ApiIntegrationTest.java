@@ -339,6 +339,60 @@ class ApiIntegrationTest {
     }
 
     @Test
+    @DisplayName("um dia perdido consome um freeze e a corrente atravessa o buraco")
+    void freezeCoversAMissedDay() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        // Faltou o dia 15. Sem o freeze da #99 a corrente valeria 1 — só o registro de hoje.
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.lastFrozenOn").value("2026-08-15"))
+                .andExpect(jsonPath("$.freezesPerMonth").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // Ler de novo não cobra de novo: a gravação em `streak_freeze` é idempotente pela chave
+        // (user_id, covered_on), e sem isso cada abertura da home queimaria o saldo do mês.
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+    }
+
+    @Test
+    @DisplayName("registrar o treino do dia perdoado devolve o freeze ao saldo")
+    void aBackdatedDrillGivesTheFreezeBack() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak")).andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // Lembrou de registrar o treino de quinta. O dia deixou de ser dia perdido, e a linha de
+        // `streak_freeze` que o cobria sai junto — senão abrir a home de manhã custaria saldo.
+        drillOn("M0.1", "2026-08-15");
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(3))
+                .andExpect(jsonPath("$.freezesRemaining").value(2))
+                .andExpect(jsonPath("$.lastFrozenOn").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("esgotado o saldo do mês, o buraco volta a quebrar a corrente")
+    void withoutFreezeBalanceTheStreakStillBreaks() throws Exception {
+        completeNode("M0.1");
+        // Buracos em 15, 13 e 11: os dois primeiros o mês perdoa, o terceiro não.
+        for (String dia : List.of("2026-08-10", "2026-08-12", "2026-08-14", "2026-08-16")) {
+            drillOn("M0.1", dia);
+        }
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(3))
+                .andExpect(jsonPath("$.freezesRemaining").value(0));
+    }
+
+    @Test
     @DisplayName("um nó vencido aparece na agenda de hoje")
     void overdueNodeAppearsInAgenda() throws Exception {
         completeNode("M0.1");
@@ -793,6 +847,15 @@ class ApiIntegrationTest {
             }
         }
         throw new AssertionError("Nó ausente da árvore: " + nodeCode);
+    }
+
+    /** Drill com data explícita — é o que permite montar um histórico sem mexer no relógio. */
+    private void drillOn(String code, String dia) throws Exception {
+        mockMvc.perform(
+                        post("/api/nodes/" + code + "/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\",\"drilledOn\":\"" + dia + "\"}"))
+                .andExpect(status().isOk());
     }
 
     private JsonNode getJson(String path) throws Exception {

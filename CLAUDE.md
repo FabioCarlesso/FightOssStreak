@@ -78,7 +78,25 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     precedência sobre o resolvedor do Spring — o desvio de 4xx no começo dele é o que impede JSON
     malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. Mexer nisso exige
     reescrever a seção de saúde de `docs/11-privacidade.md`.
-11. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
+11. **O streak perdoa até dois dias por mês, e a tabela do perdão é livro-caixa, não cache**
+    (D55, #99). O streak segue **derivado do `drill_log` a cada leitura** — o que
+    `streak_freeze` guarda é o **saldo já gasto**, e é isso que faz o teto ser "por mês" e não "por
+    corrente": sem a tabela, bastaria deixar a sequência morrer para ganhar freeze novo. Quatro
+    invariantes, e nenhuma é detalhe. **Hoje nunca gasta freeze** — o dia não acabou, e é a mesma
+    razão que faz o streak ancorar em ontem. **Buraco só é cobrado quando a caminhada alcança outro
+    dia de treino do outro lado dele**: a corrente que morre por falta de saldo não pode levar
+    junto os freezes que gastou tentando sobreviver, senão a pessoa perde a sequência **e** o saldo
+    na mesma virada. **Dia perdoado que ganha registro depois devolve o freeze**, porque `drilledOn`
+    existe para registrar o treino de ontem e cobrar por um dia que acabou tendo treino faria abrir
+    a home de manhã custar saldo — uma linha em `streak_freeze` significa sempre "dia **sem** treino
+    que foi perdoado". **Dia coberto mantém a corrente e não conta** como dia de treino, senão o
+    número na tela deixa de significar o que diz. Regra pura em `shared/domain`, espelhada no
+    backend (D17) — não escreva a segunda sem a primeira. Por isso `GET /api/streak` **escreve** e
+    não é `readOnly`; o que segura a idempotência é a chave `(user_id, covered_on)`. Freeze
+    **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
+    FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
+    `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
+12. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 

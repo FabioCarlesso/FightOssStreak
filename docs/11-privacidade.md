@@ -16,7 +16,7 @@ por quanto tempo.
 | Nome de exibição | do provedor, no primeiro login | identificar a conta na tela |
 | E-mail | de você, no cadastro; ou do provedor, no primeiro login | identifica a conta, é o que vincula Google e senha no mesmo endereço, e é o que quem administra lê para reconhecer uma conta |
 | Data do primeiro e do último login | do próprio app | saber se a conta ainda é usada |
-| Progresso, streak, agenda de revisão, drills e anotações | do uso do app | é o produto |
+| Progresso, streak, agenda de revisão, drills, anotações e os dias sem treino perdoados por freeze (#99) | do uso do app | é o produto |
 | Aceite do aviso de responsabilidade, com data e versão | do uso do app | requisito de produto (`06-disclaimer-responsabilidade.md`) |
 | **Hash da sua senha**, se você criou conta com e-mail e senha | de você, no cadastro | é o que confere a senha na entrada |
 | Papel da conta (`role`), com data e id de quem o mudou | de quem administra, ou da semente `fos.auth.owner-emails` na subida | decide quem vê a administração do app (D49) |
@@ -52,7 +52,7 @@ periódica. Enquanto isso, `DELETE /api/me` continua disponível para quem confi
 
 Em *Sua conta* → **Excluir minha conta**, ou `DELETE /api/me`. Apaga, em uma transação, a conta, a
 identidade externa, o hash da senha, os links pendentes, progresso, agenda de revisão, drills,
-anotações, tentativas de quiz e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
+anotações, tentativas de quiz, os dias perdoados por freeze e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
 
 Ela entrou junto com o login, e não depois, porque a loja da Apple recusa app com login e sem
 deleção (`02-publicacao-ios-desafios.md`) — e porque manter dado de quem nunca entrou seria

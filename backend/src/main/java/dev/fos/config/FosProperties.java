@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param usage coleta de uso do app (#84, D50)
  * @param proxy o que há entre quem navega e a aplicação (#77)
  * @param health o que a aplicação observa sobre si mesma, e quando ela avisa (#86)
+ * @param streak perdão de dias perdidos sem quebrar a sequência (#99)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
@@ -27,7 +28,8 @@ public record FosProperties(
         Demo demo,
         Usage usage,
         Proxy proxy,
-        Health health) {
+        Health health,
+        Streak streak) {
 
     public FosProperties {
         if (auth == null) {
@@ -47,6 +49,36 @@ public record FosProperties(
         }
         if (health == null) {
             health = new Health(0, 0, 0, 0, 0);
+        }
+        if (streak == null) {
+            streak = new Streak(null);
+        }
+    }
+
+    /**
+     * Freeze de streak (#99, D55): quantos dias perdidos o mês perdoa.
+     *
+     * @param freezesPerMonth freezes por mês de calendário. {@code null} usa o default; <b>zero
+     *     desliga</b> o perdão e devolve o comportamento anterior à #99, e por isso o tipo é {@code
+     *     Integer} e não {@code int} — nos outros blocos zero cai no default, aqui zero é uma
+     *     escolha que alguém pode querer fazer
+     */
+    public record Streak(Integer freezesPerMonth) {
+
+        /**
+         * Dois por mês.
+         *
+         * <p>Um só não cobre o fim de semana viajado mais a virose da mesma quinzena, e é a segunda
+         * falha que costuma matar a sequência. Três já é uma semana por mês em que a corrente conta
+         * dias que não existiram — e aí o número na tela deixa de significar o que diz.
+         */
+        public static final int DEFAULT_FREEZES_PER_MONTH = 2;
+
+        public Streak {
+            freezesPerMonth =
+                    freezesPerMonth == null
+                            ? DEFAULT_FREEZES_PER_MONTH
+                            : Math.max(0, freezesPerMonth);
         }
     }
 

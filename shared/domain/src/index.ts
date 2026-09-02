@@ -10,8 +10,9 @@ export {
   currentStreak,
   longestStreak,
   activeDaysInWindow,
+  resolveStreakWithFreeze,
 } from './streak.ts';
-export type { IsoDate } from './streak.ts';
+export type { FrozenStreak, IsoDate } from './streak.ts';
 
 export {
   initialSchedule,
