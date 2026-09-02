@@ -21,9 +21,11 @@ import dev.fos.model.QuizQuestion;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizQuestionRepository;
+import dev.fos.repo.StreakFreezeRepository;
 import dev.fos.repo.UserIdentityRepository;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +122,24 @@ class ApiIntegrationTest {
 
     @Autowired private UserIdentityRepository identities;
 
+    @Autowired private StreakFreezeRepository streakFreezeRepository;
+
     /**
      * Dá uma identidade à conta semeada.
      *
      * <p>Sem isto a autenticação padrão não resolve para usuário nenhum e todo teste daqui viraria
      * 401 — o que é o comportamento correto, e está coberto no {@link AuthIntegrationTest}.
      */
+    /**
+     * O perdão de dia perdido é gravado em transação PRÓPRIA ({@link
+     * dev.fos.service.StreakFreezeWriter}), então ele sobrevive ao rollback desta classe. Sem esta
+     * limpeza, o freeze de um teste apareceria como saldo já gasto no seguinte.
+     */
+    @BeforeEach
+    void clearFreezeLedger() {
+        streakFreezeRepository.deleteAll();
+    }
+
     @BeforeEach
     void identifyTestUser() {
         identities.save(
@@ -376,6 +390,31 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$.currentStreak").value(3))
                 .andExpect(jsonPath("$.freezesRemaining").value(2))
                 .andExpect(jsonPath("$.lastFrozenOn").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("duas leituras do streak que derivam o mesmo dia perdido não colidem")
+    void concurrentStreakReadsDoNotCollide() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak")).andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // `GET /api/streak` grava, e duas requisições da mesma conta chegam juntas o tempo todo —
+        // duas abas abertas bastam. Simula a que perde a corrida: o dia já está gravado e ela
+        // tenta gravar de novo. Com `save()` isto morria na uq_streak_freeze com 500, e o 5xx era
+        // da própria aplicação: entrava na taxa que dispara o alerta de incidente da D54.
+        streakFreezeRepository.inserirSeAusente(
+                SEEDED_USER_ID, LocalDate.of(2026, 8, 15), Instant.parse("2026-08-16T10:00:00Z"));
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        assertThat(streakFreezeRepository.findCoveredDates(SEEDED_USER_ID))
+                .containsExactly(LocalDate.of(2026, 8, 15));
     }
 
     @Test

@@ -92,7 +92,13 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     que foi perdoado". **Dia coberto mantém a corrente e não conta** como dia de treino, senão o
     número na tela deixa de significar o que diz. Regra pura em `shared/domain`, espelhada no
     backend (D17) — não escreva a segunda sem a primeira. Por isso `GET /api/streak` **escreve** e
-    não é `readOnly`; o que segura a idempotência é a chave `(user_id, covered_on)`. Freeze
+    não é `readOnly` — e **GET que escreve tem corrida**: duas abas bastavam para a que perdesse
+    responder 500 na `uq_streak_freeze`, e o 5xx era da própria aplicação, entrando na taxa que
+    dispara o alerta da D54. Quem grava é o **`StreakFreezeWriter`**, e ele é assim por medição, não
+    por precaução: `WHERE NOT EXISTS` sozinho não zera a corrida, e capturar a violação sozinho
+    também não — a transação já vem marcada como `rollback-only` e o *commit* é que estoura. Só a
+    soma resolve: transação própria (`REQUIRES_NEW`, programática) e desfazimento explícito. Não
+    volte a gravar isso com `save()`. Freeze
     **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
     FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
     `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
