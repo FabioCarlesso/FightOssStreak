@@ -83,6 +83,8 @@ beforeEach(() => {
     activeDaysLast30: 9,
     targetDaysLast30: 12,
     today: '2026-08-18',
+    freezesPerMonth: 2,
+    freezesRemaining: 2,
   });
   apiMock.getReviewsToday.mockResolvedValue({ today: '2026-08-18', dueCount: 0, due: [] });
   apiMock.getTree.mockResolvedValue({

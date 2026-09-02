@@ -11,6 +11,7 @@ import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
+import dev.fos.repo.StreakFreezeRepository;
 import dev.fos.repo.UsageEventRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.repo.UserProgressRepository;
@@ -50,6 +51,7 @@ public class AccountService {
     private final UserProgressRepository progress;
     private final SrsReviewRepository reviews;
     private final DrillLogRepository drills;
+    private final StreakFreezeRepository streakFreezes;
     private final LoginTokenRepository loginTokens;
     private final PasswordCredentialRepository credentials;
     private final QuizAttemptRepository quizAttempts;
@@ -64,6 +66,7 @@ public class AccountService {
             UserProgressRepository progress,
             SrsReviewRepository reviews,
             DrillLogRepository drills,
+            StreakFreezeRepository streakFreezes,
             LoginTokenRepository loginTokens,
             PasswordCredentialRepository credentials,
             QuizAttemptRepository quizAttempts,
@@ -76,6 +79,7 @@ public class AccountService {
         this.progress = progress;
         this.reviews = reviews;
         this.drills = drills;
+        this.streakFreezes = streakFreezes;
         this.loginTokens = loginTokens;
         this.credentials = credentials;
         this.quizAttempts = quizAttempts;
@@ -398,6 +402,9 @@ public class AccountService {
      * que acabou vinculado a outra (D47) e a demonstração vencida (#62). Nenhum deles tem um humano
      * do outro lado, e é por isso que a exclusão precisa ser completa sozinha.
      *
+     * <p>A décima é {@code streak_freeze} (V16, D55): ela pendura na conta como o log de drill, e
+     * sai junto pelo mesmo motivo — é o registro de quais dias da pessoa foram perdoados.
+     *
      * <p>A nona é {@code usage_event} (V14, D50), e ela é a única que não daria erro se fosse
      * esquecida: não tem FK, de propósito. Sai daqui porque foi prometido por escrito que sairia —
      * o agregado <b>fica</b>, porque não tem chave de visita nem id de conta, e apagá-lo faria a
@@ -413,6 +420,7 @@ public class AccountService {
         loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);
+        streakFreezes.deleteByUserId(userId);
         reviews.deleteByIdUserId(userId);
         progress.deleteByIdUserId(userId);
         disclaimers.deleteByUserId(userId);

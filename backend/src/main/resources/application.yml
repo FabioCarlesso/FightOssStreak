@@ -118,6 +118,13 @@ fos:
     # elementos. Com 2 a chave seria o nó de borda — o mesmo para todo mundo que entra por ele.
     # Ver dev.fos.service.ClientIp e a D51.
     trusted-hops: ${FOS_PROXY_TRUSTED_HOPS:1}
+  streak:
+    # Freeze de streak (#99, D55): quantos dias perdidos o mês de calendário perdoa antes de a
+    # corrente quebrar. Nada aqui é segredo, e o app sobe igual com ou sem a variável.
+    #
+    # 0 desliga o perdão e devolve o comportamento anterior à #99 — ao contrário dos outros
+    # blocos, aqui zero é escolha e não "não configurado".
+    freezes-per-month: ${FOS_STREAK_FREEZES_PER_MONTH:2}
   curriculum:
     index: 'classpath:curriculum/modules.json'
     # Reingerir o currículo na subida. Como a árvore é dado versionado (D11), a fonte

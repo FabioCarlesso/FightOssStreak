@@ -629,6 +629,12 @@ export interface components {
             targetDaysLast30?: number;
             /** Format: date */
             today?: string;
+            /** Format: int32 */
+            freezesPerMonth?: number;
+            /** Format: int32 */
+            freezesRemaining?: number;
+            /** Format: date */
+            lastFrozenOn?: string;
         };
         FeedbackRequest: {
             /** @enum {string} */

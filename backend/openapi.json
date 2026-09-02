@@ -1259,6 +1259,18 @@
           "today": {
             "type": "string",
             "format": "date"
+          },
+          "freezesPerMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "freezesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastFrozenOn": {
+            "type": "string",
+            "format": "date"
           }
         }
       },

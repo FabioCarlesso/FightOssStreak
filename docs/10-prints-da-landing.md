@@ -50,6 +50,22 @@ Refazer é barato (um comando), então na dúvida refaça.
 > por via das dúvidas só troca bytes idênticos por bytes idênticos. A tela de entrada mudou muito, e
 > não é print da landing — ela vive atrás do botão, não dentro da página.
 
+> **A #99 acrescentou uma linha ao cartão de streak, e por isso mexeu em três arquivos.** O saldo
+> de freeze (D55) aparece em `/hoje`, então `hoje-desktop` e `hoje-mobile` foram refeitos — e o
+> `og.jpg` junto, porque a prévia de link **contém a tela `/hoje`** dentro do celular do hero: é o
+> arquivo que mais parece independente do app e o que mais silenciosamente envelhece com ele.
+> `arvore-*` e `no-*` saíram byte a byte idênticos, de novo. `drill-*` mudou, mas só na **data da
+> anotação semeada** (a semeadura é relativa a hoje), então foram restaurados — recapturar por isso
+> só trocaria uma data por outra em arquivo que a #99 não tocou.
+>
+> **Duas armadilhas custaram uma recaptura inteira aqui, e valem para a próxima.** A primeira: as
+> contas de `scripts/seed-dev-users.mjs` se chamam *Aluno Teste* e *Dono Teste*, e o cabeçalho
+> aparece em `hoje-*` e `no-*` — capturar com elas põe um nome de conta de teste na página pública.
+> O `display_name` foi ajustado para *Autor* no banco local, que é o que os prints anteriores
+> mostram. A segunda, do mesmo tipo do aviso da demonstração logo acima: **`dono@teste.local` é
+> `ADMIN`**, e capturar com ela põe *Painel* e *Usuários* na barra de navegação — itens que a
+> maioria de quem chega pela landing nunca vai ver. Capture com a conta de aluno.
+
 ## Como refazer
 
 Precisa de `google-chrome` no PATH — o script fala CDP com ele por WebSocket, sem Playwright nem

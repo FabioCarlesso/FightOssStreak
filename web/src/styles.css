@@ -218,6 +218,12 @@ button:disabled {
   font-size: 0.85rem;
 }
 
+.streak__freeze {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .streak__meta {
   margin-top: 1rem;
   font-size: 0.85rem;

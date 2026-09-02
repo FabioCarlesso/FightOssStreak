@@ -193,6 +193,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_HEALTH_RETENTION_DAYS` | backend | `90` | retenção de `http_stat_hourly` e `app_start` |
 | `FOS_HEALTH_CRON` | backend | `0 */5 * * * *` | quando a medição é gravada e o incidente verificado; `-` desliga as duas |
 | `FOS_HEALTH_PURGE_CRON` | backend | `0 27 3 * * *` | quando o expurgo das tabelas de saúde roda |
+| `FOS_STREAK_FREEZES_PER_MONTH` | backend | `2` | quantos dias perdidos o mês perdoa sem quebrar a sequência (#99, D55); `0` desliga o perdão e devolve o comportamento anterior |
 
 Detalhes que não são óbvios:
 

@@ -21,9 +21,11 @@ import dev.fos.model.QuizQuestion;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizQuestionRepository;
+import dev.fos.repo.StreakFreezeRepository;
 import dev.fos.repo.UserIdentityRepository;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +122,24 @@ class ApiIntegrationTest {
 
     @Autowired private UserIdentityRepository identities;
 
+    @Autowired private StreakFreezeRepository streakFreezeRepository;
+
     /**
      * Dá uma identidade à conta semeada.
      *
      * <p>Sem isto a autenticação padrão não resolve para usuário nenhum e todo teste daqui viraria
      * 401 — o que é o comportamento correto, e está coberto no {@link AuthIntegrationTest}.
      */
+    /**
+     * O perdão de dia perdido é gravado em transação PRÓPRIA ({@link
+     * dev.fos.service.StreakFreezeWriter}), então ele sobrevive ao rollback desta classe. Sem esta
+     * limpeza, o freeze de um teste apareceria como saldo já gasto no seguinte.
+     */
+    @BeforeEach
+    void clearFreezeLedger() {
+        streakFreezeRepository.deleteAll();
+    }
+
     @BeforeEach
     void identifyTestUser() {
         identities.save(
@@ -336,6 +350,85 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$.streak.drilledToday").value(true))
                 .andExpect(jsonPath("$.intervalDays").value(2))
                 .andExpect(jsonPath("$.nextReviewOn").value("2026-08-18"));
+    }
+
+    @Test
+    @DisplayName("um dia perdido consome um freeze e a corrente atravessa o buraco")
+    void freezeCoversAMissedDay() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        // Faltou o dia 15. Sem o freeze da #99 a corrente valeria 1 — só o registro de hoje.
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.lastFrozenOn").value("2026-08-15"))
+                .andExpect(jsonPath("$.freezesPerMonth").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // Ler de novo não cobra de novo: a gravação em `streak_freeze` é idempotente pela chave
+        // (user_id, covered_on), e sem isso cada abertura da home queimaria o saldo do mês.
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+    }
+
+    @Test
+    @DisplayName("registrar o treino do dia perdoado devolve o freeze ao saldo")
+    void aBackdatedDrillGivesTheFreezeBack() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak")).andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // Lembrou de registrar o treino de quinta. O dia deixou de ser dia perdido, e a linha de
+        // `streak_freeze` que o cobria sai junto — senão abrir a home de manhã custaria saldo.
+        drillOn("M0.1", "2026-08-15");
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(3))
+                .andExpect(jsonPath("$.freezesRemaining").value(2))
+                .andExpect(jsonPath("$.lastFrozenOn").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("duas leituras do streak que derivam o mesmo dia perdido não colidem")
+    void concurrentStreakReadsDoNotCollide() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak")).andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        // `GET /api/streak` grava, e duas requisições da mesma conta chegam juntas o tempo todo —
+        // duas abas abertas bastam. Simula a que perde a corrida: o dia já está gravado e ela
+        // tenta gravar de novo. Com `save()` isto morria na uq_streak_freeze com 500, e o 5xx era
+        // da própria aplicação: entrava na taxa que dispara o alerta de incidente da D54.
+        streakFreezeRepository.inserirSeAusente(
+                SEEDED_USER_ID, LocalDate.of(2026, 8, 15), Instant.parse("2026-08-16T10:00:00Z"));
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentStreak").value(2))
+                .andExpect(jsonPath("$.freezesRemaining").value(1));
+
+        assertThat(streakFreezeRepository.findCoveredDates(SEEDED_USER_ID))
+                .containsExactly(LocalDate.of(2026, 8, 15));
+    }
+
+    @Test
+    @DisplayName("esgotado o saldo do mês, o buraco volta a quebrar a corrente")
+    void withoutFreezeBalanceTheStreakStillBreaks() throws Exception {
+        completeNode("M0.1");
+        // Buracos em 15, 13 e 11: os dois primeiros o mês perdoa, o terceiro não.
+        for (String dia : List.of("2026-08-10", "2026-08-12", "2026-08-14", "2026-08-16")) {
+            drillOn("M0.1", dia);
+        }
+
+        mockMvc.perform(get("/api/streak"))
+                .andExpect(jsonPath("$.currentStreak").value(3))
+                .andExpect(jsonPath("$.freezesRemaining").value(0));
     }
 
     @Test
@@ -793,6 +886,15 @@ class ApiIntegrationTest {
             }
         }
         throw new AssertionError("Nó ausente da árvore: " + nodeCode);
+    }
+
+    /** Drill com data explícita — é o que permite montar um histórico sem mexer no relógio. */
+    private void drillOn(String code, String dia) throws Exception {
+        mockMvc.perform(
+                        post("/api/nodes/" + code + "/drill")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"recall\":\"OK\",\"drilledOn\":\"" + dia + "\"}"))
+                .andExpect(status().isOk());
     }
 
     private JsonNode getJson(String path) throws Exception {
