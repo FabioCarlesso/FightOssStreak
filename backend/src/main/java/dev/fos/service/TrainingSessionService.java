@@ -105,6 +105,13 @@ public class TrainingSessionService {
 
     /**
      * Edição dos campos da sessão. As técnicas vinculadas não são tocadas — elas têm rota própria.
+     *
+     * <p>Com uma exceção, e ela é a data: corrigir o dia do treino <b>move junto</b> o {@code
+     * drilledOn} das técnicas daquele treino. Não é conveniência — é a única forma de o registro
+     * continuar dizendo uma coisa só. O drill vinculado não entra no streak pela própria data (a
+     * sessão responde pelo dia dele), então sem a propagação o {@code drill_log} ficaria afirmando
+     * um dia que sumiu do diário e da corrente: treino que aconteceu, ninguém representa. É a mesma
+     * invariante que a criação já estabelece, quando manda {@code trainedOn} como data do drill.
      */
     @Transactional
     public DiaryDtos.SessionView update(
@@ -118,7 +125,9 @@ public class TrainingSessionService {
                             + " desvincule as técnicas antes.");
         }
 
-        session.setTrainedOn(requireNotFuture(patch.trainedOn(), today));
+        LocalDate trainedOn = requireNotFuture(patch.trainedOn(), today);
+        moveTechniques(userId, session, trainedOn);
+        session.setTrainedOn(trainedOn);
         session.setKind(kind);
         session.setDurationMinutes(patch.durationMinutes());
         session.setFeeling(patch.feeling());
@@ -241,10 +250,7 @@ public class TrainingSessionService {
         }
 
         YearMonth mes = YearMonth.from(to);
-        int noMes =
-                (int)
-                        sessions.countByUserIdAndTrainedOnBetween(
-                                userId, mes.atDay(1), mes.atEndOfMonth());
+        int noMes = (int) sessions.countTrainingSessions(userId, mes.atDay(1), mes.atEndOfMonth());
 
         return new DiaryDtos.DiaryTimeline(from, to, noMes, List.copyOf(dias.values()));
     }
@@ -274,6 +280,22 @@ public class TrainingSessionService {
                         tecnica.recall(), tecnica.note(), session.getTrainedOn()),
                 today,
                 session.getId());
+    }
+
+    /**
+     * Leva as técnicas vinculadas para a data nova da sessão (#114).
+     *
+     * <p>Só escreve quando a data muda de fato: edição de peso ou de sensação — o caso comum do
+     * "completa depois" — não tem por que tocar em {@code drill_log}.
+     */
+    private void moveTechniques(Long userId, TrainingSession session, LocalDate trainedOn) {
+        if (trainedOn.equals(session.getTrainedOn())) {
+            return;
+        }
+        List<DrillLog> vinculados =
+                drills.findByUserIdAndSessionIdOrderByIdAsc(userId, session.getId());
+        vinculados.forEach(drill -> drill.setDrilledOn(trainedOn));
+        drills.saveAll(vinculados);
     }
 
     /**

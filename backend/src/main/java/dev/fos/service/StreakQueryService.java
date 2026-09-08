@@ -72,24 +72,6 @@ public class StreakQueryService {
      * seguinte, que é quando alguém tem o que ver. Quem passou dois meses fora não perde saldo
      * naquele intervalo — não havia corrente para salvar.
      */
-    /**
-     * Os dias que a corrente conta: sessão que não é {@code DESCANSO}, mais drill avulso (D58).
-     *
-     * <p>Antes da #114 era só o {@code drill_log}, e com o diário na rotina isso mostraria corrente
-     * morta para quem treinou seis dias na semana — o app mentindo sobre a rotina de quem usa, que
-     * é o oposto do que a D55 foi consertar. Drill vinculado a sessão não entra por aqui porque a
-     * sessão dele já responde por aquele dia.
-     *
-     * <p>É conjunto e não lista: o mesmo dia pode ter sessão e drill avulso, e a corrente conta
-     * dias, não registros. Duas sessões no mesmo dia também contam um dia só, pela mesma razão.
-     */
-    private List<LocalDate> diasComRegistro(Long userId) {
-        Set<LocalDate> dias =
-                new LinkedHashSet<>(trainingSessionRepository.findDistinctTrainingDates(userId));
-        dias.addAll(drillLogRepository.findDistinctStandaloneDrillDates(userId));
-        return new ArrayList<>(dias);
-    }
-
     @Transactional
     public ActivityDtos.StreakView streak(Long userId, LocalDate today) {
         List<LocalDate> days = diasComRegistro(userId);
@@ -116,5 +98,23 @@ public class StreakQueryService {
                 budget,
                 frozen.freezesRemaining(),
                 frozen.frozenDays().isEmpty() ? null : frozen.frozenDays().get(0));
+    }
+
+    /**
+     * Os dias que a corrente conta: sessão que não é {@code DESCANSO}, mais drill avulso (D58).
+     *
+     * <p>Antes da #114 era só o {@code drill_log}, e com o diário na rotina isso mostraria corrente
+     * morta para quem treinou seis dias na semana — o app mentindo sobre a rotina de quem usa, que
+     * é o oposto do que a D55 foi consertar. Drill vinculado a sessão não entra por aqui porque a
+     * sessão dele já responde por aquele dia.
+     *
+     * <p>É conjunto e não lista: o mesmo dia pode ter sessão e drill avulso, e a corrente conta
+     * dias, não registros. Duas sessões no mesmo dia também contam um dia só, pela mesma razão.
+     */
+    private List<LocalDate> diasComRegistro(Long userId) {
+        Set<LocalDate> dias =
+                new LinkedHashSet<>(trainingSessionRepository.findDistinctTrainingDates(userId));
+        dias.addAll(drillLogRepository.findDistinctStandaloneDrillDates(userId));
+        return new ArrayList<>(dias);
     }
 }

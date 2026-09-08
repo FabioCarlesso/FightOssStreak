@@ -121,7 +121,16 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     /api/me` os leva junto, e a coleta da D50 e o painel da D52 **nunca** os veem; há teste que
     varre a resposta do painel atrás deles. Mexer nessas linhas exige reescrever a seção de saúde de
     `docs/11-privacidade.md` e revisitar a D57. Excluir sessão inteira está fora de escopo:
-    desfazer envolveria desfazer SRS, progresso e freeze — correção é por edição.
+    desfazer envolveria desfazer SRS, progresso e freeze — correção é por edição. E **corrigir a
+    data leva junto o `drilled_on` das técnicas vinculadas**: o drill vinculado não entra no streak
+    pela própria data — quem responde pelo dia dele é a sessão —, então deixá-lo para trás faria o
+    `drill_log` afirmar um dia que sumiu do diário e da corrente. Não reagenda SRS: `was_due` e
+    `due_on` são o que o SM-2 decidiu quando o registro aconteceu. **Verbo novo em rota sob `/api`
+    precisa entrar na lista de CORS do `SecurityConfig`**: em produção web e API são a mesma origem
+    e a lista nunca é consultada, mas atrás do proxy do Vite o verbo ausente responde 403 `Invalid
+    CORS request` antes do `ApiExceptionHandler` — sem corpo, e sem quebrar teste de MockMvc nem de
+    jsdom. Foi o defeito do `PATCH` do diário; o `CorsMetodosTest` agora confere a lista contra os
+    verbos que os controladores declaram.
 13. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura

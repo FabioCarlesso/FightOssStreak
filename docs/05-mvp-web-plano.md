@@ -47,7 +47,7 @@ O diário trouxe dois números que **não** são critério de sucesso e nunca de
 
 | Número | Onde aparece | Por que não tem meta |
 |---|---|---|
-| Sessões no mês | `/hoje` e `/diario` (`sessionsInMonth`) | mede quanto se escreve, não quanto se retém — e escrever é o meio, não o fim |
+| Treinos no mês | `/hoje` e `/diario` (`sessionsInMonth`, com `DESCANSO` fora) | mede quanto se escreve, não quanto se retém — e escrever é o meio, não o fim |
 | Sessões com técnica vinculada | leitura do diário | idem: o que interessa é a revisão que a técnica gera, e isso já é medido abaixo |
 
 Meta em cima deles empurraria o app para o caderno, que é exatamente o critério de falha da D56.

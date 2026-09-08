@@ -37,7 +37,21 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
      */
     Optional<TrainingSession> findByIdAndUserId(Long id, Long userId);
 
-    long countByUserIdAndTrainedOnBetween(Long userId, LocalDate from, LocalDate to);
+    /**
+     * Quantos <b>treinos</b> no período — {@code DESCANSO} fora, pela mesma regra da consulta
+     * acima.
+     *
+     * <p>O filtro não é detalhe de contagem: este número é o que a home e o diário mostram como
+     * "treinos registrados neste mês", e contar descanso ali diria "treino" na mesma tela em que o
+     * dia aparece marcado como <i>não conta no streak</i> (D58).
+     */
+    @Query(
+            "select count(s) from TrainingSession s"
+                    + " where s.userId = :userId"
+                    + " and s.kind <> dev.fos.model.SessionKind.DESCANSO"
+                    + " and s.trainedOn between :from and :to")
+    long countTrainingSessions(
+            @Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
     long countByUserIdAndKind(Long userId, SessionKind kind);
 

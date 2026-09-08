@@ -130,8 +130,10 @@ public final class DiaryDtos {
     /**
      * A linha do tempo do período pedido.
      *
-     * @param sessionsInMonth sessões no mês de {@code to} — número <b>descritivo, sem meta</b>
-     *     (docs/05). Streak e revisões atendidas continuam sendo o que se persegue
+     * @param sessionsInMonth treinos no mês de {@code to} — número <b>descritivo, sem meta</b>
+     *     (docs/05). Streak e revisões atendidas continuam sendo o que se persegue. {@code
+     *     DESCANSO} fica de fora: é a mesma regra da D58, e contá-lo diria "treino" na tela em que
+     *     o dia aparece marcado como não contando no streak
      */
     public record DiaryTimeline(
             LocalDate from, LocalDate to, int sessionsInMonth, List<DiaryDay> days) {}

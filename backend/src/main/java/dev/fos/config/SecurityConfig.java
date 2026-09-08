@@ -240,12 +240,22 @@ class SecurityConfig {
      * preflight (que não carrega cookie) morria em 401 antes de o MVC ver a requisição. Restrito a
      * localhost de propósito — em produção web e API são a mesma origem, e um curinga aqui viraria
      * um esquecimento permanente.
+     *
+     * <p><b>Verbo que falta nesta lista só quebra em dev, e quebra em silêncio.</b> Em produção web
+     * e API são a mesma origem, então nem chega a ser requisição CORS e a lista não é consultada;
+     * atrás do proxy do Vite o navegador manda a origem de :5173, e o método ausente volta {@code
+     * 403 "Invalid CORS request"} — sem passar pelo {@code ApiExceptionHandler}, então sem corpo
+     * que explique nada. Foi o que aconteceu com o {@code PATCH} do diário (#114): a rota existia,
+     * o teste de MockMvc passava e a tela não salvava. Por isso o {@code CorsMetodosTest} confere
+     * esta lista contra os verbos que os controladores realmente declaram, em vez de deixar a
+     * conferência para quem lembrar.
      */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         // Sem credencial não há sessão do outro lado, e toda chamada voltaria 401.
         configuration.setAllowCredentials(true);

@@ -241,6 +241,59 @@ class DiaryIntegrationTest {
     }
 
     @Test
+    @DisplayName("corrigir a data do treino leva junto a data das técnicas vinculadas")
+    void movingTheSessionMovesItsTechniques() throws Exception {
+        long id =
+                criarSessao(
+                        "{\"trainedOn\":\"2026-08-16\",\"kind\":\"AULA\","
+                                + "\"tecnicas\":[{\"nodeCode\":\"M0.1\",\"recall\":\"OK\"}]}");
+
+        mockMvc.perform(
+                        patch("/api/sessoes/" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"trainedOn\":\"2026-08-14\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trainedOn").value("2026-08-14"))
+                .andExpect(jsonPath("$.tecnicas[0].drilledOn").value("2026-08-14"));
+
+        // O drill vinculado não entra no streak pela própria data — a sessão responde pelo dia
+        // dele. Sem a propagação, o `drill_log` continuaria afirmando o dia 16, que some do diário
+        // e da corrente: treino que aconteceu e ninguém representa.
+        List<DrillLog> vinculados = drills.findByUserIdAndSessionIdOrderByIdAsc(SEEDED_USER_ID, id);
+        assertThat(vinculados)
+                .singleElement()
+                .satisfies(
+                        drill ->
+                                assertThat(drill.getDrilledOn())
+                                        .isEqualTo(LocalDate.of(2026, 8, 14)));
+
+        // O dia 16 deixou de existir para todo mundo ao mesmo tempo, que é o ponto.
+        mockMvc.perform(get("/api/sessoes"))
+                .andExpect(jsonPath("$.days.length()").value(1))
+                .andExpect(jsonPath("$.days[0].day").value("2026-08-14"));
+        mockMvc.perform(get("/api/streak")).andExpect(jsonPath("$.drilledToday").value(false));
+
+        // O drill continua sendo o mesmo drill: segue vinculado e segue no histórico do nó, agora
+        // pela data corrigida. Correção de data não desfaz nem refaz agendamento de SRS.
+        assertThat(vinculados.get(0).getSessionId()).isEqualTo(id);
+        mockMvc.perform(get("/api/nodes/M0.1"))
+                .andExpect(jsonPath("$.recentDrills[0].drilledOn").value("2026-08-14"));
+    }
+
+    @Test
+    @DisplayName("o contador do mês conta treinos, e descanso não é treino")
+    void theMonthlyCountIgnoresRestDays() throws Exception {
+        criarSessao("{\"trainedOn\":\"2026-08-16\",\"kind\":\"AULA\"}");
+        criarSessao("{\"trainedOn\":\"2026-08-15\",\"kind\":\"DESCANSO\"}");
+
+        // Dizer "2 treinos registrados" na mesma tela em que o dia 15 aparece marcado como *não
+        // conta no streak* seria a UI se contradizendo em dois centímetros de distância.
+        mockMvc.perform(get("/api/sessoes"))
+                .andExpect(jsonPath("$.days.length()").value(2))
+                .andExpect(jsonPath("$.sessionsInMonth").value(1));
+    }
+
+    @Test
     @DisplayName("duas sessões no mesmo dia contam um dia de streak")
     void twoSessionsInADayAreOneDay() throws Exception {
         criarSessao("{\"trainedOn\":\"2026-08-16\",\"kind\":\"AULA\"}");
