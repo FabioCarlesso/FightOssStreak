@@ -108,7 +108,7 @@ export function LandingPage() {
         <div className="landing__phone">
           <img
             src={PRINT_HOJE.mobile}
-            alt="Tela inicial do app em um celular, com o streak e a lista do que revisar hoje."
+            alt="Tela inicial do app em um celular, com o streak, o heatmap dos últimos meses e a lista do que revisar hoje."
             width={PRINT_MOBILE.width}
             height={PRINT_MOBILE.height}
           />

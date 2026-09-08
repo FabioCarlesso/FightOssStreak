@@ -128,7 +128,7 @@ export const PRINT_DRILL: Print = {
 export const PRINT_HOJE: Print = {
   desktop: '/prints/hoje-desktop.webp',
   mobile: '/prints/hoje-mobile.webp',
-  alt: 'Tela inicial com o streak em dias e a agenda "Revise hoje", listando os nós vencidos e há quantos dias cada um está atrasado.',
+  alt: 'Tela inicial com o streak em dias, o heatmap dos últimos seis meses marcando os dias em que houve treino registrado, e a agenda "Revise hoje", listando os nós vencidos e há quantos dias cada um está atrasado.',
 };
 
 export const PRINT_DIARIO: Print = {
@@ -175,7 +175,7 @@ export const STEPS: readonly Step[] = [
   },
   {
     title: 'E o app diz o que revisar hoje',
-    text: 'A repetição espaçada devolve cada nó pouco antes de ele ser esquecido. Você abre o app e já tem a lista do que levar para o treino, do mais atrasado para o menos.',
+    text: 'A repetição espaçada devolve cada nó pouco antes de ele ser esquecido. Você abre o app e já tem a lista do que levar para o treino, do mais atrasado para o menos. Junto vem o heatmap dos últimos seis meses: o contador diz se a sequência está viva hoje, e a grade diz como o semestre foi de verdade — buracos inclusive.',
     print: PRINT_HOJE,
   },
 ];
@@ -205,7 +205,7 @@ export const FEATURES: readonly Feature[] = [
   },
   {
     title: 'Dá para ver se o hábito sobreviveu',
-    text: 'Streak, recorde e dias ativos nos últimos 30 — ao lado da meta, não soltos.',
+    text: 'Streak, recorde e dias ativos nos últimos 30 — ao lado da meta, não soltos. E um heatmap de seis meses, que é onde quem quebrou a sequência e voltou consegue se enxergar: o contador zera, o histórico não.',
   },
   {
     title: 'O vídeo é do canal que ensinou',
