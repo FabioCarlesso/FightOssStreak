@@ -54,6 +54,17 @@ public class DrillLog {
     @Column(name = "due_on")
     private LocalDate dueOn;
 
+    /**
+     * A sessão do diário que originou este drill; {@code null} = registro avulso (#114, D56).
+     *
+     * <p>Anulável de propósito, e é o que dispensou backfill: os drills anteriores ao diário
+     * aparecem nele como avulsos, e registrar pela tela do nó continua sendo caminho de primeira
+     * classe. Desvincular devolve o campo a {@code null} e <b>não</b> apaga o drill (D34): o
+     * histórico do nó é o que permite reavaliar depois se a mecânica funcionou.
+     */
+    @Column(name = "session_id")
+    private Long sessionId;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -69,6 +80,7 @@ public class DrillLog {
             String note,
             boolean wasDue,
             LocalDate dueOn,
+            Long sessionId,
             Instant createdAt) {
         this.userId = userId;
         this.nodeId = nodeId;
@@ -77,6 +89,7 @@ public class DrillLog {
         this.note = note;
         this.wasDue = wasDue;
         this.dueOn = dueOn;
+        this.sessionId = sessionId;
         this.createdAt = createdAt;
     }
 
@@ -110,6 +123,14 @@ public class DrillLog {
 
     public LocalDate getDueOn() {
         return dueOn;
+    }
+
+    public Long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Long sessionId) {
+        this.sessionId = sessionId;
     }
 
     public Instant getCreatedAt() {

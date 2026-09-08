@@ -21,6 +21,9 @@ class UsagePathsTest {
         assertThat(UsagePaths.normalize("/senha/redefinir/abc123segredo"))
                 .isEqualTo("/senha/redefinir/{token}");
         assertThat(UsagePaths.normalize("/no/M1.2")).isEqualTo("/no/{codigo}");
+        // O id da sessão do diário (#114) é só um número, e mesmo assim não entra: a regra é
+        // "segmento variável não entra", e não "estes segmentos variáveis não entram".
+        assertThat(UsagePaths.normalize("/diario/42")).isEqualTo("/diario/{id}");
     }
 
     @Test
@@ -37,6 +40,9 @@ class UsagePathsTest {
         assertThat(UsagePaths.normalize("/usuarios")).isEqualTo("/usuarios");
         // Rota do painel (#85): rota nova do app precisa entrar na lista para aparecer nele.
         assertThat(UsagePaths.normalize("/admin/painel")).isEqualTo("/admin/painel");
+        // Rotas do diário (#114): as duas fixas passam inteiras.
+        assertThat(UsagePaths.normalize("/diario")).isEqualTo("/diario");
+        assertThat(UsagePaths.normalize("/diario/nova")).isEqualTo("/diario/nova");
         assertThat(UsagePaths.normalize("/rota-que-nao-existe")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize("/../../etc/passwd")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize(null)).isEqualTo(UsagePaths.OUTRO);

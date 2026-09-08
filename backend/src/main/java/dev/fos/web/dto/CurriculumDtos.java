@@ -119,7 +119,12 @@ public final class CurriculumDtos {
         }
     }
 
-    public record DrillEntryView(LocalDate drilledOn, String recall, String note) {}
+    /**
+     * @param sessionId sessão do diário que originou o drill; {@code null} = registro avulso (#114,
+     *     D56). É o que permite a linha do histórico do nó levar de volta ao treino inteiro — o
+     *     resto do que aconteceu naquele dia mora lá, não aqui
+     */
+    public record DrillEntryView(LocalDate drilledOn, String recall, String note, Long sessionId) {}
 
     /**
      * Anotação fixada do usuário sobre um nó.

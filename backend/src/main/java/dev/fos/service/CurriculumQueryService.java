@@ -167,7 +167,8 @@ public class CurriculumQueryService {
                                         new CurriculumDtos.DrillEntryView(
                                                 entry.getDrilledOn(),
                                                 entry.getRecall().name(),
-                                                entry.getNote()))
+                                                entry.getNote(),
+                                                entry.getSessionId()))
                         .toList();
 
         return new CurriculumDtos.NodeDetailView(

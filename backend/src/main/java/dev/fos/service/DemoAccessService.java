@@ -274,6 +274,10 @@ public class DemoAccessService {
                             origem.getNote(),
                             origem.isWasDue(),
                             desloca(origem.getDueOn(), delta),
+                            // Sem sessão: a demonstração copia o progresso da conta-modelo, não o
+                            // diário dela. O drill entra como avulso, que é o que a #114 deixou
+                            // ser estado de primeira classe — e continua alimentando o streak.
+                            null,
                             desloca(origem.getCreatedAt(), delta)));
         }
 

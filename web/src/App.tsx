@@ -8,11 +8,14 @@ import { SignOutButton } from './components/SignOutButton.tsx';
 import { AccountPage } from './pages/AccountPage.tsx';
 import { AdminPanelPage } from './pages/AdminPanelPage.tsx';
 import { AdminUsersPage } from './pages/AdminUsersPage.tsx';
+import { DiaryPage } from './pages/DiaryPage.tsx';
 import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { HomePage } from './pages/HomePage.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
+import { NewSessionPage } from './pages/NewSessionPage.tsx';
 import { NodePage } from './pages/NodePage.tsx';
 import { ProgressPage } from './pages/ProgressPage.tsx';
+import { SessionPage } from './pages/SessionPage.tsx';
 import { TreePage } from './pages/TreePage.tsx';
 import { ConfirmEmailPage } from './pages/auth/ConfirmEmailPage.tsx';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage.tsx';
@@ -62,6 +65,11 @@ export function App() {
         <Route element={<AppLayout />}>
           <Route path="/hoje" element={<HomePage />} />
           <Route path="/arvore" element={<TreePage />} />
+          {/* `/diario/nova` antes de `/diario/:id`: as duas casam o mesmo formato, e quem vence é
+              a rota literal — sem esta ordem, "nova" viraria um id que não existe. */}
+          <Route path="/diario" element={<DiaryPage />} />
+          <Route path="/diario/nova" element={<NewSessionPage />} />
+          <Route path="/diario/:id" element={<SessionPage />} />
           <Route path="/no/:code" element={<NodePage />} />
           <Route path="/progresso" element={<ProgressPage />} />
           <Route path="/conta" element={<AccountPage />} />
@@ -124,6 +132,7 @@ function AppChrome() {
         <nav className="app__nav">
           <NavLink to="/hoje">Hoje</NavLink>
           <NavLink to="/arvore">Árvore</NavLink>
+          <NavLink to="/diario">Diário</NavLink>
           <NavLink to="/progresso">Progresso</NavLink>
           {/* Administração no mesmo menu, e só para quem administra: uma barra separada faria o
               app parecer dois produtos para quem tem os dois papéis (#91). */}

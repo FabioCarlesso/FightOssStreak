@@ -66,6 +66,21 @@ Refazer é barato (um comando), então na dúvida refaça.
 > `ADMIN`**, e capturar com ela põe *Painel* e *Usuários* na barra de navegação — itens que a
 > maioria de quem chega pela landing nunca vai ver. Capture com a conta de aluno.
 
+> **A #114 mudou `/hoje` e a barra de navegação, e os prints ficaram defasados — a recaptura está
+> pendente.** O diário (D56) acrescentou um cartão **abaixo** da agenda em `/hoje` e um item
+> *Diário* no cabeçalho. Os arquivos afetados são três: `hoje-desktop` e `hoje-mobile` (cartão novo
+> **e** cabeçalho), `no-desktop` (só o cabeçalho, que é o único print além de `hoje-*` que o mostra)
+> e o `og.jpg`, que contém a tela `/hoje` dentro do celular do hero. `arvore-*`, `no-mobile` e
+> `drill-*` são ancorados abaixo do cabeçalho e não mudam.
+>
+> **Por que não foram refeitos no mesmo PR**, contra a regra do `CLAUDE.md`: a recaptura exige o
+> app rodando **com login de verdade** (`FOS_PRINT_COOKIE`), e o caminho prescrito aqui —
+> `docker compose up -d db`, `scripts/seed-dev-users.mjs`, `scripts/mint-dev-login.mjs` — precisa do
+> Postgres do Compose, que o ambiente onde esta fatia foi escrita não tinha. A alternativa seria
+> capturar com o portão desligado, e este documento já diz que isso não vale: seria porta dos fundos
+> permanente para economizar três imagens. Fica registrado como pendência **desta** issue, com a
+> lista exata acima, para a recaptura ser um comando e não uma investigação.
+
 ## Como refazer
 
 Precisa de `google-chrome` no PATH — o script fala CDP com ele por WebSocket, sem Playwright nem

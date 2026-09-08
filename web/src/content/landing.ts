@@ -219,12 +219,19 @@ export const NAO_E: readonly Feature[] = [
     text: 'Habilidade motora se constrói drilando e rolando, com professor corrigindo. Nenhum quiz faz isso — e este aqui nem tenta.',
   },
   {
-    title: 'Não é diário de treino',
-    text: 'O registro existe para alimentar a revisão. Se a meta fosse anotar o que você fez, bastava um caderno.',
+    // A seção "Não é diário de treino" caiu com a D56 (#114), e o que entrou no lugar não é a
+    // mesma frase suavizada: o app PASSOU a ser um diário. O que continua verdadeiro — e é o que
+    // separa dele um caderno — é a segunda metade, e é ela que a linha abaixo promete.
+    title: 'Não é só um caderno',
+    text: 'O diário registra o treino inteiro, com ou sem técnica do currículo. A diferença é que o que você vinculou volta agendado — caderno nenhum faz a volta.',
   },
   {
     title: 'Não substitui a academia',
     text: 'É camada de revisão em cima da aula presencial. Sem a aula, não sobra nada para revisar.',
+  },
+  {
+    title: 'Não avalia o que você anotou',
+    text: 'Peso e sensação ficam guardados e à vista, e só. Sem meta, sem faixa saudável, sem alerta e sem orientação de corte de peso: isso é conselho, e conselho é com o seu professor e o seu médico.',
   },
   {
     title: 'Não tem conta, anúncio nem venda',

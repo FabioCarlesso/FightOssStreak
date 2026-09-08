@@ -10,6 +10,7 @@ export const FULL_DISCLAIMER: readonly string[] = [
   'Nunca pratique as técnicas referenciadas neste aplicativo sem supervisão de um professor qualificado, fora de um ambiente adequado de treino, com parceiro que não tenha consentido e não conheça os riscos, ou sem aquecimento e condicionamento adequados.',
   'Técnicas de estrangulamento podem causar perda de consciência, lesão neurológica ou morte. Técnicas de torção articular podem causar lesão permanente. Sempre respeite o toque (tap) do parceiro imediatamente.',
   'Consulte um médico antes de iniciar qualquer atividade física, especialmente se você tem condição pré-existente ou histórico de lesão.',
+  'O diário de treino registra o que você escreve, e não interpreta nada. Peso e sensação são guardados e mostrados como você os anotou: o aplicativo não avalia se um peso é saudável, não orienta corte de peso e não recomenda treinar ou descansar a partir de como você diz que se sentiu. Corte de peso conduzido sem acompanhamento profissional é prática de risco. Procure médico e nutricionista para qualquer decisão sobre peso, e o seu professor para decisões sobre carga de treino.',
   'O autor e os colaboradores deste aplicativo não se responsabilizam por qualquer lesão, dano ou prejuízo decorrente do uso das informações aqui contidas. Ao usar este aplicativo, você reconhece que assume integralmente os riscos da prática.',
   'Os vídeos referenciados são conteúdo de terceiros, incorporados a partir do YouTube. Não somos autores desse conteúdo e não temos vínculo com seus criadores.',
 ];

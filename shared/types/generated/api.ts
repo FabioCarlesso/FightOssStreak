@@ -46,6 +46,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/sessoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Linha do tempo do diário, por dia, do mais recente para o mais antigo */
+        get: operations["timeline"];
+        put?: never;
+        /** Registra um treino — só a data é obrigatória */
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessoes/{id}/tecnicas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Vincula uma técnica do currículo — alimenta o SRS pelo caminho de sempre */
+        post: operations["addTechnique"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/nodes/{code}/quiz": {
         parameters: {
             query?: never;
@@ -319,6 +354,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/sessoes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Detalhe de uma sessão */
+        get: operations["get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edita os campos da sessão; as técnicas vinculadas não são tocadas */
+        patch: operations["update"];
+        trace?: never;
+    };
     "/api/streak": {
         parameters: {
             query?: never;
@@ -545,6 +598,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/sessoes/{id}/tecnicas/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desvincula a técnica da sessão; o drill permanece no histórico do nó */
+        delete: operations["removeTechnique"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -563,6 +633,52 @@ export interface components {
             utmSource?: string;
             utmMedium?: string;
             utmCampaign?: string;
+        };
+        SessionRequest: {
+            /** Format: date */
+            trainedOn: string;
+            /** @enum {string} */
+            kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** @enum {string} */
+            feeling?: "BEM" | "NEUTRO" | "MAL";
+            weightKg?: number;
+            learned?: string;
+            improve?: string;
+            tecnicas?: components["schemas"]["TechniqueRequest"][];
+        };
+        TechniqueRequest: {
+            nodeCode: string;
+            /** @enum {string} */
+            recall: "FORGOT" | "HARD" | "OK" | "EASY";
+            note?: string;
+        };
+        SessionView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: date */
+            trainedOn?: string;
+            /** @enum {string} */
+            kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
+            countsAsTrainingDay?: boolean;
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** @enum {string} */
+            feeling?: "BEM" | "NEUTRO" | "MAL";
+            weightKg?: number;
+            learned?: string;
+            improve?: string;
+            tecnicas?: components["schemas"]["TechniqueView"][];
+        };
+        TechniqueView: {
+            nodeCode?: string;
+            nodeTitle?: string;
+            /** @enum {string} */
+            recall?: "FORGOT" | "HARD" | "OK" | "EASY";
+            note?: string;
+            /** Format: date */
+            drilledOn?: string;
         };
         Answer: {
             /** Format: int64 */
@@ -716,6 +832,35 @@ export interface components {
             /** @enum {string} */
             status: "ABERTO" | "EM_ANALISE" | "RESOLVIDO" | "RECUSADO";
         };
+        SessionPatch: {
+            /** Format: date */
+            trainedOn: string;
+            /** @enum {string} */
+            kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** @enum {string} */
+            feeling?: "BEM" | "NEUTRO" | "MAL";
+            weightKg?: number;
+            learned?: string;
+            improve?: string;
+        };
+        DiaryDay: {
+            /** Format: date */
+            day?: string;
+            countsAsTrainingDay?: boolean;
+            sessions?: components["schemas"]["SessionView"][];
+            avulsos?: components["schemas"]["TechniqueView"][];
+        };
+        DiaryTimeline: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: int32 */
+            sessionsInMonth?: number;
+            days?: components["schemas"]["DiaryDay"][];
+        };
         DueItemView: {
             nodeCode?: string;
             title?: string;
@@ -741,6 +886,8 @@ export interface components {
             drilledOn?: string;
             recall?: string;
             note?: string;
+            /** Format: int64 */
+            sessionId?: number;
         };
         ExtraVideoView: {
             youtubeId?: string;
@@ -1104,6 +1251,80 @@ export interface operations {
                 };
                 content: {
                     "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    timeline: {
+        parameters: {
+            query?: {
+                de?: string;
+                ate?: string;
+                limite?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DiaryTimeline"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SessionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionView"];
+                };
+            };
+        };
+    };
+    addTechnique: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechniqueRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionView"];
                 };
             };
         };
@@ -1482,6 +1703,54 @@ export interface operations {
             };
         };
     };
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionView"];
+                };
+            };
+        };
+    };
+    update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SessionPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionView"];
+                };
+            };
+        };
+    };
     streak: {
         parameters: {
             query?: never;
@@ -1758,6 +2027,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["FeedbackList"];
+                };
+            };
+        };
+    };
+    removeTechnique: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SessionView"];
                 };
             };
         };

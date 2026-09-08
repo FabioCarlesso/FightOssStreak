@@ -3,14 +3,25 @@ package dev.fos.service;
 import dev.fos.config.FosProperties;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.StreakFreezeRepository;
+import dev.fos.repo.TrainingSessionRepository;
 import dev.fos.web.dto.ActivityDtos;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Monta a visão de streak a partir do log de drills. */
+/**
+ * Monta a visão de streak a partir do que a conta registrou.
+ *
+ * <p>Desde a #114 o insumo são <b>duas</b> listas — as sessões do diário que contam como treino e
+ * os drills avulsos —, e continua sendo <b>uma</b> corrente e <b>um</b> livro-caixa (D58). Duas
+ * correntes disputando o mesmo saldo criariam a pergunta "qual delas gastou o freeze" sem resposta
+ * possível.
+ */
 @Service
 public class StreakQueryService {
 
@@ -20,6 +31,7 @@ public class StreakQueryService {
     private static final int WINDOW_DAYS = 30;
 
     private final DrillLogRepository drillLogRepository;
+    private final TrainingSessionRepository trainingSessionRepository;
     private final StreakFreezeRepository streakFreezeRepository;
     private final StreakFreezeWriter streakFreezeWriter;
     private final StreakService streakService;
@@ -28,12 +40,14 @@ public class StreakQueryService {
 
     public StreakQueryService(
             DrillLogRepository drillLogRepository,
+            TrainingSessionRepository trainingSessionRepository,
             StreakFreezeRepository streakFreezeRepository,
             StreakFreezeWriter streakFreezeWriter,
             StreakService streakService,
             FosProperties properties,
             Clock clock) {
         this.drillLogRepository = drillLogRepository;
+        this.trainingSessionRepository = trainingSessionRepository;
         this.streakFreezeRepository = streakFreezeRepository;
         this.streakFreezeWriter = streakFreezeWriter;
         this.streakService = streakService;
@@ -58,9 +72,27 @@ public class StreakQueryService {
      * seguinte, que é quando alguém tem o que ver. Quem passou dois meses fora não perde saldo
      * naquele intervalo — não havia corrente para salvar.
      */
+    /**
+     * Os dias que a corrente conta: sessão que não é {@code DESCANSO}, mais drill avulso (D58).
+     *
+     * <p>Antes da #114 era só o {@code drill_log}, e com o diário na rotina isso mostraria corrente
+     * morta para quem treinou seis dias na semana — o app mentindo sobre a rotina de quem usa, que
+     * é o oposto do que a D55 foi consertar. Drill vinculado a sessão não entra por aqui porque a
+     * sessão dele já responde por aquele dia.
+     *
+     * <p>É conjunto e não lista: o mesmo dia pode ter sessão e drill avulso, e a corrente conta
+     * dias, não registros. Duas sessões no mesmo dia também contam um dia só, pela mesma razão.
+     */
+    private List<LocalDate> diasComRegistro(Long userId) {
+        Set<LocalDate> dias =
+                new LinkedHashSet<>(trainingSessionRepository.findDistinctTrainingDates(userId));
+        dias.addAll(drillLogRepository.findDistinctStandaloneDrillDates(userId));
+        return new ArrayList<>(dias);
+    }
+
     @Transactional
     public ActivityDtos.StreakView streak(Long userId, LocalDate today) {
-        List<LocalDate> days = drillLogRepository.findDistinctDrillDates(userId);
+        List<LocalDate> days = diasComRegistro(userId);
         int budget = properties.streak().freezesPerMonth();
 
         StreakService.FrozenStreak frozen =

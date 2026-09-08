@@ -270,6 +270,7 @@ class UsageCollectionIntegrationTest {
                         null,
                         false,
                         null,
+                        null,
                         dia.atStartOfDay(ZoneOffset.UTC).toInstant()));
     }
 

@@ -8,9 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import dev.fos.model.SessionKind;
+import dev.fos.model.TrainingSession;
 import dev.fos.model.UsageDaily;
 import dev.fos.model.UsageDimension;
 import dev.fos.model.UsageEventType;
+import dev.fos.repo.TrainingSessionRepository;
 import dev.fos.repo.UsageDailyRepository;
 import dev.fos.repo.UsageEventRepository;
 import dev.fos.service.AccountService;
@@ -19,7 +22,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,13 +80,22 @@ class AdminPanelIntegrationTest {
     @Autowired private AccountService accounts;
     @Autowired private UsageDailyRepository daily;
     @Autowired private UsageEventRepository events;
+    @Autowired private TrainingSessionRepository sessoes;
+
+    /** Os ids das contas plantadas — o diário precisa de dono, e o painel não pode saber quem é. */
+    private final Map<String, Long> contas = new HashMap<>();
 
     @BeforeEach
     void limpar() {
         daily.deleteAll();
         events.deleteAll();
-        accounts.registerLogin("google", "dono", "dono@example.test", true, "Dono");
-        accounts.registerLogin("google", "ana", "ana@example.test", true, "Ana");
+        contas.put(
+                "dono",
+                accounts.registerLogin("google", "dono", "dono@example.test", true, "Dono")
+                        .getId());
+        contas.put(
+                "ana",
+                accounts.registerLogin("google", "ana", "ana@example.test", true, "Ana").getId());
     }
 
     @Test
@@ -104,6 +118,17 @@ class AdminPanelIntegrationTest {
     void theResponseNamesNobody() throws Exception {
         plantar(HOJE.minusDays(1), UsageDimension.EVENTO, UsageEventType.PAGINA.name(), 30, 9);
 
+        // Diário de treino (#114, D57): peso, sensação e os textos da sessão são dado referente à
+        // saúde. O painel lê `usage_daily` e nunca `training_session`, então plantar uma sessão
+        // aqui é a prova de que nada dela atravessa — e é o teste que quebraria no dia em que
+        // alguém resolvesse cruzar as duas tabelas para "enriquecer" o painel.
+        sessoes.save(
+                new TrainingSession(
+                        contas.get("ana"),
+                        HOJE.minusDays(1),
+                        SessionKind.AULA,
+                        Instant.parse("2026-08-26T10:00:00Z")));
+
         String corpo =
                 mockMvc.perform(get("/api/admin/painel").with(as("dono")))
                         .andExpect(status().isOk())
@@ -121,7 +146,13 @@ class AdminPanelIntegrationTest {
                 .doesNotContain("userid")
                 .doesNotContain("user_id")
                 .doesNotContain("visitkey")
-                .doesNotContain("visit_key");
+                .doesNotContain("visit_key")
+                // Os campos do diário (#114, D57): saúde não é dimensão de painel.
+                .doesNotContain("weight")
+                .doesNotContain("peso")
+                .doesNotContain("feeling")
+                .doesNotContain("learned")
+                .doesNotContain("improve");
     }
 
     @Test

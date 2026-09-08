@@ -18,7 +18,9 @@ spring:
 fos:
   # Versão do texto de disclaimer atualmente vigente. Subir quando o texto mudar
   # materialmente — isso força novo aceite (docs/06-disclaimer-responsabilidade.md).
-  disclaimer-version: '2026-08-16'
+  # Sobe quando o texto de docs/06 muda materialmente: é o que reexibe o aceite. A última subida
+  # foi o parágrafo sobre o diário de treino (#114, D57) — o app não interpreta peso nem sensação.
+  disclaimer-version: '2026-09-08'
   auth:
     # As contas de administração (D48): fila de feedback e métricas. Exige e-mail VERIFICADO —
     # pelo provedor externo ou pela confirmação do próprio app. Vazia por default: sem ela

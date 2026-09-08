@@ -11,6 +11,7 @@ import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.PasswordAccessException;
 import dev.fos.service.QuizStaleException;
 import dev.fos.service.QuizUnavailableException;
+import dev.fos.service.TrainingSessionNotFoundException;
 import dev.fos.service.UnauthenticatedException;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -182,6 +183,12 @@ class ApiExceptionHandler {
     ResponseEntity<ApiError> handleNotFound(NodeNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiError.of("node_not_found", e.getMessage()));
+    }
+
+    @ExceptionHandler(TrainingSessionNotFoundException.class)
+    ResponseEntity<ApiError> handleSessionNotFound(TrainingSessionNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiError.of("sessao_nao_encontrada", e.getMessage()));
     }
 
     @ExceptionHandler(QuizUnavailableException.class)

@@ -12,6 +12,7 @@ import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
 import dev.fos.repo.StreakFreezeRepository;
+import dev.fos.repo.TrainingSessionRepository;
 import dev.fos.repo.UsageEventRepository;
 import dev.fos.repo.UserIdentityRepository;
 import dev.fos.repo.UserProgressRepository;
@@ -52,6 +53,7 @@ public class AccountService {
     private final SrsReviewRepository reviews;
     private final DrillLogRepository drills;
     private final StreakFreezeRepository streakFreezes;
+    private final TrainingSessionRepository trainingSessions;
     private final LoginTokenRepository loginTokens;
     private final PasswordCredentialRepository credentials;
     private final QuizAttemptRepository quizAttempts;
@@ -67,6 +69,7 @@ public class AccountService {
             SrsReviewRepository reviews,
             DrillLogRepository drills,
             StreakFreezeRepository streakFreezes,
+            TrainingSessionRepository trainingSessions,
             LoginTokenRepository loginTokens,
             PasswordCredentialRepository credentials,
             QuizAttemptRepository quizAttempts,
@@ -80,6 +83,7 @@ public class AccountService {
         this.reviews = reviews;
         this.drills = drills;
         this.streakFreezes = streakFreezes;
+        this.trainingSessions = trainingSessions;
         this.loginTokens = loginTokens;
         this.credentials = credentials;
         this.quizAttempts = quizAttempts;
@@ -420,6 +424,10 @@ public class AccountService {
         loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);
+        // Depois dos drills, e não antes: é `drill_log.session_id` que aponta para cá, e inverter
+        // a ordem faria a exclusão bater na FK. O diário guarda peso e sensação — dado referente à
+        // saúde (D57, docs/11) —, então sair daqui inteiro é parte da promessa, não faxina.
+        trainingSessions.deleteByUserId(userId);
         streakFreezes.deleteByUserId(userId);
         reviews.deleteByIdUserId(userId);
         progress.deleteByIdUserId(userId);

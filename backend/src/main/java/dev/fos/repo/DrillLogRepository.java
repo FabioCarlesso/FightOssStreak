@@ -2,6 +2,7 @@ package dev.fos.repo;
 
 import dev.fos.model.DrillLog;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,34 @@ public interface DrillLogRepository extends JpaRepository<DrillLog, Long> {
     @Query(
             "select distinct d.drilledOn from DrillLog d where d.userId = :userId order by d.drilledOn desc")
     List<LocalDate> findDistinctDrillDates(@Param("userId") Long userId);
+
+    /**
+     * Datas distintas de drill <b>avulso</b> — a outra metade do insumo do streak (#114, D58).
+     *
+     * <p>Drill vinculado fica de fora porque a sessão dele já responde por aquele dia, e somar as
+     * duas listas contaria o mesmo dia duas vezes sem mudar resultado nenhum — o cálculo trabalha
+     * sobre um conjunto. O que a separação evita de verdade é o outro lado: um dia entrar pelo
+     * drill de uma sessão de {@code DESCANSO}, que por definição não é dia de treino. Vincular
+     * técnica a descanso é recusado justamente para essa combinação não existir.
+     */
+    @Query(
+            "select distinct d.drilledOn from DrillLog d"
+                    + " where d.userId = :userId and d.sessionId is null")
+    List<LocalDate> findDistinctStandaloneDrillDates(@Param("userId") Long userId);
+
+    /** Drills do período — o que a linha do tempo do diário mostra por dia (#114). */
+    List<DrillLog> findByUserIdAndDrilledOnBetweenOrderByDrilledOnDescIdDesc(
+            Long userId, LocalDate from, LocalDate to);
+
+    /** Técnicas vinculadas a uma sessão. */
+    List<DrillLog> findByUserIdAndSessionIdOrderByIdAsc(Long userId, Long sessionId);
+
+    List<DrillLog> findByUserIdAndSessionIdAndNodeId(Long userId, Long sessionId, Long nodeId);
+
+    /** Todas as técnicas vinculadas às sessões informadas, para montar a linha do tempo. */
+    List<DrillLog> findByUserIdAndSessionIdInOrderByIdAsc(Long userId, Collection<Long> sessionIds);
+
+    boolean existsByUserIdAndSessionId(Long userId, Long sessionId);
 
     List<DrillLog> findByUserIdAndNodeIdOrderByDrilledOnDesc(Long userId, Long nodeId);
 
