@@ -1,4 +1,5 @@
-import type { StreakView } from '@fos/types';
+import type { StreakHistory, StreakView } from '@fos/types';
+import { StreakHeatmap } from './StreakHeatmap.tsx';
 
 /**
  * Streak com contexto.
@@ -9,8 +10,18 @@ import type { StreakView } from '@fos/types';
  *
  * O saldo de freeze (#99) fica junto do contador, e não escondido em outra tela, porque a única
  * hora em que ele importa é a hora em que a pessoa olha a sequência e conta os dias.
+ *
+ * O heatmap (#102) entra no mesmo cartão pelo mesmo motivo, e não em seção própria: seção nova
+ * empurraria a agenda de revisão para baixo, e a agenda no topo é decisão declarada (D56c). Ele é
+ * histórico do mesmo assunto — a corrente —, então mora junto dela.
  */
-export function StreakCard({ streak }: { streak: StreakView }) {
+export function StreakCard({
+  streak,
+  historico,
+}: {
+  streak: StreakView;
+  historico?: StreakHistory | null;
+}) {
   const active = streak.activeDaysLast30 ?? 0;
   const target = streak.targetDaysLast30 ?? 12;
   const progress = Math.min(100, Math.round((active / target) * 100));
@@ -60,6 +71,8 @@ export function StreakCard({ streak }: { streak: StreakView }) {
           </p>
         )}
       </div>
+
+      {historico && <StreakHeatmap historico={historico} />}
     </section>
   );
 }

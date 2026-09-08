@@ -24,6 +24,25 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
                     + " where s.userId = :userId and s.kind <> dev.fos.model.SessionKind.DESCANSO")
     List<LocalDate> findDistinctTrainingDates(@Param("userId") Long userId);
 
+    /**
+     * Quantas sessões que contam como treino por dia, dentro do período — insumo do heatmap (#102).
+     *
+     * <p>O mesmo filtro de {@code DESCANSO} da consulta acima, e pelo mesmo motivo: o heatmap pinta
+     * <b>os dias que a corrente conta</b>. Um dia aceso aqui que não sustenta o streak seria uma
+     * segunda verdade sobre o mesmo fato, que é o que a D58 fechou.
+     *
+     * <p>Agrega no banco em vez de trazer as linhas: histórico longo é o caso que a issue pede para
+     * não degradar, e o índice {@code (user_id, trained_on)} cobre exatamente este recorte.
+     */
+    @Query(
+            "select new dev.fos.repo.DayCount(s.trainedOn, count(s)) from TrainingSession s"
+                    + " where s.userId = :userId"
+                    + " and s.kind <> dev.fos.model.SessionKind.DESCANSO"
+                    + " and s.trainedOn between :from and :to"
+                    + " group by s.trainedOn")
+    List<DayCount> countTrainingByDay(
+            @Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
     /** Linha do tempo do diário, do mais recente para o mais antigo. */
     List<TrainingSession> findByUserIdAndTrainedOnBetweenOrderByTrainedOnDescIdDesc(
             Long userId, LocalDate from, LocalDate to);

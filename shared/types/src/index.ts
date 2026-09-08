@@ -36,6 +36,15 @@ export type DueItem = Schemas['DueItemView'];
 export type DisclaimerStatus = Schemas['DisclaimerStatus'];
 
 /**
+ * Histórico de dias com registro — o heatmap da tela inicial (#102).
+ *
+ * `days` é esparso: só os dias que têm algo. Quem desenha o vazio é a grade de `@fos/domain`, a
+ * partir de `from`/`to`.
+ */
+export type StreakHistory = Schemas['StreakHistory'];
+export type StreakHistoryDay = Schemas['HistoryDay'];
+
+/**
  * Diário de treino (#114, D56/D57/D58).
  *
  * A sessão é a unidade do que aconteceu no tatame, e técnica vinculada continua sendo um drill —

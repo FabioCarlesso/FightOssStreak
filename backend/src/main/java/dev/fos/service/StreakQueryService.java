@@ -1,6 +1,7 @@
 package dev.fos.service;
 
 import dev.fos.config.FosProperties;
+import dev.fos.repo.DayCount;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.StreakFreezeRepository;
 import dev.fos.repo.TrainingSessionRepository;
@@ -10,7 +11,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,17 @@ public class StreakQueryService {
     static final int TARGET_ACTIVE_DAYS_30 = 12;
 
     private static final int WINDOW_DAYS = 30;
+
+    /** Janela padrão do heatmap: 26 semanas, ~6 meses — o teto que a issue #102 pediu. */
+    static final int HISTORY_DEFAULT_DAYS = 182;
+
+    /**
+     * Teto do período pedido.
+     *
+     * <p>Existe para o parâmetro não virar consulta arbitrária: um ano é o horizonte que qualquer
+     * grade de heatmap ainda desenha, e acima disso a resposta cresceria sem ninguém ver diferença.
+     */
+    static final int HISTORY_MAX_DAYS = 366;
 
     private final DrillLogRepository drillLogRepository;
     private final TrainingSessionRepository trainingSessionRepository;
@@ -98,6 +114,59 @@ public class StreakQueryService {
                 budget,
                 frozen.freezesRemaining(),
                 frozen.frozenDays().isEmpty() ? null : frozen.frozenDays().get(0));
+    }
+
+    /**
+     * Histórico de dias com registro para o heatmap da home (#102).
+     *
+     * <p>É <b>leitura</b>, e por isso {@code readOnly} — ao contrário de {@link #streak}, que
+     * grava. Os dias perdoados saem do livro-caixa como ele está: quem escreve nele é o cálculo do
+     * streak, e duplicar essa escrita aqui daria duas rotas gravando a mesma linha sem necessidade.
+     * Na prática isso significa que um dia recém-perdoado só aparece marcado no heatmap depois que
+     * {@code GET /api/streak} passou por ele — e é a tela que garante a ordem, pedindo o histórico
+     * depois do streak.
+     *
+     * <p>O conjunto de dias é o <b>mesmo</b> do streak, e é isso que impede uma segunda verdade
+     * (D58): sessões que não são {@code DESCANSO} mais os drills avulsos. A diferença é que aqui a
+     * contagem por dia é agregada no banco, e não em memória — histórico longo é o caso que a issue
+     * pede para não degradar, e o índice {@code (user_id, data)} das duas tabelas cobre o recorte.
+     */
+    @Transactional(readOnly = true)
+    public ActivityDtos.StreakHistory history(Long userId, LocalDate today, Integer dias) {
+        int janela =
+                dias == null ? HISTORY_DEFAULT_DAYS : Math.min(HISTORY_MAX_DAYS, Math.max(1, dias));
+        LocalDate from = today.minusDays(janela - 1L);
+
+        Map<LocalDate, Integer> registrosPorDia = new TreeMap<>();
+        for (DayCount linha : trainingSessionRepository.countTrainingByDay(userId, from, today)) {
+            registrosPorDia.merge(linha.dia(), linha.total().intValue(), Integer::sum);
+        }
+        for (DayCount linha : drillLogRepository.countStandaloneDrillsByDay(userId, from, today)) {
+            registrosPorDia.merge(linha.dia(), linha.total().intValue(), Integer::sum);
+        }
+
+        // Um dia perdoado é, por definição, dia SEM treino: se ele aparecer nos registros acima, a
+        // linha de freeze já saiu (ou vai sair) pelo caminho do streak, e quem manda é o registro.
+        Set<LocalDate> perdoados =
+                streakFreezeRepository.findCoveredDates(userId).stream()
+                        .filter(dia -> !dia.isBefore(from) && !dia.isAfter(today))
+                        .filter(dia -> !registrosPorDia.containsKey(dia))
+                        .collect(Collectors.toCollection(TreeSet::new));
+
+        List<ActivityDtos.HistoryDay> days = new ArrayList<>();
+        for (LocalDate dia : new TreeSet<>(concat(registrosPorDia.keySet(), perdoados))) {
+            days.add(
+                    new ActivityDtos.HistoryDay(
+                            dia, registrosPorDia.getOrDefault(dia, 0), perdoados.contains(dia)));
+        }
+
+        return new ActivityDtos.StreakHistory(from, today, List.copyOf(days));
+    }
+
+    private static Set<LocalDate> concat(Set<LocalDate> um, Set<LocalDate> outro) {
+        Set<LocalDate> todos = new LinkedHashSet<>(um);
+        todos.addAll(outro);
+        return todos;
     }
 
     /**

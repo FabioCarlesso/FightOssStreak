@@ -29,6 +29,21 @@ public interface DrillLogRepository extends JpaRepository<DrillLog, Long> {
                     + " where d.userId = :userId and d.sessionId is null")
     List<LocalDate> findDistinctStandaloneDrillDates(@Param("userId") Long userId);
 
+    /**
+     * Quantos drills <b>avulsos</b> por dia, dentro do período — a outra metade do heatmap (#102).
+     *
+     * <p>Mesmo recorte de {@link #findDistinctStandaloneDrillDates}: drill vinculado fica de fora
+     * porque a sessão dele já responde por aquele dia, e contá-lo aqui acenderia duas vezes o mesmo
+     * treino — inclusive o de uma sessão de {@code DESCANSO}, que não é dia de treino.
+     */
+    @Query(
+            "select new dev.fos.repo.DayCount(d.drilledOn, count(d)) from DrillLog d"
+                    + " where d.userId = :userId and d.sessionId is null"
+                    + " and d.drilledOn between :from and :to"
+                    + " group by d.drilledOn")
+    List<DayCount> countStandaloneDrillsByDay(
+            @Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
     /** Drills do período — o que a linha do tempo do diário mostra por dia (#114). */
     List<DrillLog> findByUserIdAndDrilledOnBetweenOrderByDrilledOnDescIdDesc(
             Long userId, LocalDate from, LocalDate to);

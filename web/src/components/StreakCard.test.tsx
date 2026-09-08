@@ -35,6 +35,30 @@ describe('saldo de freeze na home', () => {
     expect(screen.getByText(/um cobriu 15\/08 e a sequência seguiu/i)).toBeInTheDocument();
   });
 
+  it('sem histórico carregado o cartão aparece sozinho, sem grade vazia', () => {
+    const { container } = render(<StreakCard streak={BASE} />);
+
+    // O heatmap (#102) chega numa segunda chamada, depois do streak: enquanto ela não volta o
+    // cartão precisa renderizar inteiro, e não segurar a tela esperando a grade.
+    expect(container.querySelector('.heatmap')).toBeNull();
+    expect(screen.getByText(/4/)).toBeInTheDocument();
+  });
+
+  it('com histórico, a grade entra no mesmo cartão — a agenda não é empurrada para baixo', () => {
+    const { container } = render(
+      <StreakCard
+        streak={BASE}
+        historico={{
+          from: '2026-08-09',
+          to: '2026-08-16',
+          days: [{ day: '2026-08-16', count: 1 }],
+        }}
+      />,
+    );
+
+    expect(container.querySelector('.streak .heatmap')).not.toBeNull();
+  });
+
   it('com o perdão desligado não fala de freeze', () => {
     render(<StreakCard streak={{ ...BASE, freezesPerMonth: 0, freezesRemaining: 0 }} />);
 

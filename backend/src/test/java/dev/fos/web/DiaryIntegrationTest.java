@@ -413,6 +413,35 @@ class DiaryIntegrationTest {
         assertThat(drills.findDistinctDrillDates(SEEDED_USER_ID)).isEmpty();
     }
 
+    @Test
+    @DisplayName("o heatmap acende o mesmo conjunto de dias que a corrente conta")
+    void heatmapReadsTheSameDaysAsTheStreak() throws Exception {
+        criarSessao("{\"trainedOn\":\"2026-08-14\",\"kind\":\"ROLA\"}");
+        // DESCANSO fica no diário e NÃO conta como dia de treino (D58) — nem aqui, nem na corrente.
+        criarSessao("{\"trainedOn\":\"2026-08-15\",\"kind\":\"DESCANSO\"}");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak/historico").param("dias", "7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.days.length()").value(2))
+                .andExpect(jsonPath("$.days[0].day").value("2026-08-14"))
+                .andExpect(jsonPath("$.days[1].day").value("2026-08-16"));
+    }
+
+    @Test
+    @DisplayName("técnica vinculada não acende o dia duas vezes: quem responde pelo dia é a sessão")
+    void aLinkedTechniqueIsNotCountedTwice() throws Exception {
+        criarSessao(
+                """
+                {"trainedOn":"2026-08-16","kind":"AULA",
+                 "tecnicas":[{"nodeCode":"M0.1","recall":"OK"}]}
+                """);
+
+        mockMvc.perform(get("/api/streak/historico").param("dias", "7"))
+                .andExpect(jsonPath("$.days.length()").value(1))
+                .andExpect(jsonPath("$.days[0].count").value(1));
+    }
+
     private long criarSessao(String corpo) throws Exception {
         JsonNode resposta =
                 objectMapper.readTree(

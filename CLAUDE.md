@@ -76,7 +76,11 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     pessoa, e a D50 vale igual. O 500 carrega **identificador de correlação** no corpo e no log, e a
     mensagem da exceção fica só no log. O `@ExceptionHandler(Exception.class)` que o produz tem
     precedência sobre o resolvedor do Spring — o desvio de 4xx no começo dele é o que impede JSON
-    malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. Mexer nisso exige
+    malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. **Esse desvio cobre
+    menos do que parece**: ele só reconhece quem implementa `ErrorResponse`, e `TypeMismatchException`
+    não implementa — por isso `?dias=abc` respondia 500 nas três rotas com parâmetro tipado até a
+    #102, e hoje há handler próprio. Rota nova com parâmetro tipado exige conferir que entrada
+    inválida responde 4xx; a condição do catch-all não é garantia geral. Mexer nisso exige
     reescrever a seção de saúde de `docs/11-privacidade.md`.
 11. **O streak perdoa até dois dias por mês, e a tabela do perdão é livro-caixa, não cache**
     (D55, #99). O streak segue **derivado do `drill_log` a cada leitura** — o que
@@ -102,6 +106,13 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
     FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
     `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
+    **O heatmap da home lê o mesmo conjunto de dias** (D59, #102) — `GET /api/streak/historico`
+    agrega por dia exatamente `sessões (exceto DESCANSO) ∪ drills avulsos`, e dia perdoado é
+    *marcado* sem entrar na escala de intensidade. Um "dia ativo" próprio para a grade é a D58
+    revertida por outra porta: o app afirmaria duas coisas diferentes sobre o mesmo dia na mesma
+    tela. É rota separada porque o `StreakView` viaja dentro de todo `DrillResult`, e a tela pede o
+    histórico **depois** do streak, que é quem grava o freeze. Heatmap por nó está fora de escopo
+    pela própria issue.
 12. **O diário é a entrada, o currículo é a saída — e ele não pode criar uma segunda verdade**
     (D56/D57/D58, #114). `training_session` é a unidade do que aconteceu no tatame, e **técnica
     vinculada continua sendo um `drill_log`**, agora com `session_id` anulável: tabela paralela de

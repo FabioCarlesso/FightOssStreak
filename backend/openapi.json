@@ -857,6 +857,38 @@
         }
       }
     },
+    "/api/streak/historico": {
+      "get": {
+        "tags": [
+          "Atividade"
+        ],
+        "summary": "Dias com registro no período — insumo do heatmap da tela inicial",
+        "operationId": "streakHistory",
+        "parameters": [
+          {
+            "name": "dias",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreakHistory"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reviews/today": {
       "get": {
         "tags": [
@@ -1997,6 +2029,41 @@
             "maxLength": 2000,
             "minLength": 0,
             "type": "string"
+          }
+        }
+      },
+      "HistoryDay": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "frozen": {
+            "type": "boolean"
+          }
+        }
+      },
+      "StreakHistory": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoryDay"
+            }
           }
         }
       },

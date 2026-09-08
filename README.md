@@ -6,7 +6,7 @@ Ferramenta pessoal de revisão e retenção do que é aprendido no tatame, com m
 
 ## O que já funciona
 
-MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, **diário de treino** com vínculo opcional de técnicas, anotações pessoais por nó, streak e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real. A raiz (`/`) é a landing pública que apresenta o projeto; o app começa em `/hoje`, atrás do aceite do aviso.
+MVP web ponta a ponta: árvore de currículo com desbloqueio progressivo, detalhe do nó com conceito e quiz conceitual corrigido no servidor, registro de drill, **diário de treino** com vínculo opcional de técnicas, anotações pessoais por nó, streak com heatmap dos últimos seis meses e agenda de revisão por repetição espaçada. A tela `/progresso` mede os critérios de sucesso do MVP sobre o uso real. A raiz (`/`) é a landing pública que apresenta o projeto; o app começa em `/hoje`, atrás do aceite do aviso.
 
 | Camada | Estado |
 |---|---|

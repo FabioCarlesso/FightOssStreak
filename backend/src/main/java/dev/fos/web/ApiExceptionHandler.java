@@ -17,6 +17,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +26,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 class ApiExceptionHandler {
@@ -218,6 +220,42 @@ class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(ApiError.of("invalid_request", detail));
     }
 
+    /**
+     * Parâmetro de requisição com o tipo errado — {@code ?dias=abc} onde se espera um número.
+     *
+     * <p>Precisa de handler <b>próprio</b>, e a razão é sutil o bastante para ter custado um
+     * defeito: o desvio de 4xx do {@link #handleUnexpected} testa {@code instanceof ErrorResponse},
+     * e {@link TypeMismatchException} <b>não</b> implementa essa interface — ela desce de {@code
+     * BeansException}, não da família de erros web do Spring. JSON malformado, método HTTP errado e
+     * parâmetro faltando implementam, e por isso já eram 400; o tipo errado escapava, caía no
+     * {@code @ExceptionHandler(Exception.class)} e virava <b>500</b>.
+     *
+     * <p>E 500 aqui não era só status errado: era 5xx da própria aplicação entrando na taxa que
+     * dispara o alerta de incidente da D54. Um crawler batendo com parâmetro inválido podia mandar
+     * e-mail de "site fora do ar" — exatamente o que o desvio de 4xx existe para impedir, só que
+     * por um tipo de exceção que a condição dele não alcançava.
+     *
+     * <p>Todo {@code TypeMismatchException} desta aplicação vem de conversão de entrada da
+     * requisição (parâmetro de consulta ou variável de caminho), e por isso a família inteira é
+     * tratada como erro de quem chama, e não só a subclasse de método de controlador.
+     *
+     * <p><b>O valor recusado não volta no corpo.</b> Ele é texto de quem chamou, e devolvê-lo seria
+     * refleti-lo; a mensagem do Spring ainda por cima nomeia tipos internos do Java. Dizer qual
+     * parâmetro está errado basta para consertar a chamada.
+     */
+    @ExceptionHandler(TypeMismatchException.class)
+    ResponseEntity<ApiError> handleTypeMismatch(TypeMismatchException e) {
+        String parametro =
+                e instanceof MethodArgumentTypeMismatchException erro
+                        ? erro.getName()
+                        : e.getPropertyName();
+        String detalhe =
+                parametro == null
+                        ? "Parâmetro de requisição inválido."
+                        : "Parâmetro '" + parametro + "' inválido.";
+        return ResponseEntity.badRequest().body(ApiError.of("invalid_request", detalhe));
+    }
+
     @ExceptionHandler(CurriculumException.class)
     ResponseEntity<ApiError> handleCurriculum(CurriculumException e) {
         String correlacao = novaCorrelacao();
@@ -249,6 +287,12 @@ class ApiExceptionHandler {
      * errado e o parâmetro faltando — todos hoje 400 — passariam a ser 500. Isso não seria só uma
      * resposta errada: cada um deles entraria na taxa de erro que dispara o alerta, e o
      * monitoramento passaria a avisar sobre requisições malfeitas de quem chama.
+     *
+     * <p><b>O desvio cobre menos do que parece, e isso é armadilha.</b> Ele só reconhece quem
+     * implementa {@code ErrorResponse}; erro de cliente que não implementa passa direto e vira 500.
+     * Foi o caso do parâmetro com tipo errado, que hoje tem handler próprio ({@link
+     * #handleTypeMismatch}). Ao acrescentar rota com parâmetro tipado, confira que entrada inválida
+     * responde 4xx — a condição daqui não é uma garantia geral.
      */
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> handleUnexpected(Exception e) {

@@ -247,6 +247,99 @@ button:disabled {
   background: var(--ok);
 }
 
+/*
+ * Heatmap de streak (#102).
+ *
+ * A grade é de colunas, uma por semana, com os sete dias empilhados — a orientação do calendário
+ * de contribuições, e a única que cabe em meia tela de celular sem virar rolagem vertical.
+ *
+ * `overflow-x` no invólucro, e não na página: vinte e seis colunas passam de 320px, e sem esta
+ * caixa o cartão inteiro esticaria a home no celular (a mesma guarda do topo deste arquivo).
+ */
+.heatmap {
+  margin-top: 1rem;
+}
+
+.heatmap__scroll {
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.heatmap__months,
+.heatmap__grid {
+  display: flex;
+  gap: 3px;
+  min-width: min-content;
+}
+
+.heatmap__month {
+  width: 11px;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.heatmap__week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmap__cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--surface-2);
+}
+
+/* Dia que ainda não chegou: ocupa o lugar na coluna e não se pinta de falta. */
+.heatmap__cell--future {
+  background: transparent;
+}
+
+.heatmap__cell--0 {
+  background: var(--surface-2);
+}
+
+.heatmap__cell--1 {
+  background: rgba(76, 175, 125, 0.35);
+}
+
+.heatmap__cell--2 {
+  background: rgba(76, 175, 125, 0.65);
+}
+
+.heatmap__cell--3 {
+  background: var(--ok);
+}
+
+/*
+ * Perdoado não é falta nem treino: o contorno diz "este dia foi coberto" sem entrar na escala de
+ * intensidade, que mede treino.
+ */
+.heatmap__cell--frozen {
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1.5px #6aa9e0;
+}
+
+.heatmap__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.heatmap__scale {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
 /* Agenda */
 .due-list {
   list-style: none;

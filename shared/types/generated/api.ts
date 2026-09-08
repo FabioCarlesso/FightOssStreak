@@ -389,6 +389,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/streak/historico": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dias com registro no período — insumo do heatmap da tela inicial */
+        get: operations["streakHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/reviews/today": {
         parameters: {
             query?: never;
@@ -844,6 +861,20 @@ export interface components {
             weightKg?: number;
             learned?: string;
             improve?: string;
+        };
+        HistoryDay: {
+            /** Format: date */
+            day?: string;
+            /** Format: int32 */
+            count?: number;
+            frozen?: boolean;
+        };
+        StreakHistory: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            days?: components["schemas"]["HistoryDay"][];
         };
         DiaryDay: {
             /** Format: date */
@@ -1767,6 +1798,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["StreakView"];
+                };
+            };
+        };
+    };
+    streakHistory: {
+        parameters: {
+            query?: {
+                dias?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StreakHistory"];
                 };
             };
         };

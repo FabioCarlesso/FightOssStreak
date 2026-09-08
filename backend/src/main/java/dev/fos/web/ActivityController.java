@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,6 +45,21 @@ public class ActivityController {
     @Operation(summary = "Streak atual, recorde e dias ativos nos últimos 30")
     public ActivityDtos.StreakView streak() {
         return streakQueryService.streak(currentUser.currentUserId(), today());
+    }
+
+    /**
+     * Histórico de dias com registro — o heatmap da home (#102).
+     *
+     * <p>Rota separada de {@code /api/streak} de propósito: o {@code StreakView} viaja dentro de
+     * todo {@code DrillResult}, e pendurar seis meses de datas nele engordaria cada registro de
+     * treino com um dado que só a tela inicial lê.
+     *
+     * @param dias tamanho da janela; ausente = ~6 meses, e o serviço a limita a um ano
+     */
+    @GetMapping("/streak/historico")
+    @Operation(summary = "Dias com registro no período — insumo do heatmap da tela inicial")
+    public ActivityDtos.StreakHistory streakHistory(@RequestParam(required = false) Integer dias) {
+        return streakQueryService.history(currentUser.currentUserId(), today(), dias);
     }
 
     @GetMapping("/reviews/today")

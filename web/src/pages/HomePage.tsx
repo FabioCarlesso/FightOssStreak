@@ -17,13 +17,21 @@ import { monthRange, todayIso } from '../content/diario.ts';
  */
 export function HomePage() {
   const streak = useAsync(() => api.getStreak(), []);
+  // Depois do streak, e não em paralelo: `GET /api/streak` é quem materializa o dia perdoado em
+  // `streak_freeze` (D55), e o histórico só lê aquela tabela. Em paralelo, o primeiro carregamento
+  // depois de um dia perdido mostraria o cartão dizendo "um freeze cobriu quinta" com o heatmap
+  // marcando quinta como falta — duas afirmações diferentes sobre o mesmo dia na mesma tela.
+  const historico = useAsync(
+    () => (streak.data ? api.getStreakHistory() : Promise.resolve(null)),
+    [streak.data],
+  );
   const agenda = useAsync(() => api.getReviewsToday(), []);
   const mes = useMemo(() => monthRange(todayIso()), []);
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
 
   return (
     <div className="stack">
-      {streak.data && <StreakCard streak={streak.data} />}
+      {streak.data && <StreakCard streak={streak.data} historico={historico.data} />}
 
       <section className="card">
         <header className="card__header">
