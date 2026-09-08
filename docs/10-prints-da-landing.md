@@ -1,6 +1,6 @@
 # Prints da Landing
 
-A landing pública (`/`) mostra quatro telas do app em oito arquivos — desktop e celular de cada uma
+A landing pública (`/`) mostra cinco telas do app em dez arquivos — desktop e celular de cada uma
 — mais a imagem de prévia de link. Todos vivem em `web/public/prints/` e são gerados por
 `scripts/capturar-prints.mjs`.
 
@@ -12,7 +12,7 @@ isso que faz a recaptura nunca acontecer.
 ## Quando refazer
 
 Sempre que um PR mexer na aparência de uma destas telas: árvore (`/arvore`), detalhe do nó
-(`/no/:code`), formulário de drill ou tela inicial (`/hoje`). Vale para mudança de layout, de
+(`/no/:code`), formulário de drill, tela inicial (`/hoje`) ou diário (`/diario`). Vale para mudança de layout, de
 espaçamento e de cor — não para texto de conceito ou pergunta de quiz, que os prints não mostram.
 
 Refazer é barato (um comando), então na dúvida refaça.
@@ -27,7 +27,7 @@ Refazer é barato (um comando), então na dúvida refaça.
 > `CookieCsrfTokenRepository.withHttpOnlyFalse()` cobra) e no Chrome via `Network.setCookie` do CDP.
 > Continua valendo o que já estava escrito aqui: é caminho de operador, com login de verdade, e
 > **não** vale criar um modo que desliga o portão para capturar tela — seria porta dos fundos
-> permanente para economizar oito imagens. Sem a variável o script roda como antes e falha em `401`.
+> permanente para economizar dez imagens. Sem a variável o script roda como antes e falha em `401`.
 >
 > **Defasagem zerada na #58:** os nove arquivos foram recapturados. O cabeçalho voltou a bater com
 > o app — com o nome da conta e o botão *Sair* da #24 — nos três prints que de fato o mostram
@@ -66,20 +66,22 @@ Refazer é barato (um comando), então na dúvida refaça.
 > `ADMIN`**, e capturar com ela põe *Painel* e *Usuários* na barra de navegação — itens que a
 > maioria de quem chega pela landing nunca vai ver. Capture com a conta de aluno.
 
-> **A #114 mudou `/hoje` e a barra de navegação, e os prints ficaram defasados — a recaptura está
-> pendente.** O diário (D56) acrescentou um cartão **abaixo** da agenda em `/hoje` e um item
-> *Diário* no cabeçalho. Os arquivos afetados são três: `hoje-desktop` e `hoje-mobile` (cartão novo
-> **e** cabeçalho), `no-desktop` (só o cabeçalho, que é o único print além de `hoje-*` que o mostra)
-> e o `og.jpg`, que contém a tela `/hoje` dentro do celular do hero. `arvore-*`, `no-mobile` e
-> `drill-*` são ancorados abaixo do cabeçalho e não mudam.
+> **A #114 mudou `/hoje` e a barra de navegação, e trouxe uma tela nova — tudo recapturado.** O
+> diário (D56) acrescentou um cartão **abaixo** da agenda em `/hoje` e um item *Diário* no
+> cabeçalho, e a própria tela `/diario` entrou na landing como quinto passo. Foram refeitos:
+> `hoje-desktop` e `hoje-mobile` (cartão novo **e** cabeçalho), `no-desktop` (só o cabeçalho, que é
+> o único print além de `hoje-*` que o mostra), o `og.jpg` (contém a tela `/hoje` dentro do celular
+> do hero) e `drill-desktop`/`drill-mobile` — estes por um motivo que não existia antes: o
+> histórico do nó ganhou o link *ver o treino* quando o drill veio de uma sessão, e a semeadura
+> agora registra duas técnicas por lá. Nasceram `diario-desktop` e `diario-mobile`.
 >
-> **Por que não foram refeitos no mesmo PR**, contra a regra do `CLAUDE.md`: a recaptura exige o
-> app rodando **com login de verdade** (`FOS_PRINT_COOKIE`), e o caminho prescrito aqui —
-> `docker compose up -d db`, `scripts/seed-dev-users.mjs`, `scripts/mint-dev-login.mjs` — precisa do
-> Postgres do Compose, que o ambiente onde esta fatia foi escrita não tinha. A alternativa seria
-> capturar com o portão desligado, e este documento já diz que isso não vale: seria porta dos fundos
-> permanente para economizar três imagens. Fica registrado como pendência **desta** issue, com a
-> lista exata acima, para a recaptura ser um comando e não uma investigação.
+> `arvore-mobile` e `no-mobile` saíram com bytes diferentes e foram **restaurados**: nada nessas
+> telas mudou, e a diferença é ruído de compressão e de miniatura do YouTube. É a mesma decisão da
+> #99 — trocar bytes idênticos por bytes idênticos não é recaptura, é churn.
+>
+> **A pendência declarada na primeira fatia da #114 está paga aqui**, no mesmo PR, pelo caminho
+> prescrito nesta página: Postgres do Compose, `seed-dev-users.mjs`, `mint-dev-login.mjs` e uma
+> sessão de verdade em `FOS_PRINT_COOKIE`. O portão nunca foi desligado.
 
 ## Como refazer
 
@@ -137,7 +139,7 @@ Sai um relatório com o tamanho de cada arquivo. O script devolve 1 se algum pas
 baixe `QUALIDADE_WEBP` no topo dele e repita.
 
 Iterar em um print só: `node scripts/capturar-prints.mjs --tela=drill` (nomes: `arvore`, `no`,
-`drill`, `hoje`, `og`). Sem `--semear`, porque o banco já está semeado.
+`drill`, `hoje`, `diario`, `og`). Sem `--semear`, porque o banco já está semeado.
 
 Outras bases: `--web=`, `--api=` e `--saida=`.
 
@@ -147,7 +149,9 @@ Print de banco vazio mostra uma agenda escrita "nada vencido hoje" — o oposto 
 exibe esse print afirma. Então o script popula progresso de exemplo antes de fotografar:
 
 - conclui oito nós (M0.1–M0.5 e M1.1–M1.3) respondendo o quiz de verdade;
-- registra onze drills em **dias diferentes**, o que rende streak de 8 dias;
+- registra onze drills em **dias diferentes**, o que rende streak de 8 dias — dois deles **por dentro
+  de uma sessão do diário**, e não por fora: técnica vinculada é o mesmo `drill_log` (D56a), então
+  registrá-los assim deixa SRS, agenda e streak exatamente onde estavam;
 - deixa quatro nós vencidos hoje, com atrasos distintos, para a agenda parecer uma agenda;
 - refaz um quiz já aprovado, que é o que acende a quarta métrica de `05-mvp-web-plano.md`;
 - fixa uma anotação em M1.3, o nó fotografado, para o print do nó mostrar o bloco preenchido em vez
@@ -174,6 +178,7 @@ imagem precisa sustentar a afirmação:
 | `no-*` | conceito escrito, a anotação pessoal, vídeo incorporado e **o crédito ao canal** visível (D7) |
 | `drill-*` | as quatro opções de recall e a previsão de quando o nó volta |
 | `hoje-*` | streak e a agenda com mais de um item, com atrasos diferentes |
+| `diario-*` | uma sessão **sem** técnica nenhuma (é o que prova que rola solta cabe), uma com peso, sensação e técnica vinculada, e um drill avulso — sem os três, a seção promete um diário que o print não mostra |
 | `og.jpg` | o hero da landing em 1200×630 |
 
 Por isso o script espera por seletor (`.node-row--locked`, `.due-list__item`) em vez de esperar pelo

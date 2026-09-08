@@ -161,9 +161,9 @@ As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .
 e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
 variável de ambiente. Tabela completa no README.
 
-Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os oito prints que a página
+Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os dez prints que a página
 pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
-nó, do drill ou da tela inicial? O print correspondente precisa ser refeito no mesmo PR.
+nó, do drill, da tela inicial ou do diário? O print correspondente precisa ser refeito no mesmo PR.
 
 Testar tela autenticada em `localhost`: o app exige login e dev não tem provedor nem envio de
 e-mail configurados. `node scripts/seed-dev-users.mjs` cria `aluno@teste.local` e `dono@teste.local`

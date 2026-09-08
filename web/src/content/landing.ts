@@ -104,7 +104,7 @@ export interface Print {
 }
 
 /**
- * Os quatro prints, nomeados: o hero reaproveita o da agenda, e caminho repetido em dois lugares é
+ * Os cinco prints, nomeados: o hero reaproveita o da agenda, e caminho repetido em dois lugares é
  * caminho que um dia diverge.
  */
 export const PRINT_ARVORE: Print = {
@@ -131,6 +131,12 @@ export const PRINT_HOJE: Print = {
   alt: 'Tela inicial com o streak em dias e a agenda "Revise hoje", listando os nós vencidos e há quantos dias cada um está atrasado.',
 };
 
+export const PRINT_DIARIO: Print = {
+  desktop: '/prints/diario-desktop.webp',
+  mobile: '/prints/diario-mobile.webp',
+  alt: 'Linha do tempo do diário por dia: uma sessão de rola solta com duração e sensação, sem técnica nenhuma; o drill do mesmo dia registrado direto no nó; e a aula do dia anterior com peso anotado e as técnicas do currículo vinculadas.',
+};
+
 export interface Step {
   readonly title: string;
   readonly text: string;
@@ -138,7 +144,7 @@ export interface Step {
 }
 
 /**
- * Como funciona, em quatro passos — a espinha da página.
+ * Como funciona, em cinco passos — a espinha da página.
  *
  * Cada título é uma frase declarativa, não um rótulo: "Uma árvore, não uma playlist" já entrega o
  * argumento para quem só passa o olho, e "Currículo" não entregaria nada.
@@ -158,6 +164,14 @@ export const STEPS: readonly Step[] = [
     title: 'Registrar o treino leva um clique',
     text: 'Marcou "treinei isso hoje" e disse como foi o recall — de "não lembrei" a "saiu fácil". É esse clique que alimenta o streak e que decide quando a técnica volta.',
     print: PRINT_DRILL,
+  },
+  // O diário entra depois do registro por nó e antes da agenda, e a ordem é o argumento: é ele
+  // que recolhe o treino que o currículo não alcança, e é dele que a agenda passa a se alimentar
+  // junto (D58). Invertê-lo com a agenda quebraria o arco "registro -> revisão" que a página conta.
+  {
+    title: 'O treino inteiro cabe, não só a técnica',
+    text: 'Rola solta, físico, aula de algo que ainda nem tem nó: tudo entra no diário, e só a data é obrigatória. Marcar uma técnica do currículo é opcional — e o que você marca é o mesmo registro da tela do nó, então volta agendado.',
+    print: PRINT_DIARIO,
   },
   {
     title: 'E o app diz o que revisar hoje',
@@ -184,6 +198,10 @@ export const FEATURES: readonly Feature[] = [
   {
     title: 'A técnica volta antes de você esquecer',
     text: 'Repetição espaçada (SM-2 adaptado) reagenda cada nó a partir do seu próprio recall.',
+  },
+  {
+    title: 'O que não é técnica também fica registrado',
+    text: 'Diário por sessão: data, tipo, duração, peso e como foi — com vínculo opcional de técnicas. Dia de descanso cabe, e é o único que não conta no streak.',
   },
   {
     title: 'Dá para ver se o hábito sobreviveu',
