@@ -34,6 +34,24 @@ export type DrillResult = Schemas['DrillResult'];
 export type ReviewAgenda = Schemas['ReviewAgenda'];
 export type DueItem = Schemas['DueItemView'];
 export type DisclaimerStatus = Schemas['DisclaimerStatus'];
+
+/**
+ * Diário de treino (#114, D56/D57/D58).
+ *
+ * A sessão é a unidade do que aconteceu no tatame, e técnica vinculada continua sendo um drill —
+ * daí `TechniqueView` carregar `recall` e `note`, e não um tipo próprio de "técnica da sessão".
+ */
+export type TrainingSession = Schemas['SessionView'];
+export type TrainingSessionRequest = Schemas['SessionRequest'];
+export type TrainingSessionPatch = Schemas['SessionPatch'];
+export type SessionTechnique = Schemas['TechniqueView'];
+export type SessionTechniqueRequest = Schemas['TechniqueRequest'];
+export type DiaryDay = Schemas['DiaryDay'];
+export type DiaryTimeline = Schemas['DiaryTimeline'];
+/** `AULA | DRILL | ROLA | FISICO | DESCANSO | OUTRO`. `DESCANSO` não conta como treino (D58). */
+export type SessionKind = NonNullable<TrainingSession['kind']>;
+/** `BEM | NEUTRO | MAL`. Guardado e mostrado, nunca interpretado (D57). */
+export type Feeling = NonNullable<TrainingSession['feeling']>;
 export type DemoSession = Schemas['DemoSessionView'];
 
 export type MvpMetrics = Schemas['MvpMetrics'];

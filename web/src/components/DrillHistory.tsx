@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { DrillEntry } from '@fos/types';
 import { recallLabel } from '../content/recall.ts';
 
@@ -10,6 +11,10 @@ import { recallLabel } from '../content/recall.ts';
  *
  * Registro sem anotação continua aparecendo, só que como marca de treino: é ele que conta a
  * frequência com que a técnica foi visitada, e some-lo deixaria buracos no histórico.
+ *
+ * Quando o drill veio de uma sessão do diário (#114), a linha leva de volta a ela: o resto do que
+ * aconteceu naquele treino — a aula inteira, o que ficou faltando — mora lá, não aqui. Drill
+ * avulso não ganha link nenhum, porque não há para onde ir, e isso é estado normal.
  */
 export function DrillHistory({ entries }: { entries?: DrillEntry[] }) {
   if (!entries || entries.length === 0) {
@@ -28,6 +33,11 @@ export function DrillHistory({ entries }: { entries?: DrillEntry[] }) {
           <p className="drill-history__meta">
             <time dateTime={entry.drilledOn}>{formatDate(entry.drilledOn)}</time>
             <span className="pill">{recallLabel(entry.recall)}</span>
+            {entry.sessionId != null && (
+              <Link to={`/diario/${entry.sessionId}`} className="drill-history__session">
+                ver o treino
+              </Link>
+            )}
           </p>
           {entry.note && <p className="drill-history__note">{entry.note}</p>}
         </li>

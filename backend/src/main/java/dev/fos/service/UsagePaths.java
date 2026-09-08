@@ -33,6 +33,8 @@ public final class UsagePaths {
                     "/senha/esquecida",
                     "/hoje",
                     "/arvore",
+                    "/diario",
+                    "/diario/nova",
                     "/progresso",
                     "/conta",
                     "/feedback",
@@ -74,6 +76,12 @@ public final class UsagePaths {
         // "estes segmentos variáveis não entram".
         if (path.startsWith("/no/")) {
             return "/no/{codigo}";
+        }
+        // O id da sessão não é gravado, pela mesma regra dos demais: segmento variável não entra.
+        // Aqui ele seria só um número, e é justamente por isso que a regra precisa continuar
+        // sendo "segmento variável não entra", e não "estes segmentos variáveis não entram".
+        if (path.startsWith("/diario/")) {
+            return "/diario/{id}";
         }
         if (path.startsWith("/confirmar-email/")) {
             return "/confirmar-email/{token}";

@@ -178,6 +178,7 @@ class DemoAccessIntegrationTest {
                         "saiu limpo",
                         true,
                         CURADA_EM,
+                        null,
                         CURADA_EM_INSTANTE));
         quizAttempts.save(new QuizAttempt(modelo, m01, 100, true, CURADA_EM, CURADA_EM_INSTANTE));
         disclaimers.save(new DisclaimerAcceptance(modelo, "test-1", CURADA_EM_INSTANTE));

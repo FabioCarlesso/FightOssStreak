@@ -4,9 +4,9 @@
  *
  *   node scripts/capturar-prints.mjs --semear
  *
- * Por que existe: a landing (`web/src/pages/LandingPage.tsx`) mostra quatro telas do app, e print é
+ * Por que existe: a landing (`web/src/pages/LandingPage.tsx`) mostra cinco telas do app, e print é
  * a parte de uma página que apodrece primeiro — mudou o layout da árvore, o print virou mentira, e
- * ninguém percebe porque a imagem continua bonita. Sem um caminho reproduzível para refazer os oito
+ * ninguém percebe porque a imagem continua bonita. Sem um caminho reproduzível para refazer os dez
  * arquivos, a resposta honesta a "mexi na tela, e agora?" seria abrir o app e recortar tela a tela.
  *
  * Como funciona: sobe o Chrome em headless, fala CDP por WebSocket (nativo no Node 22, sem
@@ -43,7 +43,7 @@ const saidaPadrao = resolve(root, 'web/public/prints');
 const TETO_BYTES = 150 * 1024;
 
 /**
- * As quatro telas, na ordem em que a landing as apresenta.
+ * As cinco telas, na ordem em que a landing as apresenta.
  *
  * `esperar` é o seletor que prova que a tela chegou ao estado que a seção afirma — esperar só pelo
  * `load` fotografaria o "Carregando…" em máquina lenta. `.due-list__item` é o mais estrito de
@@ -80,6 +80,22 @@ const TELAS = [
   // destino do que se escreve no campo fotografado aqui.
   { nome: 'drill', rota: '/no/M1.3', esperar: '.drill', rolarAte: '.drill', ajuste: -160 },
   { nome: 'hoje', rota: '/hoje', esperar: '.due-list__item' },
+  // `.diary-session` e não `.diary-day`: dia com drill avulso já rende um bloco de dia, e o print
+  // existe para provar que o treino inteiro cabe — sem um cartão de sessão ele mostraria
+  // exatamente o que a landing tinha antes do diário.
+  //
+  // O celular precisa de enquadramento próprio pela mesma razão do `no`: em 390px o cartão de
+  // filtros come a tela inteira, e a sessão com peso, sensação e técnica vinculada — que é o que a
+  // seção afirma — fica abaixo do corte. Ancorar no primeiro dia resolve, e o `ajuste` negativo
+  // devolve um pedaço do cabeçalho para o print não começar no vazio.
+  {
+    nome: 'diario',
+    rota: '/diario',
+    esperar: '.diary-session',
+    porFormato: {
+      mobile: { rolarAte: '.diary-day', alinhar: 'start', ajuste: -72 },
+    },
+  },
 ];
 
 /**
@@ -128,9 +144,43 @@ const DRILLS = [
   { no: 'M1.1', diasAtras: 3, recall: 'EASY' },
   { no: 'M1.2', diasAtras: 2, recall: 'OK' },
   { no: 'M0.1', diasAtras: 2, recall: 'EASY' },
-  { no: 'M1.3', diasAtras: 1, recall: 'OK', nota: 'Cotovelo colado antes de girar — funcionou.' },
-  { no: 'M0.2', diasAtras: 1, recall: 'EASY' },
   { no: 'M0.3', diasAtras: 0, recall: 'OK' },
+];
+
+/**
+ * Sessões do diário (#114, D56).
+ *
+ * As duas técnicas de ontem **não** são drills a mais: elas saíram da lista acima e entraram aqui,
+ * porque técnica vinculada é o mesmo `drill_log` de sempre (D56a). Registrá-las pelo diário deixa o
+ * SRS, a agenda e o streak exatamente onde estavam — mesmos nós, mesmas datas, mesmo recall — e é
+ * o que faz o print do diário mostrar uma sessão de verdade em vez de uma tela de avulsos.
+ *
+ * A sessão de hoje é de propósito **sem técnica nenhuma**: é ela que sustenta a frase da landing
+ * de que rola solta cabe no registro. E o dia de hoje também tem um drill avulso (M0.3, na lista
+ * acima), então o print mostra as duas metades do diário no mesmo bloco.
+ */
+const SESSOES = [
+  {
+    diasAtras: 1,
+    kind: 'AULA',
+    durationMinutes: 90,
+    feeling: 'BEM',
+    weightKg: 78.4,
+    learned: 'Entrada de raspagem: o joelho passa antes do pé.',
+    improve: 'Perguntar como manter a pegada quando ele senta no calcanhar.',
+    tecnicas: [
+      { nodeCode: 'M1.3', recall: 'OK', note: 'Cotovelo colado antes de girar — funcionou.' },
+      { nodeCode: 'M0.2', recall: 'EASY', note: null },
+    ],
+  },
+  {
+    diasAtras: 0,
+    kind: 'ROLA',
+    durationMinutes: 60,
+    feeling: 'NEUTRO',
+    learned: 'Seis rounds. A guarda fechada aguentou os dois primeiros.',
+    tecnicas: [],
+  },
 ];
 
 /**
@@ -160,7 +210,7 @@ const dormir = (ms) => new Promise((ok) => setTimeout(ok, ms));
  * semeia por `fetch` e sobe um Chrome com perfil novo, e os dois levavam 401. O caminho que
  * `docs/10-prints-da-landing.md` já prescrevia é este — **receber** uma sessão de verdade, obtida
  * por quem opera, em vez de um modo que desliga o portão para tirar foto, que seria porta dos
- * fundos permanente para economizar oito imagens.
+ * fundos permanente para economizar dez imagens.
  *
  * O valor é o cabeçalho `Cookie` inteiro, como o navegador o manda:
  * `FOS_PRINT_COOKIE='JSESSIONID=...; XSRF-TOKEN=...'`. Sem a variável nada muda — o script segue
@@ -312,6 +362,17 @@ async function semear(api) {
     });
   }
 
+  // Depois dos drills avulsos, e não antes: as técnicas destas sessões são do mesmo nó que já
+  // apareceu acima, e o SM-2 reagenda a partir do estado anterior — fora de ordem, o intervalo
+  // sairia de um estado que ainda não existia.
+  for (const sessao of SESSOES) {
+    const { diasAtras, ...campos } = sessao;
+    await pedir(api, '/api/sessoes', {
+      method: 'POST',
+      body: JSON.stringify({ ...campos, trainedOn: hojeMenos(diasAtras) }),
+    });
+  }
+
   for (const { no, nota } of NOTAS_FIXADAS) {
     await pedir(api, `/api/nodes/${no}/note`, {
       method: 'PUT',
@@ -320,9 +381,12 @@ async function semear(api) {
   }
 
   const agenda = await pedir(api, '/api/reviews/today');
+  const tecnicasVinculadas = SESSOES.reduce((total, s) => total + s.tecnicas.length, 0);
   console.log(
-    `semeado: ${NOS_A_CONCLUIR.length} nós concluídos, ${DRILLS.length} drills, ` +
-      `${NOTAS_FIXADAS.length} anotação fixada, ${agenda.dueCount} na agenda de hoje`,
+    `semeado: ${NOS_A_CONCLUIR.length} nós concluídos, ` +
+      `${DRILLS.length + tecnicasVinculadas} drills (${tecnicasVinculadas} por sessão), ` +
+      `${SESSOES.length} sessões, ${NOTAS_FIXADAS.length} anotação fixada, ` +
+      `${agenda.dueCount} na agenda de hoje`,
   );
   if (agenda.dueCount === 0) {
     throw new Error('a agenda ficou vazia — o print de "revise hoje" sairia sem conteúdo');

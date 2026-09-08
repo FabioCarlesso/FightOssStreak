@@ -278,7 +278,8 @@ class MvpMetricsServiceTest {
     }
 
     private DrillLog drill(long nodeId, LocalDate drilledOn, boolean wasDue, LocalDate dueOn) {
-        return new DrillLog(USER, nodeId, drilledOn, Recall.OK, null, wasDue, dueOn, Instant.now());
+        return new DrillLog(
+                USER, nodeId, drilledOn, Recall.OK, null, wasDue, dueOn, null, Instant.now());
     }
 
     private QuizAttempt passed(long nodeId, LocalDate attemptedOn) {

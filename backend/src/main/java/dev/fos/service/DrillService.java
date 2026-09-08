@@ -56,6 +56,27 @@ public class DrillService {
     @Transactional
     public ActivityDtos.DrillResult log(
             Long userId, String nodeCode, ActivityDtos.DrillRequest request, LocalDate today) {
+        return log(userId, nodeCode, request, today, null);
+    }
+
+    /**
+     * O mesmo registro, agora com a sessão do diário que o originou (#114, D56).
+     *
+     * <p>Sobrecarga e não caminho novo, de propósito: técnica vinculada a uma sessão <b>é</b> o
+     * drill que já existia, com {@code session_id} preenchido. Reimplementar SM-2, {@code
+     * was_due}/{@code due_on} e a devolução de freeze da D55 do lado do diário daria ao SRS duas
+     * verdades sobre o mesmo fato, e só uma delas agendaria revisão.
+     *
+     * @param sessionId sessão de origem; {@code null} = registro avulso, que é o caminho da tela do
+     *     nó
+     */
+    @Transactional
+    public ActivityDtos.DrillResult log(
+            Long userId,
+            String nodeCode,
+            ActivityDtos.DrillRequest request,
+            LocalDate today,
+            Long sessionId) {
 
         Node node = curriculumQueryService.requireNode(nodeCode);
         LocalDate drilledOn = request.drilledOn() != null ? request.drilledOn() : today;
@@ -82,6 +103,7 @@ public class DrillService {
                         request.note(),
                         wasDue,
                         dueOn,
+                        sessionId,
                         clock.instant()));
 
         SrsReview review = reschedule(scheduled, key, request, drilledOn);

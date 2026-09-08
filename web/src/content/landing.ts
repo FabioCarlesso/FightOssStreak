@@ -104,7 +104,7 @@ export interface Print {
 }
 
 /**
- * Os quatro prints, nomeados: o hero reaproveita o da agenda, e caminho repetido em dois lugares é
+ * Os cinco prints, nomeados: o hero reaproveita o da agenda, e caminho repetido em dois lugares é
  * caminho que um dia diverge.
  */
 export const PRINT_ARVORE: Print = {
@@ -131,6 +131,12 @@ export const PRINT_HOJE: Print = {
   alt: 'Tela inicial com o streak em dias e a agenda "Revise hoje", listando os nós vencidos e há quantos dias cada um está atrasado.',
 };
 
+export const PRINT_DIARIO: Print = {
+  desktop: '/prints/diario-desktop.webp',
+  mobile: '/prints/diario-mobile.webp',
+  alt: 'Linha do tempo do diário por dia: uma sessão de rola solta com duração e sensação, sem técnica nenhuma; o drill do mesmo dia registrado direto no nó; e a aula do dia anterior com peso anotado e as técnicas do currículo vinculadas.',
+};
+
 export interface Step {
   readonly title: string;
   readonly text: string;
@@ -138,7 +144,7 @@ export interface Step {
 }
 
 /**
- * Como funciona, em quatro passos — a espinha da página.
+ * Como funciona, em cinco passos — a espinha da página.
  *
  * Cada título é uma frase declarativa, não um rótulo: "Uma árvore, não uma playlist" já entrega o
  * argumento para quem só passa o olho, e "Currículo" não entregaria nada.
@@ -158,6 +164,14 @@ export const STEPS: readonly Step[] = [
     title: 'Registrar o treino leva um clique',
     text: 'Marcou "treinei isso hoje" e disse como foi o recall — de "não lembrei" a "saiu fácil". É esse clique que alimenta o streak e que decide quando a técnica volta.',
     print: PRINT_DRILL,
+  },
+  // O diário entra depois do registro por nó e antes da agenda, e a ordem é o argumento: é ele
+  // que recolhe o treino que o currículo não alcança, e é dele que a agenda passa a se alimentar
+  // junto (D58). Invertê-lo com a agenda quebraria o arco "registro -> revisão" que a página conta.
+  {
+    title: 'O treino inteiro cabe, não só a técnica',
+    text: 'Rola solta, físico, aula de algo que ainda nem tem nó: tudo entra no diário, e só a data é obrigatória. Marcar uma técnica do currículo é opcional — e o que você marca é o mesmo registro da tela do nó, então volta agendado.',
+    print: PRINT_DIARIO,
   },
   {
     title: 'E o app diz o que revisar hoje',
@@ -184,6 +198,10 @@ export const FEATURES: readonly Feature[] = [
   {
     title: 'A técnica volta antes de você esquecer',
     text: 'Repetição espaçada (SM-2 adaptado) reagenda cada nó a partir do seu próprio recall.',
+  },
+  {
+    title: 'O que não é técnica também fica registrado',
+    text: 'Diário por sessão: data, tipo, duração, peso e como foi — com vínculo opcional de técnicas. Dia de descanso cabe, e é o único que não conta no streak.',
   },
   {
     title: 'Dá para ver se o hábito sobreviveu',
@@ -219,12 +237,19 @@ export const NAO_E: readonly Feature[] = [
     text: 'Habilidade motora se constrói drilando e rolando, com professor corrigindo. Nenhum quiz faz isso — e este aqui nem tenta.',
   },
   {
-    title: 'Não é diário de treino',
-    text: 'O registro existe para alimentar a revisão. Se a meta fosse anotar o que você fez, bastava um caderno.',
+    // A seção "Não é diário de treino" caiu com a D56 (#114), e o que entrou no lugar não é a
+    // mesma frase suavizada: o app PASSOU a ser um diário. O que continua verdadeiro — e é o que
+    // separa dele um caderno — é a segunda metade, e é ela que a linha abaixo promete.
+    title: 'Não é só um caderno',
+    text: 'O diário registra o treino inteiro, com ou sem técnica do currículo. A diferença é que o que você vinculou volta agendado — caderno nenhum faz a volta.',
   },
   {
     title: 'Não substitui a academia',
     text: 'É camada de revisão em cima da aula presencial. Sem a aula, não sobra nada para revisar.',
+  },
+  {
+    title: 'Não avalia o que você anotou',
+    text: 'Peso e sensação ficam guardados e à vista, e só. Sem meta, sem faixa saudável, sem alerta e sem orientação de corte de peso: isso é conselho, e conselho é com o seu professor e o seu médico.',
   },
   {
     title: 'Não tem conta, anúncio nem venda',

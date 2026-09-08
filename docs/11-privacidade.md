@@ -17,6 +17,7 @@ por quanto tempo.
 | E-mail | de você, no cadastro; ou do provedor, no primeiro login | identifica a conta, é o que vincula Google e senha no mesmo endereço, e é o que quem administra lê para reconhecer uma conta |
 | Data do primeiro e do último login | do próprio app | saber se a conta ainda é usada |
 | Progresso, streak, agenda de revisão, drills, anotações e os dias sem treino perdoados por freeze (#99) | do uso do app | é o produto |
+| Diário de treino: data, tipo, duração, **peso**, **sensação** e o que você escreveu sobre o treino (#114) | de você, ao registrar um treino | é a entrada do app desde a D56 — e peso e sensação são **dado referente à saúde**, com seção própria abaixo |
 | Aceite do aviso de responsabilidade, com data e versão | do uso do app | requisito de produto (`06-disclaimer-responsabilidade.md`) |
 | **Hash da sua senha**, se você criou conta com e-mail e senha | de você, no cadastro | é o que confere a senha na entrada |
 | Papel da conta (`role`), com data e id de quem o mudou | de quem administra, ou da semente `fos.auth.owner-emails` na subida | decide quem vê a administração do app (D49) |
@@ -52,7 +53,8 @@ periódica. Enquanto isso, `DELETE /api/me` continua disponível para quem confi
 
 Em *Sua conta* → **Excluir minha conta**, ou `DELETE /api/me`. Apaga, em uma transação, a conta, a
 identidade externa, o hash da senha, os links pendentes, progresso, agenda de revisão, drills,
-anotações, tentativas de quiz, os dias perdoados por freeze e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
+anotações, tentativas de quiz, os dias perdoados por freeze, **as sessões do diário — peso e sensação
+inclusive** — e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
 
 Ela entrou junto com o login, e não depois, porque a loja da Apple recusa app com login e sem
 deleção (`02-publicacao-ios-desafios.md`) — e porque manter dado de quem nunca entrou seria
@@ -63,6 +65,41 @@ indefensável.
 Enquanto a conta existir. Não há expurgo automático de conta inativa: o app é de uso pessoal e o
 volume é pequeno demais para que apagar por inatividade proteja alguém — apagaria progresso de quem
 passou dois meses lesionado, que é justamente quem mais precisa da revisão ao voltar.
+
+## Dado referente à saúde: peso e sensação (D57, #114)
+
+O diário de treino (D56) guarda dois campos que a LGPD trata em regime próprio: **peso** e
+**sensação**. São *dado referente à saúde* (art. 5º, II), e esta seção existe porque até a #114 este
+documento não usava essa palavra nenhuma vez — o app não tinha o que classificar assim.
+
+Os dois são **opcionais**, e o app funciona inteiro sem eles: sessão sem peso e sem sensação é
+sessão válida, e nada na tela cobra o preenchimento.
+
+**O que o app faz com eles: guarda e mostra.** Nada mais.
+
+- **Não interpreta.** Não há meta de peso, faixa saudável, alerta, comparação com a sessão anterior
+  nem recomendação de treinar ou descansar. Peso em esporte de luta puxa corte de peso, e sensação
+  puxa "treinar ou não"; os dois são conselho, e o FOS não aconselha (D1,
+  `06-disclaimer-responsabilidade.md`).
+- **Não correlaciona como causa.** A série pode aparecer na tela; a conclusão, não — sensação contra
+  recall em vinte sessões é superstição com gráfico.
+- **Peso é por sessão, nunca diário.** Pesar no dia do treino é o hábito real; um tracker diário
+  seria outro produto, com outra régua de risco.
+
+**Onde eles ficam, e onde não ficam.** Só na sua conta, em `training_session`. Eles **não** entram na
+coleta de uso da D50 — nem em `usage_event`, nem em `usage_daily` — e **não** aparecem no painel de
+quem administra (D52): o painel lê o agregado e nada nele identifica pessoa, muito menos o peso dela.
+Há teste que varre a resposta do painel inteira atrás desses campos e reprova o build se algum
+aparecer. Também não entram nas contagens de saúde do site (D54), que contam requisição e não pessoa.
+
+**Quem vê.** Só você. Nem quem administra o app tem tela que mostre o diário de outra conta — a
+gestão de usuários (D49) lista conta, e-mail, papel e estado de acesso, e não toca em nada disto.
+
+**Como apagar.** `DELETE /api/me` leva as sessões junto, peso e sensação inclusive, na mesma
+transação do resto. Apagar um treino específico não existe hoje: a correção é por edição, e limpar o
+campo de peso de uma sessão o remove daquela linha.
+
+Mexer em qualquer uma dessas frases é revisitar a D57 — não é ajuste de tela.
 
 ## O que falta antes de publicar em loja
 

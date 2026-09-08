@@ -11,6 +11,7 @@ import type {
   AdminUserView,
   AuthProviders,
   DemoSession,
+  DiaryTimeline,
   DisclaimerStatus,
   DrillRequest,
   DrillResult,
@@ -28,7 +29,11 @@ import type {
   QuizSubmission,
   LinkStatus,
   ReviewAgenda,
+  SessionTechniqueRequest,
   StreakView,
+  TrainingSession,
+  TrainingSessionPatch,
+  TrainingSessionRequest,
   TreeView,
   UsageEventRequest,
 } from '@fos/types';
@@ -177,6 +182,22 @@ export type PanelDays = 7 | 30 | 90;
  */
 export type HealthHours = 24 | 72 | 168;
 
+/** Recorte da linha do tempo do diário (#114). Sem nada, o backend devolve os últimos 90 dias. */
+export interface DiaryQuery {
+  readonly de?: string;
+  readonly ate?: string;
+  readonly limite?: number;
+}
+
+function diaryQuery(query: DiaryQuery): string {
+  const params = new URLSearchParams();
+  if (query.de) params.set('de', query.de);
+  if (query.ate) params.set('ate', query.ate);
+  if (query.limite != null) params.set('limite', String(query.limite));
+  const busca = params.toString();
+  return busca ? `?${busca}` : '';
+}
+
 /** Filtros da listagem de contas (#89). Todos opcionais e combináveis entre si. */
 export interface AdminUsersQuery {
   readonly status?: AccessStatus;
@@ -272,6 +293,55 @@ export function createApiClient(options: ApiClientOptions = {}) {
       }),
 
     getStreak: () => request<StreakView>('/api/streak'),
+
+    /**
+     * Linha do tempo do diário (#114, D56).
+     *
+     * Sem período, o backend devolve os últimos 90 dias. A tela filtra por mês mandando `de` e
+     * `ate`; tipo e sensação ela filtra sozinha sobre o que já tem em mãos — são recortes de uma
+     * lista pequena, e um ida-e-volta por clique de filtro seria pior que o custo de filtrar aqui.
+     */
+    getDiary: (query: DiaryQuery = {}) =>
+      request<DiaryTimeline>(`/api/sessoes${diaryQuery(query)}`),
+
+    getTrainingSession: (id: number) => request<TrainingSession>(`/api/sessoes/${id}`),
+
+    /** Registra um treino. Só a data é obrigatória — o resto se completa depois. */
+    createTrainingSession: (session: TrainingSessionRequest) =>
+      request<TrainingSession>('/api/sessoes', {
+        method: 'POST',
+        body: JSON.stringify(session),
+      }),
+
+    /**
+     * Edita os campos da sessão. As técnicas vinculadas não são tocadas — elas têm rota própria.
+     *
+     * Campo ausente volta a vazio: o formulário manda a tela inteira, e peso apagado precisa poder
+     * ser apagado.
+     */
+    updateTrainingSession: (id: number, patch: TrainingSessionPatch) =>
+      request<TrainingSession>(`/api/sessoes/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(patch),
+      }),
+
+    /**
+     * Vincula uma técnica do currículo à sessão.
+     *
+     * Vira um `drill_log` pelo mesmo caminho do registro na tela do nó: reagenda o SRS, move o
+     * progresso e devolve o freeze de um dia perdoado que acabou tendo treino (D55e).
+     */
+    addSessionTechnique: (id: number, tecnica: SessionTechniqueRequest) =>
+      request<TrainingSession>(`/api/sessoes/${id}/tecnicas`, {
+        method: 'POST',
+        body: JSON.stringify(tecnica),
+      }),
+
+    /** Desvincula a técnica. O drill permanece no histórico do nó (D34) — só perde a sessão. */
+    removeSessionTechnique: (id: number, nodeCode: string) =>
+      request<TrainingSession>(`/api/sessoes/${id}/tecnicas/${encodeURIComponent(nodeCode)}`, {
+        method: 'DELETE',
+      }),
 
     /** Critérios de sucesso do MVP medidos sobre o uso real (docs/05-mvp-web-plano.md). */
     getMvpMetrics: (days?: number) =>

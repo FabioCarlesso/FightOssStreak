@@ -102,7 +102,36 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
     FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
     `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
-12. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
+12. **O diário é a entrada, o currículo é a saída — e ele não pode criar uma segunda verdade**
+    (D56/D57/D58, #114). `training_session` é a unidade do que aconteceu no tatame, e **técnica
+    vinculada continua sendo um `drill_log`**, agora com `session_id` anulável: tabela paralela de
+    "técnica treinada" daria ao SRS duas verdades sobre o mesmo fato, e só uma delas agendaria
+    revisão. Por isso o `TrainingSessionService` **delega ao `DrillService.log`** — SM-2,
+    `was_due`/`due_on`, progresso e a devolução de freeze da D55 saem de lá, e não são
+    reimplementados. O anulável é o que dispensou backfill: drill anterior à feature aparece no
+    diário como avulso. **Só `trained_on` é obrigatório**, e isso é desenho de produto: atrito é o
+    que faz o registro não acontecer, sessão incompleta é sessão válida e não há estado de rascunho.
+    **O streak conta dia com registro** — `sessões (exceto DESCANSO) ∪ drills avulsos` —, e o
+    cálculo puro em `shared/domain`, o teto por mês e o livro-caixa `streak_freeze` ficam
+    **idênticos**: uma corrente, um livro-caixa. `DESCANSO` é o que impede o abuso trivial, e por
+    isso sessão de descanso **não recebe técnica** e sessão com técnica não vira descanso. Rebaixar
+    a agenda de revisão na home é reverter a D56c, não mexer em layout. **Peso e sensação são dado
+    referente à saúde** (LGPD art. 5º, II): guardados e mostrados, **nunca interpretados** — sem
+    meta, sem faixa, sem alerta e sem correlação apresentada como causa. Ficam só na conta, `DELETE
+    /api/me` os leva junto, e a coleta da D50 e o painel da D52 **nunca** os veem; há teste que
+    varre a resposta do painel atrás deles. Mexer nessas linhas exige reescrever a seção de saúde de
+    `docs/11-privacidade.md` e revisitar a D57. Excluir sessão inteira está fora de escopo:
+    desfazer envolveria desfazer SRS, progresso e freeze — correção é por edição. E **corrigir a
+    data leva junto o `drilled_on` das técnicas vinculadas**: o drill vinculado não entra no streak
+    pela própria data — quem responde pelo dia dele é a sessão —, então deixá-lo para trás faria o
+    `drill_log` afirmar um dia que sumiu do diário e da corrente. Não reagenda SRS: `was_due` e
+    `due_on` são o que o SM-2 decidiu quando o registro aconteceu. **Verbo novo em rota sob `/api`
+    precisa entrar na lista de CORS do `SecurityConfig`**: em produção web e API são a mesma origem
+    e a lista nunca é consultada, mas atrás do proxy do Vite o verbo ausente responde 403 `Invalid
+    CORS request` antes do `ApiExceptionHandler` — sem corpo, e sem quebrar teste de MockMvc nem de
+    jsdom. Foi o defeito do `PATCH` do diário; o `CorsMetodosTest` agora confere a lista contra os
+    verbos que os controladores declaram.
+13. **Lint e formatação são portão, não sugestão.** `npm run lint` (ESLint + Prettier) e `./mvnw spotless:check` rodam antes dos testes nos dois jobs. `npm run lint:fix` e `./mvnw spotless:apply` corrigem. Arquivo gerado fica fora do lint.
 
 ## Estrutura
 
@@ -132,9 +161,9 @@ As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .
 e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
 variável de ambiente. Tabela completa no README.
 
-Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os oito prints que a página
+Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os dez prints que a página
 pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
-nó, do drill ou da tela inicial? O print correspondente precisa ser refeito no mesmo PR.
+nó, do drill, da tela inicial ou do diário? O print correspondente precisa ser refeito no mesmo PR.
 
 Testar tela autenticada em `localhost`: o app exige login e dev não tem provedor nem envio de
 e-mail configurados. `node scripts/seed-dev-users.mjs` cria `aluno@teste.local` e `dono@teste.local`

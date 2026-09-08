@@ -11,7 +11,18 @@ O que o FOS faz é resolver o problema real de quem treina: **você aprende trê
 Essa distinção define tudo:
 - Não competimos com professor nem com academia — complementamos
 - Não precisamos de autoridade técnica para funcionar, porque o conteúdo é curadoria e organização, não instrução original
-- O diferencial contra FlowRoll/BJJ Notes (diários de treino) e contra o YouTube (conteúdo solto) é justamente a **camada de retenção estruturada**
+- O diferencial contra FlowRoll/BJJ Notes e contra o YouTube (conteúdo solto) é a **camada de retenção estruturada** em cima do registro
+
+**O FOS é um diário de treino — e o diferencial é o que ele faz com o que você escreve** (D56). Até
+a #114 esta página dizia o contrário ("não é diário: se a meta fosse anotar o que você fez, bastava
+um caderno"), e a frase descrevia um produto que o próprio autor não usa assim: o treino gera peso,
+duração, sensação, o que ficou faltando e, **às vezes**, uma técnica do currículo. Sem lugar para o
+resto, o registro não acontece — e é o registro que alimenta a revisão.
+
+A sessão de treino é a **entrada** e o currículo é a **saída**: você escreve o treino inteiro em um
+lugar só, e a técnica que você vinculou volta agendada. O caderno não faz a segunda metade, e é ela
+que continua sendo o produto. Peso e sensação são guardados e mostrados, **nunca interpretados**
+(D57): sem meta, sem alerta e sem conselho — isso seria ensinar, e a linha acima continua valendo.
 
 ## Motivação
 - Não existe hoje uma ferramenta que combine currículo estruturado em árvore + repetição espaçada + gamificação para BJJ.

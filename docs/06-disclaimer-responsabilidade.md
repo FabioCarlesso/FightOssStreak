@@ -31,6 +31,8 @@
 >
 > Consulte um médico antes de iniciar qualquer atividade física, especialmente se você tem condição pré-existente ou histórico de lesão.
 >
+> **O diário de treino registra o que você escreve, e não interpreta nada.** Peso e sensação são guardados e mostrados como você os anotou: o aplicativo não avalia se um peso é saudável, **não orienta corte de peso** e não recomenda treinar ou descansar a partir de como você diz que se sentiu. Corte de peso conduzido sem acompanhamento profissional é prática de risco. Procure médico e nutricionista para qualquer decisão sobre peso, e o seu professor para decisões sobre carga de treino.
+>
 > O autor e os colaboradores deste aplicativo **não se responsabilizam** por qualquer lesão, dano ou prejuízo decorrente do uso das informações aqui contidas. Ao usar este aplicativo, você reconhece que assume integralmente os riscos da prática.
 >
 > Os vídeos referenciados são conteúdo de terceiros, incorporados a partir do YouTube. Não somos autores desse conteúdo e não temos vínculo com seus criadores.
@@ -58,3 +60,10 @@
   pedir aceite de responsabilidade a quem talvez nunca entre não faria sentido (D36)
 - Persistir o aceite localmente (e no banco, quando houver conta) com **data e versão do texto**
 - Reexibir sempre que o texto for materialmente alterado
+
+### Histórico de versões do aceite
+
+| Versão (`fos.disclaimer-version`) | O que mudou |
+|---|---|
+| `2026-08-16` | Texto inicial |
+| `2026-09-08` | Parágrafo sobre o diário de treino (#114, D57): o app não interpreta peso nem sensação e não orienta corte de peso. Mudança material — o aceite foi reexibido |

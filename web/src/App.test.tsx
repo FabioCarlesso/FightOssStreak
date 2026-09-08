@@ -3,6 +3,7 @@ import type {
   AdminUserPage,
   AuthProviders,
   DemoSession,
+  DiaryTimeline,
   DisclaimerStatus,
   ReviewAgenda,
   StreakView,
@@ -33,6 +34,7 @@ const { apiMock } = vi.hoisted(() => ({
     acceptDisclaimer: vi.fn<(version: string) => Promise<DisclaimerStatus>>(),
     getStreak: vi.fn<() => Promise<StreakView>>(),
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
+    getDiary: vi.fn<() => Promise<DiaryTimeline>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     startDemo: vi.fn<() => Promise<DemoSession>>(),
@@ -87,6 +89,14 @@ beforeEach(() => {
     freezesRemaining: 2,
   });
   apiMock.getReviewsToday.mockResolvedValue({ today: '2026-08-18', dueCount: 0, due: [] });
+  // O bloco do diário na home (#114) fica ABAIXO da agenda, e é só um contador — mas ele chama a
+  // API, e sem este mock a home inteira estoura ao montar.
+  apiMock.getDiary.mockResolvedValue({
+    from: '2026-08-01',
+    to: '2026-08-31',
+    sessionsInMonth: 0,
+    days: [],
+  });
   apiMock.getTree.mockResolvedValue({
     modules: [],
     summary: { totalNodes: 46, completedNodes: 0, availableNodes: 1, lockedNodes: 45 },
