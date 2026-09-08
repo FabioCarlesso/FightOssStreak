@@ -15,6 +15,9 @@ React e React Native compartilham modelo mental (JSX, hooks, estado). Lógica de
 - Registro de drill ("treinei hoje") e streak, com **freeze**: até dois dias perdidos por mês de
   calendário são perdoados sem quebrar a sequência (#99, D55). Dia coberto mantém a corrente e não
   conta como dia de treino, e o saldo do mês aparece na home
+- **Heatmap** dos dias com registro na home (#102, D59): a corrente diz se está viva, o heatmap diz
+  como foram os últimos seis meses — que é o que quem quebrou e retomou precisa ver. Agregado por
+  dia e sobre o **mesmo** conjunto de dias do streak; detalhe por nó fica de fora
 - Agenda de revisão por SRS na home ("revise hoje: X, Y")
 - **Diário de treino** (#114, D56): a sessão é a unidade do que aconteceu no tatame — data, tipo,
   duração, peso, sensação, o que aprendeu e o que precisa melhorar —, com vínculo **opcional** de

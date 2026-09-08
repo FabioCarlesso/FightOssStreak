@@ -102,6 +102,13 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
     FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
     `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
+    **O heatmap da home lê o mesmo conjunto de dias** (D59, #102) — `GET /api/streak/historico`
+    agrega por dia exatamente `sessões (exceto DESCANSO) ∪ drills avulsos`, e dia perdoado é
+    *marcado* sem entrar na escala de intensidade. Um "dia ativo" próprio para a grade é a D58
+    revertida por outra porta: o app afirmaria duas coisas diferentes sobre o mesmo dia na mesma
+    tela. É rota separada porque o `StreakView` viaja dentro de todo `DrillResult`, e a tela pede o
+    histórico **depois** do streak, que é quem grava o freeze. Heatmap por nó está fora de escopo
+    pela própria issue.
 12. **O diário é a entrada, o currículo é a saída — e ele não pode criar uma segunda verdade**
     (D56/D57/D58, #114). `training_session` é a unidade do que aconteceu no tatame, e **técnica
     vinculada continua sendo um `drill_log`**, agora com `session_id` anulável: tabela paralela de

@@ -30,6 +30,7 @@ import type {
   LinkStatus,
   ReviewAgenda,
   SessionTechniqueRequest,
+  StreakHistory,
   StreakView,
   TrainingSession,
   TrainingSessionPatch,
@@ -293,6 +294,17 @@ export function createApiClient(options: ApiClientOptions = {}) {
       }),
 
     getStreak: () => request<StreakView>('/api/streak'),
+
+    /**
+     * Histórico de dias com registro para o heatmap (#102).
+     *
+     * Chamada separada do streak de propósito: o `StreakView` viaja dentro de todo `DrillResult`, e
+     * seis meses de datas dentro dele engordariam cada registro de treino por causa de uma tela só.
+     */
+    getStreakHistory: (dias?: number) =>
+      request<StreakHistory>(
+        dias === undefined ? '/api/streak/historico' : `/api/streak/historico?dias=${dias}`,
+      ),
 
     /**
      * Linha do tempo do diário (#114, D56).

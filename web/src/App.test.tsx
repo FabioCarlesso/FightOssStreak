@@ -6,6 +6,7 @@ import type {
   DiaryTimeline,
   DisclaimerStatus,
   ReviewAgenda,
+  StreakHistory,
   StreakView,
   TreeView,
   UsageEventRequest,
@@ -33,6 +34,7 @@ const { apiMock } = vi.hoisted(() => ({
     getDisclaimer: vi.fn<() => Promise<DisclaimerStatus>>(),
     acceptDisclaimer: vi.fn<(version: string) => Promise<DisclaimerStatus>>(),
     getStreak: vi.fn<() => Promise<StreakView>>(),
+    getStreakHistory: vi.fn<() => Promise<StreakHistory>>(),
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
     getDiary: vi.fn<() => Promise<DiaryTimeline>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
@@ -88,6 +90,10 @@ beforeEach(() => {
     freezesPerMonth: 2,
     freezesRemaining: 2,
   });
+
+  // O heatmap (#102) vive dentro do cartão de streak e faz a própria chamada; sem este mock a
+  // home estoura ao montar, do mesmo jeito que estourava sem o do diário.
+  apiMock.getStreakHistory.mockResolvedValue({ from: '2026-07-19', to: '2026-08-16', days: [] });
   apiMock.getReviewsToday.mockResolvedValue({ today: '2026-08-18', dueCount: 0, due: [] });
   // O bloco do diário na home (#114) fica ABAIXO da agenda, e é só um contador — mas ele chama a
   // API, e sem este mock a home inteira estoura ao montar.

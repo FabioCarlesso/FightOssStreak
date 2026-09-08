@@ -14,6 +14,9 @@ export {
 } from './streak.ts';
 export type { FrozenStreak, IsoDate } from './streak.ts';
 
+export { buildStreakHeatmap, heatLevel, weekdayOf } from './heatmap.ts';
+export type { ActivityDay, Heatmap, HeatmapCell, HeatLevel } from './heatmap.ts';
+
 export {
   initialSchedule,
   review,

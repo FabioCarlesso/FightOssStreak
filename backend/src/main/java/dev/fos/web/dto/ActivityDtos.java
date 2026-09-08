@@ -36,6 +36,33 @@ public final class ActivityDtos {
             LocalDate lastFrozenOn) {}
 
     /**
+     * Histórico de dias com registro, para o heatmap da home (#102).
+     *
+     * <p>Devolve <b>só os dias que têm algo</b>, e não o período inteiro: a grade é desenhada pela
+     * tela a partir de {@code from}/{@code to}, e mandar cento e oitenta linhas para acender vinte
+     * seria carregar o vazio pela rede. O período é fechado nas duas pontas e {@code to} é sempre
+     * hoje — dia que ainda não chegou não é dia sem treino.
+     *
+     * @param days em ordem crescente de data, sem buracos representados
+     */
+    public record StreakHistory(LocalDate from, LocalDate to, List<HistoryDay> days) {}
+
+    /**
+     * Um dia do heatmap.
+     *
+     * <p>O conjunto é <b>o mesmo</b> que a corrente conta (D58): sessões que não são {@code
+     * DESCANSO} mais os drills avulsos. Não há segunda regra de "dia ativo" — se houvesse, o
+     * heatmap poderia acender um dia que o streak ignora, e o app passaria a afirmar duas coisas
+     * diferentes sobre o mesmo dia na mesma tela.
+     *
+     * @param count quantos registros naquele dia; é o que vira intensidade na tela, e nunca é zero
+     *     em dia com treino
+     * @param frozen dia <b>sem</b> treino que um freeze perdoou (D55). Nunca vem com {@code count >
+     *     0}: uma linha em {@code streak_freeze} significa sempre dia sem treino
+     */
+    public record HistoryDay(LocalDate day, int count, boolean frozen) {}
+
+    /**
      * @param drilledOn data do treino; ausente = hoje. Permite registrar o treino de ontem sem
      *     falsear a data, que é o que aconteceria se o registro fosse só "agora".
      */

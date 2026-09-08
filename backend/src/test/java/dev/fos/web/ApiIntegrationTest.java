@@ -432,6 +432,81 @@ class ApiIntegrationTest {
     }
 
     @Test
+    @DisplayName("o heatmap devolve os dias com registro, com a lacuna preservada")
+    void heatmapReturnsRawActiveDays() throws Exception {
+        completeNode("M0.1");
+        // Corrente quebrada e retomada: sem saldo para tanto buraco, o streak atual vale pouco —
+        // e é exatamente por isso que o heatmap existe. Ele é histórico bruto, não a corrente.
+        for (String dia : List.of("2026-07-20", "2026-07-21", "2026-08-15", "2026-08-16")) {
+            drillOn("M0.1", dia);
+        }
+
+        mockMvc.perform(get("/api/streak/historico"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.to").value("2026-08-16"))
+                .andExpect(jsonPath("$.from").value("2026-02-16"))
+                // Só os dias com algo: o vazio é a grade que a tela desenha, não linha na resposta.
+                .andExpect(jsonPath("$.days.length()").value(4))
+                .andExpect(jsonPath("$.days[0].day").value("2026-07-20"))
+                .andExpect(jsonPath("$.days[0].count").value(1))
+                .andExpect(jsonPath("$.days[0].frozen").value(false))
+                .andExpect(jsonPath("$.days[3].day").value("2026-08-16"));
+    }
+
+    @Test
+    @DisplayName("a janela do heatmap é recortada pelo parâmetro e limitada a um ano")
+    void heatmapWindowIsBounded() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-07-20");
+        drillOn("M0.1", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak/historico").param("dias", "7"))
+                .andExpect(jsonPath("$.from").value("2026-08-10"))
+                .andExpect(jsonPath("$.days.length()").value(1))
+                .andExpect(jsonPath("$.days[0].day").value("2026-08-16"));
+
+        // Pedido absurdo não vira consulta absurda: o serviço corta em um ano.
+        mockMvc.perform(get("/api/streak/historico").param("dias", "99999"))
+                .andExpect(jsonPath("$.from").value("2025-08-16"));
+    }
+
+    @Test
+    @DisplayName("dia perdoado por freeze aparece marcado, sem virar dia de treino")
+    void heatmapMarksForgivenDays() throws Exception {
+        completeNode("M0.1");
+        drillOn("M0.1", "2026-08-14");
+        drillOn("M0.1", "2026-08-16");
+
+        // Quem grava o perdão é o cálculo do streak (`GET /api/streak`); o heatmap só lê o
+        // livro-caixa. A linha é semeada direto porque o `StreakFreezeWriter` grava em transação
+        // PRÓPRIA: pela rota ela sobreviveria ao rollback da classe, e o `deleteAll()` do
+        // `prepare()` a apagaria apenas dentro desta transação — o teste passaria sozinho e
+        // falharia depois de um vizinho que perdoou o mesmo dia.
+        streakFreezeRepository.inserirSeAusente(
+                SEEDED_USER_ID, LocalDate.of(2026, 8, 15), Instant.parse("2026-08-16T10:00:00Z"));
+
+        mockMvc.perform(get("/api/streak/historico"))
+                .andExpect(jsonPath("$.days.length()").value(3))
+                .andExpect(jsonPath("$.days[1].day").value("2026-08-15"))
+                .andExpect(jsonPath("$.days[1].frozen").value(true))
+                // Dia coberto mantém a corrente e NÃO conta como dia de treino (D55).
+                .andExpect(jsonPath("$.days[1].count").value(0));
+    }
+
+    @Test
+    @DisplayName("dois registros no mesmo dia viram intensidade, não dois dias")
+    void heatmapCountsRecordsPerDay() throws Exception {
+        completeNode("M0.1");
+        completeNode("M0.2");
+        drillOn("M0.1", "2026-08-16");
+        drillOn("M0.2", "2026-08-16");
+
+        mockMvc.perform(get("/api/streak/historico"))
+                .andExpect(jsonPath("$.days.length()").value(1))
+                .andExpect(jsonPath("$.days[0].count").value(2));
+    }
+
+    @Test
     @DisplayName("um nó vencido aparece na agenda de hoje")
     void overdueNodeAppearsInAgenda() throws Exception {
         completeNode("M0.1");

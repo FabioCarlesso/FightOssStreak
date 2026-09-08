@@ -83,6 +83,18 @@ Refazer é barato (um comando), então na dúvida refaça.
 > prescrito nesta página: Postgres do Compose, `seed-dev-users.mjs`, `mint-dev-login.mjs` e uma
 > sessão de verdade em `FOS_PRINT_COOKIE`. O portão nunca foi desligado.
 
+> **A #102 acrescentou o heatmap ao cartão de streak, e por isso mexeu em três arquivos.** A grade
+> de seis meses (D59) aparece em `/hoje`, então `hoje-desktop` e `hoje-mobile` foram refeitos — e o
+> `og.jpg` junto, pelo motivo de sempre: a prévia de link **contém a tela `/hoje`** dentro do
+> celular do hero. `arvore-mobile` e `no-mobile` saíram com bytes diferentes e foram
+> **restaurados**, pela mesma régua da #114: nada nessas telas mudou, e trocar bytes por bytes não
+> é recaptura.
+>
+> **A recaptura pegou um defeito que teste nenhum pegaria, e é a razão de esta página existir.** No
+> celular a grade abria rolada no passado remoto — meio ano de células vazias — e a semana com
+> treino ficava fora da tela, à direita. O print saiu literalmente em branco. O conserto está no
+> componente (o invólucro abre rolado até o fim), e sem refazer o print ninguém teria olhado.
+
 ## Como refazer
 
 Precisa de `google-chrome` no PATH — o script fala CDP com ele por WebSocket, sem Playwright nem
