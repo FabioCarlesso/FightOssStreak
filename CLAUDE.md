@@ -76,7 +76,11 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     pessoa, e a D50 vale igual. O 500 carrega **identificador de correlação** no corpo e no log, e a
     mensagem da exceção fica só no log. O `@ExceptionHandler(Exception.class)` que o produz tem
     precedência sobre o resolvedor do Spring — o desvio de 4xx no começo dele é o que impede JSON
-    malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. Mexer nisso exige
+    malformado de virar 500 e, pior, de entrar na taxa que dispara o alerta. **Esse desvio cobre
+    menos do que parece**: ele só reconhece quem implementa `ErrorResponse`, e `TypeMismatchException`
+    não implementa — por isso `?dias=abc` respondia 500 nas três rotas com parâmetro tipado até a
+    #102, e hoje há handler próprio. Rota nova com parâmetro tipado exige conferir que entrada
+    inválida responde 4xx; a condição do catch-all não é garantia geral. Mexer nisso exige
     reescrever a seção de saúde de `docs/11-privacidade.md`.
 11. **O streak perdoa até dois dias por mês, e a tabela do perdão é livro-caixa, não cache**
     (D55, #99). O streak segue **derivado do `drill_log` a cada leitura** — o que

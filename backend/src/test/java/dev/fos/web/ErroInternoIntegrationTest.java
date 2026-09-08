@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import dev.fos.service.AccountService;
+import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +38,11 @@ import org.springframework.web.bind.annotation.RestController;
  * malformado e o método HTTP errado — hoje 400 e 405 — virariam 500. Isso não seria só resposta
  * errada: cada um deles entraria na taxa de erro que dispara o alerta desta mesma issue, e o
  * monitoramento passaria a avisar sobre requisição malfeita de quem chama.
+ *
+ * <p>O <b>parâmetro com tipo errado</b> entrou aqui na #102 porque de fato escapou: o desvio de 4xx
+ * reconhece quem implementa {@code ErrorResponse}, e {@code TypeMismatchException} não implementa.
+ * As três rotas com parâmetro tipado respondiam 500 a {@code ?dias=abc}. É o mesmo risco desta
+ * classe, e por isso mora nela — não junto da feature que o revelou.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -102,6 +108,42 @@ class ErroInternoIntegrationTest {
         mockMvc.perform(post("/api/teste/explode").with(as("ana")).with(csrf()))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.correlationId").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("parâmetro com tipo errado é 400, e não incidente — nas três rotas que o aceitam")
+    void aTypeMismatchIsAClientError() throws Exception {
+        // O defeito que este teste fecha: `TypeMismatchException` não implementa `ErrorResponse`,
+        // então escapava do desvio de 4xx do catch-all e virava 500 — 5xx da própria aplicação
+        // entrando na taxa que dispara o alerta de incidente da D54. Um crawler com `?dias=abc`
+        // podia gerar e-mail de "site fora do ar".
+        for (String rota :
+                List.of(
+                        "/api/streak/historico?dias=abc",
+                        "/api/sessoes?limite=abc",
+                        "/api/sessoes?de=naoehdata")) {
+            mockMvc.perform(get(rota).with(as("ana")))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value("invalid_request"))
+                    // Sem identificador: 400 é resposta esperada, e correlação só existe no 500.
+                    .andExpect(jsonPath("$.correlationId").doesNotExist());
+        }
+    }
+
+    @Test
+    @DisplayName("o 400 diz qual parâmetro está errado, sem devolver o valor recusado")
+    void theBadRequestNamesTheParameterWithoutEchoingTheValue() throws Exception {
+        mockMvc.perform(get("/api/streak/historico?dias=<script>").with(as("ana")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(Matchers.containsString("dias")))
+                // O valor é texto de quem chamou: devolvê-lo seria refleti-lo. E a mensagem do
+                // Spring ainda nomearia `java.lang.Integer`, que não é assunto de quem chama.
+                .andExpect(
+                        jsonPath("$.message")
+                                .value(Matchers.not(Matchers.containsString("script"))))
+                .andExpect(
+                        jsonPath("$.message")
+                                .value(Matchers.not(Matchers.containsString("java.lang"))));
     }
 
     /** Sessão do par (provedor, subject) — o mesmo que o {@code CurrentUserProvider} lê. */
