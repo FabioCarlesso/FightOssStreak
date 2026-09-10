@@ -82,7 +82,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Imagem do web builda
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           # Contexto é a RAIZ, não web/. `docker build web/` passa a impressão de funcionar até
           # falhar na resolução dos imports dos workspaces.
