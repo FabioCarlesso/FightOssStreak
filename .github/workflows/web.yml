@@ -33,7 +33,7 @@ jobs:
   web:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Primeiro passo do job, antes de qualquer instalação: falha em segundos e não custa nada.
       # Renomear um job de CI derruba a proteção de `main` em silêncio, porque o contexto do
