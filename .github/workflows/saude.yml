@@ -83,7 +83,7 @@ jobs:
 
       - name: Abrir ou atualizar a issue de incidente
         if: steps.verificacao.outputs.estado == 'fora'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           CODIGO: ${{ steps.verificacao.outputs.codigo }}
           TEMPO: ${{ steps.verificacao.outputs.tempo }}
@@ -162,7 +162,7 @@ jobs:
 
       - name: Fechar a issue quando o site voltar
         if: steps.verificacao.outputs.estado == 'no-ar'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           TEMPO: ${{ steps.verificacao.outputs.tempo }}
         with:

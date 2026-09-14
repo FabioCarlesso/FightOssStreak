@@ -44,7 +44,7 @@ jobs:
 
       - name: Abrir ou atualizar a issue de aviso
         if: steps.verificacao.outputs.codigo == '1'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -114,7 +114,7 @@ jobs:
 
       - name: Fechar a issue quando todos voltarem
         if: steps.verificacao.outputs.codigo == '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const MARCADOR = '<!-- fos:videos-indisponiveis -->';
