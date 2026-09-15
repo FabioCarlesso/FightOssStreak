@@ -265,8 +265,14 @@ Detalhes que não são óbvios:
   celular — o cookie é descartado e **não há sessão**: o login não completa e toda chamada responde
   401. O 301 da borda não substitui o flag: o redirecionamento
   é uma **resposta**, e a requisição que o provoca já viajou em texto claro com o cookie anexado.
-  Como a variável e o código entram por caminhos diferentes, confira depois do deploy — com sessão
-  nova, porque as abertas antes seguem com o cookie antigo até vencerem:
+  **Esquecer a variável não é silencioso**, e é o mesmo remédio do `FOS_PROXY_TRUSTED_HOPS`: quando
+  a requisição chega por `https` e o cookie está declarado sem `Secure`, o backend escreve um `WARN`
+  nomeando `FOS_COOKIE_SECURE` — uma vez por hora, sem endereço, sem rota e sem identificador de
+  sessão. O aviso **não manda ligar de olhos fechados**: o esquema vem do `X-Forwarded-Proto`, que
+  atravessa o nginx vindo de quem chama quando ninguém na frente o saneia, e ligar o flag onde não
+  há TLS de verdade derruba a sessão de todo host que não seja `localhost`. Confirme e então
+  confira depois do deploy — com sessão nova, porque as abertas antes seguem com o cookie antigo
+  até vencerem:
 
   ```bash
   curl -sS -D- -o /dev/null https://fos.fabiocarlesso.com/api/oauth2/authorization/google | grep -i set-cookie
