@@ -70,6 +70,58 @@ class CookieSecureTopologyTest {
     }
 
     @Test
+    @DisplayName("http com o flag ligado avisa também — e é o lado em que o app não funciona")
+    void plainHttpWithTheFlagOnWarnsToo() {
+        // O contrário do defeito da #74, e com sintoma pior: o navegador descarta o cookie em todo
+        // host que não seja localhost, então não há sessão. Sem este aviso, o log fica mudo
+        // justamente quando o app parou de funcionar.
+        topology(true).observe(false);
+
+        assertThat(mensagens())
+                .singleElement()
+                .asString()
+                .contains("FOS_COOKIE_SECURE")
+                .contains("401");
+    }
+
+    @Test
+    @DisplayName("o aviso do lado http também não manda mexer de olhos fechados")
+    void theHttpSideWarningDoesNotTellTheReaderToFlipItBlindly() {
+        // O esquema observado é afirmação de quem está na frente, não fato: desligar o flag por
+        // causa de uma requisição que não passou pela borda seria desfazer o conserto da #74.
+        topology(true).observe(false);
+
+        assertThat(mensagens())
+                .singleElement()
+                .asString()
+                .contains("Se este ambiente não tem TLS")
+                .contains("X-Forwarded-Proto");
+    }
+
+    @Test
+    @DisplayName("os dois lados dizem o que fazer com a variável, e dizem coisas diferentes")
+    void eachSideNamesTheValueThatFixesIt() {
+        topology(false).observe(true);
+        assertThat(mensagens()).singleElement().asString().contains("FOS_COOKIE_SECURE=true");
+
+        avisos.list.clear();
+        topology(true).observe(false);
+        assertThat(mensagens()).singleElement().asString().contains("FOS_COOKIE_SECURE=false");
+    }
+
+    @Test
+    @DisplayName("http com o flag ligado não repete a cada requisição")
+    void theHttpSideMismatchDoesNotRepeatOnEveryRequest() {
+        CookieSecureTopology topology = topology(true);
+
+        for (int i = 0; i < 50; i++) {
+            topology.observe(false);
+        }
+
+        assertThat(mensagens()).hasSize(1);
+    }
+
+    @Test
     @DisplayName("produção configurada não escreve nada: deploy correto tem log limpo")
     void aMatchingProductionStaysSilent() {
         CookieSecureTopology topology = topology(true);

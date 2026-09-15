@@ -74,6 +74,18 @@ class HttpStatFilterCookieTest {
         assertThat(mensagens()).isEmpty();
     }
 
+    @Test
+    @DisplayName("requisição http com o flag ligado avisa pelo outro lado, também pelo filtro")
+    void theInverseMismatchAlsoReachesTheFilter() throws Exception {
+        // O lado em que o app não funciona precisa chegar ao log pelo mesmo caminho — senão o
+        // aviso existe na classe e não existe na aplicação.
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/me");
+
+        filtro(true).doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
+
+        assertThat(mensagens()).singleElement().asString().contains("FOS_COOKIE_SECURE");
+    }
+
     private List<String> mensagens() {
         return avisos.list.stream()
                 .filter(evento -> evento.getLevel() == Level.WARN)

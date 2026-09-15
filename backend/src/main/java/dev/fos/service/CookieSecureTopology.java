@@ -21,17 +21,25 @@ import org.springframework.stereotype.Component;
  * fazê-lo.
  *
  * <p><b>O que ele observa.</b> {@code isSecure()} lido depois do {@code ForwardedHeaderFilter}, ou
- * seja, o {@code X-Forwarded-Proto} que a borda encaminhou. Requisição em {@code https} com o
- * cookie declarado sem {@code Secure} é a divergência; {@code http} com {@code false} é dev e o
- * Compose, e não escreve nada — deploy correto tem log limpo, dos dois lados.
+ * seja, o {@code X-Forwarded-Proto} que a borda encaminhou. Configuração batendo com o tráfego —
+ * {@code https} com o flag ligado, {@code http} com ele desligado — não escreve nada: deploy
+ * correto tem log limpo.
  *
- * <p><b>O que ele não faz.</b> Não liga o flag sozinho e não recusa a subida: aviso, não portão. E
- * <b>não manda ligar de olhos fechados</b>, porque o {@code X-Forwarded-Proto} atravessa o nginx
- * vindo de quem chama quando ninguém na frente o sanear (o {@code map} do {@code
- * nginx.conf.template} só usa {@code $scheme} quando o header chega vazio). Ligar {@code Secure}
- * onde o TLS não é real tem preço medido: o navegador guarda cookie {@code Secure} em {@code
- * localhost} — que ele trata como origem confiável — mas descarta em qualquer outro host {@code
- * http}, e ali o login não completa e toda chamada responde 401.
+ * <p><b>As duas divergências, e por que nenhuma pode ficar de fora.</b> {@code https} com o cookie
+ * <b>sem</b> {@code Secure} é o defeito que abriu a #74: o cookie viaja em texto claro em qualquer
+ * navegação {@code http} até a borda redirecionar, e o app funciona — ninguém percebe. {@code http}
+ * com o cookie declarado <b>com</b> {@code Secure} é o contrário, e o sintoma é pior: o navegador
+ * guarda cookie {@code Secure} em {@code localhost} — que ele trata como origem confiável — mas
+ * <b>descarta em qualquer outro host</b>, e ali o login não completa e toda chamada responde 401. O
+ * app simplesmente não funciona, e sem este aviso o log não diria por quê. É o estado de quem ligou
+ * o flag por engano — ou de quem obedeceu ao primeiro aviso num ambiente onde o {@code
+ * X-Forwarded-Proto} chegou forjado.
+ *
+ * <p><b>O que ele não faz.</b> Não liga nem desliga o flag sozinho, e não recusa a subida: aviso,
+ * não portão. E <b>não manda mexer de olhos fechados</b>, porque o {@code X-Forwarded-Proto}
+ * atravessa o nginx vindo de quem chama quando ninguém na frente o sanear (o {@code map} do {@code
+ * nginx.conf.template} só usa {@code $scheme} quando o header chega vazio). Os dois textos pedem a
+ * mesma conferência: o esquema observado é afirmação de quem está na frente, não fato.
  *
  * <p><b>Privacidade.</b> O aviso carrega o nome de uma variável de ambiente e mais nada. Nenhum
  * endereço, nenhuma rota, nenhum identificador de sessão — a promessa de {@code
@@ -69,27 +77,38 @@ public class CookieSecureTopology {
     }
 
     /**
-     * Confere o esquema que chegou contra o flag declarado e avisa quando há TLS na borda e o
-     * cookie de sessão sai sem {@code Secure}.
+     * Confere o esquema que chegou contra o flag declarado e avisa quando os dois não batem, em
+     * qualquer das duas direções.
      *
      * @param tlsNaBorda o {@code isSecure()} da requisição, já embrulhada pelo {@code
      *     ForwardedHeaderFilter}
      */
     public void observe(boolean tlsNaBorda) {
-        if (!tlsNaBorda || declarado) {
+        if (tlsNaBorda == declarado) {
             return;
         }
         if (!deveAvisar()) {
             return;
         }
+        if (tlsNaBorda) {
+            log.warn(
+                    "A requisição chegou por https e o cookie de sessão está declarado sem Secure:"
+                            + " ele viaja em texto claro em qualquer navegação http até a borda"
+                            + " redirecionar — e o redirecionamento é a resposta, quando o cookie já"
+                            + " foi. Quem conserta é {}=true. Confirme antes que o TLS é seu: este"
+                            + " esquema vem do X-Forwarded-Proto, que atravessa o proxy vindo de quem"
+                            + " chama quando ninguém na frente o saneia, e ligar o flag onde não há"
+                            + " TLS de verdade derruba a sessão de todo host que não seja localhost",
+                    VARIAVEL);
+            return;
+        }
         log.warn(
-                "A requisição chegou por https e o cookie de sessão está declarado sem Secure:"
-                        + " ele viaja em texto claro em qualquer navegação http até a borda"
-                        + " redirecionar — e o redirecionamento é a resposta, quando o cookie já"
-                        + " foi. Quem conserta é {}. Confirme antes que o TLS é seu: este esquema"
-                        + " vem do X-Forwarded-Proto, que atravessa o proxy vindo de quem chama"
-                        + " quando ninguém na frente o saneia, e ligar o flag onde não há TLS de"
-                        + " verdade derruba a sessão de todo host que não seja localhost",
+                "A requisição chegou por http e o cookie de sessão está declarado com Secure: o"
+                        + " navegador descarta esse cookie em todo host que não seja localhost, e"
+                        + " ali não há sessão nenhuma — o login não completa e toda chamada responde"
+                        + " 401. Se este ambiente não tem TLS na borda, quem conserta é {}=false. Se"
+                        + " tem, esta requisição não passou por ela: o esquema vem do"
+                        + " X-Forwarded-Proto, e quem está na frente é que responde por ele",
                 VARIAVEL);
     }
 

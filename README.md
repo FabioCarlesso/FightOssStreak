@@ -265,14 +265,17 @@ Detalhes que não são óbvios:
   celular — o cookie é descartado e **não há sessão**: o login não completa e toda chamada responde
   401. O 301 da borda não substitui o flag: o redirecionamento
   é uma **resposta**, e a requisição que o provoca já viajou em texto claro com o cookie anexado.
-  **Esquecer a variável não é silencioso**, e é o mesmo remédio do `FOS_PROXY_TRUSTED_HOPS`: quando
-  a requisição chega por `https` e o cookie está declarado sem `Secure`, o backend escreve um `WARN`
-  nomeando `FOS_COOKIE_SECURE` — uma vez por hora, sem endereço, sem rota e sem identificador de
-  sessão. O aviso **não manda ligar de olhos fechados**: o esquema vem do `X-Forwarded-Proto`, que
-  atravessa o nginx vindo de quem chama quando ninguém na frente o saneia, e ligar o flag onde não
-  há TLS de verdade derruba a sessão de todo host que não seja `localhost`. Confirme e então
-  confira depois do deploy — com sessão nova, porque as abertas antes seguem com o cookie antigo
-  até vencerem:
+  **Errar a variável não é silencioso, nos dois sentidos**, e é o mesmo remédio do
+  `FOS_PROXY_TRUSTED_HOPS`: quando o flag declarado não bate com o esquema pelo qual a requisição
+  chegou, o backend escreve um `WARN` nomeando `FOS_COOKIE_SECURE` — uma vez por hora, sem endereço,
+  sem rota e sem identificador de sessão. `https` com o cookie sem `Secure` é o defeito que a #74
+  consertou: o cookie viaja desprotegido e **o app funciona**, então ninguém percebe. `http` com o
+  flag ligado é o contrário, e o sintoma é pior: o navegador descarta o cookie em todo host que não
+  seja `localhost`, o login não completa e toda chamada responde 401 — o app **não** funciona.
+  Nenhum dos dois avisos manda mexer de olhos fechados: o esquema vem do `X-Forwarded-Proto`, que
+  atravessa o nginx vindo de quem chama quando ninguém na frente o saneia, e é afirmação de quem
+  está na frente, não fato. Confirme e então confira depois do deploy — com sessão nova, porque as
+  abertas antes seguem com o cookie antigo até vencerem:
 
   ```bash
   curl -sS -D- -o /dev/null https://fos.fabiocarlesso.com/api/oauth2/authorization/google | grep -i set-cookie
