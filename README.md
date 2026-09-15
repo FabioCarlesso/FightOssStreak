@@ -258,8 +258,12 @@ Detalhes que não são óbvios:
   **Tomcat**, a partir do request do conector, onde a conexão vinda do nginx é `http` puro — o TLS
   termina na borda da plataforma. O `forward-headers-strategy: framework` é filtro de servlet e não
   alcança essa camada: é por isso que o `XSRF-TOKEN`, criado pelo Spring, já saía com `Secure` e o
-  cookie de sessão não. Default `false` porque dev (`:8080`) e o Compose (`:8081`) servem em `http`
-  e com `true` perderiam a sessão a cada F5. O 301 da borda não substitui o flag: o redirecionamento
+  cookie de sessão não. Default `false` porque dev (`:8080`) e o Compose (`:8081`) servem em `http`.
+  **`localhost` sozinho não mostra o estrago**, e isto foi medido: o navegador trata `localhost`
+  como origem confiável, então lá o cookie `Secure` é guardado e a sessão sobrevive ao F5 mesmo em
+  `http`. De qualquer outro host `http` — o IP da máquina na rede, que é como se abre o Compose no
+  celular — o cookie é descartado e **não há sessão**: o login não completa e toda chamada responde
+  401. O 301 da borda não substitui o flag: o redirecionamento
   é uma **resposta**, e a requisição que o provoca já viajou em texto claro com o cookie anexado.
   Como a variável e o código entram por caminhos diferentes, confira depois do deploy — com sessão
   nova, porque as abertas antes seguem com o cookie antigo até vencerem:

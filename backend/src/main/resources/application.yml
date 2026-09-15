@@ -163,9 +163,11 @@ server:
         # onde a conexão vinda do nginx é `http` — o `forward-headers-strategy: framework`
         # acima é filtro de servlet e não alcança essa camada (por isso o XSRF-TOKEN, criado
         # pelo Spring, saía com Secure e o JSESSIONID não). Daí ser ambiente e não constante:
-        # `true` onde há TLS na borda, `false` em dev e no Compose, que servem em http e
-        # perderiam a sessão. Trocar a estratégia para `native` alcançaria o Tomcat e traria
-        # de volta o problema de redirect_uri que a estratégia atual existe para evitar.
+        # `true` onde há TLS na borda, `false` em dev e no Compose, que servem em http. O
+        # navegador só guarda cookie `Secure` em origem confiável, e `localhost` é exceção —
+        # de qualquer outro host http (o IP da máquina na rede, por exemplo) o cookie é
+        # descartado e não há sessão. Trocar a estratégia para `native` alcançaria o Tomcat e
+        # traria de volta o problema de redirect_uri que a estratégia atual existe para evitar.
         secure: ${FOS_COOKIE_SECURE:false}
 
 management:
