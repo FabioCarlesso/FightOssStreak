@@ -1,6 +1,7 @@
 package dev.fos.config;
 
 import dev.fos.model.HttpStatHourly;
+import dev.fos.service.CookieSecureTopology;
 import dev.fos.service.HttpStatCollector;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,15 +36,23 @@ import org.springframework.web.servlet.HandlerMapping;
  *
  * <p>Ordem: logo depois do {@code ForwardedHeaderFilter} e antes da cadeia de segurança, para que o
  * tempo medido seja o tempo que quem chamou esperou, e o status seja o que ele recebeu.
+ *
+ * <p>É também daqui que o {@link CookieSecureTopology} olha o esquema da requisição (#74), e é por
+ * causa dessa ordem: <b>depois</b> do {@code ForwardedHeaderFilter} o {@code isSecure()} já reflete
+ * o {@code X-Forwarded-Proto} da borda, e antes dele diria {@code http} em toda requisição. Um
+ * filtro próprio para a conferência precisaria repetir essa sutileza de ordenação para não mentir;
+ * este já está no lugar certo, e o custo é ler um booleano por requisição.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 20)
 class HttpStatFilter extends OncePerRequestFilter {
 
     private final HttpStatCollector collector;
+    private final CookieSecureTopology cookie;
 
-    HttpStatFilter(HttpStatCollector collector) {
+    HttpStatFilter(HttpStatCollector collector, CookieSecureTopology cookie) {
         this.collector = collector;
+        this.cookie = cookie;
     }
 
     @Override
@@ -56,6 +65,7 @@ class HttpStatFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        cookie.observe(request.isSecure());
         long inicio = System.nanoTime();
         try {
             chain.doFilter(request, response);

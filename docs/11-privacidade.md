@@ -354,6 +354,20 @@ um restart que ninguém pediu não deixa rastro em outro lugar.
   numa tabela de métrica, pela mesma porta que o `UsagePaths` fecha na coleta de uso.
 - **Corpo, cabeçalho ou parâmetro de qualquer requisição.**
 
+### O aviso de configuração do cookie de sessão
+
+O backend compara o flag `Secure` que a configuração declara com o esquema pelo qual a requisição
+chegou, e escreve um **aviso no log** quando os dois não batem — `https` com o cookie sem o flag, ou
+`http` com ele. Existe porque a variável de ambiente que liga o flag e o código que a lê entram por
+caminhos diferentes, e o valor errado é um valor válido: sem o aviso, o desencontro seria silencioso
+nos dois sentidos.
+
+O que esse aviso carrega é **o nome de uma variável de ambiente e mais nada**. Não há endereço, rota,
+conta, cookie nem identificador de sessão no texto — nem o valor do cabeçalho que originou o esquema,
+só o fato de a requisição ter chegado por `http` ou por `https`. Sai no máximo **uma vez por hora**,
+por mais requisições que passem. A regra do bloco acima continua valendo inteira: cabeçalho de
+requisição não é registrado.
+
 ### O identificador de correlação do erro
 
 Quando o app responde **500**, a resposta traz um código de oito caracteres, e a mesma linha do log
