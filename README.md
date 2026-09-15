@@ -173,6 +173,7 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `SERVER_ADDRESS` | backend | `0.0.0.0` | `::` |
 | `TZ` | web / backend | `America/Sao_Paulo` | `America/Sao_Paulo` |
 | `FOS_PROXY_TRUSTED_HOPS` | backend | `1` | `3` — **medido**, ver abaixo |
+| `FOS_COOKIE_SECURE` | backend | `false` | `true` — marca `Secure` no cookie de sessão, ver abaixo |
 | `VITE_PUBLIC_URL` | web (**build**) | — | URL pública do app, ex. `https://fos.up.railway.app` |
 | `FOS_OWNER_EMAILS` | backend | vazia | semente de administração: e-mails que viram `ADMIN` na subida, separados por vírgula |
 | `FOS_AUTH_PROVIDERS_GOOGLE_CLIENT_ID` | backend | — | id do app no Google |
@@ -253,6 +254,22 @@ Detalhes que não são óbvios:
   Nos dois casos é ruído visível, não bypass — mas é degradação de verdade, então **a variável
   entra no mesmo deploy que este código**: sem ela o default `1` vale, e o default é o Compose. Pôr uma CDN na frente do domínio acrescenta um salto
   e pede o número novo. Ver D51 em [`07-decisoes.md`](docs/07-decisoes.md).
+- **`FOS_COOKIE_SECURE=true` é o que marca `Secure` no `JSESSIONID`.** Quem cria esse cookie é o
+  **Tomcat**, a partir do request do conector, onde a conexão vinda do nginx é `http` puro — o TLS
+  termina na borda da plataforma. O `forward-headers-strategy: framework` é filtro de servlet e não
+  alcança essa camada: é por isso que o `XSRF-TOKEN`, criado pelo Spring, já saía com `Secure` e o
+  cookie de sessão não. Default `false` porque dev (`:8080`) e o Compose (`:8081`) servem em `http`
+  e com `true` perderiam a sessão a cada F5. O 301 da borda não substitui o flag: o redirecionamento
+  é uma **resposta**, e a requisição que o provoca já viajou em texto claro com o cookie anexado.
+  Como a variável e o código entram por caminhos diferentes, confira depois do deploy — com sessão
+  nova, porque as abertas antes seguem com o cookie antigo até vencerem:
+
+  ```bash
+  curl -sS -D- -o /dev/null https://fos.fabiocarlesso.com/api/oauth2/authorization/google | grep -i set-cookie
+  ```
+
+  Deve trazer `JSESSIONID=...; Path=/; Secure; HttpOnly; SameSite=Lax`. Esse endpoint serve porque
+  cria a sessão sem exigir login concluído. Ver D60 em [`07-decisoes.md`](docs/07-decisoes.md).
 - **`FOS_OWNER_EMAILS` é semente, não fonte da verdade (D49).** Quem administra é `app_user.role`,
   no banco, mudado pela tela *Usuários* sem deploy. A variável **promove** — na subida e em todo
   login com e-mail verificado — e **nunca rebaixa**: tirar um endereço dela não tira o papel de
