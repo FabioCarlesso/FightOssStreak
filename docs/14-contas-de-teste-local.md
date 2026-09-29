@@ -96,8 +96,8 @@ emite outro. É o link que expira, nunca a conta.
 As contas semeadas nascem com identidade `password` e a senha **`senha-de-teste-local`**, que o
 `mint-dev-login` imprime junto com o link. Ela é obrigatória: confirmar o link exige a senha do
 cadastro (FOS-01), e sem credencial nenhum link seria confirmável. Vai gravada com o prefixo `{noop}`
-do `DelegatingPasswordEncoder` — texto puro, aceitável só no container local — e o primeiro login a
-regrava em bcrypt. Conta semeada antes disso ganha a credencial ao rodar o `seed-dev-users` de novo.
+do `DelegatingPasswordEncoder` — texto puro, aceitável só no container local — e a primeira
+confirmação ou o primeiro login a regrava em bcrypt. Conta semeada antes disso ganha a credencial ao rodar o `seed-dev-users` de novo.
 Com ela também dá para entrar pelo formulário, em `/entrar`.
 
 ## Detalhes que economizam tempo

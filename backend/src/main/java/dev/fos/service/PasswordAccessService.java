@@ -361,6 +361,12 @@ public class PasswordAccessService {
             registrarErro(email, ip, now);
             throw PasswordAccessException.senhaDoCadastroNaoConfere();
         }
+        // Como no login: confirmar é o primeiro momento em que a senha em claro passa por aqui, e
+        // hash de algoritmo velho (ou o `{noop}` das contas semeadas no container local) se regrava
+        // já nele, e não só quando a pessoa um dia entrar pelo formulário.
+        if (encoder.upgradeEncoding(credential.get().getPasswordHash())) {
+            credential.get().changeTo(encoder.encode(rawPassword), now);
+        }
         freio.clear(chaveEmail(email));
     }
 

@@ -391,6 +391,27 @@ class PasswordAccessIntegrationTest {
     }
 
     @Test
+    @DisplayName("confirmar regrava hash de algoritmo velho, como o login já fazia")
+    void confirmingUpgradesAnOldHash() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        // O `{noop}` é o das contas do seed-dev-users; vale para qualquer prefixo que não o atual.
+        credentials
+                .findByIdentityId(identidade(ENDERECO).getId())
+                .orElseThrow()
+                .changeTo("{noop}" + SENHA, CaixaDeSaida.agora);
+
+        confirmarComToken(tokenDeVerificacao()).andExpect(status().isNoContent());
+
+        assertThat(
+                        credentials
+                                .findByIdentityId(identidade(ENDERECO).getId())
+                                .orElseThrow()
+                                .getPasswordHash())
+                .startsWith("{bcrypt}");
+        entrar(ENDERECO, SENHA).andExpect(status().isNoContent());
+    }
+
+    @Test
     @DisplayName("errar a senha na confirmação conta no freio do login")
     void wrongPasswordsOnConfirmationHitTheSameBrake() throws Exception {
         cadastrar(ENDERECO, SENHA);

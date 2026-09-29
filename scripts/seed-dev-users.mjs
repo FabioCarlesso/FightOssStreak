@@ -23,8 +23,8 @@
  * As duas com a senha SENHA_DEV abaixo. Ela existe porque confirmar o link de e-mail exige a senha
  * do cadastro (FOS-01) — sem credencial, o link do mint-dev-login não teria como ser confirmado. O
  * hash vai com o prefixo `{noop}` do DelegatingPasswordEncoder: texto puro, aceitável só porque o
- * script nunca alcança outro banco que não o do container local, e o primeiro login o regrava em
- * bcrypt. Conta semeada antes disto ganha a credencial na próxima rodada.
+ * script nunca alcança outro banco que não o do container local, e a primeira confirmação ou login o
+ * regrava em bcrypt. Conta semeada antes disto ganha a credencial na próxima rodada.
  *
  * O login em si é emitido à parte por scripts/mint-dev-login.mjs — o token de entrada expira em
  * 15 minutos (mesma regra da entrada por e-mail de verdade), então não faz sentido fixá-lo aqui.
