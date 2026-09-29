@@ -133,10 +133,16 @@ public class PasswordAuthController {
             description =
                     "É aqui que a conta passa a existir de verdade. POST, e não GET, porque"
                             + " confirmar é ato explícito de quem leu o e-mail — nenhuma máquina"
-                            + " que só siga links chega a esta rota.")
+                            + " que só siga links chega a esta rota. Exige a senha do cadastro: o"
+                            + " link prova a caixa de entrada, a senha prova quem cadastrou. 401"
+                            + " com a senha errada, sem gastar o link; 429 no freio de tentativas.")
     public ResponseEntity<Void> confirmar(
-            @PathVariable String token, HttpServletRequest request, HttpServletResponse response) {
-        PasswordAccessService.Confirmacao confirmacao = senha.verify(token);
+            @PathVariable String token,
+            @Valid @RequestBody SenhaRequest body,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        PasswordAccessService.Confirmacao confirmacao =
+                senha.verify(token, body.senha(), clientIp.of(request));
         if (!confirmacao.ok()) {
             // 400 com a mensagem, como na redefinição: a tela já sabia do GET que o link valia, e
             // só chega aqui quem perdeu uma corrida — outro clique, ou o prazo virando no meio.

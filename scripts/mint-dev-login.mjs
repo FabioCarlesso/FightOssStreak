@@ -14,6 +14,9 @@
  * confirma (e abre a sessão) é o botão da tela. Vale 24h, como em produção. Rodar de novo emite
  * outro; o que expira é o link, nunca a conta.
  *
+ * A tela pede a senha do cadastro antes de confirmar (FOS-01): é a `SENHA_DEV` que o
+ * seed-dev-users.mjs grava, repetida aqui e impressa junto com o link.
+ *
  * Códigos de saída:
  *   0  link emitido, impresso em stdout
  *   1  conta inexistente (rode seed-dev-users.mjs primeiro)
@@ -23,6 +26,8 @@ import { execFileSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
 
 const CONTAINER = 'fos-db';
+// A mesma do seed-dev-users.mjs. Repetida, e não importada: importar aquele script o executaria.
+const SENHA_DEV = 'senha-de-teste-local';
 const email = process.argv[2];
 
 if (!email) {
@@ -77,3 +82,4 @@ psql(
 );
 
 console.log(`http://localhost:5173/confirmar-email/${token}`);
+console.error(`senha para confirmar: ${SENHA_DEV}`);

@@ -364,6 +364,97 @@ class PasswordAccessIntegrationTest {
         assertThat(identities.findByUserId(conta)).hasSize(2);
     }
 
+    // ------------------------------------------------- pré-sequestro de conta (FOS-01)
+
+    @Test
+    @DisplayName(
+            "confirmar sem a senha do cadastro não confirma, não abre sessão e não gasta o link")
+    void confirmingWithoutTheSignupPasswordChangesNothing() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        String token = tokenDeVerificacao();
+
+        confirmarComToken(token, "nao-e-a-senha-do-cadastro")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("credencial_invalida"));
+        mockMvc.perform(
+                        post("/api/auth/verificar/" + token)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{}"))
+                .andExpect(status().isBadRequest());
+
+        assertThat(identidade(ENDERECO).isEmailVerified()).isFalse();
+        // O link segue valendo: quem errou a digitação tem a caixa na mão e tenta de novo.
+        mockMvc.perform(get("/api/auth/verificar/" + token))
+                .andExpect(jsonPath("$.valido").value(true));
+        confirmarComToken(token).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("confirmar regrava hash de algoritmo velho, como o login já fazia")
+    void confirmingUpgradesAnOldHash() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        // O `{noop}` é o das contas do seed-dev-users; vale para qualquer prefixo que não o atual.
+        credentials
+                .findByIdentityId(identidade(ENDERECO).getId())
+                .orElseThrow()
+                .changeTo("{noop}" + SENHA, CaixaDeSaida.agora);
+
+        confirmarComToken(tokenDeVerificacao()).andExpect(status().isNoContent());
+
+        assertThat(
+                        credentials
+                                .findByIdentityId(identidade(ENDERECO).getId())
+                                .orElseThrow()
+                                .getPasswordHash())
+                .startsWith("{bcrypt}");
+        entrar(ENDERECO, SENHA).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("errar a senha na confirmação conta no freio do login")
+    void wrongPasswordsOnConfirmationHitTheSameBrake() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        String token = tokenDeVerificacao();
+
+        for (int tentativa = 0; tentativa < 5; tentativa++) {
+            confirmarComToken(token, "errada-de-proposito").andExpect(status().isUnauthorized());
+        }
+        confirmarComToken(token).andExpect(status().isTooManyRequests());
+        assertThat(identidade(ENDERECO).isEmailVerified()).isFalse();
+    }
+
+    @Test
+    @DisplayName("recadastro de e-mail pendente troca a senha: a do primeiro cadastrante não vale")
+    void aPendingSignupTakesTheLatestPassword() throws Exception {
+        // O ataque: alguém cadastra antes o endereço da vítima, com uma senha que só ele conhece.
+        cadastrar(ENDERECO, "senha-do-invasor-999");
+        // A vítima, sem saber, faz o cadastro dela e confirma pelo link que chegou.
+        cadastrar(ENDERECO, SENHA);
+        confirmar();
+
+        entrar(ENDERECO, "senha-do-invasor-999").andExpect(status().isUnauthorized());
+        entrar(ENDERECO, SENHA).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("o dono do Google que clica num link de cadastro alheio não entrega a conta")
+    void aGoogleOwnerClickingAForeignSignupLinkKeepsTheAccount() throws Exception {
+        AppUser google = accounts.registerLogin("google", "sub-3", ENDERECO, true, "Aluno");
+        cadastrar(ENDERECO, "senha-do-invasor-999");
+
+        // O dono recebe "Confirme seu e-mail" e clica. Sem a senha de quem cadastrou, não confirma.
+        confirmarComToken(tokenDeVerificacao(), "qualquer-coisa-que-ele-tente")
+                .andExpect(status().isUnauthorized());
+
+        assertThat(identidade(ENDERECO).isEmailVerified()).isFalse();
+        assertThat(identities.findByUserId(google.getId())).hasSize(1);
+        // E a senha de quem cadastrou continua sem abrir sessão nenhuma.
+        entrar(ENDERECO, "senha-do-invasor-999")
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("email_nao_verificado"));
+    }
+
     // ------------------------------------------------------------------ recuperação
 
     @Test
@@ -584,7 +675,16 @@ class PasswordAccessIntegrationTest {
 
     /** O clique em "confirmar meu e-mail": é o POST que gasta o link, nunca a abertura da URL. */
     private ResultActions confirmarComToken(String token) throws Exception {
-        return mockMvc.perform(post("/api/auth/verificar/" + token).with(csrf()));
+        return confirmarComToken(token, SENHA);
+    }
+
+    /** O clique com a senha digitada na tela de confirmação (FOS-01). */
+    private ResultActions confirmarComToken(String token, String senha) throws Exception {
+        return mockMvc.perform(
+                post("/api/auth/verificar/" + token)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"senha\":\"%s\"}".formatted(senha)));
     }
 
     /** Sessão já autenticada por senha, para as chamadas que só precisam estar dentro. */

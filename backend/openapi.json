@@ -452,7 +452,7 @@
           "Cadastro e senha"
         ],
         "summary": "Confirma o e-mail e abre a sessão",
-        "description": "É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota.",
+        "description": "É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota. Exige a senha do cadastro: o link prova a caixa de entrada, a senha prova quem cadastrou. 401 com a senha errada, sem gastar o link; 429 no freio de tentativas.",
         "operationId": "confirmar",
         "parameters": [
           {
@@ -464,6 +464,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SenhaRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1822,17 +1832,6 @@
           }
         }
       },
-      "EmailRequest": {
-        "required": [
-          "email"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          }
-        }
-      },
       "SenhaRequest": {
         "required": [
           "senha"
@@ -1840,6 +1839,17 @@
         "type": "object",
         "properties": {
           "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "EmailRequest": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
             "type": "string"
           }
         }

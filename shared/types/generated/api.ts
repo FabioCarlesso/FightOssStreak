@@ -184,7 +184,7 @@ export interface paths {
         put?: never;
         /**
          * Confirma o e-mail e abre a sessão
-         * @description É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota.
+         * @description É aqui que a conta passa a existir de verdade. POST, e não GET, porque confirmar é ato explícito de quem leu o e-mail — nenhuma máquina que só siga links chega a esta rota. Exige a senha do cadastro: o link prova a caixa de entrada, a senha prova quem cadastrou. 401 com a senha errada, sem gastar o link; 429 no freio de tentativas.
          */
         post: operations["confirmar"];
         delete?: never;
@@ -804,11 +804,11 @@ export interface components {
             /** Format: date-time */
             expiraEm?: string;
         };
-        EmailRequest: {
-            email: string;
-        };
         SenhaRequest: {
             senha: string;
+        };
+        EmailRequest: {
+            email: string;
         };
         LoginRequest: {
             email: string;
@@ -1511,7 +1511,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SenhaRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {

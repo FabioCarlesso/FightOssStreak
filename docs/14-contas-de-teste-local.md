@@ -26,8 +26,8 @@ autenticação de tipo conhecido (OAuth2, demonstração ou senha).
 O caminho que funciona sem credencial é o **link de confirmação de e-mail** (D47), fabricado à mão:
 o `login_token` guarda só o SHA-256 do valor que viaja no link, então dá para escolher o valor,
 gravar o hash e abrir `/confirmar-email/<valor>`. É exatamente o fluxo de produção, só que sem o
-e-mail no meio: a tela confere o link, e o botão **Confirmar meu e-mail** é que gasta o token e abre
-a sessão.
+e-mail no meio: a tela confere o link, pede a senha do cadastro, e o botão **Confirmar meu e-mail**
+é que gasta o token e abre a sessão.
 
 ## Por que Postgres local, e não o H2 do perfil dev
 
@@ -93,9 +93,12 @@ node scripts/mint-dev-login.mjs dono@teste.local
 O link emitido vale **24h** e pode ser usado uma vez, igual ao de produção; rodar o script de novo
 emite outro. É o link que expira, nunca a conta.
 
-As contas semeadas nascem com identidade `password` e **sem senha**: elas existem para entrar pelo
-link acima, não pelo formulário. Quem quiser exercitar o login por senha de verdade precisa do
-roteiro do Compose, no fim desta página.
+As contas semeadas nascem com identidade `password` e a senha **`senha-de-teste-local`**, que o
+`mint-dev-login` imprime junto com o link. Ela é obrigatória: confirmar o link exige a senha do
+cadastro (FOS-01), e sem credencial nenhum link seria confirmável. Vai gravada com o prefixo `{noop}`
+do `DelegatingPasswordEncoder` — texto puro, aceitável só no container local — e a primeira
+confirmação ou o primeiro login a regrava em bcrypt. Conta semeada antes disso ganha a credencial ao rodar o `seed-dev-users` de novo.
+Com ela também dá para entrar pelo formulário, em `/entrar`.
 
 ## Detalhes que economizam tempo
 
@@ -125,7 +128,8 @@ Com `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM` preenchidos no ambiente do Compose, o
 conferir de ponta a ponta é:
 
 1. cadastrar com um endereço seu → `202`, nenhuma sessão, um e-mail na caixa;
-2. abrir o link (vale **24h**, uma vez só) → cai em `/hoje` já dentro;
+2. abrir o link (vale **24h**, uma vez só), digitar a senha do cadastro → cai em `/hoje` já dentro;
+   com a senha errada o link continua valendo e a tela oferece *esqueci a senha*;
 3. sair, entrar de novo com a senha;
 4. *esqueci minha senha* → link de **1h**; ao usá-lo, a sessão que estava aberta cai.
 
