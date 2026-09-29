@@ -1,12 +1,16 @@
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { api } from '../../api/client.ts';
+import { api, ApiError } from '../../api/client.ts';
 import { useAsync } from '../../state/useAsync.ts';
 import { AuthCard } from './AuthCard.tsx';
 import { mensagemDeErro } from './erros.ts';
 
 /**
  * O fim do cadastro: o link que chegou por e-mail vira conta.
+ *
+ * **Confirmar pede a senha do cadastro** (FOS-01). O link prova que quem clica controla a caixa; a
+ * senha prova que é a mesma pessoa que cadastrou. Sem ela, quem cadastrasse antes um endereço
+ * alheio fixava uma senha que o dono ativaria ao clicar — e entrava na conta dele depois.
  *
  * **Abrir esta tela não confirma nada** — é a decisão que ela carrega. Quem abre a URL de um
  * e-mail nem sempre é a pessoa: varredor de link corporativo (Safe Links e parentes) e antivírus
@@ -32,19 +36,27 @@ export function ConfirmEmailPage() {
 function Confirmacao({ token }: { token: string }) {
   const link = useAsync(() => api.checkVerificationLink(token), [token]);
   const navigate = useNavigate();
+  const [senha, setSenha] = useState('');
   const [confirmando, setConfirmando] = useState(false);
   const [falha, setFalha] = useState<string | null>(null);
 
-  async function confirmar() {
+  async function confirmar(event: FormEvent) {
+    event.preventDefault();
     setConfirmando(true);
     setFalha(null);
     try {
-      await api.confirmEmail(token);
+      await api.confirmEmail(token, senha);
       // A sessão já veio no cookie da resposta: navegação do router basta, e recarregar a página
       // inteira só descartaria o app que acabou de carregar.
       navigate('/hoje', { replace: true });
     } catch (cause) {
-      setFalha(mensagemDeErro(cause));
+      // O `mensagemDeErro` fala do par e-mail/senha, que é o certo na entrada; aqui o endereço
+      // não está em jogo — quem chegou tem o link —, então a mensagem fala só da senha.
+      setFalha(
+        cause instanceof ApiError && cause.isBadCredentials
+          ? 'A senha não confere com a do cadastro. Se não lembra dela, redefina a senha.'
+          : mensagemDeErro(cause),
+      );
       setConfirmando(false);
     }
   }
@@ -74,15 +86,31 @@ function Confirmacao({ token }: { token: string }) {
     return (
       <AuthCard titulo="Confirme seu e-mail">
         <p>
-          Falta um clique. Ao confirmar, sua conta passa a existir de verdade e você já entra no
-          app.
+          Falta um passo. Digite a senha que você escolheu no cadastro: ao confirmar, sua conta
+          passa a existir de verdade e você já entra no app.
         </p>
-        {falha && <p className="gate__error">{falha}</p>}
-        <div className="gate__actions">
-          <button type="button" onClick={() => void confirmar()} disabled={confirmando}>
-            {confirmando ? 'Confirmando…' : 'Confirmar meu e-mail'}
-          </button>
-        </div>
+        <form className="login__email" onSubmit={(event) => void confirmar(event)}>
+          <label htmlFor="confirmar-senha">Senha do cadastro</label>
+          <input
+            id="confirmar-senha"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={senha}
+            onChange={(event) => setSenha(event.target.value)}
+          />
+          {falha && <p className="gate__error">{falha}</p>}
+          <div className="gate__actions">
+            <button type="submit" disabled={confirmando || !senha}>
+              {confirmando ? 'Confirmando…' : 'Confirmar meu e-mail'}
+            </button>
+            {/* Quem não se lembra da senha — ou não foi quem cadastrou — sai por aqui: a
+                redefinição também confirma o endereço, e com a senha de quem tem a caixa. */}
+            <Link className="linklike" to="/senha/esquecida">
+              Esqueci a senha
+            </Link>
+          </div>
+        </form>
       </AuthCard>
     );
   }

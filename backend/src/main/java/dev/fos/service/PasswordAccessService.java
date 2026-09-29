@@ -187,6 +187,11 @@ public class PasswordAccessService {
             if (identity.isEmailVerified()) {
                 avisarQueJaTemConta(email);
             } else {
+                // A senha nova SUBSTITUI a pendente (FOS-01). Guardar a do primeiro cadastro era o
+                // pré-sequestro: quem cadastrasse antes um endereço alheio fixava a senha que
+                // passaria a valer quando o dono, cadastrando-se depois, confirmasse o e-mail. O
+                // último a pedir é quem recebe o link — e o link só vale com a senha dele.
+                trocarSenha(identity, hash, now);
                 enviarVerificacao(identity.getUserId(), email, baseUrl, now);
             }
             return false;
@@ -297,9 +302,16 @@ public class PasswordAccessService {
      * verificado, a conta reivindica o {@code primary_email} e a sessão pode ser aberta. O
      * propósito é conferido antes de tudo: link de redefinição apresentado aqui é inválido, não uma
      * confirmação.
+     *
+     * <p><b>Exige a senha do cadastro</b> (FOS-01). O link prova só que quem clica controla a
+     * caixa; a senha prova que é a mesma pessoa que cadastrou. Sem ela, quem cadastrasse antes um
+     * endereço alheio fixava uma senha que o dono ativava ao clicar — e, se o endereço já fosse de
+     * uma conta Google, a identidade de senha era anexada a ela ({@link #confirmar}), entregando a
+     * conta a quem nunca viu a caixa de entrada. Senha errada não gasta o link e conta no mesmo
+     * freio do login: quem tem o link na mão pode errar a digitação e tentar de novo.
      */
     @Transactional
-    public Confirmacao verify(String rawToken) {
+    public Confirmacao verify(String rawToken, String rawPassword, String ip) {
         Instant now = Instant.now(clock);
         Optional<LoginToken> encontrado =
                 tokenComProposito(rawToken, LoginTokenPurpose.VERIFICACAO);
@@ -311,12 +323,45 @@ public class PasswordAccessService {
         if (falha != null) {
             return Confirmacao.falhou(falha);
         }
+        // Conta sem identidade de senha não tem o que confirmar. Não acontece pelo fluxo normal, e
+        // "inválido" é a resposta honesta se acontecer.
+        Optional<UserIdentity> identidade = identidadeDeSenha(token.getUserId());
+        if (identidade.isEmpty()) {
+            return Confirmacao.falhou(FalhaDeLink.INVALIDO);
+        }
+        UserIdentity identity = identidade.get();
+        conferirSenha(identity, rawPassword, ip, now);
         token.consume(LoginTokenPurpose.VERIFICACAO, now);
-        return identidadeDeSenha(token.getUserId())
-                .map(identity -> Confirmacao.de(confirmar(identity, now)))
-                // Conta sem identidade de senha não tem o que confirmar. Não acontece pelo fluxo
-                // normal, e "inválido" é a resposta honesta se acontecer.
-                .orElseGet(() -> Confirmacao.falhou(FalhaDeLink.INVALIDO));
+        return Confirmacao.de(confirmar(identity, now));
+    }
+
+    /**
+     * A senha apresentada é a da credencial desta identidade — ou a exceção do login.
+     *
+     * <p>Mesmo freio e mesmas chaves do {@link #authenticate}: confirmar é uma entrada, e errar a
+     * senha aqui não pode ser caminho paralelo sem limite. Sem credencial (conta semeada à mão), a
+     * conferência roda contra o hash fantasma e falha — confirmar sem senha não existe.
+     */
+    private void conferirSenha(UserIdentity identity, String rawPassword, String ip, Instant now) {
+        String email = identity.getEmail();
+        freio.evictOlderThan(JANELA_TENTATIVAS, now);
+        if (freio.isBlocked(chaveEmail(email), MAX_TENTATIVAS_EMAIL, JANELA_TENTATIVAS, now)
+                || freio.isBlocked(chaveIp(ip), MAX_TENTATIVAS_IP, JANELA_TENTATIVAS, now)) {
+            throw PasswordAccessException.muitasTentativas();
+        }
+        Optional<PasswordCredential> credential = credentials.findByIdentityId(identity.getId());
+        boolean confere =
+                rawPassword != null
+                        && encoder.matches(
+                                rawPassword,
+                                credential
+                                        .map(PasswordCredential::getPasswordHash)
+                                        .orElse(HASH_FANTASMA));
+        if (!confere || credential.isEmpty()) {
+            registrarErro(email, ip, now);
+            throw PasswordAccessException.senhaDoCadastroNaoConfere();
+        }
+        freio.clear(chaveEmail(email));
     }
 
     /**
@@ -460,16 +505,7 @@ public class PasswordAccessService {
                                         new IllegalArgumentException(
                                                 "Esta conta não entra por senha."));
         PasswordPolicy.check(rawPassword, identity.getEmail());
-        credentials
-                .findByIdentityId(identity.getId())
-                .ifPresentOrElse(
-                        credential -> credential.changeTo(encoder.encode(rawPassword), now),
-                        () ->
-                                credentials.save(
-                                        new PasswordCredential(
-                                                identity.getId(),
-                                                encoder.encode(rawPassword),
-                                                now)));
+        trocarSenha(identity, encoder.encode(rawPassword), now);
         invalidarPendentes(token.getUserId(), now);
         freio.clear(chaveEmail(identity.getEmail()));
         confirmar(identity, now);
@@ -514,6 +550,17 @@ public class PasswordAccessService {
                         .orElseGet(() -> users.findById(identity.getUserId()).orElseThrow());
         accounts.claimVerifiedEmail(dona, identity.getEmail(), true);
         return identity.getEmail();
+    }
+
+    /** Grava o hash na credencial da identidade, criando-a se ainda não houver uma. */
+    private void trocarSenha(UserIdentity identity, String hash, Instant now) {
+        credentials
+                .findByIdentityId(identity.getId())
+                .ifPresentOrElse(
+                        credential -> credential.changeTo(hash, now),
+                        () ->
+                                credentials.save(
+                                        new PasswordCredential(identity.getId(), hash, now)));
     }
 
     /** A identidade de senha de uma conta, se ela tiver uma. */

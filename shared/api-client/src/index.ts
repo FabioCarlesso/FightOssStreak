@@ -420,9 +420,17 @@ export function createApiClient(options: ApiClientOptions = {}) {
     checkVerificationLink: (token: string) =>
       request<LinkStatus>(`/api/auth/verificar/${encodeURIComponent(token)}`),
 
-    /** Confirma o e-mail e abre a sessão. É o clique da pessoa, não a abertura da URL. */
-    confirmEmail: (token: string) =>
-      requestNoContent(`/api/auth/verificar/${encodeURIComponent(token)}`, { method: 'POST' }),
+    /**
+     * Confirma o e-mail e abre a sessão. É o clique da pessoa, não a abertura da URL.
+     *
+     * Leva a senha do cadastro: o link prova a caixa de entrada, a senha prova quem cadastrou. Sem
+     * ela, quem cadastrasse antes um endereço alheio fixava a senha que o dono ativaria ao clicar.
+     */
+    confirmEmail: (token: string, senha: string) =>
+      requestNoContent(`/api/auth/verificar/${encodeURIComponent(token)}`, {
+        method: 'POST',
+        body: JSON.stringify({ senha }),
+      }),
 
     /** Outro link de confirmação. Responde igual para cadastro pendente, confirmado e inexistente. */
     resendVerification: (email: string) =>

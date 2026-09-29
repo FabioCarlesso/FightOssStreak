@@ -681,7 +681,11 @@ class AdminUsersIntegrationTest {
                                         "{\"email\":\"%s\",\"senha\":\"%s\",\"nome\":\"Ana\"}"
                                                 .formatted(email, SENHA)))
                 .andExpect(status().isAccepted());
-        mockMvc.perform(post("/api/auth/verificar/" + tokenDeVerificacao(email)).with(csrf()))
+        mockMvc.perform(
+                        post("/api/auth/verificar/" + tokenDeVerificacao(email))
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"senha\":\"%s\"}".formatted(SENHA)))
                 .andExpect(status().isNoContent());
     }
 

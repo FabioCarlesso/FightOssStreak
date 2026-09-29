@@ -36,6 +36,16 @@ public class PasswordAccessException extends RuntimeException {
                 Motivo.CREDENCIAL_INVALIDA, "E-mail ou senha não conferem.");
     }
 
+    /**
+     * Senha errada na confirmação do e-mail (FOS-01). Mesmo motivo do login — a tela trata igual —,
+     * mas a mensagem fala da senha só: quem está aqui já tem o link, e o endereço não está em jogo.
+     */
+    public static PasswordAccessException senhaDoCadastroNaoConfere() {
+        return new PasswordAccessException(
+                Motivo.CREDENCIAL_INVALIDA,
+                "A senha não confere com a do cadastro. Se não lembra dela, redefina a senha.");
+    }
+
     public static PasswordAccessException emailNaoVerificado() {
         return new PasswordAccessException(
                 Motivo.EMAIL_NAO_VERIFICADO,

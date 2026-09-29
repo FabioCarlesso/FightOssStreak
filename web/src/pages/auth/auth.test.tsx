@@ -32,7 +32,7 @@ const { apiMock } = vi.hoisted(() => ({
     resendVerification: vi.fn<(email: string) => Promise<void>>(),
     requestPasswordReset: vi.fn<(email: string) => Promise<void>>(),
     checkVerificationLink: vi.fn<(token: string) => Promise<LinkStatus>>(),
-    confirmEmail: vi.fn<(token: string) => Promise<void>>(),
+    confirmEmail: vi.fn<(token: string, senha: string) => Promise<void>>(),
     checkPasswordResetLink: vi.fn<(token: string) => Promise<LinkStatus>>(),
     resetPassword: vi.fn<(token: string, senha: string) => Promise<void>>(),
   },
@@ -292,10 +292,37 @@ describe('link de confirmação', () => {
     expect(apiMock.confirmEmail).not.toHaveBeenCalled();
     expect(apiMock.checkVerificationLink).toHaveBeenCalledWith('tok-123');
 
+    await userEvent.type(screen.getByLabelText(/senha do cadastro/i), 'tatame-quarta-feira');
     await userEvent.click(screen.getByRole('button', { name: /confirmar meu e-mail/i }));
 
-    expect(apiMock.confirmEmail).toHaveBeenCalledWith('tok-123');
+    // A senha viaja junto (FOS-01): o link prova a caixa, a senha prova quem cadastrou.
+    expect(apiMock.confirmEmail).toHaveBeenCalledWith('tok-123', 'tatame-quarta-feira');
     expect(await screen.findByText(APP)).toBeInTheDocument();
+  });
+
+  it('senha errada na confirmação fica na tela, com a saída pela redefinição', async () => {
+    apiMock.confirmEmail.mockRejectedValue(
+      new ApiError(
+        401,
+        'credencial_invalida',
+        'A senha não confere com a do cadastro. Se não lembra dela, redefina a senha.',
+      ),
+    );
+    renderEm('/confirmar-email/tok-123');
+
+    // Sem senha o botão nem habilita: confirmar sem ela não existe.
+    const botao = await screen.findByRole('button', { name: /confirmar meu e-mail/i });
+    expect(botao).toBeDisabled();
+
+    await userEvent.type(screen.getByLabelText(/senha do cadastro/i), 'nao-e-a-dela');
+    await userEvent.click(botao);
+
+    expect(await screen.findByText(/a senha não confere/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /esqueci a senha/i })).toHaveAttribute(
+      'href',
+      '/senha/esquecida',
+    );
+    expect(screen.queryByText(APP)).not.toBeInTheDocument();
   });
 
   it('vencido pede o endereço e reenvia', async () => {
