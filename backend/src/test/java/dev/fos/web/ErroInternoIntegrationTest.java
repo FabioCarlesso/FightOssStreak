@@ -18,10 +18,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,15 +36,19 @@ import org.springframework.web.bind.annotation.RestController;
  * inteiro de linhas. Com o código na tela, o relato vira uma busca; sem ele, vira adivinhação.
  *
  * <p>E o teste guarda também o que o {@code @ExceptionHandler(Exception.class)} <b>não</b> pode
- * fazer. Ele tem precedência sobre o resolvedor padrão do Spring, então sem cuidado o JSON
- * malformado e o método HTTP errado — hoje 400 e 405 — virariam 500. Isso não seria só resposta
- * errada: cada um deles entraria na taxa de erro que dispara o alerta desta mesma issue, e o
- * monitoramento passaria a avisar sobre requisição malfeita de quem chama.
+ * fazer. Ele tem precedência sobre o resolvedor padrão do Spring, então sem cuidado o método HTTP
+ * errado — hoje 405 — viraria 500. Isso não seria só resposta errada: cada um deles entraria na
+ * taxa de erro que dispara o alerta desta mesma issue, e o monitoramento passaria a avisar sobre
+ * requisição malfeita de quem chama.
  *
  * <p>O <b>parâmetro com tipo errado</b> entrou aqui na #102 porque de fato escapou: o desvio de 4xx
  * reconhece quem implementa {@code ErrorResponse}, e {@code TypeMismatchException} não implementa.
  * As três rotas com parâmetro tipado respondiam 500 a {@code ?dias=abc}. É o mesmo risco desta
  * classe, e por isso mora nela — não junto da feature que o revelou.
+ *
+ * <p>O <b>corpo ilegível</b> (ausente ou JSON malformado) escapou pelo mesmo motivo e só foi medido
+ * na revisão da D61: {@code HttpMessageNotReadableException} também não implementa {@code
+ * ErrorResponse}, e o parágrafo acima, que o dava por 400, estava errado.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -108,6 +114,36 @@ class ErroInternoIntegrationTest {
         mockMvc.perform(post("/api/teste/explode").with(as("ana")).with(csrf()))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.correlationId").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("corpo ausente ou JSON malformado é 400, e não incidente")
+    void anUnreadableBodyIsAClientError() throws Exception {
+        // `HttpMessageNotReadableException` não implementa `ErrorResponse`: escapava do desvio de
+        // 4xx do catch-all e virava 500, como o tipo errado da #102. A comparação que o revelou foi
+        // contra a stack de pé, na revisão da D61 — este teste não existia, e o comentário do
+        // catch-all afirmava o contrário.
+        for (String corpo : new String[] {null, "{", "{\"email\":"}) {
+            MockHttpServletRequestBuilder requisicao =
+                    post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON);
+            if (corpo != null) {
+                requisicao.content(corpo);
+            }
+            mockMvc.perform(requisicao)
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value("invalid_request"))
+                    .andExpect(jsonPath("$.correlationId").doesNotExist());
+        }
+        // E o texto do Jackson não volta: ele cita o que foi enviado e nomeia classes internas.
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"<script>\""))
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        jsonPath("$.message")
+                                .value(Matchers.not(Matchers.containsString("script"))));
     }
 
     @Test

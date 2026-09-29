@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.ErrorResponse;
@@ -226,9 +227,10 @@ class ApiExceptionHandler {
      * <p>Precisa de handler <b>próprio</b>, e a razão é sutil o bastante para ter custado um
      * defeito: o desvio de 4xx do {@link #handleUnexpected} testa {@code instanceof ErrorResponse},
      * e {@link TypeMismatchException} <b>não</b> implementa essa interface — ela desce de {@code
-     * BeansException}, não da família de erros web do Spring. JSON malformado, método HTTP errado e
-     * parâmetro faltando implementam, e por isso já eram 400; o tipo errado escapava, caía no
-     * {@code @ExceptionHandler(Exception.class)} e virava <b>500</b>.
+     * BeansException}, não da família de erros web do Spring. Método HTTP errado e parâmetro
+     * faltando implementam, e por isso já eram 4xx; o tipo errado escapava, caía no
+     * {@code @ExceptionHandler(Exception.class)} e virava <b>500</b> — como o corpo ilegível, que
+     * tem handler próprio logo abaixo ({@link #handleUnreadableBody}).
      *
      * <p>E 500 aqui não era só status errado: era 5xx da própria aplicação entrando na taxa que
      * dispara o alerta de incidente da D54. Um crawler batendo com parâmetro inválido podia mandar
@@ -254,6 +256,29 @@ class ApiExceptionHandler {
                         ? "Parâmetro de requisição inválido."
                         : "Parâmetro '" + parametro + "' inválido.";
         return ResponseEntity.badRequest().body(ApiError.of("invalid_request", detalhe));
+    }
+
+    /**
+     * Corpo ausente ou JSON malformado.
+     *
+     * <p>Mesmo defeito do {@link #handleTypeMismatch}, por outra exceção: {@link
+     * HttpMessageNotReadableException} desce de {@code HttpMessageConversionException}, não
+     * implementa {@code ErrorResponse} e passava pelo desvio de 4xx do catch-all até virar
+     * <b>500</b>. Os comentários daqui diziam o contrário, e só a medição contra a stack de pé
+     * mostrou: {@code POST /api/auth/login} com JSON sem fechar, ou sem corpo, respondia 500 e
+     * entrava na taxa do alerta da D54.
+     *
+     * <p>Ficou urgente na D61 (FOS-01): a confirmação de e-mail passou a exigir corpo, e uma aba
+     * aberta antes do deploy manda o POST antigo, sem corpo nenhum — cada uma seria um 500 da
+     * própria aplicação durante a virada de versão.
+     *
+     * <p><b>A mensagem do Jackson não volta.</b> Ela cita trecho do que foi enviado e nomeia
+     * classes internas; o texto fixo basta para quem chama consertar a chamada.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ApiError> handleUnreadableBody(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest()
+                .body(ApiError.of("invalid_request", "Corpo da requisição ausente ou malformado."));
     }
 
     @ExceptionHandler(CurriculumException.class)
@@ -283,16 +308,17 @@ class ApiExceptionHandler {
      *
      * <p><b>O desvio de 4xx no começo é o que impede este método de piorar as coisas.</b> Um
      * {@code @ExceptionHandler(Exception.class)} tem precedência sobre o {@code
-     * DefaultHandlerExceptionResolver} do Spring, e sem o desvio o JSON malformado, o método HTTP
-     * errado e o parâmetro faltando — todos hoje 400 — passariam a ser 500. Isso não seria só uma
-     * resposta errada: cada um deles entraria na taxa de erro que dispara o alerta, e o
-     * monitoramento passaria a avisar sobre requisições malfeitas de quem chama.
+     * DefaultHandlerExceptionResolver} do Spring, e sem o desvio o método HTTP errado e o parâmetro
+     * faltando — hoje 4xx — passariam a ser 500. Isso não seria só uma resposta errada: cada um
+     * deles entraria na taxa de erro que dispara o alerta, e o monitoramento passaria a avisar
+     * sobre requisições malfeitas de quem chama.
      *
      * <p><b>O desvio cobre menos do que parece, e isso é armadilha.</b> Ele só reconhece quem
      * implementa {@code ErrorResponse}; erro de cliente que não implementa passa direto e vira 500.
-     * Foi o caso do parâmetro com tipo errado, que hoje tem handler próprio ({@link
-     * #handleTypeMismatch}). Ao acrescentar rota com parâmetro tipado, confira que entrada inválida
-     * responde 4xx — a condição daqui não é uma garantia geral.
+     * Foi o caso do parâmetro com tipo errado ({@link #handleTypeMismatch}) e do corpo ilegível
+     * ({@link #handleUnreadableBody}), que hoje têm handler próprio. Ao acrescentar rota com
+     * parâmetro tipado ou corpo, confira que entrada inválida responde 4xx — a condição daqui não é
+     * uma garantia geral.
      */
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> handleUnexpected(Exception e) {
