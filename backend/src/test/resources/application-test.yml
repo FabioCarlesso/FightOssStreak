@@ -16,6 +16,10 @@ spring:
 
 fos:
   disclaimer-version: 'test-1'
+  # A origem dos links de e-mail (FOS-02). Não é segredo e não liga nada sozinha: sem
+  # EmailSender o cadastro por senha continua indisponível, que é como o AuthIntegrationTest o
+  # confere. Os testes que registram uma caixa de saída falsa precisam dela para a porta existir.
+  public-url: 'https://fos.example.test'
   curriculum:
     sync-on-startup: true
 

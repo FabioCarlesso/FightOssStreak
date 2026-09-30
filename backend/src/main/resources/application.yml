@@ -39,6 +39,13 @@ fos:
     # e-mail de confirmação.
     api-key: ${FOS_EMAIL_API_KEY:}
     from: ${FOS_EMAIL_FROM:}
+  # Origem pública do app — `https://fos.up.railway.app`, sem caminho —, de onde saem os links
+  # de confirmação e de redefinição de senha (FOS-02). NUNCA sai da requisição: o Host é de quem
+  # chama, e um pedido de redefinição com Host forjado mandaria à vítima um link para o domínio
+  # de outra pessoa. Sem ela (ou com valor que não seja https://, fora localhost) o cadastro por
+  # senha responde 503 como sem credencial de envio, e a subida avisa no log. Precisa estar no
+  # ambiente ANTES do deploy que a exige, pela mesma lição do FOS_PROXY_TRUSTED_HOPS (D53).
+  public-url: ${FOS_PUBLIC_URL:}
   demo:
     # Conta-modelo do acesso demonstrativo (#62): o e-mail VERIFICADO da conta que o autor cura
     # pelo próprio app e que cada visita recebe copiada. Vazio por default — sem ela a aplicação

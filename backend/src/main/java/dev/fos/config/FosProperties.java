@@ -1,5 +1,7 @@
 package dev.fos.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param proxy o que há entre quem navega e a aplicação (#77)
  * @param health o que a aplicação observa sobre si mesma, e quando ela avisa (#86)
  * @param streak perdão de dias perdidos sem quebrar a sequência (#99)
+ * @param publicUrl origem pública do app, de onde saem os links dos e-mails (FOS-02)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
@@ -29,7 +32,8 @@ public record FosProperties(
         Usage usage,
         Proxy proxy,
         Health health,
-        Streak streak) {
+        Streak streak,
+        String publicUrl) {
 
     public FosProperties {
         if (auth == null) {
@@ -53,6 +57,56 @@ public record FosProperties(
         if (streak == null) {
             streak = new Streak(null);
         }
+        publicUrl = normalizePublicUrl(publicUrl);
+    }
+
+    /** Se há origem pública válida — sem ela não há link de e-mail que se possa montar. */
+    public boolean hasPublicUrl() {
+        return !publicUrl.isEmpty();
+    }
+
+    /**
+     * A origem pública do app — {@code https://fos.up.railway.app}, sem caminho — de onde saem os
+     * links de confirmação e de redefinição de senha (FOS-02).
+     *
+     * <p>Configuração, e nunca a requisição, porque o {@code Host} é de quem chama: montado a
+     * partir dele, um pedido de redefinição para o endereço de outra pessoa com um {@code Host}
+     * forjado fazia o app mandar à vítima um e-mail legítimo com o link apontando para o domínio de
+     * quem pediu — e o clique entregava o token de 1 hora.
+     *
+     * <p>Valor que não é URL absoluta {@code https://} (ou {@code http://localhost}, para dev) vale
+     * como ausente, e não derruba a subida: ausente, o cadastro por senha responde 503 como
+     * responde sem credencial de envio, e a aplicação avisa no log. Um erro de digitação na
+     * variável tira uma porta de entrada, não o site inteiro.
+     *
+     * <p>Devolve a origem sem barra final, ou vazio quando o valor não serve.
+     */
+    private static String normalizePublicUrl(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return "";
+        }
+        String trimmed = raw.trim();
+        while (trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        URI uri;
+        try {
+            uri = new URI(trimmed);
+        } catch (URISyntaxException e) {
+            return "";
+        }
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase(Locale.ROOT);
+        String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase(Locale.ROOT);
+        // Só a origem: caminho, query, fragmento ou usuário embutido não são origem, e
+        // qualquer um deles no link seria texto que ninguém revisou indo parar no e-mail.
+        boolean soOrigem =
+                (uri.getRawPath() == null || uri.getRawPath().isEmpty())
+                        && uri.getRawQuery() == null
+                        && uri.getRawFragment() == null
+                        && uri.getRawUserInfo() == null;
+        boolean local = host.equals("localhost") || host.equals("127.0.0.1");
+        boolean esquemaAceito = scheme.equals("https") || (scheme.equals("http") && local);
+        return soOrigem && !host.isEmpty() && esquemaAceito ? trimmed : "";
     }
 
     /**

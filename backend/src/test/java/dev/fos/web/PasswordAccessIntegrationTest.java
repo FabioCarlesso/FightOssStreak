@@ -590,6 +590,51 @@ class PasswordAccessIntegrationTest {
                 .andExpect(status().isAccepted());
     }
 
+    // ------------------------------------------------------- links de e-mail (FOS-02)
+
+    @Test
+    @DisplayName("link de redefinição sai de fos.public-url, nunca do Host de quem pediu")
+    void resetLinkIgnoresTheRequestHost() throws Exception {
+        cadastrar(ENDERECO, SENHA);
+        confirmarComToken(tokenDeVerificacao()).andExpect(status().isNoContent());
+
+        // O ataque inteiro: pedir a redefinição da conta de outra pessoa com um Host do domínio
+        // de quem pede. A vítima recebe um e-mail legítimo do app, e o clique entregaria o token.
+        esquecida(ENDERECO, hostForjado("evil.test")).andExpect(status().isAccepted());
+
+        String corpo = mensagensPara(ENDERECO).getLast().corpo();
+        assertThat(corpo).contains("https://fos.example.test/senha/redefinir/");
+        assertThat(corpo).doesNotContain("evil.test");
+    }
+
+    @Test
+    @DisplayName("link de confirmação sai de fos.public-url, nunca do Host de quem cadastrou")
+    void verificationLinkIgnoresTheRequestHost() throws Exception {
+        mockMvc.perform(
+                        post("/api/auth/cadastro")
+                                .with(hostForjado("evil.test"))
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"email\":\"%s\",\"senha\":\"%s\"}"
+                                                .formatted(ENDERECO, SENHA)))
+                .andExpect(status().isAccepted());
+
+        String corpo = mensagensPara(ENDERECO).getLast().corpo();
+        assertThat(corpo).contains("https://fos.example.test/confirmar-email/");
+        assertThat(corpo).doesNotContain("evil.test");
+    }
+
+    /** {@code Host} e {@code X-Forwarded-Host}: o segundo é o que o Spring honra atrás do nginx. */
+    private static RequestPostProcessor hostForjado(String host) {
+        return request -> {
+            request.setServerName(host);
+            request.addHeader("Host", host);
+            request.addHeader("X-Forwarded-Host", host);
+            return request;
+        };
+    }
+
     // ------------------------------------------------------------------ auxiliares
 
     private ResultActions cadastrar(String email, String senha) throws Exception {
