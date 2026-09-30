@@ -1,7 +1,7 @@
 # Template processado por envsubst no start do container (imagem oficial do nginx, script
-# /docker-entrypoint.d/20-envsubst-on-templates.sh). Só ${PORT}, ${BACKEND_ORIGIN} e
-# ${NGINX_RESOLVER} são substituídos — ver NGINX_ENVSUBST_FILTER no Dockerfile. As demais
-# variáveis ($uri, $host, $request_uri...) chegam intactas ao nginx.
+# /docker-entrypoint.d/20-envsubst-on-templates.sh). Só ${PORT}, ${BACKEND_ORIGIN},
+# ${NGINX_RESOLVER} e ${PUBLIC_HOST} são substituídos — ver NGINX_ENVSUBST_FILTER no
+# Dockerfile. As demais variáveis ($uri, $host, $request_uri...) chegam intactas ao nginx.
 
 # Zera o Origin quando ele aponta para o próprio app, e só nesse caso.
 #
@@ -29,10 +29,37 @@ map $http_x_forwarded_proto $forwarded_proto {
     default $http_x_forwarded_proto;
 }
 
+# Host que não é o do app não chega a lugar nenhum (FOS-02).
+#
+# O backend monta URL a partir do Host que o nginx repassa — o redirect URI do OAuth sai dele —,
+# e com `server_name _` qualquer Host passava. O link dos e-mails já não depende disso (ele sai
+# de FOS_PUBLIC_URL), mas é a mesma classe de defeito por outra porta: fechar aqui é o que
+# impede a próxima rota que montar URL de herdar o problema.
+#
+# 444 é o código do nginx para "fecha a conexão sem responder". A exceção é o /healthz: o
+# healthcheck da Railway chega com o Host dela (healthcheck.railway.app), e recusá-lo faria
+# todo deploy falhar. Ele não toca o backend, então não há o que proteger ali.
+server {
+    listen ${PORT} default_server;
+    server_name _;
+
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 444;
+    }
+}
+
 server {
     # A porta vem do ambiente: a Railway injeta a dela em runtime e ignora o EXPOSE.
     listen ${PORT};
-    server_name _;
+    # O domínio público do app, sem esquema nem porta — o mesmo host de FOS_PUBLIC_URL. Mais de
+    # um (domínio próprio além do da Railway) vai separado por espaço.
+    server_name ${PUBLIC_HOST};
 
     root /usr/share/nginx/html;
     index index.html;

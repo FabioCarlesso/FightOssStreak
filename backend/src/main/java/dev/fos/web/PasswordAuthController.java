@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Cadastro, entrada e recuperação com senha própria (#81, D47).
@@ -108,7 +107,7 @@ public class PasswordAuthController {
         // Emitido do controller, e não de dentro do serviço, por um motivo prático: aqui não há
         // transação em curso, então um evento que falhe ao gravar não pode arrastar o cadastro
         // junto. Vale para os quatro eventos de funil (#84, D50).
-        if (senha.register(body.email(), body.senha(), body.nome(), baseUrl())) {
+        if (senha.register(body.email(), body.senha(), body.nome())) {
             uso.funnel(UsageEventType.CADASTRO_CRIADO);
         }
         return ResponseEntity.accepted().build();
@@ -167,7 +166,7 @@ public class PasswordAuthController {
         if (!freiar(request, body.email())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        senha.resendVerification(body.email(), baseUrl());
+        senha.resendVerification(body.email());
         return ResponseEntity.accepted().build();
     }
 
@@ -195,7 +194,7 @@ public class PasswordAuthController {
         if (!freiar(request, body.email())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        senha.requestReset(body.email(), baseUrl());
+        senha.requestReset(body.email());
         return ResponseEntity.accepted().build();
     }
 
@@ -248,10 +247,5 @@ public class PasswordAuthController {
     /** O motivo em minúsculas, que é como ele viaja na query e como a tela o lê. */
     private static String motivo(PasswordAccessService.Confirmacao confirmacao) {
         return confirmacao.falha().name().toLowerCase(Locale.ROOT);
-    }
-
-    /** A URL pública que o browser usou — a mesma que monta o redirect do OAuth. */
-    private static String baseUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
     }
 }

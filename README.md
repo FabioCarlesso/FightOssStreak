@@ -182,6 +182,8 @@ Variáveis, e o que cada uma vale nos dois ambientes:
 | `FOS_AUTH_PROVIDERS_FACEBOOK_CLIENT_SECRET` | backend | — | segredo do app no Meta for Developers |
 | `FOS_EMAIL_API_KEY` | backend | — | chave do provedor de envio (Resend) |
 | `FOS_EMAIL_FROM` | backend | — | remetente, em domínio verificado |
+| `FOS_PUBLIC_URL` | backend | `http://localhost:8081` | origem pública dos links de e-mail, ex. `https://fos.fabiocarlesso.com` — **antes** do deploy, ver abaixo |
+| `PUBLIC_HOST` | web | `localhost` | domínio que o nginx atende, ex. `fos.fabiocarlesso.com`; mais de um separado por espaço |
 | `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
 | `FOS_USAGE_ENABLED` | backend | `true` | `false` desliga a coleta de uso (D50) por inteiro: nada é gravado **e** o endpoint responde 503, que é como o navegador para de mandar evento |
 | `FOS_USAGE_GEOIP_DATABASE` | backend | vazia | caminho do CSV local de faixas de IP → país; vazia = país desconhecido |
@@ -303,9 +305,28 @@ Detalhes que não são óbvios:
 - **Sem `FOS_EMAIL_API_KEY` não há cadastro por senha.** O cadastro *é* o e-mail de confirmação,
   então sem provedor de envio ele responde **503** e a tela diz isso — mesma regra dos provedores de
   login. A aplicação sobe igual, e dev e CI continuam sem segredo nenhum.
-- **`FOS_PUBLIC_URL` não existe mais.** Ela servia só ao resumo horário da fila (D38), que saiu com
-  o portão de aprovação (D48). Os links de confirmação e redefinição saem da URL da própria
-  requisição.
+- **`FOS_PUBLIC_URL` é de onde saem os links de confirmação e de redefinição (D62).** Nunca da
+  requisição: o `Host` é de quem chama, e um pedido de redefinição para o endereço de outra pessoa
+  com `Host` forjado mandaria à vítima um e-mail legítimo com o link para o domínio de quem pediu.
+  Só a origem, sem caminho, e `https://` — `http://` só vale para `localhost`. Ausente ou inválida,
+  o cadastro e a recuperação por senha respondem **503** como sem credencial de envio, e a subida
+  escreve um `WARN` nomeando a variável; o resto do app funciona igual. **Precisa estar na Railway
+  antes do deploy do código**, pela lição da #96: código e variável entram por caminhos diferentes.
+- **`PUBLIC_HOST` é o único `Host` que o nginx atende.** Qualquer outro recebe `444` (conexão
+  fechada sem resposta) e não chega ao backend — exceto o `/healthz`, porque o healthcheck da
+  Railway chega com o `Host` dela. Por isso esquecer a variável **não** reprova o deploy e **derruba
+  o site**: todo acesso pelo domínio público vira `444`. Domínio próprio e o `*.up.railway.app`
+  juntos vão separados por espaço. No Compose o default é `localhost`; para abrir pelo IP da máquina
+  na rede (celular), acrescente o IP: `PUBLIC_HOST="localhost 192.168.0.10"`. Conferência depois do
+  deploy — o primeiro responde, o segundo fecha a conexão:
+
+  ```bash
+  curl -sS -o /dev/null -w '%{http_code}\n' https://fos.fabiocarlesso.com/api/auth/providers
+  curl -sS -o /dev/null -w '%{http_code}\n' -H 'Host: evil.test' https://fos.fabiocarlesso.com/api/auth/providers
+  ```
+
+  Se a borda da plataforma recusar o segundo antes do nginx, ótimo — é o que fecha o "suspeito" do
+  FOS-02 do lado da Railway.
 - **A base de geolocalização é baixada no build da imagem, não versionada (D50).** O
   `backend/Dockerfile` puxa o [DB-IP Lite](https://db-ip.com) (CC BY 4.0) do mês corrente, com recuo
   para o mês anterior, e já aponta `FOS_USAGE_GEOIP_DATABASE` para ele — **na Railway não há o que

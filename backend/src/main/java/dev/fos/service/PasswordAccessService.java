@@ -1,5 +1,6 @@
 package dev.fos.service;
 
+import dev.fos.config.FosProperties;
 import dev.fos.email.EmailSender;
 import dev.fos.model.AppUser;
 import dev.fos.model.LoginToken;
@@ -24,6 +25,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,6 +115,7 @@ public class PasswordAccessService {
     private final AccessRateLimiter freio;
     private final PasswordEncoder encoder;
     private final ObjectProvider<EmailSender> emailSender;
+    private final FosProperties properties;
     private final Clock clock;
 
     public PasswordAccessService(
@@ -123,6 +127,7 @@ public class PasswordAccessService {
             AccessRateLimiter freio,
             PasswordEncoder encoder,
             ObjectProvider<EmailSender> emailSender,
+            FosProperties properties,
             Clock clock) {
         this.users = users;
         this.identities = identities;
@@ -132,6 +137,7 @@ public class PasswordAccessService {
         this.freio = freio;
         this.encoder = encoder;
         this.emailSender = emailSender;
+        this.properties = properties;
         this.clock = clock;
     }
 
@@ -142,9 +148,28 @@ public class PasswordAccessService {
      * cadastro <em>é</em> o e-mail de confirmação, então oferecê-lo sem provedor de envio seria
      * criar contas que ninguém consegue confirmar. Dev e CI continuam subindo sem segredo nenhum —
      * só sem esta porta.
+     *
+     * <p>E sem {@code fos.public-url} também não (FOS-02): o e-mail sairia, mas com o link montado
+     * a partir de nada que o app controle. A origem da requisição não serve de substituta — o
+     * {@code Host} é de quem chama, e com ele um pedido de redefinição forjado mandaria à vítima um
+     * link para o domínio de outra pessoa.
      */
     public boolean isEnabled() {
-        return emailSender.getIfAvailable() != null;
+        return emailSender.getIfAvailable() != null && properties.hasPublicUrl();
+    }
+
+    /**
+     * Credencial de envio sem URL pública é o único caso que se configura pela metade sem perceber:
+     * a aplicação sobe, o login funciona, e só o cadastro responde 503. O aviso existe para que
+     * isso apareça no log da subida, e não na primeira reclamação de quem tentou se cadastrar.
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    void avisarSeFaltaUrlPublica() {
+        if (emailSender.getIfAvailable() != null && !properties.hasPublicUrl()) {
+            log.warn(
+                    "Envio de e-mail configurado sem FOS_PUBLIC_URL válida (https://, só a origem):"
+                            + " cadastro e recuperação por senha ficam indisponíveis");
+        }
     }
 
     // ------------------------------------------------------------------ cadastro
@@ -170,7 +195,7 @@ public class PasswordAccessService {
      * tentativa de cadastrar um endereço que já tem conta, que é o número que a issue NÃO pediu.
      */
     @Transactional
-    public boolean register(String rawEmail, String rawPassword, String rawNome, String baseUrl) {
+    public boolean register(String rawEmail, String rawPassword, String rawNome) {
         exigirEnvioConfigurado();
         String email = Emails.normalize(rawEmail);
         String nome = nomeOuNulo(rawNome);
@@ -192,7 +217,7 @@ public class PasswordAccessService {
                 // passaria a valer quando o dono, cadastrando-se depois, confirmasse o e-mail. O
                 // último a pedir é quem recebe o link — e o link só vale com a senha dele.
                 trocarSenha(identity, hash, now);
-                enviarVerificacao(identity.getUserId(), email, baseUrl, now);
+                enviarVerificacao(identity.getUserId(), email, now);
             }
             return false;
         }
@@ -215,22 +240,21 @@ public class PasswordAccessService {
                                 nome,
                                 now));
         credentials.save(new PasswordCredential(identity.getId(), hash, now));
-        enviarVerificacao(user.getId(), email, baseUrl, now);
+        enviarVerificacao(user.getId(), email, now);
         log.info("Cadastro por senha registrado — conta {}, à espera de confirmação", user.getId());
         return true;
     }
 
     /** Outro link de confirmação, para quem não recebeu o primeiro. Responde igual sempre. */
     @Transactional
-    public void resendVerification(String rawEmail, String baseUrl) {
+    public void resendVerification(String rawEmail) {
         exigirEnvioConfigurado();
         String email = Emails.normalize(rawEmail);
         Instant now = Instant.now(clock);
         identities
                 .findByProviderAndProviderSubject(PasswordAuthenticationToken.PROVIDER, email)
                 .filter(identity -> !identity.isEmailVerified())
-                .ifPresent(
-                        identity -> enviarVerificacao(identity.getUserId(), email, baseUrl, now));
+                .ifPresent(identity -> enviarVerificacao(identity.getUserId(), email, now));
     }
 
     /**
@@ -449,14 +473,13 @@ public class PasswordAccessService {
 
     /** Manda o link de redefinição, se houver conta com senha nesse endereço. Responde igual. */
     @Transactional
-    public void requestReset(String rawEmail, String baseUrl) {
+    public void requestReset(String rawEmail) {
         exigirEnvioConfigurado();
         String email = Emails.normalize(rawEmail);
         Instant now = Instant.now(clock);
         identities
                 .findByProviderAndProviderSubject(PasswordAuthenticationToken.PROVIDER, email)
-                .ifPresent(
-                        identity -> enviarRedefinicao(identity.getUserId(), email, baseUrl, now));
+                .ifPresent(identity -> enviarRedefinicao(identity.getUserId(), email, now));
     }
 
     /**
@@ -578,7 +601,7 @@ public class PasswordAccessService {
                 .findFirst();
     }
 
-    private void enviarVerificacao(Long userId, String email, String baseUrl, Instant now) {
+    private void enviarVerificacao(Long userId, String email, Instant now) {
         // Um link por vez: o anterior queima quando outro é pedido, senão pedir "reenviar" três
         // vezes deixaria três links vivos, e o mais antigo continuaria valendo por 24 horas.
         invalidarPendentes(userId, LoginTokenPurpose.VERIFICACAO, now);
@@ -596,10 +619,10 @@ public class PasswordAccessService {
                 Se não foi você que se cadastrou, ignore este e-mail — nada acontece, e a
                 conta some sozinha por não ter sido confirmada.
                 """
-                        .formatted(baseUrl, raw));
+                        .formatted(properties.publicUrl(), raw));
     }
 
-    private void enviarRedefinicao(Long userId, String email, String baseUrl, Instant now) {
+    private void enviarRedefinicao(Long userId, String email, Instant now) {
         invalidarPendentes(userId, LoginTokenPurpose.REDEFINICAO, now);
         String raw = emitir(userId, LoginTokenPurpose.REDEFINICAO, VALIDADE_REDEFINICAO, now);
         enviar(
@@ -614,7 +637,7 @@ public class PasswordAccessService {
                 aberta nesta conta é encerrada.
                 Se não foi você que pediu, ignore este e-mail — sua senha continua a mesma.
                 """
-                        .formatted(baseUrl, raw));
+                        .formatted(properties.publicUrl(), raw));
     }
 
     private void avisarQueJaTemConta(String email) {

@@ -177,6 +177,7 @@ class IncidentAlertsTest {
                         null,
                         null,
                         null,
+                        null,
                         null);
         IncidentAlerts semDestinatario = new IncidentAlerts(collector, comEnvio(), semDono);
         registrar(20, 500);
@@ -196,6 +197,7 @@ class IncidentAlertsTest {
                 null,
                 null,
                 new FosProperties.Auth(List.of("dono@example.test"), null),
+                null,
                 null,
                 null,
                 null,

@@ -36,11 +36,14 @@ COPY web/nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Sem filtro, o envsubst do entrypoint substituiria qualquer variável presente no ambiente,
 # inclusive as do próprio nginx ($uri, $host, $request_uri) caso alguma coincida de nome.
-ENV NGINX_ENVSUBST_FILTER="^(PORT|BACKEND_ORIGIN|NGINX_RESOLVER)$"
+ENV NGINX_ENVSUBST_FILTER="^(PORT|BACKEND_ORIGIN|NGINX_RESOLVER|PUBLIC_HOST)$"
 
-# Defaults do Compose local. Na Railway os três são sobrescritos pelo ambiente, sem rebuild.
+# Defaults do Compose local. Na Railway os quatro são sobrescritos pelo ambiente, sem rebuild.
 ENV PORT=80
 ENV BACKEND_ORIGIN=http://backend:8080
 ENV NGINX_RESOLVER="127.0.0.11 ipv6=off"
+# `localhost` é o Compose. Na Railway, esquecer esta variável não quebra o deploy — o /healthz
+# responde em qualquer Host — e derruba o site: todo acesso pelo domínio público vira 444.
+ENV PUBLIC_HOST=localhost
 
 EXPOSE 80
