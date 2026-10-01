@@ -41,14 +41,19 @@ class ProviderLogin {
     }
 
     /**
-     * O Google manda {@code email_verified}; o Facebook não manda nada equivalente porque só
-     * devolve e-mail já confirmado por ele. Sem e-mail, não há o que verificar.
+     * Verificado só quando o provedor <b>afirma</b> a verificação (D63, FOS-03).
+     *
+     * <p>O Google manda {@code email_verified} no id token. O Facebook não manda nada equivalente,
+     * e até aqui a ausência valia como "sim" — a garantia passava a ser do provedor e não estava
+     * escrita em lugar nenhum, e é desse booleano que saem o vínculo por e-mail (D47) e a semente
+     * de administração (D49). Atributo ausente é não verificado: o login funciona, só não vincula
+     * conta nem promove ninguém. Sem e-mail, não há o que verificar.
      */
-    private static boolean isEmailVerified(OAuth2User user) {
+    static boolean isEmailVerified(OAuth2User user) {
         if (attribute(user, "email") == null) {
             return false;
         }
         Object flag = user.getAttribute("email_verified");
-        return flag == null || Boolean.parseBoolean(flag.toString());
+        return flag != null && Boolean.parseBoolean(flag.toString());
     }
 }

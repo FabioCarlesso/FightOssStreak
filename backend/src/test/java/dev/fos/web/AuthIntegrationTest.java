@@ -208,12 +208,14 @@ class AuthIntegrationTest {
     @DisplayName("o mesmo e-mail VERIFICADO em provedores diferentes é uma conta só (D47)")
     void aVerifiedEmailIsTheSameAccount() {
         AppUser google = login("google", "sujeito", "mesmo@example.test", "Sujeito");
-        AppUser facebook = login("facebook", "sujeito", "mesmo@example.test", "Sujeito");
+        // Apple e não Facebook: desde a D63 o Facebook não afirma a verificação e nunca chega aqui
+        // com `true`.
+        AppUser apple = login("apple", "sujeito", "mesmo@example.test", "Sujeito");
 
         // A D36 dizia o contrário, e estava certa enquanto não havia senha própria: sem ela, duas
         // contas para a mesma pessoa era um incômodo. Com cadastro aberto (D47) vira o defeito de
         // quem se cadastra e encontra a árvore em branco.
-        assertThat(facebook.getId()).isEqualTo(google.getId());
+        assertThat(apple.getId()).isEqualTo(google.getId());
         assertThat(identities.findByUserId(google.getId())).hasSize(2);
     }
 
