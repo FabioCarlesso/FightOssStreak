@@ -375,7 +375,10 @@ O app **exige login**, e há dois caminhos (D47):
 
 **Google e senha no mesmo endereço são a mesma conta**, desde que o e-mail esteja **verificado** dos
 dois lados: a identidade nova se anexa à conta que já existe, com o progresso intacto, em vez de
-criar uma conta vazia. E-mail não verificado nunca vincula nada.
+criar uma conta vazia. E-mail não verificado nunca vincula nada — e **verificado é só o que o
+provedor afirma** (D63): o Google manda `email_verified`, o Facebook não manda nada, então quem entra
+pelo Facebook ganha conta própria, que não se anexa a outra pelo e-mail nem vira administração pela
+`FOS_AUTH_OWNER_EMAILS`.
 
 **Não há mais fila de aprovação, resumo horário nem link de e-mail como meio de login** (D48). Quem
 entrava por link antes do cadastro aberto continua entrando: basta se cadastrar com o **mesmo
