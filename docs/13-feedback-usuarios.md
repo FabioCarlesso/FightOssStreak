@@ -65,6 +65,9 @@ app, com o mesmo modelo mental da fila de acesso.
   quem mandou), `node_id` (FK `node`, nullable), `category`, `message`, `status`, `created_at`,
   `decided_at`, `decided_by` (FK `app_user`, nullable) — mesmo par decisão/decisor que `app_user`
   já tem para aprovação de conta.
+- **Exclusão de conta** (FOS-04, D64): `DELETE /api/me` apaga os feedbacks que a pessoa escreveu
+  e zera `decided_by` onde ela só decidiu — o feedback de outra pessoa continua na fila. Até a D64
+  as duas FKs faziam a exclusão dessas contas responder 500.
 - **Endpoints**:
   - `POST /api/feedback` — quem está autenticado e aprovado manda; `userId` sai do
     `CurrentUserProvider`, nunca do corpo.
