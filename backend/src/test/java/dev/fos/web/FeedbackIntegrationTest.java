@@ -1,14 +1,19 @@
 package dev.fos.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import dev.fos.model.AppUser;
+import dev.fos.model.Feedback;
+import dev.fos.model.FeedbackCategory;
+import dev.fos.model.FeedbackStatus;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.FeedbackRepository;
@@ -177,6 +182,84 @@ class FeedbackIntegrationTest {
                                 .content("{\"category\":\"OUTRO\",\"message\":\"teste\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value("feedback_nao_permitido"));
+    }
+
+    @Test
+    @DisplayName("quem mandou feedback consegue excluir a conta, e o que escreveu sai junto")
+    void authorCanDeleteAccountAndTheirFeedbackGoes() throws Exception {
+        AppUser aluno = login("google", "aluno", "aluno@example.test", "Aluno");
+        enviar("aluno", "{\"category\":\"BUG\",\"message\":\"app trava ao abrir\"}");
+
+        mockMvc.perform(delete("/api/me").with(as("google", "aluno")).with(csrf()))
+                .andExpect(status().isNoContent());
+        // A FK só é conferida quando o DELETE chega ao banco; sem o flush a transação do teste
+        // nunca o mandaria, e o caso da FOS-04 passaria aqui e estouraria em produção.
+        users.flush();
+
+        assertThat(users.findById(aluno.getId())).isEmpty();
+        assertThat(feedbacks.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("quem decidiu feedback consegue excluir a conta, e o feedback fica na fila")
+    void deciderCanDeleteAccountAndFeedbackStays() throws Exception {
+        AppUser dono = login("google", "dono", "dono@example.test", "Dono");
+        AppUser aluno = login("google", "aluno", "aluno@example.test", "Aluno");
+        enviar("aluno", "{\"category\":\"BUG\",\"message\":\"app trava ao abrir\"}");
+        Long id = feedbacks.findAllByOrderByCreatedAtAsc().get(0).getId();
+        mockMvc.perform(
+                        post("/api/admin/feedback/" + id + "/status")
+                                .with(as("google", "dono"))
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"status\":\"RESOLVIDO\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/api/me").with(as("google", "dono")).with(csrf()))
+                .andExpect(status().isNoContent());
+        users.flush();
+
+        assertThat(users.findById(dono.getId())).isEmpty();
+        Feedback restante = feedbacks.findById(id).orElseThrow();
+        assertThat(restante.getUserId()).isEqualTo(aluno.getId());
+        assertThat(restante.getStatus()).isEqualTo(FeedbackStatus.RESOLVIDO);
+        assertThat(restante.getDecidedBy()).isNull();
+    }
+
+    @Test
+    @DisplayName("a fusão de identidade apaga a conta de origem mesmo com feedback nela")
+    void mergeDeletesOriginAccountWithFeedback() {
+        Instant agora = Instant.parse("2026-08-16T10:00:00Z");
+        AppUser dona = login("google", "ana", "ana@example.test", "Ana");
+        AppUser origem = users.save(AppUser.forPassword("ana@example.test", agora));
+        UserIdentity senha =
+                identities.save(
+                        new UserIdentity(
+                                origem.getId(),
+                                "password",
+                                "ana@example.test",
+                                "ana@example.test",
+                                true,
+                                "ana@example.test",
+                                agora));
+        feedbacks.save(new Feedback(origem.getId(), null, FeedbackCategory.OUTRO, "teste", agora));
+
+        accounts.mergeIdentityInto(senha, dona);
+        users.flush();
+
+        assertThat(users.findById(origem.getId())).isEmpty();
+        assertThat(feedbacks.findAll()).isEmpty();
+        assertThat(identities.findByUserId(dona.getId())).hasSize(2);
+    }
+
+    private void enviar(String subject, String body) throws Exception {
+        mockMvc.perform(
+                        post("/api/feedback")
+                                .with(as("google", subject))
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(body))
+                .andExpect(status().isOk());
     }
 
     private AppUser login(String provider, String subject, String email, String name) {

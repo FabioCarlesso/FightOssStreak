@@ -7,6 +7,7 @@ import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
+import dev.fos.repo.FeedbackRepository;
 import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
@@ -59,6 +60,7 @@ public class AccountService {
     private final QuizAttemptRepository quizAttempts;
     private final DisclaimerAcceptanceRepository disclaimers;
     private final UsageEventRepository usageEvents;
+    private final FeedbackRepository feedbacks;
     private final FosProperties.Auth auth;
     private final Clock clock;
 
@@ -75,6 +77,7 @@ public class AccountService {
             QuizAttemptRepository quizAttempts,
             DisclaimerAcceptanceRepository disclaimers,
             UsageEventRepository usageEvents,
+            FeedbackRepository feedbacks,
             FosProperties properties,
             Clock clock) {
         this.users = users;
@@ -89,6 +92,7 @@ public class AccountService {
         this.quizAttempts = quizAttempts;
         this.disclaimers = disclaimers;
         this.usageEvents = usageEvents;
+        this.feedbacks = feedbacks;
         this.auth = properties.auth();
         this.clock = clock;
     }
@@ -413,6 +417,12 @@ public class AccountService {
      * esquecida: não tem FK, de propósito. Sai daqui porque foi prometido por escrito que sairia —
      * o agregado <b>fica</b>, porque não tem chave de visita nem id de conta, e apagá-lo faria a
      * exclusão de uma conta reescrever o histórico de uso de todo mundo.
+     *
+     * <p>{@code feedback} (V10) ficou de fora até a auditoria (FOS-04, D64), e ficou do jeito que
+     * este comentário previa: violação de FK, transação revertida e 500 para quem tinha mandado
+     * feedback ou decidido algum. Ela pendura na conta por duas colunas: o que a pessoa escreveu
+     * sai, e onde ela só aparece como quem decidiu, o feedback — que é de outra pessoa — fica na
+     * fila sem {@code decided_by}.
      */
     @Transactional
     public void delete(Long userId) {
@@ -421,6 +431,8 @@ public class AccountService {
         credentials.deleteByIdentityIdIn(
                 identities.findByUserId(userId).stream().map(UserIdentity::getId).toList());
         usageEvents.deleteByUserId(userId);
+        feedbacks.clearDecidedBy(userId);
+        feedbacks.deleteByUserId(userId);
         loginTokens.deleteByUserId(userId);
         quizAttempts.deleteByUserId(userId);
         drills.deleteByUserId(userId);

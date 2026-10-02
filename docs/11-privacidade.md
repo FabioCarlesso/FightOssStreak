@@ -54,7 +54,14 @@ periódica. Enquanto isso, `DELETE /api/me` continua disponível para quem confi
 Em *Sua conta* → **Excluir minha conta**, ou `DELETE /api/me`. Apaga, em uma transação, a conta, a
 identidade externa, o hash da senha, os links pendentes, progresso, agenda de revisão, drills,
 anotações, tentativas de quiz, os dias perdoados por freeze, **as sessões do diário — peso e sensação
-inclusive** — e o aceite do aviso. Não há cópia lógica nem lixeira: o que sai, sai.
+inclusive** —, **os feedbacks que você mandou** e o aceite do aviso. Não há cópia lógica nem
+lixeira: o que sai, sai.
+
+**Feedback sai, não é anonimizado** (D64). A mensagem é texto livre seu, e tirar só o autor deixaria
+na fila o que você escreveu. Se você administra e decidiu feedback de outra pessoa, esse feedback
+continua na fila — ele é dela —, e só a marca de que foi você quem decidiu é apagada. Até a D64 a
+exclusão de quem tinha mandado ou decidido feedback falhava inteira (FOS-04): a conta ficava, e
+nada saía.
 
 Ela entrou junto com o login, e não depois, porque a loja da Apple recusa app com login e sem
 deleção (`02-publicacao-ios-desafios.md`) — e porque manter dado de quem nunca entrou seria
