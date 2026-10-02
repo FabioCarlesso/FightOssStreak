@@ -29,6 +29,24 @@ map $http_x_forwarded_proto $forwarded_proto {
     default $http_x_forwarded_proto;
 }
 
+# Sem versão no `Server:` nem nas páginas de erro (FOS-05). Vale para os dois `server` abaixo.
+server_tokens off;
+
+# O Cache-Control de cada caminho, num lugar só (#75).
+#
+# Ele morava em `add_header` dentro de `location /assets/` e `location = /index.html`, e
+# `add_header` em `location` DESCARTA todos os do `server` — os cabeçalhos de segurança abaixo
+# sumiriam justamente do HTML e dos bundles. Com o valor vindo daqui, o `server` tem um
+# `add_header` só e nenhum `location` precisa repetir nada. Valor vazio não emite o cabeçalho: é o
+# que deixa o `/api/` com o Cache-Control que o Spring escolheu.
+#
+# `$uri` é lido na resposta, depois do `try_files`: /hoje e / chegam aqui como /index.html.
+map $uri $cache_control {
+    ~^/assets/     "public, max-age=31536000, immutable";
+    /index.html    "no-cache";
+    default        "";
+}
+
 # Host que não é o do app não chega a lugar nenhum (FOS-02).
 #
 # O backend monta URL a partir do Host que o nginx repassa — o redirect URI do OAuth sai dele —,
@@ -68,6 +86,27 @@ server {
     # privada da Railway. `valid=1s` é curto de propósito — ver a nota no location /api/.
     resolver ${NGINX_RESOLVER} valid=1s;
 
+    # Cabeçalhos de segurança (#75, FOS-05). Nenhum corrige defeito que exista hoje — o front não
+    # tem sink de HTML e o React escapa —, e é por isso que entram agora: são a segunda barreira, e
+    # ela se instala enquanto a primeira está inteira. Todos com `always`, para valerem também no
+    # 404 e no 5xx. Nenhum `location` deste `server` pode ter `add_header` próprio, senão perde
+    # todos estes — o Cache-Control vem do `map` no topo por esse motivo.
+    #
+    # CSP: tudo da própria origem, exceto o embed do YouTube (D7) — o player em `frame-src` e a
+    # miniatura da tira de vídeos extras em `img-src`. `style-src` não precisa de 'unsafe-inline':
+    # o Vite emite CSS em arquivo, e o `style={{...}}` do React escreve pelo CSSOM, que a CSP não
+    # bloqueia. `frame-ancestors 'none'` impede que outro site enquadre o app, e o X-Frame-Options
+    # diz o mesmo a navegador e WebView que não leem CSP. Ver D65.
+    #
+    # HSTS chega por HTTP no Compose local, e o navegador o ignora ali — o template segue um só.
+    # Sem `preload`: compromete o domínio inteiro, e é decisão à parte.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Cache-Control $cache_control;
+
     gzip on;
     gzip_comp_level 5;
     gzip_min_length 1024;
@@ -87,6 +126,14 @@ server {
         # Railway o IP do backend muda a cada deploy, e o proxy passaria a servir 502.
         # Nesse modo o nginx não reescreve a URI, então ela vai explícita em $request_uri.
         set $upstream ${BACKEND_ORIGIN};
+
+        # O Spring Security já manda estes três nas respostas da API, e o `server` acima também:
+        # sem esconder os do backend, a resposta sairia com o cabeçalho repetido — e
+        # X-Frame-Options repetido é tratado como inválido por parte dos navegadores. O nginx é a
+        # fonte única, pelo mesmo motivo de os cabeçalhos estarem aqui e não no backend.
+        proxy_hide_header X-Frame-Options;
+        proxy_hide_header X-Content-Type-Options;
+        proxy_hide_header Strict-Transport-Security;
         proxy_pass $upstream$request_uri;
 
         proxy_http_version 1.1;
@@ -135,15 +182,13 @@ server {
         proxy_set_header Origin $proxy_origin;
     }
 
-    # Bundles do Vite têm hash no nome: podem ser cacheados para sempre.
+    # Bundles do Vite têm hash no nome: podem ser cacheados para sempre (o valor vem do `map`).
+    # O `location` continua existindo, vazio, para que bundle inexistente responda 404 em vez de
+    # cair no fallback de SPA e devolver HTML com 200 no lugar de JavaScript.
+    #
+    # O index.html não tem hash e é quem aponta para os bundles novos — `no-cache`, também pelo
+    # `map`, para o navegador não ficar preso na versão anterior depois de um deploy.
     location /assets/ {
-        add_header Cache-Control "public, max-age=31536000, immutable";
-    }
-
-    # O index.html não tem hash e é quem aponta para os bundles novos. Cacheá-lo deixaria o
-    # navegador preso na versão anterior depois de um deploy.
-    location = /index.html {
-        add_header Cache-Control "no-cache";
     }
 
     # Fallback de SPA: /arvore e /no/M3.1 são rotas do react-router, não arquivos.

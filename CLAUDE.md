@@ -174,6 +174,12 @@ As duas imagens constroem a partir da **raiz** do repo (`-f backend/Dockerfile .
 e não carregam host, porta ou credencial fixos — o que varia entre Compose e Railway (D22) entra por
 variável de ambiente. Tabela completa no README.
 
+Os cabeçalhos de segurança (CSP, HSTS, `X-Frame-Options`...) saem do `server` em
+`web/nginx.conf.template` (D65). **Nenhum `location` do app pode ter `add_header` próprio**: no nginx
+isso descarta, só ali, todos os do `server`, sem nada falhar. O `Cache-Control` vem de um `map` por
+esse motivo, e `scripts/verificar-cabecalhos.mjs` confere a imagem no job `web`. Host novo de vídeo
+ou imagem entra no `frame-src`/`img-src` da CSP no mesmo PR.
+
 Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os dez prints que a página
 pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
 nó, do drill, da tela inicial ou do diário? O print correspondente precisa ser refeito no mesmo PR.

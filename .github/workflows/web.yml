@@ -89,5 +89,17 @@ jobs:
           context: .
           file: web/Dockerfile
           push: false
+          # Carregada no daemon do runner para o passo seguinte subir um container dela.
+          load: true
+          tags: fos-web:ci
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web,ignore-error=true
+
+      # O nginx.conf.template só é exercitado com o container de pé, e o defeito que ele mais
+      # facilmente ganha é silencioso: um `add_header` num `location` apaga ali todos os cabeçalhos
+      # de segurança do `server` (#75). Sem backend de propósito — ver o cabeçalho do script.
+      - name: Cabeçalhos de segurança do nginx
+        run: |
+          docker run -d --name fos-web-ci -p 8090:80 fos-web:ci
+          for i in $(seq 1 20); do curl -sf -o /dev/null http://localhost:8090/healthz && break; sleep 1; done
+          node scripts/verificar-cabecalhos.mjs http://localhost:8090 || { docker logs fos-web-ci; exit 1; }
