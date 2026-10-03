@@ -1,7 +1,7 @@
 # Vídeos: estado do catálogo
 
 O que já foi catalogado, de qual canal, e o que ainda falta conferir. Critérios e procedimento em
-[`videos.md`](../videos.md).
+[`videos.md`](videos.md).
 
 ## Estado atual (M0 a M7)
 

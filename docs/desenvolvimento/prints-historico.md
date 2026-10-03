@@ -1,7 +1,7 @@
 # Prints da landing: histórico de recapturas
 
 Registro do que cada recaptura mudou e por quê. O procedimento está em
-[`prints-da-landing.md`](../prints-da-landing.md).
+[`prints-da-landing.md`](prints-da-landing.md).
 
 > ℹ️ **A recaptura ficou bloqueada da #24 até a #58, e agora está destravada** — pelo caminho que
 > a versão anterior deste documento já prescrevia, não por um atalho. O app exige login (D36/D37) e

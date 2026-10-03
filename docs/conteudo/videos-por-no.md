@@ -1,7 +1,7 @@
 # Vídeos: o que cada nó precisa mostrar
 
 Critério nó a nó para escolher o vídeo canônico. A política, os critérios gerais e o
-procedimento estão em [`videos.md`](../videos.md).
+procedimento estão em [`videos.md`](videos.md).
 
 ### Módulo 0 — Fundamentos e Segurança
 

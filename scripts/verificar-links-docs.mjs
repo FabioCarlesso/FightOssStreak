@@ -162,8 +162,14 @@ export function verificavel(arquivo) {
   return EXTENSOES_DE_TEXTO.test(arquivo) && !IGNORADOS.some((re) => re.test(arquivo));
 }
 
+/**
+ * Versionados **e** novos ainda não adicionados (fora do `.gitignore`). Só os versionados deixava
+ * passar localmente o arquivo recém-criado — que é justamente onde o link quebrado nasce — e a
+ * quebra só aparecia no CI.
+ */
 function arquivosVersionados() {
-  return execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
+  const args = ['ls-files', '-z', '--cached', '--others', '--exclude-standard'];
+  return execFileSync('git', args, { cwd: root, encoding: 'utf8' })
     .split('\0')
     .filter((f) => f && verificavel(f));
 }

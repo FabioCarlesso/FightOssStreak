@@ -1,6 +1,6 @@
 # Fontes por nó
 
-A régua do que conta como fonte está em [`fontes.md`](../fontes.md).
+A régua do que conta como fonte está em [`fontes.md`](fontes.md).
 
 Preenchida à medida que B e C (escrita de conceito e de quiz) avançarem. Ao escrever ou revisar um
 nó, adicione a fonte efetivamente consultada nesta linha; "nenhuma além do professor" também é um
