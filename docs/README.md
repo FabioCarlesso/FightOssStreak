@@ -13,7 +13,7 @@ Para instalar e rodar, veja o [README](../README.md). Este arquivo é o índice 
 | [`regras-de-negocio.md`](regras-de-negocio.md) | Desbloqueio, SRS, diário, streak e freeze, aceite, modo demonstração |
 | [`api.md`](api.md) | Mapa de rotas, erros e CORS |
 | [`autenticacao.md`](autenticacao.md) | Cadastro, login, papéis, bloqueio, exclusão de conta e demonstração pública |
-| [`seguranca.md`](seguranca.md) | Endereço de quem chama, cookie de sessão, host aceito, links de e-mail, cabeçalhos |
+| [`seguranca.md`](seguranca.md) | Endereço de quem chama, cookie de sessão, host aceito, links de e-mail, cabeçalhos e auditoria |
 | [`configuracao.md`](configuracao.md) | Todas as variáveis de ambiente, por ambiente |
 | [`deploy.md`](deploy.md) | Compose local e Railway |
 | [`operacao.md`](operacao.md) | Monitoramento, alerta, painel de uso e feedback |
@@ -57,6 +57,7 @@ regra fica no arquivo de referência; o motivo dela fica na decisão, e um apont
 | Uma rota (nova, removida, parâmetro, código de erro) | [`api.md`](api.md) |
 | Login, cadastro, papéis, bloqueio, demonstração pública | [`autenticacao.md`](autenticacao.md) |
 | Proxy, cookie, host, cabeçalhos do nginx | [`seguranca.md`](seguranca.md) |
+| Achado de auditoria de segurança, ou a correção de um | [`seguranca.md`](seguranca.md#auditoria-de-segurança-setembro-de-2026) — sem roteiro de exploração |
 | Streak, SRS, desbloqueio, diário, quiz | [`regras-de-negocio.md`](regras-de-negocio.md) |
 | Monitoramento, alerta, painel | [`operacao.md`](operacao.md) |
 | Uma migration | [`banco-de-dados.md`](banco-de-dados.md) |

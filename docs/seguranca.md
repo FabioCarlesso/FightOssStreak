@@ -127,3 +127,34 @@ do deploy:
 ```bash
 node scripts/verificar-cabecalhos.mjs https://fos.fabiocarlesso.com --api
 ```
+
+## Auditoria de segurança (setembro de 2026)
+
+Revisão somente leitura do commit `e9aac9d`, em 2026-09-29, sem execução dinâmica. Não encontrou
+SQL injection, IDOR, segredo no repositório ou no histórico, nem endpoint administrativo exposto. O
+que ela achou e o que já foi corrigido:
+
+| ID | Achado | Severidade | Estado |
+|---|---|---|---|
+| FOS-01 | Cadastro de e-mail alheio fixava a senha ativada pelo dono ao confirmar | Alta | Corrigido — [D61](decisoes/D61-confirmar-o-e-mail-exige-a.md) |
+| FOS-02 | Link de e-mail montado a partir do `Host` da requisição | Média | Corrigido — [D62](decisoes/D62-link-de-e-mail-sai-de.md) |
+| FOS-03 | `email_verified` ausente tratado como verificado (Facebook) | Média | Corrigido — [D63](decisoes/D63-e-mail-de-provedor-so-e.md) |
+| FOS-04 | Exclusão de conta falhava para quem enviou ou decidiu feedback | Média | Corrigido — [D64](decisoes/D64-exclusao-de-conta-apaga-o-feedback.md) |
+| FOS-05 | HTML do app sem CSP, `X-Frame-Options`, HSTS e `nosniff` | Baixa | Corrigido — [D65](decisoes/D65-cabecalhos-de-seguranca-no-nginx-com.md) |
+| FOS-06 | Freio de login chaveado só por e-mail permite travar a conta de outra pessoa | Baixa | Pendente |
+| FOS-07 | Cadastro não confirmado nunca expira, apesar de o e-mail dizer que some | Baixa | Pendente |
+| FOS-08 | Compose publica backend e Postgres em todas as interfaces, sem passar pelo nginx | Baixa | Pendente |
+| FOS-09 | Teto global de demonstrações vivas pode ser esgotado por poucos endereços | Baixa | Pendente |
+| FOS-10 | Dependências desatualizadas (Spring Boot 3.4.1, `react-router`, `vite`) | Baixa | Pendente — [#78](https://github.com/FabioCarlesso/FightOssStreak/issues/78) |
+| FOS-11 | Feedback sem freio de volume por conta e fila sem paginação | Baixa | Pendente |
+| FOS-12 | Workflows sem `permissions:` explícito, actions e imagens base sem pinagem, base de geolocalização sem checksum | Informativa | Pendente |
+| FOS-13 | Perfil padrão `dev` quando `SPRING_PROFILES_ACTIVE` falta (ver [`deploy.md`](deploy.md#detalhes-que-não-são-óbvios)) | Informativa | Pendente |
+| FOS-14 | Swagger e OpenAPI com `permitAll` — inalcançáveis pelo nginx, expostos onde o backend for alcançável direto | Informativa | Pendente |
+| FOS-15 | SQL montado por interpolação nos scripts de dev (`seed-dev-users.mjs`, `mint-dev-login.mjs`) | Informativa | Pendente |
+
+O roteiro de cada achado fica fora do repositório, que é público. Achado corrigido ganha decisão
+própria em [`decisoes/`](decisoes/README.md) e muda de estado aqui no mesmo PR.
+
+**Limites da auditoria**: nada foi reproduzido contra o app rodando; o comportamento da borda da
+Railway com `Host` divergente e as dependências Java não foram verificados com ferramenta; a
+configuração na Railway, nos consoles dos provedores e no Resend ficou fora do escopo.
