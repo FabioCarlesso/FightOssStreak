@@ -3,14 +3,17 @@ package dev.fos.web;
 import dev.fos.model.AppUser;
 import dev.fos.model.UserIdentity;
 import dev.fos.service.AccountService;
+import dev.fos.service.AppleSignIn;
 import dev.fos.service.CurrentUserProvider;
 import dev.fos.service.DemoAccessService;
+import dev.fos.service.GoogleIdTokens;
 import dev.fos.service.PasswordAccessService;
 import dev.fos.web.dto.AccountDtos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +48,8 @@ public class AccountController {
     private final AccountService accounts;
     private final DemoAccessService demoAccess;
     private final PasswordAccessService passwordAccess;
+    private final GoogleIdTokens googleIdTokens;
+    private final AppleSignIn appleSignIn;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrations;
 
     public AccountController(
@@ -52,11 +57,15 @@ public class AccountController {
             AccountService accounts,
             DemoAccessService demoAccess,
             PasswordAccessService passwordAccess,
+            GoogleIdTokens googleIdTokens,
+            AppleSignIn appleSignIn,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) {
         this.currentUser = currentUser;
         this.accounts = accounts;
         this.demoAccess = demoAccess;
         this.passwordAccess = passwordAccess;
+        this.googleIdTokens = googleIdTokens;
+        this.appleSignIn = appleSignIn;
         this.clientRegistrations = clientRegistrations;
     }
 
@@ -74,8 +83,15 @@ public class AccountController {
                                 .map(AccountController::toView)
                                 .toList()
                         : List.of();
+        List<String> mobile = new ArrayList<>();
+        if (googleIdTokens.isEnabled()) {
+            mobile.add("google");
+        }
+        if (appleSignIn.isEnabled()) {
+            mobile.add("apple");
+        }
         return new AccountDtos.AuthProviders(
-                enabled, demoAccess.isEnabled(), passwordAccess.isEnabled());
+                enabled, demoAccess.isEnabled(), passwordAccess.isEnabled(), List.copyOf(mobile));
     }
 
     @GetMapping("/me")
@@ -101,9 +117,14 @@ public class AccountController {
             summary = "Exclui a conta e todo o dado dela",
             description =
                     "Irreversível: apaga a conta, a identidade, o hash da senha, os links"
-                            + " pendentes e todo o progresso. A sessão é invalidada junto.")
+                            + " pendentes, os tokens do app e todo o progresso, e revoga na Apple o"
+                            + " acesso de quem entrou por ela. A sessão é invalidada junto.")
     public ResponseEntity<Void> deleteMe(HttpServletRequest request) {
-        accounts.delete(currentUser.currentUserId());
+        Long userId = currentUser.currentUserId();
+        // Antes de apagar, e fora da transação da exclusão: a revogação é chamada de rede, e é
+        // melhor esforço — a Apple fora do ar não pode prender a conta aqui (#139, D68).
+        appleSignIn.revokeAllOf(userId);
+        accounts.delete(userId);
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();

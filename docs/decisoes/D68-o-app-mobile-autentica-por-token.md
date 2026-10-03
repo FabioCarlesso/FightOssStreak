@@ -150,6 +150,19 @@ Sem a credencial da Apple, a rota da Apple também responde 404, e a Apple não 
   `docs/seguranca.md` descrevem o que existe, e mudam **no PR que implementa** (#139), não aqui.
   Até lá, a frase "a Apple ainda não" em `autenticacao.md` continua verdadeira.
 
+## Como foi implementado (#139)
+
+Dois pontos saíram diferentes do texto acima, e mais firmes que ele:
+
+- **Cadeia de segurança própria, e não um filtro a mais.** Na cadeia do navegador, o
+  `SessionManagementFilter` trata a autenticação por token como login novo e cria sessão. Toda
+  requisição com `Authorization` vai para uma cadeia sem estado e sem CSRF
+  (`SecurityConfig.mobileFilterChain`), com as mesmas rotas da outra, e a sessão nem é lida.
+- **A revogação dos tokens acontece dentro da transação da troca de senha**
+  (`PasswordAccessService.resetPassword`), como a queima dos links pendentes, e não num ponto
+  chamado depois. As sessões do navegador continuam sendo derrubadas pelo controller, depois do
+  commit, porque o registro delas é em memória.
+
 ## Revisar quando
 
 - Se o app precisar de administração. A restrição de `/api/admin/**` cai, e a pergunta passa a ser

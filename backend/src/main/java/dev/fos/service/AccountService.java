@@ -5,10 +5,12 @@ import dev.fos.model.AppUser;
 import dev.fos.model.Role;
 import dev.fos.model.UserIdentity;
 import dev.fos.repo.AppUserRepository;
+import dev.fos.repo.AppleCredentialRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.FeedbackRepository;
 import dev.fos.repo.LoginTokenRepository;
+import dev.fos.repo.MobileTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
 import dev.fos.repo.QuizAttemptRepository;
 import dev.fos.repo.SrsReviewRepository;
@@ -57,6 +59,8 @@ public class AccountService {
     private final TrainingSessionRepository trainingSessions;
     private final LoginTokenRepository loginTokens;
     private final PasswordCredentialRepository credentials;
+    private final MobileTokenRepository mobileTokens;
+    private final AppleCredentialRepository appleCredentials;
     private final QuizAttemptRepository quizAttempts;
     private final DisclaimerAcceptanceRepository disclaimers;
     private final UsageEventRepository usageEvents;
@@ -74,6 +78,8 @@ public class AccountService {
             TrainingSessionRepository trainingSessions,
             LoginTokenRepository loginTokens,
             PasswordCredentialRepository credentials,
+            MobileTokenRepository mobileTokens,
+            AppleCredentialRepository appleCredentials,
             QuizAttemptRepository quizAttempts,
             DisclaimerAcceptanceRepository disclaimers,
             UsageEventRepository usageEvents,
@@ -89,6 +95,8 @@ public class AccountService {
         this.trainingSessions = trainingSessions;
         this.loginTokens = loginTokens;
         this.credentials = credentials;
+        this.mobileTokens = mobileTokens;
+        this.appleCredentials = appleCredentials;
         this.quizAttempts = quizAttempts;
         this.disclaimers = disclaimers;
         this.usageEvents = usageEvents;
@@ -428,8 +436,14 @@ public class AccountService {
     public void delete(Long userId) {
         // A senha mora em `password_credential`, pendurada na IDENTIDADE e não na conta (#81):
         // sai antes das identidades, senão a remoção delas bate na FK.
-        credentials.deleteByIdentityIdIn(
-                identities.findByUserId(userId).stream().map(UserIdentity::getId).toList());
+        List<Long> identityIds =
+                identities.findByUserId(userId).stream().map(UserIdentity::getId).toList();
+        credentials.deleteByIdentityIdIn(identityIds);
+        // O token do app e o refresh token da Apple penduram na identidade pela mesma razão da
+        // senha (#139, D68). A revogação na Apple já aconteceu antes, fora desta transação — ver
+        // AppleSignIn.revokeAllOf.
+        mobileTokens.deleteByIdentityIdIn(identityIds);
+        appleCredentials.deleteByIdentityIdIn(identityIds);
         usageEvents.deleteByUserId(userId);
         feedbacks.clearDecidedBy(userId);
         feedbacks.deleteByUserId(userId);

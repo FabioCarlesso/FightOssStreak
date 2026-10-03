@@ -81,6 +81,17 @@ export type AuthProviders = Schemas['AuthProviders'];
 export type LinkStatus = Schemas['LinkView'];
 
 /**
+ * O app mobile (#139, D68): o login nativo troca uma prova de identidade por um token, que o app
+ * guarda no `expo-secure-store` e manda em `Authorization: Bearer`.
+ */
+export type MobileToken = Schemas['MobileTokenView'];
+export type MobilePasswordRequest = Schemas['MobilePasswordRequest'];
+export type MobileGoogleRequest = Schemas['MobileGoogleRequest'];
+export type MobileAppleRequest = Schemas['MobileAppleRequest'];
+/** Versão mínima do app que a API atende. Nula quando qualquer versão serve. */
+export type AppVersion = Schemas['AppVersionView'];
+
+/**
  * As contas do sistema, vistas por quem administra (#89, #90).
  *
  * É a primeira resposta do app que carrega dado pessoal de outras pessoas — o que entra nela está

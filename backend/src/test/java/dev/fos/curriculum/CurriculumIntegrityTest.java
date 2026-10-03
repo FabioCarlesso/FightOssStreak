@@ -40,6 +40,7 @@ class CurriculumIntegrityTest {
                         null,
                         null,
                         null,
+                        null,
                         null);
         CurriculumLoader loader =
                 new CurriculumLoader(new ObjectMapper(), new DefaultResourceLoader(), properties);

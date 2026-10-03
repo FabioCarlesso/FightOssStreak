@@ -112,6 +112,7 @@ public class PasswordAccessService {
     private final LoginTokenRepository tokens;
     private final PasswordCredentialRepository credentials;
     private final AccountService accounts;
+    private final MobileTokens mobileTokens;
     private final AccessRateLimiter freio;
     private final PasswordEncoder encoder;
     private final ObjectProvider<EmailSender> emailSender;
@@ -124,6 +125,7 @@ public class PasswordAccessService {
             LoginTokenRepository tokens,
             PasswordCredentialRepository credentials,
             AccountService accounts,
+            MobileTokens mobileTokens,
             AccessRateLimiter freio,
             PasswordEncoder encoder,
             ObjectProvider<EmailSender> emailSender,
@@ -134,6 +136,7 @@ public class PasswordAccessService {
         this.tokens = tokens;
         this.credentials = credentials;
         this.accounts = accounts;
+        this.mobileTokens = mobileTokens;
         this.freio = freio;
         this.encoder = encoder;
         this.emailSender = emailSender;
@@ -536,6 +539,10 @@ public class PasswordAccessService {
         PasswordPolicy.check(rawPassword, identity.getEmail());
         trocarSenha(identity, encoder.encode(rawPassword), now);
         invalidarPendentes(token.getUserId(), now);
+        // Na mesma transação da troca, e por isso antes de a senha nova valer: trocar a senha
+        // depois de perder o celular tem que tirar o celular de dentro (#139, D68). As sessões do
+        // navegador o controller derruba depois do commit, porque o registro delas é em memória.
+        mobileTokens.revokeAllOf(token.getUserId());
         freio.clear(chaveEmail(identity.getEmail()));
         confirmar(identity, now);
         log.info("Senha redefinida — conta {}", token.getUserId());

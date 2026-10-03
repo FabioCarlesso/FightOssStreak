@@ -33,6 +33,13 @@ recurso que depende dela (provedor de login, cadastro por senha, demonstração)
 | `FOS_PUBLIC_URL` | backend | `http://localhost:8081` | origem pública dos links de e-mail, ex. `https://fos.fabiocarlesso.com` — **antes** do deploy, ver [segurança](seguranca.md#links-de-e-mail-fos_public_url) |
 | `PUBLIC_HOST` | web | `localhost` | domínio que o nginx atende, ex. `fos.fabiocarlesso.com`; mais de um separado por espaço |
 | `FOS_DEMO_TEMPLATE_EMAIL` | backend | — | e-mail verificado da conta-modelo da demonstração |
+| `FOS_MOBILE_TOKEN_IDLE_DAYS` | backend | `90` | dias sem uso até o token do app mobile vencer (D68) |
+| `FOS_MOBILE_MIN_VERSION` | backend | vazia | versão mínima do app que a API atende, ex. `1.2.0`; vazia = qualquer versão |
+| `FOS_MOBILE_GOOGLE_CLIENT_IDS` | backend | — | client IDs do app no Google (Android e iOS), separados por vírgula; vazia = sem login Google no app |
+| `FOS_MOBILE_APPLE_BUNDLE_ID` | backend | — | bundle id do app iOS; com os três abaixo liga o Sign in with Apple |
+| `FOS_MOBILE_APPLE_TEAM_ID` | backend | — | Team ID da conta Apple Developer |
+| `FOS_MOBILE_APPLE_KEY_ID` | backend | — | Key ID da chave de Sign in with Apple |
+| `FOS_MOBILE_APPLE_PRIVATE_KEY` | backend | — | a chave `.p8`, em PEM — **segredo** |
 | `FOS_USAGE_ENABLED` | backend | `true` | `false` desliga a coleta de uso (D50) por inteiro: nada é gravado **e** o endpoint responde 503, que é como o navegador para de mandar evento |
 | `FOS_USAGE_GEOIP_DATABASE` | backend | vazia | caminho do CSV local de faixas de IP → país; vazia = país desconhecido |
 | `FOS_USAGE_RETENTION_DAYS` | backend | `90` | retenção da tabela **crua** de eventos; o agregado não expira |
@@ -55,7 +62,7 @@ As credenciais `fos/fos/fos` do Compose são de conveniência local. Não reapro
 |---|---|---|
 | Portas, perfil, banco, rede, fuso, geolocalização | `PORT`, `SPRING_PROFILES_ACTIVE`, `FOS_DB_*`, `SERVER_ADDRESS`, `NGINX_RESOLVER`, `TZ`, `VITE_PUBLIC_URL`, `FOS_USAGE_GEOIP_DATABASE` | [`deploy.md`](deploy.md#detalhes-que-não-são-óbvios) |
 | Endereço de quem chama, cookie, host aceito, links de e-mail | `FOS_PROXY_TRUSTED_HOPS`, `FOS_COOKIE_SECURE`, `PUBLIC_HOST`, `FOS_PUBLIC_URL` | [`seguranca.md`](seguranca.md) |
-| Login, cadastro, administração e demonstração | `FOS_AUTH_PROVIDERS_*`, `FOS_EMAIL_*`, `FOS_OWNER_EMAILS`, `FOS_DEMO_TEMPLATE_EMAIL` | [`autenticacao.md`](autenticacao.md#configuração) |
+| Login, cadastro, administração, demonstração e app mobile | `FOS_AUTH_PROVIDERS_*`, `FOS_EMAIL_*`, `FOS_OWNER_EMAILS`, `FOS_DEMO_TEMPLATE_EMAIL`, `FOS_MOBILE_*` | [`autenticacao.md`](autenticacao.md#configuração) |
 | Coleta de uso | `FOS_USAGE_*` | [`privacidade/coleta-de-uso.md`](privacidade/coleta-de-uso.md) |
 | Saúde do site e alerta | `FOS_HEALTH_*` | [`operacao.md`](operacao.md) |
 | Streak | `FOS_STREAK_FREEZES_PER_MONTH` | [`regras-de-negocio.md`](regras-de-negocio.md#streak-e-freeze) |

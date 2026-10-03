@@ -115,6 +115,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mobile/auth/senha": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entra com e-mail e senha e recebe o token do app
+         * @description As mesmas respostas do login da web: 401 sem dizer se o e-mail existe, 403 com o endereço ainda não confirmado, 429 no freio de tentativas.
+         */
+        post: operations["senha"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile/auth/sair": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoga o token do app
+         * @description O token apresentado no cabeçalho Authorization deixa de valer. Os outros aparelhos da conta continuam dentro.
+         */
+        post: operations["sair"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile/auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entra pelo login nativo do Google
+         * @description Recebe o ID token do Google e confere assinatura, emissor, prazo e audiência contra os client IDs do app. O e-mail só vincula conta quando o Google afirma email_verified (D63). 404 quando o Google não está configurado neste ambiente; 401 com token que não confere.
+         */
+        post: operations["google"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile/auth/apple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entra pelo Sign in with Apple (iOS)
+         * @description Confere o identity token, a audiência igual ao bundle id e o nonce. O e-mail relay não vincula conta nem semeia administração. 404 quando a Apple não está configurada neste ambiente; 401 com token que não confere.
+         */
+        post: operations["apple"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/feedback": {
         parameters: {
             query?: never;
@@ -228,7 +308,7 @@ export interface paths {
         put?: never;
         /**
          * Troca a senha
-         * @description Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.
+         * @description Queima os links pendentes da conta, revoga os tokens do app e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.
          */
         post: operations["redefinir"];
         delete?: never;
@@ -476,7 +556,7 @@ export interface paths {
         post?: never;
         /**
          * Exclui a conta e todo o dado dela
-         * @description Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes e todo o progresso. A sessão é invalidada junto.
+         * @description Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes, os tokens do app e todo o progresso, e revoga na Apple o acesso de quem entrou por ela. A sessão é invalidada junto.
          */
         delete: operations["deleteMe"];
         options?: never;
@@ -530,6 +610,26 @@ export interface paths {
          * @description Só os que têm credencial configurada. Sem nenhum, a lista vem vazia e a tela de login não mostra botão — a aplicação sobe sem segredo nenhum.
          */
         get: operations["providers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/app/versao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Versão mínima do app
+         * @description Pública e sem segredo: responde antes do login, para o app velho saber que precisa atualizar antes de tentar entrar. É o app que compara.
+         */
+        get: operations["versao"];
         put?: never;
         post?: never;
         delete?: never;
@@ -768,6 +868,22 @@ export interface components {
             freezesRemaining?: number;
             /** Format: date */
             lastFrozenOn?: string;
+        };
+        MobilePasswordRequest: {
+            email: string;
+            senha: string;
+        };
+        MobileTokenView: {
+            token?: string;
+        };
+        MobileGoogleRequest: {
+            idToken: string;
+        };
+        MobileAppleRequest: {
+            identityToken: string;
+            nonce: string;
+            authorizationCode?: string;
+            nome?: string;
         };
         FeedbackRequest: {
             /** @enum {string} */
@@ -1083,6 +1199,10 @@ export interface components {
             providers?: components["schemas"]["AuthProviderView"][];
             demoEnabled?: boolean;
             passwordEnabled?: boolean;
+            mobileProviders?: string[];
+        };
+        AppVersionView: {
+            minimumVersion?: string;
         };
         AdminUserPage: {
             items?: components["schemas"]["AdminUserView"][];
@@ -1408,6 +1528,96 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DrillResult"];
+                };
+            };
+        };
+    };
+    senha: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobilePasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MobileTokenView"];
+                };
+            };
+        };
+    };
+    sair: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    google: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileGoogleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MobileTokenView"];
+                };
+            };
+        };
+    };
+    apple: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileAppleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MobileTokenView"];
                 };
             };
         };
@@ -1986,6 +2196,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AuthProviders"];
+                };
+            };
+        };
+    };
+    versao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppVersionView"];
                 };
             };
         };

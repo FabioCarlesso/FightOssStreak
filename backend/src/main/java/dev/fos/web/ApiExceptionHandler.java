@@ -6,6 +6,7 @@ import dev.fos.service.AdminActionException;
 import dev.fos.service.AdminUserNotFoundException;
 import dev.fos.service.DemoUnavailableException;
 import dev.fos.service.FeedbackNotAllowedException;
+import dev.fos.service.MobileLoginException;
 import dev.fos.service.NodeNotFoundException;
 import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.PasswordAccessException;
@@ -153,6 +154,24 @@ class ApiExceptionHandler {
                     case EMAIL_NAO_VERIFICADO -> HttpStatus.FORBIDDEN;
                     case MUITAS_TENTATIVAS -> HttpStatus.TOO_MANY_REQUESTS;
                     case INDISPONIVEL -> HttpStatus.SERVICE_UNAVAILABLE;
+                };
+        return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
+    }
+
+    /**
+     * Login nativo do app recusado (#139, D68).
+     *
+     * <p><b>404</b> quando o provedor não está configurado — a porta não existe neste ambiente,
+     * como o provedor sem credencial não aparece na web —, <b>401</b> para token de provedor que
+     * não confere e <b>429</b> no freio por origem.
+     */
+    @ExceptionHandler(MobileLoginException.class)
+    ResponseEntity<ApiError> handleMobileLogin(MobileLoginException e) {
+        HttpStatus status =
+                switch (e.motivo()) {
+                    case INDISPONIVEL -> HttpStatus.NOT_FOUND;
+                    case TOKEN_INVALIDO -> HttpStatus.UNAUTHORIZED;
+                    case MUITAS_TENTATIVAS -> HttpStatus.TOO_MANY_REQUESTS;
                 };
         return ResponseEntity.status(status).body(ApiError.of(e.code(), e.getMessage()));
     }
