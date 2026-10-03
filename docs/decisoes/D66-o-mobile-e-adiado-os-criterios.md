@@ -40,6 +40,9 @@ Quando uma janela de 30 dias em `/progresso` mostrar os quatro critérios atingi
 decisão cai, a #137 é refeita com os números novos e o épico segue a partir da #138. Números abaixo da
 meta não reabrem esta decisão: reabrem a mecânica, pelo critério de falha do `mvp-web.md`
 
+Revisitada na [D67](D67-o-mobile-comeca-aprender-a-plataforma.md): o mobile começa por aprendizado, sem
+que os critérios mudem.
+
 ---
 
 [Índice das decisões](../README.md)

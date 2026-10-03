@@ -6,7 +6,7 @@ arquivo descreve cada componente, suas fronteiras e o porquê das escolhas de st
 
 ## Stack
 - **MVP web**: React (Vite) + TypeScript
-- **Mobile (fase posterior)**: React Native via Expo
+- **Mobile (em andamento, D67)**: React Native via Expo
 - **Backend**: Spring Boot
 - **Banco**: Postgres
 - **Vídeo**: embed do player oficial do YouTube (sem hospedagem própria)
@@ -41,7 +41,7 @@ fightossstreak/
 │   ├── nginx.conf.template    # envsubst no start: porta e upstream vêm do ambiente
 │   └── railway.json
 │
-├── mobile/                    # React Native / Expo (fase posterior)
+├── mobile/                    # React Native / Expo (D67; ainda não criado)
 │   └── src/{components,screens,api,state}/
 │
 ├── shared/                    # compartilhado entre web e mobile

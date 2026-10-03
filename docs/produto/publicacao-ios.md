@@ -1,6 +1,6 @@
 # Publicação iOS — Desafios e Decisão
 
-> Fase futura. Nesta etapa (uso pessoal + MVP web) nada aqui se aplica ainda — o documento existe para que as decisões de hoje não criem bloqueio depois.
+> Em andamento desde a D67: o épico mobile (#138 a #144) segue, e a publicação é a #144.
 
 ## Desafios de publicar no iOS
 - **Precisa de um Mac** para compilar via Xcode — não é possível gerar o `.ipa` em Linux. Solução: build na nuvem via **EAS Build** (Expo) ou Codemagic.
@@ -21,4 +21,4 @@
 Não. A review da Apple avalia o binário e o comportamento do app, independentemente do framework (RN, Flutter ou nativo).
 
 ## Decisão
-Validar tudo primeiro na web (ver `docs/produto/mvp-web.md`). O processo de loja só entra em cena quando houver produto validado e vontade de distribuir para além do uso pessoal.
+Validar tudo primeiro na web (ver `docs/produto/mvp-web.md`) era a regra da D4, e a D66 a confirmou com os critérios do MVP abaixo da meta. A D67 a revisitou: o mobile começa porque aprender a desenvolver e publicar para as duas plataformas é objetivo próprio, sem que os critérios do MVP afrouxem.

@@ -75,6 +75,7 @@ nesta tabela, no mesmo PR.
 | [D64](D64-exclusao-de-conta-apaga-o-feedback.md) | Exclusão de conta apaga o feedback do autor e esquece quem decidiu |
 | [D65](D65-cabecalhos-de-seguranca-no-nginx-com.md) | Cabeçalhos de segurança no nginx, com CSP bloqueante sem `'unsafe-inline'` |
 | [D66](D66-o-mobile-e-adiado-os-criterios.md) | O mobile é adiado: os critérios do MVP web não foram atingidos — a D4 segue valendo |
+| [D67](D67-o-mobile-comeca-aprender-a-plataforma.md) | O mobile começa: aprender a plataforma é objetivo próprio, e a D66 cai — os critérios do MVP não afrouxam |
 
 ## Política de uso de vídeo (D7) — limites
 
@@ -95,4 +96,4 @@ nesta tabela, no mesmo PR.
 | Currículo montado sem revisão de graduado | Pode ensinar ordem ou conceito errado | Aceito conscientemente enquanto o uso for pessoal (D12) — desde D40, `docs/conteudo/fontes.md` torna a proveniência rastreável, sem fechar o risco |
 | Vídeos do YouTube saem do ar / ficam privados | Nós ficam sem referência | Detectado, não evitado — `scripts/verificar-videos.mjs` roda semanalmente pelo workflow `videos` e abre issue com os nós afetados (`docs/conteudo/videos.md`). A substituição segue humana |
 | Gamificação sustentar-se sozinha sem gerar aprendizado | Produto vira streak vazio | Coberto pelo critério de falha em `docs/produto/mvp-web.md` |
-| App ser visto como wrapper de YouTube na review da Apple | Rejeição | Fase futura; mitigação em `docs/produto/publicacao-ios.md` |
+| App ser visto como wrapper de YouTube na review da Apple | Rejeição | Em aberto desde a D67; mitigação em `docs/produto/publicacao-ios.md` |
