@@ -113,7 +113,7 @@ export function SignInPage() {
       {nenhumaEntrada && !senhaHabilitada && (
         <p className="gate__error">
           Nenhuma forma de entrada está configurada neste ambiente. Defina as credenciais descritas
-          no README para habilitar o login.
+          em docs/autenticacao.md para habilitar o login.
         </p>
       )}
 
