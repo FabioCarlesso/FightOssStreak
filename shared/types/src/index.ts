@@ -84,7 +84,7 @@ export type LinkStatus = Schemas['LinkView'];
  * As contas do sistema, vistas por quem administra (#89, #90).
  *
  * É a primeira resposta do app que carrega dado pessoal de outras pessoas — o que entra nela está
- * registrado em `docs/11-privacidade.md`.
+ * registrado em `docs/privacidade/coleta-de-uso.md`.
  */
 export type AdminUserView = Schemas['AdminUserView'];
 export type AdminUserPage = Schemas['AdminUserPage'];
@@ -95,7 +95,7 @@ export type AccessStatus = NonNullable<AdminUserView['accessStatus']>;
  * O painel de uso do app (#85, D50).
  *
  * Agregado e de ninguém: não há um campo aqui que identifique uma pessoa, e essa ausência é o que
- * mantém verdadeiro o desenho de privacidade da coleta — ver `docs/11-privacidade.md`.
+ * mantém verdadeiro o desenho de privacidade da coleta — ver `docs/privacidade/coleta-de-uso.md`.
  */
 export type PanelView = Schemas['PanelView'];
 export type PanelAccessSeries = Schemas['AccessSeries'];

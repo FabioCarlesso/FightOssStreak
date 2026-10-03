@@ -17,15 +17,15 @@ spring:
 
 fos:
   # Versão do texto de disclaimer atualmente vigente. Subir quando o texto mudar
-  # materialmente — isso força novo aceite (docs/06-disclaimer-responsabilidade.md).
-  # Sobe quando o texto de docs/06 muda materialmente: é o que reexibe o aceite. A última subida
+  # materialmente — isso força novo aceite (docs/produto/disclaimer.md).
+  # Sobe quando o texto de docs/produto/disclaimer.md muda materialmente: é o que reexibe o aceite. A última subida
   # foi o parágrafo sobre o diário de treino (#114, D57) — o app não interpreta peso nem sensação.
   disclaimer-version: '2026-09-08'
   auth:
     # As contas de administração (D48): fila de feedback e métricas. Exige e-mail VERIFICADO —
     # pelo provedor externo ou pela confirmação do próprio app. Vazia por default: sem ela
     # ninguém administra nada, e a primeira identidade de administrador a entrar é quem adota
-    # o progresso pré-existente (app_user id = 1). Ver docs/07-decisoes.md (D48).
+    # o progresso pré-existente (app_user id = 1). Ver docs/decisoes/README.md (D48).
     owner-emails: ${FOS_OWNER_EMAILS:}
     # As credenciais NÃO ficam declaradas aqui: provedor sem client-id e client-secret não é
     # registrado, não aparece na tela de login, e a aplicação sobe sem segredo nenhum. Para
@@ -65,10 +65,10 @@ fos:
     # Base de geolocalização LOCAL (DB-IP Lite, CC BY 4.0, ou equivalente): CSV de
     # `início,fim,país[,região]`, aceito também em .gz. Vazio por default — dev e CI sobem sem
     # base e coletam tudo menos país, que vira 'ZZ'. Nunca há chamada a serviço externo por
-    # requisição: o IP de quem usa o app não vai para lugar nenhum (docs/11-privacidade.md).
+    # requisição: o IP de quem usa o app não vai para lugar nenhum (docs/privacidade/coleta-de-uso.md).
     geoip-database: ${FOS_USAGE_GEOIP_DATABASE:}
     # Retenção da tabela CRUA, em dias. O agregado não expira — ele não tem chave de visita nem
-    # id de conta. Mudar isto muda a promessa escrita em docs/11-privacidade.md.
+    # id de conta. Mudar isto muda a promessa escrita em docs/privacidade/coleta-de-uso.md.
     retention-days: ${FOS_USAGE_RETENTION_DAYS:90}
     # Teto de acessos gravados por dia. É o único limite da coleta que não depende de nada que o
     # cliente possa escolher: o freio por visita é chaveado no IP + User-Agent, e o User-Agent é

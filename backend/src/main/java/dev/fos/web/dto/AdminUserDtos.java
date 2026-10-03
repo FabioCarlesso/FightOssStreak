@@ -11,8 +11,9 @@ import java.util.List;
  * As contas do sistema, vistas por quem administra (#89, #90).
  *
  * <p>É a primeira resposta do app que carrega dado pessoal de <em>outras</em> pessoas — o e-mail de
- * todo mundo que se cadastrou. O que entra aqui está registrado em {@code docs/11-privacidade.md},
- * e o que fica de fora é decisão: não há senha, não há token, não há histórico de uso.
+ * todo mundo que se cadastrou. O que entra aqui está registrado em {@code
+ * docs/privacidade/contas.md}, e o que fica de fora é decisão: não há senha, não há token, não há
+ * histórico de uso.
  */
 public final class AdminUserDtos {
 

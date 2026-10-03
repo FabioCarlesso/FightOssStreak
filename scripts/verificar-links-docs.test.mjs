@@ -9,6 +9,7 @@ import {
   mencoesADocs,
   problemaDoAlvo,
   verificar,
+  verificavel,
 } from './verificar-links-docs.mjs';
 
 describe('âncora gerada para um título', () => {
@@ -68,6 +69,19 @@ describe('menções a docs/', () => {
     );
   });
 
+  it('acha a URL deste repositório no GitHub, que é o link público da landing', () => {
+    const ts = 'export const URL = `${REPO_URL}/blob/main/docs/produto/disclaimer.md`;';
+    const md = 'https://github.com/FabioCarlesso/FightOssStreak/blob/main/docs/api.md#erros';
+    assert.deepEqual(
+      mencoesADocs(ts).map((m) => m.alvo),
+      ['docs/produto/disclaimer.md'],
+    );
+    assert.deepEqual(
+      mencoesADocs(md).map((m) => m.alvo),
+      ['docs/api.md#erros'],
+    );
+  });
+
   it('não confunde com caminho de outro repositório ou de subpasta', () => {
     const texto = 'https://github.com/outro/repo/blob/main/docs/api.md e web/docs/x.md';
     assert.deepEqual(mencoesADocs(texto), []);
@@ -97,6 +111,19 @@ describe('resolução do alvo', () => {
   it('âncora que não existe é apontada, inclusive a do próprio arquivo', () => {
     assert.match(problemaDoAlvo('docs/a.md#outra', '/r', contexto), /âncora inexistente/);
     assert.match(problemaDoAlvo('#outra', '/r', contexto), /âncora inexistente/);
+  });
+});
+
+describe('arquivos verificados', () => {
+  it('migration fica de fora: corrigir comentário nela muda o checksum do Flyway', () => {
+    assert.equal(verificavel('backend/src/main/resources/db/migration/V1__schema.sql'), false);
+    assert.equal(verificavel('backend/src/main/java/dev/fos/service/ClientIp.java'), true);
+  });
+
+  it('gerado fica de fora; Markdown e código entram', () => {
+    assert.equal(verificavel('shared/types/generated/api.ts'), false);
+    assert.equal(verificavel('docs/README.md'), true);
+    assert.equal(verificavel('backend/Dockerfile'), true);
   });
 });
 

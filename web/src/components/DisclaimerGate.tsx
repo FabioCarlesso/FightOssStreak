@@ -10,7 +10,7 @@ import { FULL_DISCLAIMER } from '../content/disclaimer.ts';
  *
  * O aceite é por *versão de texto*: quando o texto muda materialmente, o backend passa a reportar
  * `accepted: false` e o aviso reaparece. É requisito de produto, não enfeite
- * (docs/06-disclaimer-responsabilidade.md).
+ * (docs/produto/disclaimer.md).
  *
  * Desde a #24 o aceite é por **conta**, e o portão passou a ficar dentro do `AuthGate`. Daí a saída
  * no rodapé do card: sem ela, quem entrasse na conta errada ficaria preso no aviso, sem app e sem

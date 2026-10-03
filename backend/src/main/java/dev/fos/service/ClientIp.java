@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  * <p>O que este componente <b>não</b> faz, e não deve passar a fazer: devolver o IP para alguém
  * guardar. Ele existe para ser consumido e descartado dentro da requisição — derivar país, compor
  * hash, contar tentativa. Não há coluna de IP em tabela nenhuma (D50), e {@code
- * docs/11-privacidade.md} promete isso por escrito.
+ * docs/privacidade/coleta-de-uso.md} promete isso por escrito.
  */
 @Component
 public class ClientIp {

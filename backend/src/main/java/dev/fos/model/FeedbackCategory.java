@@ -1,8 +1,7 @@
 package dev.fos.model;
 
 /**
- * Assunto do feedback (docs/13-feedback-usuarios.md) — o dono prioriza por aqui sem abrir cada
- * item.
+ * Assunto do feedback (docs/produto/feedback.md) — o dono prioriza por aqui sem abrir cada item.
  */
 public enum FeedbackCategory {
     BUG,

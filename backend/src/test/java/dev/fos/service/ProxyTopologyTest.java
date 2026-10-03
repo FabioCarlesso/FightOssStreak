@@ -167,7 +167,7 @@ class ProxyTopologyTest {
     void theWarningNeverCarriesAnAddress() {
         topology(3).observe(2);
 
-        // A promessa de docs/11-privacidade.md vale para o log também.
+        // A promessa de docs/privacidade/coleta-de-uso.md vale para o log também.
         assertThat(mensagens()).singleElement().asString().doesNotContainPattern("\\d+\\.\\d+\\.");
     }
 

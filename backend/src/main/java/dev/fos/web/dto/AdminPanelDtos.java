@@ -11,7 +11,7 @@ import java.util.List;
  * há {@code user_id}, não há linha que descreva uma pessoa. Tudo é contagem. Essa ausência é o que
  * mantém verdadeiro o desenho de privacidade da coleta (D50) — um painel que listasse pessoas
  * tornaria inútil todo o cuidado de não guardar IP, e a promessa escrita em {@code
- * docs/11-privacidade.md} teria que ser reescrita de novo.
+ * docs/privacidade/coleta-de-uso.md} teria que ser reescrita de novo.
  *
  * <p>Tudo vem de {@code usage_daily}, com duas exceções que <b>não</b> são a tabela crua de
  * eventos: os totais de contas, que saem de {@code app_user}, e "contas ativas", que sai da

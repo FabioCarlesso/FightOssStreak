@@ -34,10 +34,14 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /**
- * Arquivos fora da checagem. Gerado não se corrige à mão (regra 2 do CLAUDE.md), e o currículo é
- * dado editorial (D11). O próprio script e o teste dele citam caminhos inexistentes de propósito.
+ * Arquivos fora da checagem. Gerado não se corrige à mão (regra 2 do CLAUDE.md), e o próprio script
+ * e o teste dele citam caminhos inexistentes de propósito. Migration aplicada também fica de fora, e
+ * esta é a que importa: o Flyway guarda o checksum do arquivo inteiro, comentário incluído, e
+ * corrigir ali o caminho de um documento renomeado faria a subida em produção recusar o schema.
+ * Comentário de migration é registro do dia em que ela foi escrita.
  */
-const IGNORADOS = [
+export const IGNORADOS = [
+  /^backend\/src\/main\/resources\/db\/migration\//,
   /^shared\/types\/generated\//,
   /^backend\/openapi\.json$/,
   /^package-lock\.json$/,
@@ -117,12 +121,20 @@ export function linksDoMarkdown(texto) {
 
 /**
  * Menções a `docs/….md` em qualquer texto. A barra antes de `docs/` fica de fora de propósito:
- * `https://github.com/outro/repo/blob/main/docs/x.md` é de outro repositório.
+ * `https://github.com/outro/repo/blob/main/docs/x.md` é de outro repositório. A exceção é a URL
+ * deste repositório — `FightOssStreak/blob/main/docs/…` ou `${REPO_URL}/blob/main/docs/…` —, que é
+ * a mais cara de quebrar: a landing aponta o aviso de responsabilidade por ela, e a quebra só aparece
+ * para quem clica.
  */
 export function mencoesADocs(texto) {
   const mencoes = [];
   texto.split('\n').forEach((linha, i) => {
     for (const m of linha.matchAll(/(?<![\w/.-])(docs\/[\w./-]*\.md)(#[\p{L}\p{N}_-]+)?/gu)) {
+      mencoes.push({ alvo: m[1] + (m[2] ?? ''), numero: i + 1 });
+    }
+    const desteRepo =
+      /(?:FightOssStreak|\$\{REPO_URL\})\/blob\/main\/(docs\/[\w./-]*\.md)(#[\p{L}\p{N}_-]+)?/gu;
+    for (const m of linha.matchAll(desteRepo)) {
       mencoes.push({ alvo: m[1] + (m[2] ?? ''), numero: i + 1 });
     }
   });
@@ -146,10 +158,14 @@ export function problemaDoAlvo(alvo, base, { existe, ancorasDe, arquivoAtual }) 
   return null;
 }
 
+export function verificavel(arquivo) {
+  return EXTENSOES_DE_TEXTO.test(arquivo) && !IGNORADOS.some((re) => re.test(arquivo));
+}
+
 function arquivosVersionados() {
   return execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
     .split('\0')
-    .filter((f) => f && EXTENSOES_DE_TEXTO.test(f) && !IGNORADOS.some((re) => re.test(f)));
+    .filter((f) => f && verificavel(f));
 }
 
 export function verificar(arquivos = arquivosVersionados()) {

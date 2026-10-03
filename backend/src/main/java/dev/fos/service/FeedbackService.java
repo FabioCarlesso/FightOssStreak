@@ -19,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão
- * (docs/13-feedback-usuarios.md).
+ * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão (docs/produto/feedback.md).
  *
  * <p>Segue o mesmo desenho da fila de acesso (D36–D38): quem manda escreve, e só o dono
  * (`fos.auth.owner-emails`, via {@code OwnerOnlyInterceptor}) lê e decide.

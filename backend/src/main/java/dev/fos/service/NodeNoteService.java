@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Serviço próprio, e não um método a mais em {@link DrillService}: anotar não é treinar. O drill
  * alimenta streak, reagenda o SRS e conclui nó sem quiz; a anotação não faz nenhuma das três, e
  * misturá-las na mesma classe convidaria a que uma dessas três acabasse acontecendo por descuido —
- * o que estragaria justamente as métricas de docs/05-mvp-web-plano.md.
+ * o que estragaria justamente as métricas de docs/produto/mvp-web.md.
  */
 @Service
 public class NodeNoteService {

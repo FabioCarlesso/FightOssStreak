@@ -21,7 +21,7 @@
  *
  * Pré-requisitos: backend e web no ar (`npm run dev:backend` e `npm run dev:web`), `google-chrome`
  * no PATH e — desde que o app exige login (#24) — uma sessão já obtida em `FOS_PRINT_COOKIE`. O
- * passo a passo completo está em `docs/10-prints-da-landing.md`.
+ * passo a passo completo está em `docs/desenvolvimento/prints-da-landing.md`.
  *
  * Códigos de saída:
  *   0  todos os prints gravados dentro do teto de tamanho
@@ -198,7 +198,7 @@ const NOTAS_FIXADAS = [
   },
 ];
 
-/** Um quiz refeito depois de aprovado — é o que acende a quarta métrica de docs/05. */
+/** Um quiz refeito depois de aprovado — é o que acende a quarta métrica de docs/produto/mvp-web.md. */
 const QUIZ_REFEITO = 'M0.2';
 
 const dormir = (ms) => new Promise((ok) => setTimeout(ok, ms));
@@ -208,7 +208,7 @@ const dormir = (ms) => new Promise((ok) => setTimeout(ok, ms));
  *
  * Desde a #24 o app exige login (D36/D37), e este script não tem como se autenticar sozinho: ele
  * semeia por `fetch` e sobe um Chrome com perfil novo, e os dois levavam 401. O caminho que
- * `docs/10-prints-da-landing.md` já prescrevia é este — **receber** uma sessão de verdade, obtida
+ * `docs/desenvolvimento/prints-da-landing.md` já prescrevia é este — **receber** uma sessão de verdade, obtida
  * por quem opera, em vez de um modo que desliga o portão para tirar foto, que seria porta dos
  * fundos permanente para economizar dez imagens.
  *

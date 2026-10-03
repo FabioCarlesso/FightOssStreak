@@ -185,7 +185,7 @@ class CookieSecureTopologyTest {
     @Test
     @DisplayName("o aviso não carrega endereço, rota nem identificador de sessão")
     void theWarningCarriesNothingThatIdentifiesAnyone() {
-        // A promessa de docs/11-privacidade.md vale para o log também (D50).
+        // A promessa de docs/privacidade/coleta-de-uso.md vale para o log também (D50).
         topology(false).observe(true);
 
         assertThat(mensagens())

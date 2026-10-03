@@ -17,7 +17,7 @@ public final class ActivityDtos {
      * @param currentStreak dias com treino na corrente atual; dia coberto por freeze mantém a
      *     corrente e não conta
      * @param activeDaysLast30 dias com registro nos últimos 30 — a métrica do critério de sucesso
-     * @param targetDaysLast30 meta declarada em docs/05-mvp-web-plano.md (12 de 30)
+     * @param targetDaysLast30 meta declarada em docs/produto/mvp-web.md (12 de 30)
      * @param freezesPerMonth saldo cheio do mês (#99, D55); zero = perdão desligado nesta
      *     instalação, e a tela não mostra nada sobre freeze
      * @param freezesRemaining o que sobra do saldo no mês corrente
@@ -77,7 +77,7 @@ public final class ActivityDtos {
             int intervalDays,
             StreakView streak) {}
 
-    /** Agenda de "o que drillar hoje" — a razão de o app existir, segundo docs/00. */
+    /** Agenda de "o que drillar hoje" — a razão de o app existir, segundo docs/produto/visao.md. */
     public record ReviewAgenda(LocalDate today, int dueCount, List<DueItemView> due) {}
 
     /**

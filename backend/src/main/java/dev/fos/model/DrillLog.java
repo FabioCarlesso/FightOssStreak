@@ -16,7 +16,7 @@ import java.time.LocalDate;
  *
  * <p>É a única entrada de dado que alimenta simultaneamente o streak e a agenda de SRS. Fica como
  * log append-only — o histórico é o que permite reavaliar depois se a mecânica funcionou (critério
- * de falha em docs/05-mvp-web-plano.md).
+ * de falha em docs/produto/mvp-web.md).
  */
 @Entity
 @Table(name = "drill_log")

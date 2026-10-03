@@ -10,7 +10,7 @@
 
 export const REPO_URL = 'https://github.com/FabioCarlesso/FightOssStreak';
 export const DOCS_URL = `${REPO_URL}/tree/main/docs`;
-export const DISCLAIMER_DOC_URL = `${REPO_URL}/blob/main/docs/06-disclaimer-responsabilidade.md`;
+export const DISCLAIMER_DOC_URL = `${REPO_URL}/blob/main/docs/produto/disclaimer.md`;
 
 /** Rota de entrada do app. Daqui para dentro passa pelo login e pelo aceite. */
 export const APP_PATH = '/hoje';

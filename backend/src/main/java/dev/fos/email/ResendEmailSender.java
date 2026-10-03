@@ -65,7 +65,7 @@ class ResendEmailSender implements EmailSender {
                 .retrieve()
                 .toBodilessEntity();
         // O endereço não entra no log: é dado pessoal, e saber que "um e-mail saiu" já basta para
-        // depurar. Ver docs/11-privacidade.md.
+        // depurar. Ver docs/privacidade/contas.md.
         log.info("E-mail de entrada enviado");
     }
 }

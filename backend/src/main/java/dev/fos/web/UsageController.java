@@ -57,7 +57,7 @@ public class UsageController {
                             + " requisição e ignora qualquer um desses campos no corpo. O endereço"
                             + " de IP é usado para derivar país e compor a chave de visita, e é"
                             + " descartado — não há coluna de IP em tabela nenhuma"
-                            + " (docs/11-privacidade.md).")
+                            + " (docs/privacidade/coleta-de-uso.md).")
     public ResponseEntity<?> evento(
             HttpServletRequest request,
             @Valid @RequestBody(required = false) UsageDtos.EventRequest body) {

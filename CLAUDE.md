@@ -1,6 +1,6 @@
 # CLAUDE.md — FightOssStreak (FOS)
 
-Contrato curto de comportamento. O planejamento completo vive em [`docs/`](docs/) — leia antes de decidir qualquer coisa estrutural.
+Contrato curto de comportamento. A documentação completa vive em [`docs/`](docs/) — leia antes de decidir qualquer coisa estrutural. [`docs/README.md`](docs/README.md) é o índice e diz qual arquivo é o dono de cada assunto: documente a mudança **lá**, e não copie o texto para outro lugar.
 
 ## O que este projeto é
 
@@ -12,9 +12,9 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 2. **`shared/types/generated/` é gerado** a partir do OpenAPI. Não editar à mão — rode `npm run gen:types`.
 3. **Vídeo só por embed do YouTube** (D7). Não baixar, não re-hospedar, não recortar. Creditar canal em cada nó.
 4. **Cadastro é aberto: qualquer um cria conta com e-mail e senha** (D47/D48, que revisitaram D36–D38). Não há fila, aprovação nem magic link de login — tudo isso foi desmontado. Login por Google entra direto. Quem não tem provedor **se cadastra**: a conta nasce `APROVADO` e **não verificada**, sem sessão, e só existe de verdade quando o link de confirmação (24h, uso único) for **confirmado com um clique e a senha do cadastro** — abrir a URL só consulta o link, porque varredor de e-mail abre tudo que chega, e o link sozinho prova a caixa de entrada mas não quem cadastrou (D61, FOS-01): sem a senha, quem cadastrasse antes um endereço alheio fixava a credencial que o dono ativaria ao clicar. Pelo mesmo motivo, recadastro de e-mail **ainda não verificado** troca a senha pendente pela nova — nunca guarde a do primeiro. Senha é hash com `DelegatingPasswordEncoder`, mínimo de 12 caracteres, em `password_credential` — nunca em `user_identity`. Recuperação é link de 1 hora que queima os pendentes e derruba as sessões abertas. **Link que vai por e-mail sai de `fos.public-url`, nunca da requisição** (D62, FOS-02): o `Host` é de quem chama, e com ele um pedido de redefinição forjado mandava à vítima um link para o domínio do atacante. Sem a variável o cadastro responde 503 — não caia para a URL da requisição. O nginx só atende `PUBLIC_HOST`, e o resto leva 444. Cadastro, reenvio e recuperação respondem **igual** para e-mail que existe e que não existe. `login_token` tem `purpose`, e ele é **conferido no consumo** — link de 24h não pode valer pelo de 1h. **Vínculo entre provedores é por `app_user.primary_email`, sempre verificado**: identidade nova cujo e-mail verificado já pertence a uma conta se anexa àquela conta; e-mail não verificado nunca vincula nada, e **verificado é só o que o provedor afirma** (D63, FOS-03): `email_verified` ausente — o Facebook nunca manda — vale como não verificado, e por isso login pelo Facebook não vincula conta nem vira `ADMIN`. O usuário da requisição sai do `CurrentUserProvider` — **todo método de autenticação novo precisa ser reconhecido lá**, senão o login autentica e o app responde 401 em silêncio (foi o defeito da #51). Todo login que a aplicação faz por conta própria passa pelo `SessionLogin`: rotacionar o id, gravar o contexto e registrar a sessão. A aplicação **sobe sem segredo nenhum**, e é assim que dev e CI rodam — sem credencial de envio, o cadastro por senha responde 503, como o provedor sem `client-id` não aparece. **Quem administra é `app_user.role`** (D49), mudado pela tela *Usuários* sem deploy; quem decide isso continua sendo `AccountService.roleOf`, **ponto único**, e `/api/me` devolve `role`. Só conta com e-mail verificado — pelo provedor ou pela confirmação do próprio app — vira `ADMIN`. `fos.auth.owner-emails` não é fonte da verdade: é **semente de bootstrap e saída de emergência**, que promove na subida e em todo login verificado e **nunca rebaixa**. Conta abusiva se **bloqueia** movendo para `RECUSADO` (`POST /api/admin/usuarios/{id}/status`): o `AccessGateInterceptor` relê o estado a cada requisição e responde 403 `acesso_recusado` já na ação seguinte, inclusive em aba aberta — **bloqueio não derruba sessão**, e derrubar faria o `ConcurrentSessionFilter` responder 401 antes do portão, devolvendo a pessoa para o login em vez do motivo — não é a fila de aprovação de volta, e **conta bloqueada continua podendo se excluir** por `DELETE /api/me`. Sem sessão é 401. `fos.demo.template-email` (D39) cria conta `APROVADO` descartável, sem identidade de ninguém, que vence em duas horas — mexer nisso reabre a decisão. **Permissão granular** (perfil por recurso) segue fora de escopo: são dois papéis, e o critério para mudar isso está na D49.
-5. **Disclaimer é requisito de produto**, não enfeite. Textos em `docs/06-disclaimer-responsabilidade.md`; mudança material no texto exige subir a versão do aceite.
+5. **Disclaimer é requisito de produto**, não enfeite. Textos em `docs/produto/disclaimer.md`; mudança material no texto exige subir a versão do aceite.
 6. **`main` só muda por PR com CI verde** (D18). Nunca commitar direto em `main` — trabalhe em branch e abra PR. As regras são versionadas em `.github/rulesets/main.json`; mudança nelas entra por PR como qualquer outra, e depois roda `./scripts/apply-repo-rules.sh`.
-7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/09-regras-repositorio.md`). O caso de renome não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão. Já **acrescentar `paths:` ao `pull_request:`** derruba a proteção do mesmo jeito e a guarda não pega — não introduza (D19).
+7. **Renomear job de CI quebra a proteção de `main`.** Os jobs `backend` e `web` são os required checks. Renomeou? Atualize `.github/rulesets/main.json` no mesmo PR e rode `./scripts/apply-repo-rules.sh` (`docs/repositorio.md`). O caso de renome não depende mais de memória: `scripts/verificar-ruleset.mjs` roda no CI e falha apontando o contexto órfão. Já **acrescentar `paths:` ao `pull_request:`** derruba a proteção do mesmo jeito e a guarda não pega — não introduza (D19).
 8. **Coleta de uso não guarda IP, não cria cookie e não chama terceiro** (D50). O IP é lido na
    requisição, deriva país e compõe a `visit_key`, e é descartado no mesmo método — **não existe
    coluna de IP em tabela nenhuma**, e `UsageSemIpTest` reprova o build se uma aparecer em qualquer
@@ -34,12 +34,12 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
    prefixo**, porque varrer tudo com a janela curta dela apagaria o contador de força bruta de
    senha.
    Nada disso pode quebrar tela: evento que falha é evento perdido. Mexer em qualquer uma dessas
-   linhas exige reescrever `docs/11-privacidade.md` — a promessa está lá por escrito.
+   linhas exige reescrever `docs/privacidade/coleta-de-uso.md` — a promessa está lá por escrito.
    **Quem lê tudo isso é o painel** (`/admin/painel`, D52), e ele é **agregado e de ninguém**: lê
    `usage_daily` e **nunca** `usage_event`. Nada na resposta dele identifica pessoa — não há
    e-mail, nome nem `user_id`, e há teste que varre o corpo inteiro atrás de uma arroba. Visão por
    pessoa, sessão individual ou funil por conta não é ajuste de tela: é a D50 revertida, e passa
-   por reescrever `docs/11-privacidade.md` antes de escrever a consulta. Dimensão nova do painel é
+   por reescrever `docs/privacidade/coleta-de-uso.md` antes de escrever a consulta. Dimensão nova do painel é
    **linha no `UsageAggregator`**, nunca migration — foi assim que navegador e idioma entraram.
 9. **O endereço de quem chama sai do `ClientIp`, nunca do `getRemoteAddr()`** (D51, #77). Atrás do
    nginx o segundo devolve o **primeiro** elemento do `X-Forwarded-For` — que é o que o cliente
@@ -83,7 +83,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     respondia 500 em toda rota com corpo até a revisão da D61; os dois hoje têm handler próprio. Rota
     nova com parâmetro tipado ou corpo exige conferir que entrada inválida responde 4xx; a condição
     do catch-all não é garantia geral. Mexer nisso exige
-    reescrever a seção de saúde de `docs/11-privacidade.md`.
+    reescrever `docs/privacidade/saude-do-site.md`.
 11. **O streak perdoa até dois dias por mês, e a tabela do perdão é livro-caixa, não cache**
     (D55, #99). O streak segue **derivado do `drill_log` a cada leitura** — o que
     `streak_freeze` guarda é o **saldo já gasto**, e é isso que faz o teto ser "por mês" e não "por
@@ -106,7 +106,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     soma resolve: transação própria (`REQUIRES_NEW`, programática) e desfazimento explícito. Não
     volte a gravar isso com `save()`. Freeze
     **manual** e **compra** de freeze estão fora de escopo por decisão: não há economia de pontos no
-    FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `05`.
+    FOS, e criar uma seria a gamificação se sustentando sozinha — o critério de falha do `docs/produto/mvp-web.md`.
     `fos.streak.freezes-per-month: 0` devolve o comportamento anterior à #99 sem deploy.
     **O heatmap da home lê o mesmo conjunto de dias** (D59, #102) — `GET /api/streak/historico`
     agrega por dia exatamente `sessões (exceto DESCANSO) ∪ drills avulsos`, e dia perdoado é
@@ -132,8 +132,8 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
     referente à saúde** (LGPD art. 5º, II): guardados e mostrados, **nunca interpretados** — sem
     meta, sem faixa, sem alerta e sem correlação apresentada como causa. Ficam só na conta, `DELETE
     /api/me` os leva junto, e a coleta da D50 e o painel da D52 **nunca** os veem; há teste que
-    varre a resposta do painel atrás deles. Mexer nessas linhas exige reescrever a seção de saúde de
-    `docs/11-privacidade.md` e revisitar a D57. Excluir sessão inteira está fora de escopo:
+    varre a resposta do painel atrás deles. Mexer nessas linhas exige reescrever
+    `docs/privacidade/dados-de-saude.md` e revisitar a D57. Excluir sessão inteira está fora de escopo:
     desfazer envolveria desfazer SRS, progresso e freeze — correção é por edição. E **corrigir a
     data leva junto o `drilled_on` das técnicas vinculadas**: o drill vinculado não entra no streak
     pela própria data — quem responde pelo dia dele é a sessão —, então deixá-lo para trás faria o
@@ -152,7 +152,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 backend/   Spring Boot + Postgres (fonte da verdade de progresso e SRS)
 web/       React + Vite (MVP)
 shared/    domain (regras puras), api-client, types (gerados)
-docs/      planejamento e log de decisões
+docs/      documentação por assunto e log de decisões (índice em docs/README.md)
 ```
 
 ## Comandos
@@ -181,28 +181,29 @@ esse motivo, e `scripts/verificar-cabecalhos.mjs` confere a imagem no job `web`.
 ou imagem entra no `frame-src`/`img-src` da CSP no mesmo PR.
 
 Prints da landing: `node scripts/capturar-prints.mjs --semear` refaz os dez prints que a página
-pública exibe, com o app rodando (`docs/10-prints-da-landing.md`). Mexeu na aparência da árvore, do
+pública exibe, com o app rodando (`docs/desenvolvimento/prints-da-landing.md`). Mexeu na aparência da árvore, do
 nó, do drill, da tela inicial ou do diário? O print correspondente precisa ser refeito no mesmo PR.
 
 Testar tela autenticada em `localhost`: o app exige login e dev não tem provedor nem envio de
 e-mail configurados. `node scripts/seed-dev-users.mjs` cria `aluno@teste.local` e `dono@teste.local`
 no Postgres do Compose (uma vez, com o schema migrado) e `node scripts/mint-dev-login.mjs <e-mail>`
 imprime a URL de entrada. Nenhum dos dois é código do Spring nem migration do Flyway — não rodam
-sozinhos em ambiente nenhum. Ver `docs/14-contas-de-teste-local.md`.
+sozinhos em ambiente nenhum. Ver `docs/desenvolvimento/contas-de-teste.md`.
 
 Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga o canônico (verifica e credita o
 canal), `... <NÓ> --extra <url>...` acrescenta complementares (D32, teto de 4 por nó) e
 `node scripts/verificar-videos.mjs` reconfere os já catalogados — o workflow `videos` roda esse
-segundo semanalmente e avisa por issue. Ver `docs/08-curadoria-videos.md`.
+segundo semanalmente e avisa por issue. Ver `docs/conteudo/videos.md`.
 
 ## Ao alterar o currículo
 
-Editar o JSON, rodar `cd backend && ./mvnw test` — há teste que valida integridade do grafo (referências, ciclos, códigos duplicados). Registrar mudança pedagógica relevante em `docs/07-decisoes.md`.
+Editar o JSON, rodar `cd backend && ./mvnw test` — há teste que valida integridade do grafo (referências, ciclos, códigos duplicados). Registrar mudança pedagógica relevante como decisão nova em `docs/decisoes/`.
 
-Escrever ou revisar conceito e quiz de um nó? `docs/12-fontes-de-conteudo.md` é a régua de fonte —
-o que conta, o que não conta, e como texto de terceiro pode ser usado — e traz a tabela `nó →
-fontes consultadas` para registrar de onde veio o que foi escrito.
+Escrever ou revisar conceito e quiz de um nó? `docs/conteudo/fontes.md` é a régua de fonte —
+o que conta, o que não conta, e como texto de terceiro pode ser usado — e
+`docs/conteudo/fontes-por-no.md` traz a tabela `nó → fontes consultadas` para registrar de onde veio
+o que foi escrito.
 
 ## Ao tomar decisão estrutural
 
-Anotar em `docs/07-decisoes.md` com justificativa e critério de revisão. O log existe para que reversões futuras sejam conscientes.
+Criar um arquivo em `docs/decisoes/` (`DNN-titulo-curto.md`, com o próximo número) com justificativa e critério de revisão, e acrescentar a linha no índice `docs/decisoes/README.md`. O log existe para que reversões futuras sejam conscientes.

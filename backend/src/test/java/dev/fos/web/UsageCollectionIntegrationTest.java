@@ -44,10 +44,10 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * A coleta de uso, ponta a ponta (#84, D50).
  *
- * <p>O que estes testes protegem são promessas escritas em {@code docs/11-privacidade.md}, e não
- * comportamento de conveniência: o servidor deriva o que dá para derivar e ignora o corpo forjado,
- * nenhum cookie novo é criado, nenhum token de rota entra na tabela, e {@code DELETE /api/me} leva
- * os eventos crus da conta junto.
+ * <p>O que estes testes protegem são promessas escritas em {@code
+ * docs/privacidade/coleta-de-uso.md}, e não comportamento de conveniência: o servidor deriva o que
+ * dá para derivar e ignora o corpo forjado, nenhum cookie novo é criado, nenhum token de rota entra
+ * na tabela, e {@code DELETE /api/me} leva os eventos crus da conta junto.
  *
  * <p>Um Chrome de Android como {@code User-Agent} padrão para que dispositivo, navegador e sistema
  * tenham o que derivar — e nenhuma base de geolocalização, que é como dev e CI rodam.

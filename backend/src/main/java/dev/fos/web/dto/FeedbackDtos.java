@@ -9,8 +9,7 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão
- * (docs/13-feedback-usuarios.md).
+ * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão (docs/produto/feedback.md).
  */
 public final class FeedbackDtos {
 

@@ -1,6 +1,6 @@
 # Currículo como dado versionado
 
-Fonte da verdade da árvore de currículo (ver `docs/04-arvore-curriculo-bjj.md` e decisão **D11**).
+Fonte da verdade da árvore de currículo (ver `docs/produto/curriculo.md` e decisão **D11**).
 Estes arquivos são ingeridos no banco na subida da aplicação — **nada aqui é hardcoded em Java**.
 
 Alterar a árvore é editar JSON e abrir PR. É isso que torna a futura validação por um faixa-preta
@@ -58,7 +58,7 @@ este padrão proíbe.
 faixa de 450–900 caracteres para os módulos em `CONCEPT_LENGTH_CURATED_MODULES` — hoje os 9
 módulos, porque os 46 nós foram reescritos juntos. A constante continua existindo, e não virou um
 booleano: um módulo novo (`M9` em diante) nasce fora dela por padrão, até ser escrito no padrão e
-entrar no conjunto. Ver **D41**, **D42** e **D43** em `docs/07-decisoes.md` — a última é quem explica
+entrar no conjunto. Ver **D41**, **D42** e **D43** em `docs/decisoes/README.md` — a última é quem explica
 por que M2–M8 entraram juntos, num PR só, em vez do rollout módulo a módulo que a D42 previa.
 
 Se "não é passo a passo" não é automatizável por heurística de palavra — fica como item de revisão
@@ -66,14 +66,14 @@ humana do PR, não do validador.
 
 ### `unlockRule`
 
-O desbloqueio padrão é **ALL**: todos os pré-requisitos concluídos. `docs/04` descreve o Módulo 4
+O desbloqueio padrão é **ALL**: todos os pré-requisitos concluídos. `docs/produto/curriculo.md` descreve o Módulo 4
 como "pré-requisito: M3.2 **ou** M3.3 (qualquer passagem)" — semântica de OU, que o modelo
 `ALL` não expressa. Daí `unlockRule: "ANY"`, usado hoje só em `M4.1`. Registrado como **D13**.
 
 ### `video`
 
 **M0 e M1 estão catalogados** (11 nós); de M2 a M8 os nós seguem com `video: null`, que é estado
-normal — a curadoria é incremental. Catalogar é a etapa 3 de `docs/05-mvp-web-plano.md` e é
+normal — a curadoria é incremental. Catalogar é a etapa 3 de `docs/produto/mvp-web.md` e é
 trabalho de curadoria humana: exige assistir e escolher. Inventar IDs de vídeo produziria
 referências quebradas ou, pior, tecnicamente erradas.
 
@@ -87,7 +87,7 @@ node scripts/catalogar-video.mjs M1.2 https://www.youtube.com/watch?v=XXXXXXXXXX
 Os ids já gravados são reconferidos semanalmente por `scripts/verificar-videos.mjs` (workflow
 `videos`), que avisa quando um vídeo sai do ar ou perde a permissão de incorporação.
 
-Critérios de escolha por nó estão em `docs/08-curadoria-videos.md`. O formato gravado é:
+Critérios de escolha por nó estão em `docs/conteudo/videos.md`. O formato gravado é:
 
 ```jsonc
 "video": {
@@ -98,7 +98,7 @@ Critérios de escolha por nó estão em `docs/08-curadoria-videos.md`. O formato
 }
 ```
 
-Antes de incluir, conferir a política de uso de vídeo em `docs/07-decisoes.md`: só embed do player
+Antes de incluir, conferir a política de uso de vídeo em `docs/decisoes/README.md`: só embed do player
 oficial, só vídeos públicos e incorporáveis, sempre com crédito ao canal.
 
 ### `extraVideos`
@@ -164,7 +164,7 @@ A chave de ordenação da rotação é o **enunciado**, não o id: `replaceQuizz
 pergunta a cada sincronização do currículo (D11), então ordenar por id embaralharia a rotação a cada
 deploy. É por isso que enunciado duplicado no mesmo nó é erro de validação, e não só estilo.
 
-Escrever perguntas novas para um nó sem fonte instrucional própria (M4–M8, ver `docs/12`)? A base é
+Escrever perguntas novas para um nó sem fonte instrucional própria (M4–M8, ver `docs/conteudo/fontes.md`)? A base é
 o próprio `concept` do nó — o mesmo critério da D43 para o texto do conceito — e não uma técnica ou
 mecanismo que não esteja já descrito ali.
 

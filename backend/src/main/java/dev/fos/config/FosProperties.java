@@ -230,7 +230,10 @@ public record FosProperties(
      */
     public record Usage(boolean enabled, String geoipDatabase, int retentionDays, int dailyCap) {
 
-        /** Os 90 dias da D50. Mudar aqui muda a promessa escrita em docs/11-privacidade.md. */
+        /**
+         * Os 90 dias da D50. Mudar aqui muda a promessa escrita em
+         * docs/privacidade/coleta-de-uso.md.
+         */
         public static final int DEFAULT_RETENTION_DAYS = 90;
 
         /**

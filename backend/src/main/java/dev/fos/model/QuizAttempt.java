@@ -15,7 +15,7 @@ import java.time.LocalDate;
  * <p>Log append-only, deliberadamente separado de {@link UserProgress}: o progresso guarda o estado
  * atual (última nota, conclusão) e o histórico guarda o que aconteceu. Sem ele não há como
  * distinguir um quiz respondido uma vez de um quiz refeito — e "quiz refeito espontaneamente" é um
- * dos critérios de sucesso do MVP (docs/05-mvp-web-plano.md), justamente por ser sinal de retenção
+ * dos critérios de sucesso do MVP (docs/produto/mvp-web.md), justamente por ser sinal de retenção
  * real em vez de streak vazio.
  */
 @Entity

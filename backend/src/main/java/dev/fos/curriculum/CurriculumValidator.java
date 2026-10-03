@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 /**
  * Valida a integridade do currículo <em>antes</em> de ele chegar ao banco.
  *
- * <p>Detecção de ciclo acontece aqui, na ingestão, e nunca em runtime (docs/01-stack-tecnica.md):
- * um ciclo tornaria um conjunto de nós permanentemente inalcançável, e o lugar barato de descobrir
+ * <p>Detecção de ciclo acontece aqui, na ingestão, e nunca em runtime (docs/arquitetura.md): um
+ * ciclo tornaria um conjunto de nós permanentemente inalcançável, e o lugar barato de descobrir
  * isso é no build.
  */
 @Component
@@ -60,7 +60,7 @@ public class CurriculumValidator {
      *
      * <p>A checagem só roda para os módulos em {@link #CONCEPT_LENGTH_CURATED_MODULES} — ver o
      * javadoc de lá para o porquê de não valer para o currículo inteiro ainda (issue #58, D41 em
-     * {@code docs/07-decisoes.md}).
+     * {@code docs/decisoes/README.md}).
      */
     public static final int MIN_CONCEPT_LENGTH = 450;
 
@@ -69,8 +69,8 @@ public class CurriculumValidator {
     /**
      * Módulos cujo {@code concept} já foi reescrito no padrão de três movimentos e cabe na faixa de
      * {@link #MIN_CONCEPT_LENGTH}–{@link #MAX_CONCEPT_LENGTH}. Os 9 módulos (46 nós) foram
-     * reescritos juntos (issue #58, D42 em {@code docs/07-decisoes.md}), então o conjunto cobre o
-     * currículo inteiro — mas o desenho por módulo continua aqui, e não uma constante booleana,
+     * reescritos juntos (issue #58, D42 em {@code docs/decisoes/README.md}), então o conjunto cobre
+     * o currículo inteiro — mas o desenho por módulo continua aqui, e não uma constante booleana,
      * porque um nó novo em módulo futuro (ex.: um M9) nasceria fora da faixa por padrão, e é assim
      * que deve ser até ser escrito no padrão e o módulo entrar no conjunto.
      */

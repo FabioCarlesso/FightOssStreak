@@ -438,7 +438,8 @@ public class AccountService {
         drills.deleteByUserId(userId);
         // Depois dos drills, e não antes: é `drill_log.session_id` que aponta para cá, e inverter
         // a ordem faria a exclusão bater na FK. O diário guarda peso e sensação — dado referente à
-        // saúde (D57, docs/11) —, então sair daqui inteiro é parte da promessa, não faxina.
+        // saúde (D57, docs/privacidade/dados-de-saude.md) —, então sair daqui inteiro é parte da
+        // promessa, não faxina.
         trainingSessions.deleteByUserId(userId);
         streakFreezes.deleteByUserId(userId);
         reviews.deleteByIdUserId(userId);

@@ -3,7 +3,7 @@ package dev.fos.web.dto;
 import java.time.LocalDate;
 
 /**
- * Os quatro critérios de sucesso do MVP, medidos (docs/05-mvp-web-plano.md).
+ * Os quatro critérios de sucesso do MVP, medidos (docs/produto/mvp-web.md).
  *
  * <p>Cada métrica viaja junto com a própria meta. Número solto não decide nada: o que o documento
  * pede é uma resposta de atingiu/não atingiu ao fim dos 30 dias — inclusive a resposta ruim, que é
@@ -16,8 +16,8 @@ public final class MetricsDtos {
     /**
      * @param windowStart primeiro dia considerado, inclusive
      * @param windowEnd último dia considerado, inclusive — o "hoje" do relógio da aplicação
-     * @param targetsFor30Days as metas valem para a janela de 30 dias de docs/05; janela diferente
-     *     mede o mesmo, mas a comparação com a meta deixa de fazer sentido
+     * @param targetsFor30Days as metas valem para a janela de 30 dias de docs/produto/mvp-web.md;
+     *     janela diferente mede o mesmo, mas a comparação com a meta deixa de fazer sentido
      */
     public record MvpMetrics(
             LocalDate windowStart,

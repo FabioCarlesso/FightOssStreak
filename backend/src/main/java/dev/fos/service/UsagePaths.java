@@ -49,7 +49,7 @@ public final class UsagePaths {
         }
         String path = raw.trim();
         // Fora a query string e o fragmento. Os `utm_*` chegam em campo próprio; o resto da query
-        // é descartado, e está escrito em docs/11-privacidade.md que é assim.
+        // é descartado, e está escrito em docs/privacidade/coleta-de-uso.md que é assim.
         int corte = indexOfAny(path, '?', '#');
         if (corte >= 0) {
             path = path.substring(0, corte);

@@ -14,7 +14,7 @@ export interface DemoMode {
  * quiz de cada nó anterior. É ferramenta de inspeção do dono do app, não recurso de produto (D31):
  * o bloqueio continua sendo derivado pelo backend, os contadores continuam reais e a demonstração
  * **não grava nada**, senão a varredura destravaria nós de verdade e contaminaria as métricas de
- * `docs/05-mvp-web-plano.md`.
+ * `docs/produto/mvp-web.md`.
  *
  * O provider vive em `DemoModeProvider.tsx`: arquivo que exporta componente não pode exportar
  * hook junto sem quebrar o fast refresh (e o lint).

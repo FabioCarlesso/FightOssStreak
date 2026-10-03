@@ -63,7 +63,7 @@ jobs:
               'que não estão mais públicos ou tiveram a incorporação desativada.',
               '',
               'Substituir é curadoria humana: escolha o vídeo pelos critérios do nó em',
-              '`docs/08-curadoria-videos.md` e recatalogue com `node scripts/catalogar-video.mjs <NÓ> <url>`.',
+              '`docs/conteudo/videos.md` e recatalogue com `node scripts/catalogar-video.mjs <NÓ> <url>`.',
               '',
               '```text',
               relatorio,

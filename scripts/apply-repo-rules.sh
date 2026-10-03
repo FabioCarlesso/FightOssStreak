@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Aplica no GitHub as regras descritas em docs/09-regras-repositorio.md:
+# Aplica no GitHub as regras descritas em docs/repositorio.md:
 #   1. `main` é a branch default
 #   2. `main` só muda por pull request
 #   3. o PR só pode ser mergeado com o CI verde

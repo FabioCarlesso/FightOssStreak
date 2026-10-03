@@ -7,7 +7,7 @@
  * Por que existe: o contexto de um required check do GitHub Actions é o nome do job. Renomear um
  * job quebra a proteção de `main` em silêncio — o check exigido deixa de existir, nunca reporta, e
  * todo PR fica preso em "Expected — waiting for status to be reported". A regra está escrita no
- * CLAUDE.md e em `docs/09-regras-repositorio.md`, mas documentação não é portão: depende de alguém
+ * CLAUDE.md e em `docs/repositorio.md`, mas documentação não é portão: depende de alguém
  * lembrar no momento certo. Este script troca a lembrança por verificação.
  *
  * Roda como primeiro passo do job `web`, logo depois do checkout e antes de qualquer instalação de

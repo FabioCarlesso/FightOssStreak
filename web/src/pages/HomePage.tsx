@@ -9,7 +9,7 @@ import { monthRange, todayIso } from '../content/diario.ts';
  * Tela inicial: streak e, principalmente, a agenda de "o que drillar hoje".
  *
  * A agenda vem antes de tudo de propósito — é o que o produto se propõe a responder. Um app que
- * abre mostrando só o streak seria exatamente o caso de falha descrito em docs/05.
+ * abre mostrando só o streak seria exatamente o caso de falha descrito em docs/produto/mvp-web.md.
  *
  * O diário entra **abaixo** dela, e isso é decisão e não layout (D56c): a agenda é o único
  * elemento que o caderno não faz, e rebaixá-la seria virar o BJJ Notes com quiz junto. O contador

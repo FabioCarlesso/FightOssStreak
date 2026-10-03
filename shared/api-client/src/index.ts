@@ -2,7 +2,7 @@
  * Cliente da API do FightOssStreak.
  *
  * Fica em `shared/` porque é reaproveitado integralmente na migração para React Native — só a
- * camada de UI é reescrita (docs/03-estrutura-projeto.md).
+ * camada de UI é reescrita (docs/arquitetura.md).
  */
 import type {
   AccessStatus,
@@ -355,7 +355,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
         method: 'DELETE',
       }),
 
-    /** Critérios de sucesso do MVP medidos sobre o uso real (docs/05-mvp-web-plano.md). */
+    /** Critérios de sucesso do MVP medidos sobre o uso real (docs/produto/mvp-web.md). */
     getMvpMetrics: (days?: number) =>
       request<MvpMetrics>(`/api/metrics/mvp${days ? `?days=${days}` : ''}`),
 
@@ -507,7 +507,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
     },
 
     /**
-     * Envia um feedback: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).
+     * Envia um feedback: bug, conteúdo errado, troca de vídeo, sugestão (docs/produto/feedback.md).
      * `nodeCode` é opcional — nem todo feedback é sobre um nó do currículo.
      */
     submitFeedback: (feedback: FeedbackRequest) =>

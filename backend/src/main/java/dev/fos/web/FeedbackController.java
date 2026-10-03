@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Feedback de usuário, do lado de quem manda (docs/13-feedback-usuarios.md).
+ * Feedback de usuário, do lado de quem manda (docs/produto/feedback.md).
  *
  * <p>A fila do lado de quem decide vive em {@link AdminController}, sob {@code /api/admin/**}.
  */

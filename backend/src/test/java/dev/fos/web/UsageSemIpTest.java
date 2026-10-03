@@ -26,10 +26,11 @@ import org.springframework.test.context.ActiveProfiles;
  * A promessa que o schema tem de cumprir: <b>não existe coluna de endereço de IP</b> (#84, D50).
  *
  * <p>Este teste é o critério de aceite da issue virado código, e ele é sobre o schema INTEIRO, não
- * sobre as tabelas da coleta: {@code docs/11-privacidade.md} promete, com todas as letras, que o
- * app não guarda IP em lugar nenhum. Uma coluna nova em qualquer migration futura reprova aqui, que
- * é exatamente o momento em que a decisão precisa ser consciente — se um dia guardar IP for
- * necessário, o caminho é reabrir a D50 e reescrever a promessa, não passar por baixo dela.
+ * sobre as tabelas da coleta: {@code docs/privacidade/coleta-de-uso.md} promete, com todas as
+ * letras, que o app não guarda IP em lugar nenhum. Uma coluna nova em qualquer migration futura
+ * reprova aqui, que é exatamente o momento em que a decisão precisa ser consciente — se um dia
+ * guardar IP for necessário, o caminho é reabrir a D50 e reescrever a promessa, não passar por
+ * baixo dela.
  *
  * <p>Varre as duas fontes de propósito: o banco migrado (o que existe de verdade) e o texto das
  * migrations (que pega uma coluna criada e removida depois, cujo dado chegou a existir).
@@ -68,7 +69,7 @@ class UsageSemIpTest {
 
         assertThat(suspeitas)
                 .as(
-                        "docs/11-privacidade.md promete que o app não guarda endereço de IP."
+                        "docs/privacidade/coleta-de-uso.md promete que o app não guarda endereço de IP."
                                 + " Se guardar virou necessidade, reabra a D50 e reescreva a promessa"
                                 + " — não afrouxe este teste.")
                 .isEmpty();

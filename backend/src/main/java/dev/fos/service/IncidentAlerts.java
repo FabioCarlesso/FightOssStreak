@@ -152,7 +152,7 @@ public class IncidentAlerts {
                 Requisições na janela: %d
 
                 Isto não é o app errando: é ele recusando. O padrão típico é varredura de
-                credencial. O freio por origem continua valendo (docs/11-privacidade.md); se o
+                credencial. O freio por origem continua valendo (docs/privacidade/README.md); se o
                 número não ceder, conta abusiva se bloqueia pela tela Usuários.
                 Este é o único e-mail deste incidente."""
                         .formatted(

@@ -3,7 +3,7 @@ import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
 
 /**
- * Os quatro critérios de sucesso do MVP, medidos (docs/05-mvp-web-plano.md).
+ * Os quatro critérios de sucesso do MVP, medidos (docs/produto/mvp-web.md).
  *
  * A tela existe para responder uma pergunta só, ao fim dos 30 dias: a mecânica funcionou? Por isso
  * cada métrica aparece ao lado da meta e diz atingiu/não atingiu — inclusive quando a resposta é
@@ -28,8 +28,8 @@ export function ProgressPage() {
         <p className="hint">
           Janela de {data.windowStart} a {data.windowEnd}.{' '}
           {data.targetsFor30Days
-            ? 'As metas são as de docs/05 e valem para 30 dias.'
-            : 'Fora da janela de 30 dias — as metas de docs/05 não se aplicam a este recorte.'}
+            ? 'As metas são as de docs/produto/mvp-web.md e valem para 30 dias.'
+            : 'Fora da janela de 30 dias — as metas de docs/produto/mvp-web.md não se aplicam a este recorte.'}
         </p>
       </section>
 

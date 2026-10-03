@@ -22,7 +22,7 @@ import { App } from './App.tsx';
  *
  * Extensão consciente da D29, pelo mesmo critério da D31: o que se testa aqui não é layout, é o
  * risco de a página pública virar caminho para dentro do app sem o aceite do aviso — o defeito mais
- * grave que este projeto pode ter (docs/06). Junto vem a outra promessa estrutural da landing, que
+ * grave que este projeto pode ter (docs/produto/disclaimer.md). Junto vem a outra promessa estrutural da landing, que
  * é **não** falar com a API: era o portão que decidia a raiz, e ele depende de `GET /api/disclaimer`
  * para renderizar, então com o backend frio a primeira tela era um erro de rede.
  *

@@ -12,7 +12,7 @@ import java.time.Instant;
  * Aceite do aviso de responsabilidade, registrado com data <em>e versão do texto</em>.
  *
  * <p>Guardar a versão é o que permite reexibir o aviso quando o texto mudar materialmente, em vez
- * de assumir que um aceite antigo cobre um texto novo (docs/06-disclaimer-responsabilidade.md).
+ * de assumir que um aceite antigo cobre um texto novo (docs/produto/disclaimer.md).
  */
 @Entity
 @Table(name = "disclaimer_acceptance")

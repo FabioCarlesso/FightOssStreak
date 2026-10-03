@@ -55,7 +55,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("todos os 9 módulos de docs/04 estão presentes e na ordem")
+    @DisplayName("todos os 9 módulos de docs/produto/curriculo.md estão presentes e na ordem")
     void hasAllModules() {
         assertThat(modules)
                 .extracting(CurriculumSource.Module::code)
@@ -63,7 +63,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("a contagem por módulo bate com a tabela de docs/04")
+    @DisplayName("a contagem por módulo bate com a tabela de docs/produto/curriculo.md")
     void nodeCountsMatchPlanningDoc() {
         Map<String, Integer> countByModule =
                 modules.stream()
@@ -78,8 +78,10 @@ class CurriculumIntegrityTest {
                                 "M0", 5, "M1", 6, "M2", 7, "M3", 7, "M4", 6, "M5", 4, "M6", 4, "M7",
                                 4, "M8", 3));
 
-        // docs/04 afirma "Total: 43 nós", mas a soma das tabelas do próprio documento dá 46.
-        // O código segue as tabelas — elas são o conteúdo real. Divergência anotada em docs/07
+        // docs/produto/curriculo.md afirma "Total: 43 nós", mas a soma das tabelas do próprio
+        // documento dá 46.
+        // O código segue as tabelas — elas são o conteúdo real. Divergência anotada em
+        // docs/decisoes/README.md
         // (D14).
         int total = countByModule.values().stream().mapToInt(Integer::intValue).sum();
         assertThat(total).isEqualTo(46);

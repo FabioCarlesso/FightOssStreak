@@ -12,7 +12,7 @@ import java.time.Instant;
 
 /**
  * Feedback de um usuário: bug, conteúdo errado, troca de vídeo ou sugestão
- * (docs/13-feedback-usuarios.md).
+ * (docs/produto/feedback.md).
  *
  * <p>{@code nodeId} é opcional — nem todo feedback é sobre um nó do currículo.
  */
