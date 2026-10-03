@@ -544,25 +544,10 @@ Detalhes em [`docs/03-estrutura-projeto.md`](docs/03-estrutura-projeto.md) e [`C
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/05-mvp-web-plano.md)
 4. Só então considerar mobile (D4)
 
-## Planejamento
+## Documentação
 
-Toda a documentação de planejamento está em [`docs/`](docs/):
-
-- [`00-visao-geral.md`](docs/00-visao-geral.md) — posicionamento e escopo
-- [`01-stack-tecnica.md`](docs/01-stack-tecnica.md) — stack e decisões técnicas
-- [`02-publicacao-ios-desafios.md`](docs/02-publicacao-ios-desafios.md)
-- [`03-estrutura-projeto.md`](docs/03-estrutura-projeto.md)
-- [`04-arvore-curriculo-bjj.md`](docs/04-arvore-curriculo-bjj.md) — currículo (46 nós)
-- [`05-mvp-web-plano.md`](docs/05-mvp-web-plano.md)
-- [`06-disclaimer-responsabilidade.md`](docs/06-disclaimer-responsabilidade.md)
-- [`07-decisoes.md`](docs/07-decisoes.md) — log de decisões
-- [`08-curadoria-videos.md`](docs/08-curadoria-videos.md) — critérios de curadoria dos vídeos
-- [`09-regras-repositorio.md`](docs/09-regras-repositorio.md) — `main` protegida, PR obrigatório, CI como portão
-- [`10-prints-da-landing.md`](docs/10-prints-da-landing.md) — como refazer os prints que a landing exibe
-- [`11-privacidade.md`](docs/11-privacidade.md) — o que o app guarda de dado pessoal, e como apagar
-- [`12-fontes-de-conteudo.md`](docs/12-fontes-de-conteudo.md) — régua de fonte para conceito e quiz
-- [`13-feedback-usuarios.md`](docs/13-feedback-usuarios.md) — fila de feedback de quem usa o app
-- [`14-contas-de-teste-local.md`](docs/14-contas-de-teste-local.md) — como entrar no app em `localhost` sem provedor configurado
+O índice da [`docs/`](docs/) — e a tabela de **onde documentar cada mudança** — está em
+[`docs/README.md`](docs/README.md).
 
 ## Contribuindo
 
