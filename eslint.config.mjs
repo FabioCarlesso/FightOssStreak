@@ -63,7 +63,7 @@ export default tseslint.config(
   },
 
   // React só existe no `web/`. `shared/` é deliberadamente agnóstico de UI para ser reaproveitado
-  // inteiro no React Native (docs/03-estrutura-projeto.md).
+  // inteiro no React Native (docs/arquitetura.md).
   {
     files: ['web/src/**/*.{ts,tsx}'],
     extends: [reactHooks.configs['recommended-latest']],
