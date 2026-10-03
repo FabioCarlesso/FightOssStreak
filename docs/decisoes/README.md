@@ -76,6 +76,7 @@ nesta tabela, no mesmo PR.
 | [D65](D65-cabecalhos-de-seguranca-no-nginx-com.md) | Cabeçalhos de segurança no nginx, com CSP bloqueante sem `'unsafe-inline'` |
 | [D66](D66-o-mobile-e-adiado-os-criterios.md) | O mobile é adiado: os critérios do MVP web não foram atingidos — a D4 segue valendo |
 | [D67](D67-o-mobile-comeca-aprender-a-plataforma.md) | O mobile começa: aprender a plataforma é objetivo próprio, e a D66 cai — os critérios do MVP não afrouxam |
+| [D68](D68-o-app-mobile-autentica-por-token.md) | O app mobile autentica por token opaco no banco, e entra por Google nativo, Apple (só iOS) e senha — o token não administra |
 
 ## Política de uso de vídeo (D7) — limites
 
