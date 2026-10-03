@@ -327,6 +327,16 @@ Detalhes que não são óbvios:
 
   Se a borda da plataforma recusar o segundo antes do nginx, ótimo — é o que fecha o "suspeito" do
   FOS-02 do lado da Railway.
+- **Os cabeçalhos de segurança saem do nginx, e só dele (#75, D65).** CSP com
+  `frame-ancestors 'none'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy` e HSTS valem em toda
+  resposta, 404 incluso; o `Server:` não mostra versão. **Não há variável a configurar.** Em `/api/`
+  os mesmos três que o Spring Security manda são escondidos com `proxy_hide_header`, para não
+  saírem duplicados. Vídeo novo de outro host que não o `youtube-nocookie.com` é bloqueado pela CSP
+  até entrar no `frame-src` do `web/nginx.conf.template`. Conferência depois do deploy:
+
+  ```bash
+  node scripts/verificar-cabecalhos.mjs https://fos.fabiocarlesso.com --api
+  ```
 - **A base de geolocalização é baixada no build da imagem, não versionada (D50).** O
   `backend/Dockerfile` puxa o [DB-IP Lite](https://db-ip.com) (CC BY 4.0) do mês corrente, com recuo
   para o mês anterior, e já aponta `FOS_USAGE_GEOIP_DATABASE` para ele — **na Railway não há o que
