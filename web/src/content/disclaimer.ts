@@ -1,7 +1,7 @@
 /**
  * Texto do aviso completo, exibido no primeiro uso com aceite obrigatório.
  *
- * Cópia fiel de `docs/06-disclaimer-responsabilidade.md`. Ao alterar materialmente este texto,
+ * Cópia fiel de `docs/produto/disclaimer.md`. Ao alterar materialmente este texto,
  * suba `fos.disclaimer-version` no backend — é o que força a reexibição do aceite.
  */
 export const FULL_DISCLAIMER: readonly string[] = [
@@ -16,7 +16,7 @@ export const FULL_DISCLAIMER: readonly string[] = [
 ];
 
 /**
- * Aviso curto, o mesmo do rodapé de nó em `docs/06-disclaimer-responsabilidade.md`.
+ * Aviso curto, o mesmo do rodapé de nó em `docs/produto/disclaimer.md`.
  *
  * Aparece na landing, que é pública e não passa pelo portão de aceite: quem chega pelo link precisa
  * ler o limite antes de entrar, mesmo que nunca clique em "Abrir o app". Mora aqui junto do texto

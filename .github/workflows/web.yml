@@ -15,6 +15,8 @@ on:
       - 'package-lock.json'
       - 'backend/openapi.json'
       - '.github/workflows/web.yml'
+      # Documentação também: a guarda de links abaixo é o que pega um arquivo de docs/ renomeado.
+      - '**/*.md'
   # Em PR NÃO há filtro por caminho, de propósito. Este job é required check da ruleset
   # de `main`: workflow filtrado por path simplesmente não reporta status, e um required
   # check que nunca reporta trava o PR em "waiting for status" para sempre.
@@ -40,6 +42,11 @@ jobs:
       # required check é o nome do job. Só o Node do runner é usado — nada de `npm ci` aqui.
       - name: Ruleset e jobs de CI batem
         run: node scripts/verificar-ruleset.mjs
+
+      # Mesma lógica: só Node e git, falha em segundos. Arquivo de docs/ renomeado ou título de
+      # seção alterado deixa para trás link e comentário de código apontando para o nada (#135).
+      - name: Links da documentação resolvem
+        run: node scripts/verificar-links-docs.mjs
 
       - uses: actions/setup-node@v7
         with:

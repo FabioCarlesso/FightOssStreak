@@ -10,9 +10,9 @@ import { useAccount } from '../state/account.ts';
 import { useAsync } from '../state/useAsync.ts';
 
 /**
- * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão (docs/13-feedback-usuarios.md).
+ * Feedback de usuário: bug, conteúdo errado, troca de vídeo, sugestão (docs/produto/feedback.md).
  *
- * Formulário único e genérico — sem botão contextual por nó nesta fatia (docs/13). Quem manda não
+ * Formulário único e genérico — sem botão contextual por nó nesta fatia (docs/produto/feedback.md). Quem manda não
  * decide: a fila abaixo só aparece para quem administra (D48).
  */
 export function FeedbackPage() {

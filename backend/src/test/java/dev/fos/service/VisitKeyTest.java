@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test;
 /**
  * A chave de visita conta pessoas sem identificar ninguém (#84, D50).
  *
- * <p>O que estes testes protegem é uma promessa escrita em {@code docs/11-privacidade.md}: a mesma
- * pessoa em dois dias diferentes não é ligável, e nem a própria aplicação consegue recomputar a
- * chave de um evento passado. Se alguém "otimizar" o sal para ser fixo ou persistido, é aqui que
- * quebra.
+ * <p>O que estes testes protegem é uma promessa escrita em {@code
+ * docs/privacidade/coleta-de-uso.md}: a mesma pessoa em dois dias diferentes não é ligável, e nem a
+ * própria aplicação consegue recomputar a chave de um evento passado. Se alguém "otimizar" o sal
+ * para ser fixo ou persistido, é aqui que quebra.
  */
 class VisitKeyTest {
 

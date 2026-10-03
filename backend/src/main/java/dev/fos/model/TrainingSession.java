@@ -25,7 +25,7 @@ import java.time.LocalDate;
  *
  * <p>{@code weightKg} e {@code feeling} são <b>dado referente à saúde</b> (LGPD, art. 5º, II):
  * ficam só na conta de quem escreveu, {@code DELETE /api/me} os leva junto, e a coleta da D50 e o
- * painel da D52 nunca os veem (docs/11-privacidade.md).
+ * painel da D52 nunca os veem (docs/privacidade/dados-de-saude.md).
  */
 @Entity
 @Table(name = "training_session")

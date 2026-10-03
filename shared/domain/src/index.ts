@@ -2,7 +2,7 @@
  * Regras de negócio puras, sem dependência de UI nem de rede.
  *
  * É o que mais se paga na migração para React Native: streak, agendamento de SRS e lógica de
- * desbloqueio são idênticos em web e mobile (docs/03-estrutura-projeto.md).
+ * desbloqueio são idênticos em web e mobile (docs/arquitetura.md).
  */
 export {
   addDays,

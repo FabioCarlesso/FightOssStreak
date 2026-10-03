@@ -37,7 +37,7 @@ export interface paths {
         put?: never;
         /**
          * Registra um acesso a uma rota do app
-         * @description O servidor deriva dispositivo, navegador, sistema, idioma e país da própria requisição e ignora qualquer um desses campos no corpo. O endereço de IP é usado para derivar país e compor a chave de visita, e é descartado — não há coluna de IP em tabela nenhuma (docs/11-privacidade.md).
+         * @description O servidor deriva dispositivo, navegador, sistema, idioma e país da própria requisição e ignora qualquer um desses campos no corpo. O endereço de IP é usado para derivar país e compor a chave de visita, e é descartado — não há coluna de IP em tabela nenhuma (docs/privacidade/coleta-de-uso.md).
          */
         post: operations["evento"];
         delete?: never;
@@ -449,7 +449,7 @@ export interface paths {
         };
         /**
          * Os quatro critérios de sucesso do MVP, com valor e meta
-         * @description As metas são as de docs/05-mvp-web-plano.md e valem para a janela de 30 dias.
+         * @description As metas são as de docs/produto/mvp-web.md e valem para a janela de 30 dias.
          */
         get: operations["mvp"];
         put?: never;
@@ -587,7 +587,7 @@ export interface paths {
         };
         /**
          * Acessos, funil, origem e perfil de uso do app
-         * @description Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa — não há e-mail, nome nem id de conta. Lê apenas a contagem diária (`usage_daily`), nunca a tabela crua de eventos (docs/11-privacidade.md). O período termina ontem: hoje ainda recebe evento e não foi fechado.
+         * @description Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa — não há e-mail, nome nem id de conta. Lê apenas a contagem diária (`usage_daily`), nunca a tabela crua de eventos (docs/privacidade/coleta-de-uso.md). O período termina ontem: hoje ainda recebe evento e não foi fechado.
          */
         get: operations["painel"];
         put?: never;

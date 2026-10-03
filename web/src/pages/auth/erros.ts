@@ -26,7 +26,7 @@ export function mensagemDeErro(cause: unknown): string {
       return (
         'O cadastro por e-mail e senha não está disponível neste ambiente, porque não há' +
         ' provedor de envio de e-mail configurado — e é o e-mail de confirmação que faz a conta' +
-        ' existir. Entre por um provedor, ou configure o envio (README).'
+        ' existir. Entre por um provedor, ou configure o envio (docs/autenticacao.md).'
       );
     }
     if (cause.status === 429) {

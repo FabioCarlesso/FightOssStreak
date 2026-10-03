@@ -801,7 +801,8 @@ class ApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("sem uso, as métricas do MVP respondem zerado e com as metas de docs/05")
+    @DisplayName(
+            "sem uso, as métricas do MVP respondem zerado e com as metas de docs/produto/mvp-web.md")
     void metricsStartEmpty() throws Exception {
         mockMvc.perform(get("/api/metrics/mvp"))
                 .andExpect(status().isOk())

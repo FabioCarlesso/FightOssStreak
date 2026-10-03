@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Mesma disciplina do {@link UsagePanelService}: ele lê o <b>agregado</b>, e só o agregado. Aqui
  * não existe nem tabela crua para ser lida — a medição já nasce somada por (hora, rota), e a
  * pergunta "quem fez esta requisição?" não tem onde ser respondida. Se um dia ela precisar de
- * resposta, o caminho é reabrir a D50 e reescrever {@code docs/11-privacidade.md}, não acrescentar
- * uma coluna.
+ * resposta, o caminho é reabrir a D50 e reescrever {@code docs/privacidade/saude-do-site.md}, não
+ * acrescentar uma coluna.
  *
  * <p>Ao contrário do painel de uso, o período <b>inclui a hora corrente</b>. Lá o dia fechado é
  * regra porque um número que muda depois de lido engana a leitura de tendência; aqui a leitura é

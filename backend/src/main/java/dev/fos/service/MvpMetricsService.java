@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Mede os quatro critérios de sucesso do MVP (docs/05-mvp-web-plano.md).
+ * Mede os quatro critérios de sucesso do MVP (docs/produto/mvp-web.md).
  *
  * <p>Existe porque a alternativa é avaliar 30 dias de uso por memória — e o critério de falha
  * declarado no plano ("o app está sendo aberto só para não perder o streak") é justamente o tipo de
@@ -34,7 +34,7 @@ public class MvpMetricsService {
 
     private static final int MAX_WINDOW_DAYS = 365;
 
-    // Metas de docs/05-mvp-web-plano.md.
+    // Metas de docs/produto/mvp-web.md.
     static final int TARGET_DAYS_WITH_DRILL = 12;
     static final int TARGET_SRS_ADHERENCE_PERCENT = 60;
     static final int TARGET_NODES_COMPLETED = 15;
@@ -154,8 +154,8 @@ public class MvpMetricsService {
      *
      * <p>"Mais de uma tentativa" não serve como definição: reprovar e passar na segunda é o caminho
      * normal para concluir um nó, e contá-lo acenderia a meta no primeiro erro de quem só está
-     * avançando. O que docs/05 chama de espontâneo é voltar a um quiz que já estava resolvido — daí
-     * só contar tentativa posterior à primeira aprovação.
+     * avançando. O que docs/produto/mvp-web.md chama de espontâneo é voltar a um quiz que já estava
+     * resolvido — daí só contar tentativa posterior à primeira aprovação.
      *
      * <p>O histórico é lido inteiro, e não só a janela, porque a aprovação que torna a tentativa
      * uma repetição costuma ser bem anterior a ela; a janela recorta a repetição, não a aprovação.

@@ -28,7 +28,7 @@ RUN mvn -B -q -DskipTests package
 # MB de dado de terceiro em cada atualização mensal dentro do histórico do git, e volume é
 # custo e upload manual num projeto que roda com uma réplica (D22). O download é do estágio de
 # BUILD — quem fala com o db-ip.com é a máquina que constrói a imagem, nunca a requisição de
-# quem usa o app. A promessa de `docs/11-privacidade.md` continua de pé: o IP de quem navega
+# quem usa o app. A promessa de `docs/privacidade/coleta-de-uso.md` continua de pé: o IP de quem navega
 # não sai daqui.
 #
 # NUNCA derruba o build. Sem base o app coleta tudo menos país, que é como dev e CI rodam —
@@ -73,7 +73,7 @@ USER fos
 # tomada. Definir a variável no ambiente sobrescreve, inclusive para vazio, que desliga.
 #
 # Dado de país por DB-IP (https://db-ip.com), sob CC BY 4.0. A licença exige crédito: ele está
-# aqui, no README e em docs/11-privacidade.md, e precisa aparecer também no painel da #85
+# aqui, no README e em docs/privacidade/coleta-de-uso.md, e precisa aparecer também no painel da #85
 # quando a tela existir.
 ENV FOS_USAGE_GEOIP_DATABASE=/app/geoip.csv.gz
 

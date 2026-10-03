@@ -6,7 +6,7 @@ import { DisclaimerGate } from './DisclaimerGate.tsx';
 
 /**
  * O portão do disclaimer decide se o app é utilizável. Um defeito aqui ou trava tudo, ou — pior —
- * deixa passar sem aceite, e o aviso é requisito de produto (docs/06-disclaimer-responsabilidade.md).
+ * deixa passar sem aceite, e o aviso é requisito de produto (docs/produto/disclaimer.md).
  *
  * O cliente de API é mockado no módulo: nenhum teste toca a rede.
  */

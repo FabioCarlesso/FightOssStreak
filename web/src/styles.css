@@ -1557,7 +1557,7 @@ button.landing__button--ghost {
   max-width: 70ch;
 }
 
-/* Feedback de usuários (docs/13-feedback-usuarios.md)
+/* Feedback de usuários (docs/produto/feedback.md)
  *
  * Os campos têm classe própria em vez de estilo em `form`/`label` soltos: o resto do app estiliza
  * formulário por componente (`.drill__note`, `.pinned-note__input`), e uma regra genérica de

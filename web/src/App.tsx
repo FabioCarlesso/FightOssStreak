@@ -85,7 +85,7 @@ export function App() {
   );
 }
 
-/** O provider fica por fora dos portões, mas são eles que abrem o app (D31 + docs/06 + #24). */
+/** O provider fica por fora dos portões, mas são eles que abrem o app (D31 + docs/produto/disclaimer.md + #24). */
 function AppLayout() {
   return (
     <AuthGate>

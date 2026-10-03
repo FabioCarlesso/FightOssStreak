@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  *
  * <p><b>Privacidade.</b> O aviso carrega dois números e o nome de uma variável de ambiente. Nenhum
  * endereço entra no texto — contar elementos não é registrar endereço, e a promessa de {@code
- * docs/11-privacidade.md} continua de pé.
+ * docs/privacidade/coleta-de-uso.md} continua de pé.
  */
 @Component
 public class ProxyTopology {

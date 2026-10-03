@@ -3,7 +3,7 @@ import type { FeedbackCategory } from '@fos/types';
 /**
  * Como a categoria de feedback é nomeada na tela.
  *
- * O dono prioriza pela categoria antes de abrir cada item (docs/13-feedback-usuarios.md) — daí
+ * O dono prioriza pela categoria antes de abrir cada item (docs/produto/feedback.md) — daí
  * ela ser obrigatória no formulário, e não um campo livre de "assunto" além da mensagem.
  */
 export const FEEDBACK_CATEGORY_LABELS: ReadonlyArray<{

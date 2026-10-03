@@ -187,7 +187,7 @@ public class StreakService {
      * Dias com registro dentro da janela recente.
      *
      * <p>É a métrica que realmente responde ao critério de sucesso do MVP — "≥ 12 dias de 30" —
-     * enquanto o streak responde só a "manteve a corrente" (docs/05-mvp-web-plano.md).
+     * enquanto o streak responde só a "manteve a corrente" (docs/produto/mvp-web.md).
      */
     public int activeDaysInWindow(
             Collection<LocalDate> drillDates, LocalDate today, int windowDays) {

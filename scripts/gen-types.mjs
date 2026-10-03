@@ -6,7 +6,7 @@
  *   1. backend rodando  ->  http://localhost:8080/v3/api-docs
  *   2. spec versionado  ->  backend/openapi.json
  *
- * Por que existe (ver docs/01-stack-tecnica.md): sem geração automática,
+ * Por que existe (ver docs/arquitetura.md): sem geração automática,
  * shared/types diverge do backend em duas semanas. O CI roda este script e
  * falha se o resultado ficar diferente do que está commitado.
  */

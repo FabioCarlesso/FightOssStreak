@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>É o diferencial declarado do produto: o app abre e diz o que revisar, em vez de só exibir um
  * streak. A ordenação é intencional — mais atrasado primeiro e, em empate, o nó cujo quiz saiu pior
- * (docs/04-arvore-curriculo-bjj.md, "notas de design").
+ * (docs/produto/curriculo.md, "notas de design").
  */
 @Service
 public class ReviewAgendaService {

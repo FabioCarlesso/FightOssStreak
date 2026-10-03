@@ -40,7 +40,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Feedback de usuário, ponta a ponta (docs/13-feedback-usuarios.md).
+ * Feedback de usuário, ponta a ponta (docs/produto/feedback.md).
  *
  * <p>O que importa provar aqui: quem manda não decide, só o dono lê e decide a fila, o nó
  * referenciado é opcional e precisa existir quando informado, e a demo (D39) não manda feedback —

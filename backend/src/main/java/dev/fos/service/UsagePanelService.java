@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  * aponte para ninguém. Ler o cru daria respostas mais finas — funil por pessoa, sessão, retorno
  * entre dias — e é exatamente por isso que não se lê: cada uma dessas respostas é a D50 sendo
  * revertida em silêncio. Se um dia o painel precisar de uma delas, o caminho é reabrir a decisão e
- * reescrever {@code docs/11-privacidade.md}, não acrescentar uma consulta aqui.
+ * reescrever {@code docs/privacidade/coleta-de-uso.md}, não acrescentar uma consulta aqui.
  *
  * <p>Duas leituras não vêm do agregado, e nenhuma das duas é o cru: os totais de contas saem de
  * {@code app_user} e "contas ativas" sai da contagem de dias com drill. As duas devolvem

@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CurriculumQueryService {
 
-    /** Aviso curto exibido no rodapé de todo nó (docs/06-disclaimer-responsabilidade.md). */
+    /** Aviso curto exibido no rodapé de todo nó (docs/produto/disclaimer.md). */
     static final String SHORT_SAFETY_NOTICE =
             "⚠️ Conteúdo de apoio ao estudo. Não substitui a instrução do seu professor. "
                     + "Pratique somente em academia, com supervisão e parceiro consciente. "

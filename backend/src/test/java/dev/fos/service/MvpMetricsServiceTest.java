@@ -104,7 +104,7 @@ class MvpMetricsServiceTest {
     }
 
     @Test
-    @DisplayName("a meta de dias com drill é 12 em 30, como em docs/05")
+    @DisplayName("a meta de dias com drill é 12 em 30, como em docs/produto/mvp-web.md")
     void daysWithDrillTarget() {
         List<DrillLog> drills = new ArrayList<>();
         for (int day = 0; day < 12; day++) {
@@ -210,7 +210,8 @@ class MvpMetricsServiceTest {
     @DisplayName("errar e passar na segunda tentativa não é quiz refeito")
     void failingThenPassingIsNotARetake() {
         // Caminho normal para concluir um nó. Contar isto acenderia a meta no primeiro erro de
-        // quem está apenas avançando no currículo — o oposto do sinal que docs/05 procura.
+        // quem está apenas avançando no currículo — o oposto do sinal que docs/produto/mvp-web.md
+        // procura.
         givenQuizAttempts(failed(10L, TODAY), passed(10L, TODAY));
 
         assertThat(metrics().quizRetakes().value()).isZero();

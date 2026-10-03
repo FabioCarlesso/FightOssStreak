@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * O spec OpenAPI não é documentação decorativa: é a fonte a partir da qual {@code shared/types} é
- * gerado (docs/01-stack-tecnica.md). Sem ele, os tipos do front divergem do backend em duas
- * semanas.
+ * gerado (docs/arquitetura.md). Sem ele, os tipos do front divergem do backend em duas semanas.
  */
 @Configuration
 class OpenApiConfig {

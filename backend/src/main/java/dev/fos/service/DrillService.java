@@ -89,7 +89,7 @@ public class DrillService {
 
         // Lido ANTES do reagendamento: é o reagendamento que apaga o estado anterior da agenda,
         // e é esse estado que responde se o drill atendeu a uma revisão sugerida pelo SRS
-        // (critério de sucesso em docs/05-mvp-web-plano.md).
+        // (critério de sucesso em docs/produto/mvp-web.md).
         SrsReview scheduled = srsRepository.findById(key).orElse(null);
         LocalDate dueOn = scheduled != null ? scheduled.getNextReviewOn() : null;
         boolean wasDue = dueOn != null && !dueOn.isAfter(drilledOn);

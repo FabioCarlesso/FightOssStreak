@@ -219,7 +219,8 @@ function CadastroIndisponivel() {
         pendurada para sempre.
       </p>
       <p>
-        Se você está rodando o app localmente, o README explica quais variáveis habilitam o envio.
+        Se você está rodando o app localmente, docs/autenticacao.md explica quais variáveis
+        habilitam o envio.
       </p>
       <div className="gate__actions">
         <Link className="linklike" to="/entrar">

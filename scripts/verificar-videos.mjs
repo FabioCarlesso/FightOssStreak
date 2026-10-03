@@ -5,13 +5,13 @@
  *   node scripts/verificar-videos.mjs
  *
  * Por que existe: vídeo do YouTube sai do ar, vira privado ou tem a incorporação desativada depois
- * de catalogado — risco listado em `docs/07-decisoes.md`. Sem esta checagem, a descoberta é
+ * de catalogado — risco listado em `docs/decisoes/README.md`. Sem esta checagem, a descoberta é
  * acidental e acontece no pior momento possível: abrindo o nó depois do treino.
  *
  * O que ele faz: lê todos os `m*.json`, pega os vídeos catalogados — o canônico do nó e os
  * complementares (D32) — e pergunta ao YouTube, um a um, se cada id ainda está público e
  * incorporável. Não escreve nada — a substituição de um vídeo é curadoria humana
- * (`docs/08-curadoria-videos.md`), não automação.
+ * (`docs/conteudo/videos.md`), não automação.
  *
  * Códigos de saída, porque quem chama (o workflow `videos.yml`) decide por eles:
  *   0  tudo disponível — inclusive o caso "nenhum vídeo catalogado ainda"
@@ -131,7 +131,7 @@ export function formatarRelatorio(resultados) {
       ...quebrados.map(linha),
       '',
       'A substituição é curadoria humana: escolha o novo vídeo pelos critérios do nó em',
-      'docs/08-curadoria-videos.md e recatalogue com',
+      'docs/conteudo/videos.md e recatalogue com',
       '  node scripts/catalogar-video.mjs <NÓ> <url>            (canônico)',
       '  node scripts/catalogar-video.mjs <NÓ> --extra <url>    (complementar, marcado com +)',
     );

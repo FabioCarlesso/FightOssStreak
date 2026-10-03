@@ -22,8 +22,9 @@ import org.slf4j.LoggerFactory;
  * País e região a partir do IP, com base local (#84, D50).
  *
  * <p>Local, e não um serviço de consulta: chamar terceiro a cada requisição colocaria o IP de quem
- * usa o app na mão de outra empresa — que é precisamente o que {@code docs/11-privacidade.md}
- * promete que não acontece. A base é um arquivo, entra por PR e é atualizada por PR.
+ * usa o app na mão de outra empresa — que é precisamente o que {@code
+ * docs/privacidade/coleta-de-uso.md} promete que não acontece. A base é um arquivo, entra por PR e
+ * é atualizada por PR.
  *
  * <p><b>Ausente é o caso normal.</b> Dev e CI sobem sem base nenhuma, e coletam tudo menos país: o
  * país vira {@link UsageEvent#PAIS_DESCONHECIDO}, que é categoria própria e não erro. Base ausente

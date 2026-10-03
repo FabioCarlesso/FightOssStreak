@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
  *
  * <p><b>Privacidade.</b> O aviso carrega o nome de uma variável de ambiente e mais nada. Nenhum
  * endereço, nenhuma rota, nenhum identificador de sessão — a promessa de {@code
- * docs/11-privacidade.md} vale para o log também (D50).
+ * docs/privacidade/coleta-de-uso.md} vale para o log também (D50).
  */
 @Component
 public class CookieSecureTopology {

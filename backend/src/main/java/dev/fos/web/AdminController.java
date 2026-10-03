@@ -70,7 +70,7 @@ public class AdminController {
                     "Agregado e de ninguém: nenhum campo desta resposta identifica uma pessoa —"
                             + " não há e-mail, nome nem id de conta. Lê apenas a contagem diária"
                             + " (`usage_daily`), nunca a tabela crua de eventos"
-                            + " (docs/11-privacidade.md). O período termina ontem: hoje ainda"
+                            + " (docs/privacidade/coleta-de-uso.md). O período termina ontem: hoje ainda"
                             + " recebe evento e não foi fechado.")
     public AdminPanelDtos.PanelView painel(
             @Parameter(description = "Tamanho do período: 7, 30 ou 90 dias")

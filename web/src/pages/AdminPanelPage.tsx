@@ -14,7 +14,7 @@ import { useAsync } from '../state/useAsync.ts';
  * de escopo. Ela responde três perguntas — **quantos** chegaram, **de onde** vieram, **onde
  * desistiram** — e nenhuma sobre alguém em particular. Não há aqui lista de pessoas, sessão
  * individual nem "últimos acessos de fulano": o backend não devolve isso, e o dia em que devolver
- * será porque a D50 foi reaberta e `docs/11-privacidade.md` reescrito, não porque esta tela pediu.
+ * será porque a D50 foi reaberta e `docs/privacidade/coleta-de-uso.md` reescrito, não porque esta tela pediu.
  *
  * Os gráficos são SVG escrito à mão. O web tem três dependências de runtime, e um painel de uso
  * pessoal com uma linha e umas barras não justifica a quarta — nem o peso que uma biblioteca de

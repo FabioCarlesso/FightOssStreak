@@ -5,7 +5,7 @@ import { api } from '../api/client.ts';
  * Exclusão da própria conta.
  *
  * Não é item de polimento: app com login precisa ter rota de deleção, e a exigência é da própria
- * loja da Apple (docs/02-publicacao-ios-desafios.md) — por isso ela entrou junto com o login, e não
+ * loja da Apple (docs/produto/publicacao-ios.md) — por isso ela entrou junto com o login, e não
  * depois.
  *
  * A confirmação é em dois passos de propósito. O texto diz o que se perde, porque um botão que

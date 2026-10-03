@@ -16,7 +16,7 @@ import java.time.Instant;
  * quanto tempo somaram, e em que faixa da escada cada uma caiu. <b>Não há nesta tabela nada que
  * diga quem fez a requisição nem de onde ela veio</b> — nem conta, nem chave de visita, nem
  * endereço. Contar requisição não é observar pessoa, e é essa fronteira que mantém de pé a promessa
- * de {@code docs/11-privacidade.md}.
+ * de {@code docs/privacidade/saude-do-site.md}.
  *
  * <p>O {@code path} é o <b>padrão</b> que o roteamento casou, nunca o caminho que chegou: é a mesma
  * guarda que o {@code UsagePaths} faz na coleta de uso, por outro caminho. Padrão não tem segmento
