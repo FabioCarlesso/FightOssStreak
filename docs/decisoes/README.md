@@ -74,6 +74,7 @@ nesta tabela, no mesmo PR.
 | [D63](D63-e-mail-de-provedor-so-e.md) | E-mail de provedor só é verificado quando o provedor afirma; o Facebook passa a entrar sem vínculo |
 | [D64](D64-exclusao-de-conta-apaga-o-feedback.md) | Exclusão de conta apaga o feedback do autor e esquece quem decidiu |
 | [D65](D65-cabecalhos-de-seguranca-no-nginx-com.md) | Cabeçalhos de segurança no nginx, com CSP bloqueante sem `'unsafe-inline'` |
+| [D66](D66-o-mobile-e-adiado-os-criterios.md) | O mobile é adiado: os critérios do MVP web não foram atingidos — a D4 segue valendo |
 
 ## Política de uso de vídeo (D7) — limites
 
