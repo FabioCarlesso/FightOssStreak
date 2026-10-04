@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +21,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Sign in with Apple, só no app iOS (#139, D68).
@@ -114,34 +114,38 @@ public class AppleSignIn {
      * <p>Melhor esforço, e de propósito: a falha da Apple aqui não pode impedir a pessoa de entrar.
      * O custo é que aquela identidade, até o próximo login com código, não terá o que revogar na
      * exclusão — e o log diz isso.
+     *
+     * <p><b>Sem {@code @Transactional}, de propósito.</b> A troca é chamada de rede, e dentro de
+     * transação ela seguraria uma conexão do banco enquanto espera a Apple. A rede vem primeiro, e
+     * a gravação é uma operação só, transacional por conta do repositório.
      */
-    @Transactional
     public void rememberRefreshToken(UserIdentity identity, String authorizationCode) {
         if (authorizationCode == null || authorizationCode.isBlank()) {
             return;
         }
+        Optional<String> refresh;
         try {
-            api.exchange(authorizationCode)
-                    .ifPresent(
-                            refresh -> {
-                                Instant now = Instant.now(clock);
-                                credentials
-                                        .findByIdentityId(identity.getId())
-                                        .ifPresentOrElse(
-                                                c -> c.replaceWith(refresh, now),
-                                                () ->
-                                                        credentials.save(
-                                                                new AppleCredential(
-                                                                        identity.getId(),
-                                                                        refresh,
-                                                                        now)));
-                            });
+            refresh = api.exchange(authorizationCode);
         } catch (RuntimeException e) {
             log.warn(
                     "Troca do código da Apple falhou — identidade {} sem refresh token: {}",
                     identity.getId(),
                     e.getClass().getSimpleName());
+            return;
         }
+        refresh.ifPresent(
+                value -> {
+                    Instant now = Instant.now(clock);
+                    AppleCredential credential =
+                            credentials
+                                    .findByIdentityId(identity.getId())
+                                    .orElseGet(
+                                            () ->
+                                                    new AppleCredential(
+                                                            identity.getId(), value, now));
+                    credential.replaceWith(value, now);
+                    credentials.save(credential);
+                });
     }
 
     /**

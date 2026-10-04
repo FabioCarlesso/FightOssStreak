@@ -228,9 +228,22 @@ export function createApiClient(options: ApiClientOptions = {}) {
   const baseUrl = (options.baseUrl ?? '').replace(/\/$/, '');
   const doFetch = options.fetch ?? globalThis.fetch.bind(globalThis);
 
+  /**
+   * Rotas que nunca levam o token do app, mesmo quando há um guardado.
+   *
+   * O backend decide só pelo token quando ele vem (D68), e um token vencido ou revogado responde
+   * 401 em qualquer rota — inclusive nas de entrar. Mandá-lo aqui deixaria o app preso: o token
+   * velho impediria justamente o login que o substituiria, e a versão mínima, que precisa
+   * responder antes de tudo, também cairia.
+   */
+  const SEM_TOKEN = new Set(['/api/app/versao', '/api/auth/providers']);
+  const semToken = (path: string) =>
+    SEM_TOKEN.has(path) ||
+    (path.startsWith('/api/mobile/auth/') && path !== '/api/mobile/auth/sair');
+
   async function send(path: string, init?: RequestInit): Promise<Response> {
     const method = (init?.method ?? 'GET').toUpperCase();
-    const bearer = options.accessToken ? await options.accessToken() : null;
+    const bearer = options.accessToken && !semToken(path) ? await options.accessToken() : null;
     const token = bearer || SAFE_METHODS.has(method) ? null : csrfToken();
     const response = await doFetch(`${baseUrl}${path}`, {
       ...init,

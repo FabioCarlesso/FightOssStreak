@@ -66,6 +66,11 @@ class SecurityConfig {
             throws Exception {
         http.securityMatcher(BearerTokenFilter.HAS_AUTHORIZATION)
                 .cors(org.springframework.security.config.Customizer.withDefaults())
+                // O CodeQL aponta esta linha (java/spring-disabled-csrf-protection), e o alerta foi
+                // dispensado como falso positivo (D68): CSRF explora credencial que o navegador
+                // anexa sozinho, e esta cadeia só recebe requisição com `Authorization`, que ele
+                // não anexa. O BearerTokenFilter recusa tudo que não seja Bearer válido, sem ler
+                // sessão — não há cookie que um site de terceiro consiga usar aqui.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -39,13 +40,28 @@ class HttpAppleTokenApi implements AppleTokenApi {
     private static final String REVOKE_URL = "https://appleid.apple.com/auth/revoke";
     private static final Duration SECRET_TTL = Duration.ofMinutes(5);
 
+    /**
+     * Prazo curto para conectar e para ler. Sem ele o cliente padrão espera para sempre, e uma
+     * Apple travada travaria junto o login da Apple e a exclusão da conta — que é direito da pessoa
+     * e não pode depender de terceiro responder. Estourado o prazo, os dois seguem pelo caminho de
+     * melhor esforço do {@code AppleSignIn}.
+     */
+    static final Duration TIMEOUT = Duration.ofSeconds(5);
+
     private final FosProperties.Apple apple;
     private final Clock clock;
-    private final RestClient http = RestClient.create();
+    private final RestClient http = RestClient.builder().requestFactory(requestFactory()).build();
 
     HttpAppleTokenApi(FosProperties properties, Clock clock) {
         this.apple = properties.mobile().apple();
         this.clock = clock;
+    }
+
+    static SimpleClientHttpRequestFactory requestFactory() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(TIMEOUT);
+        factory.setReadTimeout(TIMEOUT);
+        return factory;
     }
 
     @Override

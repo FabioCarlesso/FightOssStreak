@@ -77,4 +77,28 @@ describe('transporte do api-client', () => {
       senha: 'senha-longa-12',
     });
   });
+
+  it('token velho no aparelho não vai nas rotas de entrar nem na versão mínima', async () => {
+    const chamadas: Chamada[] = [];
+    const api = createApiClient({ fetch: fetchFalso(chamadas), accessToken: () => 'vencido' });
+
+    await api.mobileLoginWithPassword('aluno@example.test', 'senha-longa-12');
+    await api.mobileLoginWithGoogle('id-token');
+    await api.mobileLoginWithApple({ identityToken: 'x', nonce: 'n' });
+    await api.getAppVersion();
+    await api.getAuthProviders();
+
+    for (const chamada of chamadas) {
+      assert.equal(cabecalhos(chamada)['Authorization'], undefined, chamada.url);
+    }
+  });
+
+  it('sair leva o token: é ele que o backend revoga', async () => {
+    const chamadas: Chamada[] = [];
+    const api = createApiClient({ fetch: fetchFalso(chamadas), accessToken: () => 'este' });
+
+    await api.mobileLogout().catch(() => undefined);
+
+    assert.equal(cabecalhos(chamadas[0])['Authorization'], 'Bearer este');
+  });
 });

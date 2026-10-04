@@ -11,7 +11,9 @@ qualquer rota fora da lista pública responde `401`.
 **O app mobile usa as mesmas rotas, com `Authorization: Bearer <token>`** no lugar do cookie (D68).
 Requisição com esse cabeçalho é decidida só pelo token: sem sessão, sem CSRF, e `401
 token_invalido` se ele não valer — mesmo que venha um cookie de sessão junto. O token não alcança
-as rotas de administração (`403`, mesmo para conta `ADMIN`).
+as rotas de administração (`403`, mesmo para conta `ADMIN`). Por isso o `api-client` **não manda o token nas rotas de
+entrar nem em `/api/app/versao`**: um token vencido ainda guardado no aparelho responderia `401` ali
+e impediria o próprio login que o substitui.
 
 ## Rotas públicas
 

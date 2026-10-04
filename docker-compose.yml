@@ -56,6 +56,15 @@ services:
       # Conta-modelo do acesso demonstrativo (#62). Vazia desliga o recurso: o botão não aparece
       # na landing e a aplicação sobe igual.
       FOS_DEMO_TEMPLATE_EMAIL: '${FOS_DEMO_TEMPLATE_EMAIL:-}'
+      # App mobile (#139, D68). Todas opcionais: sem client ID do Google e sem a credencial da
+      # Apple, as duas rotas de login nativo respondem 404; a entrada por senha não depende de nada.
+      FOS_MOBILE_TOKEN_IDLE_DAYS: '${FOS_MOBILE_TOKEN_IDLE_DAYS:-90}'
+      FOS_MOBILE_MIN_VERSION: '${FOS_MOBILE_MIN_VERSION:-}'
+      FOS_MOBILE_GOOGLE_CLIENT_IDS: '${FOS_MOBILE_GOOGLE_CLIENT_IDS:-}'
+      FOS_MOBILE_APPLE_BUNDLE_ID: '${FOS_MOBILE_APPLE_BUNDLE_ID:-}'
+      FOS_MOBILE_APPLE_TEAM_ID: '${FOS_MOBILE_APPLE_TEAM_ID:-}'
+      FOS_MOBILE_APPLE_KEY_ID: '${FOS_MOBILE_APPLE_KEY_ID:-}'
+      FOS_MOBILE_APPLE_PRIVATE_KEY: '${FOS_MOBILE_APPLE_PRIVATE_KEY:-}'
     # Opcional: o app funciona sem publicar esta porta, já que o acesso é pelo nginx. Fica
     # publicada só para depuração e para o Swagger em http://localhost:8080/swagger-ui.html.
     ports:

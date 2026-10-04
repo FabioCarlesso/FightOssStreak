@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Login do app mobile (#139, D68): cada rota troca uma prova de identidade por um token.
  *
- * <p>Nenhuma abre sessão nem deixa cookie — o token volta no corpo, e o app o guarda no {@code
- * expo-secure-store}. É por isso que estas rotas ficam fora do CSRF sem abrir nada: outra origem
- * que as chamasse pelo navegador de alguém não leria a resposta, e não sobraria cookie nenhum.
+ * <p>Nenhuma abre sessão — o token volta no corpo, e o app o guarda no {@code expo-secure-store}. É
+ * por isso que estas rotas ficam fora do CSRF sem abrir nada: outra origem que as chamasse pelo
+ * navegador de alguém não leria a resposta, e não sobraria sessão nenhuma. O único cookie que pode
+ * sair daqui é o {@code XSRF-TOKEN}, que a cadeia do navegador põe em toda resposta e que não
+ * autentica ninguém.
  *
  * <p><b>Cadastro, confirmação e recuperação continuam na web.</b> O link de confirmação sai de
  * {@code fos.public-url} (D62) e exige a senha do cadastro (D61); depois a pessoa entra no app com
