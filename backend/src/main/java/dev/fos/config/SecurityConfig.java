@@ -1,6 +1,7 @@
 package dev.fos.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.fos.service.MobileTokens;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
@@ -9,15 +10,19 @@ import java.util.Map;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -40,7 +45,57 @@ class SecurityConfig {
     /** Para onde o browser volta depois do login. É a primeira tela do app. */
     private static final String AFTER_LOGIN = "/hoje";
 
+    /**
+     * A cadeia do app mobile: toda requisição que traz {@code Authorization} (#139, D68).
+     *
+     * <p>Cadeia própria, e não um filtro a mais na do navegador, por causa da sessão. Na cadeia do
+     * navegador o {@code SessionManagementFilter} vê uma autenticação que não veio da sessão e a
+     * trata como login novo — cria sessão, registra, manda {@code JSESSIONID} —, e a requisição do
+     * app sairia com sessão de navegador a tiracolo. Aqui ela é <b>sem estado</b>: a sessão não é
+     * lida nem criada, e por isso um cookie de sessão que viesse junto não pesa nada — com {@code
+     * Authorization}, só o token decide.
+     *
+     * <p>Sem CSRF pelo mesmo motivo: o navegador não anexa {@code Authorization} sozinho, então não
+     * há falsificação cross-site a proteger. As rotas são as mesmas da outra cadeia ({@link
+     * #rotas}), para que a regra de quem entra onde não exista em duas versões.
+     */
     @Bean
+    @Order(1)
+    SecurityFilterChain mobileFilterChain(
+            HttpSecurity http, ObjectMapper objectMapper, MobileTokens mobileTokens)
+            throws Exception {
+        http.securityMatcher(BearerTokenFilter.HAS_AUTHORIZATION)
+                .cors(org.springframework.security.config.Customizer.withDefaults())
+                // O CodeQL aponta esta linha (java/spring-disabled-csrf-protection), e o alerta foi
+                // dispensado como falso positivo (D68): CSRF explora credencial que o navegador
+                // anexa sozinho, e esta cadeia só recebe requisição com `Authorization`, que ele
+                // não anexa. O BearerTokenFilter recusa tudo que não seja Bearer válido, sem ler
+                // sessão — não há cookie que um site de terceiro consiga usar aqui.
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .requestCache(cache -> cache.disable())
+                .logout(logout -> logout.disable())
+                .authorizeHttpRequests(SecurityConfig::rotas)
+                .exceptionHandling(
+                        handling ->
+                                handling.authenticationEntryPoint(
+                                        (request, response, exception) ->
+                                                write(
+                                                        objectMapper,
+                                                        response,
+                                                        HttpServletResponse.SC_UNAUTHORIZED,
+                                                        "token_invalido",
+                                                        "Token do app ausente, vencido ou"
+                                                                + " revogado. Entre de novo.")))
+                .addFilterBefore(
+                        new BearerTokenFilter(mobileTokens, objectMapper),
+                        AnonymousAuthenticationFilter.class);
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             ObjectMapper objectMapper,
@@ -57,43 +112,7 @@ class SecurityConfig {
         csrfHandler.setCsrfRequestAttributeName(null);
 
         http.cors(org.springframework.security.config.Customizer.withDefaults())
-                .authorizeHttpRequests(
-                        auth ->
-                                auth.requestMatchers(
-                                                "/actuator/health",
-                                                "/api/auth/providers",
-                                                // Cadastro com senha própria (#81): é a porta de
-                                                // quem ainda não tem conta, então exigir sessão
-                                                // aqui seria pedir conta a quem vem criar uma.
-                                                "/api/auth/cadastro",
-                                                "/api/auth/login",
-                                                "/api/auth/verificar/**",
-                                                "/api/auth/verificacao/**",
-                                                "/api/auth/senha/**",
-                                                // A demonstração é degrau ANTES do portão: quem
-                                                // ainda não tem conta é justamente quem a abre
-                                                // (#62).
-                                                "/api/demo/**",
-                                                // A coleta de uso (#84) mede quem AINDA NÃO tem
-                                                // conta: a landing é a página que recebe o link.
-                                                // Exigir sessão aqui mediria só quem já entrou.
-                                                "/api/telemetria/**",
-                                                "/api/oauth2/**",
-                                                "/api/login/**")
-                                        .permitAll()
-                                        // O spec alimenta a geração de tipos do front e é
-                                        // conferido pelo CI. O backend não tem domínio público
-                                        // (D24), então isto não é superfície exposta.
-                                        .requestMatchers(
-                                                "/v3/api-docs",
-                                                "/v3/api-docs/**",
-                                                "/swagger-ui.html",
-                                                "/swagger-ui/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/**")
-                                        .authenticated()
-                                        .anyRequest()
-                                        .permitAll())
+                .authorizeHttpRequests(SecurityConfig::rotas)
                 // O registro de sessões existe para a redefinição de senha poder derrubar o que
                 // está aberto (#81). `maximumSessions(-1)` não limita nada — é o que registra o
                 // `ConcurrentSessionFilter`, sem o qual marcar uma sessão como expirada não teria
@@ -125,7 +144,12 @@ class SecurityConfig {
                                         // conta nenhuma, e já aceita requisição sem sessão de
                                         // qualquer origem. Forjá-lo suja a métrica de quem forjou,
                                         // que é o que o freio por chave de visita limita.
-                                        .ignoringRequestMatchers("/api/telemetria/**"))
+                                        .ignoringRequestMatchers("/api/telemetria/**")
+                                        // O login do app mobile (#139, D68) não tem cookie nem
+                                        // sessão a proteger: devolve o token no corpo, que outra
+                                        // origem não lê. Requisição COM `Authorization` nem chega
+                                        // a esta cadeia — ver mobileFilterChain.
+                                        .ignoringRequestMatchers("/api/mobile/auth/**"))
                 .exceptionHandling(
                         handling ->
                                 handling.authenticationEntryPoint(
@@ -264,7 +288,52 @@ class SecurityConfig {
         return source;
     }
 
-    private static void write(
+    /** Quem entra onde — a mesma regra nas duas cadeias. */
+    private static void rotas(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry
+                    auth) {
+        auth.requestMatchers(
+                        "/actuator/health",
+                        "/api/auth/providers",
+                        // Cadastro com senha própria (#81): é a porta de
+                        // quem ainda não tem conta, então exigir sessão
+                        // aqui seria pedir conta a quem vem criar uma.
+                        "/api/auth/cadastro",
+                        "/api/auth/login",
+                        "/api/auth/verificar/**",
+                        "/api/auth/verificacao/**",
+                        "/api/auth/senha/**",
+                        // A demonstração é degrau ANTES do portão: quem
+                        // ainda não tem conta é justamente quem a abre
+                        // (#62).
+                        "/api/demo/**",
+                        // A coleta de uso (#84) mede quem AINDA NÃO tem
+                        // conta: a landing é a página que recebe o link.
+                        // Exigir sessão aqui mediria só quem já entrou.
+                        "/api/telemetria/**",
+                        "/api/oauth2/**",
+                        "/api/login/**",
+                        // O login do app mobile (#139, D68) é a porta de
+                        // quem ainda não tem token, como o cadastro é a de
+                        // quem não tem conta. E a versão mínima precisa
+                        // responder ANTES do login: é ela que diz ao app
+                        // velho que nem adianta tentar.
+                        "/api/mobile/auth/**",
+                        "/api/app/versao")
+                .permitAll()
+                // O spec alimenta a geração de tipos do front e é
+                // conferido pelo CI. O backend não tem domínio público
+                // (D24), então isto não é superfície exposta.
+                .requestMatchers(
+                        "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
+                .permitAll()
+                .requestMatchers("/api/**")
+                .authenticated()
+                .anyRequest()
+                .permitAll();
+    }
+
+    static void write(
             ObjectMapper objectMapper,
             HttpServletResponse response,
             int status,

@@ -4,9 +4,11 @@ import dev.fos.model.AppUser;
 import dev.fos.model.Role;
 import dev.fos.service.AccountService;
 import dev.fos.service.CurrentUserProvider;
+import dev.fos.service.MobileTokenAuthentication;
 import dev.fos.service.OwnerRequiredException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -44,6 +46,13 @@ class OwnerOnlyInterceptor implements HandlerInterceptor {
     public boolean preHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler) {
         AppUser user = currentUser.currentUser();
+        // O token do app não administra, nem de conta ADMIN (#139, D68): o app não tem tela de
+        // administração, e o token de um celular perdido é a credencial mais provável de vazar.
+        // O papel continua o mesmo — administrar só passa a exigir o navegador.
+        if (SecurityContextHolder.getContext().getAuthentication()
+                instanceof MobileTokenAuthentication) {
+            throw new OwnerRequiredException();
+        }
         if (accounts.roleOf(user) != Role.ADMIN) {
             throw new OwnerRequiredException();
         }

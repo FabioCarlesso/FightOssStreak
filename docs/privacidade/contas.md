@@ -34,6 +34,20 @@ Nada disso vai para log: o que se registra é o id da conta, nunca o endereço.
 A exclusão de conta apaga a identidade, o hash da senha e os links pendentes, na mesma transação do
 resto.
 
+## App mobile (D68)
+
+- **O token do app não é guardado** — como os links, a tabela tem o hash dele, a identidade por
+  onde a pessoa entrou e as datas de criação e de último uso (gravada no máximo uma vez por dia). O
+  valor vive só no aparelho, no armazenamento seguro do sistema. Vence com 90 dias sem uso, e
+  redefinir a senha revoga todos os da conta.
+- **Sign in with Apple guarda um refresh token da Apple**, numa tabela própria. É o único valor
+  aqui que não vira hash, porque precisa ser reenviado à Apple — e serve só para isso: na exclusão
+  da conta, o app avisa a Apple que a autorização acabou. Nada no app aceita esse valor como login.
+- **O e-mail que a Apple esconde** (`@privaterelay.appleid.com`) é tratado como não verificado:
+  não vincula a conta a outra pelo endereço e não semeia administração.
+
+A exclusão da conta apaga tokens e refresh token junto com o resto, e revoga na Apple antes.
+
 ## O que quem administra vê, e o que fica registrado (D49)
 
 Até aqui nenhuma tela do app mostrava dado pessoal de outra pessoa: cada conta via a si mesma, e a

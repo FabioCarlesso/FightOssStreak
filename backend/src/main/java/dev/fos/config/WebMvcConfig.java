@@ -51,7 +51,11 @@ class WebMvcConfig implements WebMvcConfigurer {
                         "/api/auth/**",
                         "/api/login/**",
                         "/api/demo/**",
-                        "/api/telemetria/**");
+                        "/api/telemetria/**",
+                        // O login e a versão mínima do app (#139): portas de entrada, como as de
+                        // cima.
+                        "/api/mobile/auth/**",
+                        "/api/app/versao");
 
         // Depois do portão de aprovação, e não antes: a ordem de registro é a de execução, e
         // "esta conta está liberada?" precisa ser respondida antes de "esta conta é a dona?".

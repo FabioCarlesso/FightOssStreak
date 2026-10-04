@@ -46,7 +46,13 @@ public final class AccountDtos {
      * @param passwordEnabled se dá para criar conta com e-mail e senha (D47). O cadastro <i>é</i> o
      *     e-mail de confirmação, então sem credencial de envio a porta não existe — e a tela mostra
      *     o que existe, em vez de um formulário que falha no envio
+     * @param mobileProviders os logins nativos que o app mobile pode oferecer neste ambiente (#139,
+     *     D68): {@code google} e {@code apple}, cada um só quando tem credencial. A senha não entra
+     *     aqui porque não depende de credencial nenhuma para entrar
      */
     public record AuthProviders(
-            List<AuthProviderView> providers, boolean demoEnabled, boolean passwordEnabled) {}
+            List<AuthProviderView> providers,
+            boolean demoEnabled,
+            boolean passwordEnabled,
+            List<String> mobileProviders) {}
 }

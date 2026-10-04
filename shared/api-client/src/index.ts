@@ -28,6 +28,11 @@ import type {
   QuizResult,
   QuizSubmission,
   LinkStatus,
+  MobileAppleRequest,
+  MobileGoogleRequest,
+  MobilePasswordRequest,
+  MobileToken,
+  AppVersion,
   ReviewAgenda,
   SessionTechniqueRequest,
   StreakHistory,
@@ -43,6 +48,15 @@ export interface ApiClientOptions {
   /** Base da API. Em dev o Vite faz proxy de `/api`, então o padrão relativo basta. */
   readonly baseUrl?: string;
   readonly fetch?: typeof globalThis.fetch;
+  /**
+   * Token do app mobile (#139, D68). Quando devolve um valor, a requisição vai com
+   * `Authorization: Bearer`, sem cookie e sem CSRF — é o backend que decide pelo cabeçalho, e não
+   * há sessão de navegador para proteger. A web não passa isto e continua na sessão por cookie.
+   *
+   * Função, e não valor, porque o token muda (login, sair) e mora fora deste cliente, no
+   * `expo-secure-store` do aparelho.
+   */
+  readonly accessToken?: () => string | null | Promise<string | null>;
 }
 
 /** Erro de API com o código estruturado que o backend devolve. */
@@ -214,16 +228,32 @@ export function createApiClient(options: ApiClientOptions = {}) {
   const baseUrl = (options.baseUrl ?? '').replace(/\/$/, '');
   const doFetch = options.fetch ?? globalThis.fetch.bind(globalThis);
 
+  /**
+   * Rotas que nunca levam o token do app, mesmo quando há um guardado.
+   *
+   * O backend decide só pelo token quando ele vem (D68), e um token vencido ou revogado responde
+   * 401 em qualquer rota — inclusive nas de entrar. Mandá-lo aqui deixaria o app preso: o token
+   * velho impediria justamente o login que o substituiria, e a versão mínima, que precisa
+   * responder antes de tudo, também cairia.
+   */
+  const SEM_TOKEN = new Set(['/api/app/versao', '/api/auth/providers']);
+  const semToken = (path: string) =>
+    SEM_TOKEN.has(path) ||
+    (path.startsWith('/api/mobile/auth/') && path !== '/api/mobile/auth/sair');
+
   async function send(path: string, init?: RequestInit): Promise<Response> {
     const method = (init?.method ?? 'GET').toUpperCase();
-    const token = SAFE_METHODS.has(method) ? null : csrfToken();
+    const bearer = options.accessToken && !semToken(path) ? await options.accessToken() : null;
+    const token = bearer || SAFE_METHODS.has(method) ? null : csrfToken();
     const response = await doFetch(`${baseUrl}${path}`, {
       ...init,
-      // O cookie de sessão é a autenticação. Explícito porque o default varia entre
-      // implementações de fetch, e sem ele toda requisição voltaria 401.
-      credentials: 'same-origin',
+      // Na web, o cookie de sessão é a autenticação. Explícito porque o default varia entre
+      // implementações de fetch, e sem ele toda requisição voltaria 401. Com token, nenhum
+      // cookie: o backend decide só pelo cabeçalho (D68), e um cookie a mais não ajudaria em nada.
+      credentials: bearer ? 'omit' : 'same-origin',
       headers: {
         'Content-Type': 'application/json',
+        ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
         ...(token ? { 'X-XSRF-TOKEN': token } : {}),
         ...(init?.headers ?? {}),
       },
@@ -385,6 +415,39 @@ export function createApiClient(options: ApiClientOptions = {}) {
      * não um controller — daí o caminho literal aqui.
      */
     logout: () => requestNoContent('/api/logout', { method: 'POST' }),
+
+    /**
+     * Versão mínima do app (#139). Pública: o app pergunta antes do login, para saber se
+     * precisa atualizar antes de tentar entrar.
+     */
+    getAppVersion: () => request<AppVersion>('/api/app/versao'),
+
+    /** Login do app com e-mail e senha. Devolve o token que vai no `accessToken` (D68). */
+    mobileLoginWithPassword: (email: string, senha: string) =>
+      request<MobileToken>('/api/mobile/auth/senha', {
+        method: 'POST',
+        body: JSON.stringify({ email, senha } satisfies MobilePasswordRequest),
+      }),
+
+    /** Login do app pelo ID token do login nativo do Google. */
+    mobileLoginWithGoogle: (idToken: string) =>
+      request<MobileToken>('/api/mobile/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ idToken } satisfies MobileGoogleRequest),
+      }),
+
+    /**
+     * Login do app pelo Sign in with Apple (só iOS). O `nonce` vai em claro: a Apple devolve o
+     * hash dele no token, e o backend confere.
+     */
+    mobileLoginWithApple: (body: MobileAppleRequest) =>
+      request<MobileToken>('/api/mobile/auth/apple', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+
+    /** Revoga o token deste aparelho. Os outros aparelhos da conta continuam dentro. */
+    mobileLogout: () => requestNoContent('/api/mobile/auth/sair', { method: 'POST' }),
 
     /** Exclusão irreversível da conta e de todo o dado dela. */
     deleteAccount: () => requestNoContent('/api/me', { method: 'DELETE' }),

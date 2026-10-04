@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param health o que a aplicação observa sobre si mesma, e quando ela avisa (#86)
  * @param streak perdão de dias perdidos sem quebrar a sequência (#99)
  * @param publicUrl origem pública do app, de onde saem os links dos e-mails (FOS-02)
+ * @param mobile o app Android e iOS: validade do token, versão mínima e login nativo (#139, D68)
  */
 @ConfigurationProperties(prefix = "fos")
 public record FosProperties(
@@ -33,7 +34,8 @@ public record FosProperties(
         Proxy proxy,
         Health health,
         Streak streak,
-        String publicUrl) {
+        String publicUrl,
+        Mobile mobile) {
 
     public FosProperties {
         if (auth == null) {
@@ -58,6 +60,9 @@ public record FosProperties(
             streak = new Streak(null);
         }
         publicUrl = normalizePublicUrl(publicUrl);
+        if (mobile == null) {
+            mobile = new Mobile(0, null, null, null);
+        }
     }
 
     /** Se há origem pública válida — sem ela não há link de e-mail que se possa montar. */
@@ -107,6 +112,75 @@ public record FosProperties(
         boolean local = host.equals("localhost") || host.equals("127.0.0.1");
         boolean esquemaAceito = scheme.equals("https") || (scheme.equals("http") && local);
         return soOrigem && !host.isEmpty() && esquemaAceito ? trimmed : "";
+    }
+
+    /**
+     * O app mobile (#139, D68).
+     *
+     * <p>Nada aqui é obrigatório, pela regra 4 do {@code CLAUDE.md}: sem client ID do Google a rota
+     * do Google responde 404 e o app não mostra o botão, e o mesmo vale para a Apple. A entrada por
+     * senha funciona sem nada configurado, porque a credencial dela é a do próprio app.
+     *
+     * @param tokenIdleDays dias sem uso depois dos quais o token vence. Zero ou negativo usa o
+     *     default
+     * @param minVersion versão mínima do app que a API ainda atende, no formato {@code 1.2.3}. É o
+     *     app que compara e pede a atualização; vazio quer dizer "qualquer versão serve"
+     * @param googleClientIds client IDs do app no Google — Android e iOS são client IDs próprios,
+     *     diferentes do da web. É contra eles que o {@code aud} do ID token é conferido
+     * @param apple a credencial do Sign in with Apple
+     */
+    public record Mobile(
+            int tokenIdleDays, String minVersion, List<String> googleClientIds, Apple apple) {
+
+        /**
+         * Noventa dias.
+         *
+         * <p>Longo porque o celular é pessoal e pedir login de novo é o atrito que faz o registro
+         * não acontecer; curto o bastante para um aparelho esquecido na gaveta não guardar uma
+         * credencial viva para sempre. Usar o app renova o prazo.
+         */
+        public static final int DEFAULT_TOKEN_IDLE_DAYS = 90;
+
+        public Mobile {
+            tokenIdleDays = tokenIdleDays > 0 ? tokenIdleDays : DEFAULT_TOKEN_IDLE_DAYS;
+            minVersion = minVersion == null || minVersion.isBlank() ? null : minVersion.trim();
+            googleClientIds =
+                    googleClientIds == null
+                            ? List.of()
+                            : googleClientIds.stream()
+                                    .filter(id -> id != null && !id.isBlank())
+                                    .map(String::trim)
+                                    .toList();
+            apple = apple == null ? new Apple(null, null, null, null) : apple;
+        }
+
+        public boolean isGoogleConfigured() {
+            return !googleClientIds.isEmpty();
+        }
+    }
+
+    /**
+     * Sign in with Apple, só no app iOS (D68).
+     *
+     * <p>Não é o {@code Providers.apple} da web, que continua recusado na subida: lá a Apple seria
+     * um provedor OAuth2 do Spring, aqui é um identity token conferido pelo backend. Os quatro
+     * campos são necessários juntos — o bundle id confere o token, e os outros três assinam o
+     * {@code client_secret} com que o backend troca o código e, na exclusão da conta, revoga o
+     * acesso na Apple.
+     *
+     * @param bundleId o bundle id do app iOS, que é o {@code aud} do identity token
+     * @param teamId o Team ID da conta de desenvolvedor
+     * @param keyId o Key ID da chave de Sign in with Apple
+     * @param privateKey a chave {@code .p8}, em PEM; nunca versionada
+     */
+    public record Apple(String bundleId, String teamId, String keyId, String privateKey) {
+        public boolean isConfigured() {
+            return present(bundleId) && present(teamId) && present(keyId) && present(privateKey);
+        }
+
+        private static boolean present(String value) {
+            return value != null && !value.isBlank();
+        }
     }
 
     /**

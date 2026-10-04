@@ -46,6 +46,27 @@ fos:
   # senha responde 503 como sem credencial de envio, e a subida avisa no log. Precisa estar no
   # ambiente ANTES do deploy que a exige, pela mesma lição do FOS_PROXY_TRUSTED_HOPS (D53).
   public-url: ${FOS_PUBLIC_URL:}
+  mobile:
+    # O app Android e iOS (#139, D68). Nada aqui é obrigatório: sem client ID do Google e sem a
+    # credencial da Apple, as duas rotas de login nativo respondem 404 e o app não mostra os
+    # botões — a entrada por senha funciona sem nada configurado.
+    #
+    # Dias sem uso até o token do app vencer. Vazio usa 90.
+    token-idle-days: ${FOS_MOBILE_TOKEN_IDLE_DAYS:0}
+    # Versão mínima do app que a API ainda atende (ex.: 1.2.0). Vazia, qualquer versão serve. É
+    # o app que compara e pede atualização: versão antiga fica meses no aparelho das pessoas, e
+    # é por aqui que uma mudança incompatível de contrato deixa de quebrar em silêncio.
+    min-version: ${FOS_MOBILE_MIN_VERSION:}
+    # Client IDs do app no Google, separados por vírgula: o do Android e o do iOS, que são
+    # diferentes do da web. O `aud` do ID token precisa ser um deles.
+    google-client-ids: ${FOS_MOBILE_GOOGLE_CLIENT_IDS:}
+    # Sign in with Apple, só no iOS. Os quatro juntos, ou a Apple não existe neste ambiente.
+    apple:
+      bundle-id: ${FOS_MOBILE_APPLE_BUNDLE_ID:}
+      team-id: ${FOS_MOBILE_APPLE_TEAM_ID:}
+      key-id: ${FOS_MOBILE_APPLE_KEY_ID:}
+      # A chave .p8, em PEM. Segredo: só no painel da plataforma, nunca versionada.
+      private-key: ${FOS_MOBILE_APPLE_PRIVATE_KEY:}
   demo:
     # Conta-modelo do acesso demonstrativo (#62): o e-mail VERIFICADO da conta que o autor cura
     # pelo próprio app e que cada visita recebe copiada. Vazio por default — sem ela a aplicação
