@@ -26,7 +26,7 @@ revisão por repetição espaçada. A raiz (`/`) é a landing pública; o app co
 | Backend | Spring Boot + Flyway + Spring Security, API documentada em OpenAPI |
 | Web | React + Vite |
 | Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |
-| Mobile | Não iniciado (fase posterior, D4) |
+| Mobile | **Workspace criado** em Expo (D67): app Android e iOS com a tela de fumaça, lint, testes e CI próprio (#140). Telas reais na #141 — ver [como rodar](docs/desenvolvimento/mobile.md) |
 
 **Stack:** Spring Boot 3 (Java 21) · Postgres + Flyway · React + Vite (TypeScript) · nginx · Docker
 — detalhes em [`docs/arquitetura.md`](docs/arquitetura.md).
@@ -84,7 +84,7 @@ cd backend && ./mvnw spotless:check && ./mvnw test   # backend
    (`node scripts/verificar-videos.mjs`), que avisa quando um sai do ar
 2. Catalogar os vídeos de M2–M8 e escrever o quiz conceitual de M4–M8 (M2 e M3 já têm quiz)
 3. Usar por 30 dias e avaliar contra os [critérios de sucesso](docs/produto/mvp-web.md)
-4. Só então considerar mobile (D4)
+4. O mobile começou por objetivo próprio, sem esperar este critério (D67, que revisitou a D4)
 
 ## Contribuindo
 

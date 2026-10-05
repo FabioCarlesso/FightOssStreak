@@ -4,6 +4,18 @@ dist/
 .vite/
 *.tsbuildinfo
 
+# Expo / React Native (mobile/, D67). `android/` e `ios/` saem do `expo prebuild` e são gerados
+# a cada build pelo EAS: versionar os dois faria o app.json deixar de ser a fonte da verdade.
+.expo/
+mobile/android/
+mobile/ios/
+# Credenciais de assinatura e chaves das lojas nunca entram no repositório (#143).
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
 # Java / Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar

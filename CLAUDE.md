@@ -151,6 +151,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 ```
 backend/   Spring Boot + Postgres (fonte da verdade de progresso e SRS)
 web/       React + Vite (MVP)
+mobile/    Expo + React Native (D67), reaproveita shared/
 shared/    domain (regras puras), api-client, types (gerados)
 docs/      documentação por assunto e log de decisões (índice em docs/README.md)
 ```
@@ -161,7 +162,8 @@ docs/      documentação por assunto e log de decisões (índice em docs/README
 npm install                 # workspaces: web + shared/*
 npm run dev:backend         # Spring Boot em :8080 (perfil dev, H2 em memória)
 npm run dev:web             # Vite em :5173, proxy /api -> :8080
-npm test                    # shared/domain + api-client + scripts + fluxos de UI do web (vitest/jsdom)
+npm run dev:mobile          # expo start (Metro em :8081); app no emulador ou no Expo Go
+npm test                    # shared/domain + api-client + scripts + fluxos de UI do web + mobile (jest-expo)
 npm run lint                # ESLint + Prettier; lint:fix corrige
 npm run gen:types           # regenera shared/types a partir do OpenAPI
 cd backend && ./mvnw test   # testes do backend
@@ -189,6 +191,12 @@ e-mail configurados. `node scripts/seed-dev-users.mjs` cria `aluno@teste.local` 
 no Postgres do Compose (uma vez, com o schema migrado) e `node scripts/mint-dev-login.mjs <e-mail>`
 imprime a URL de entrada. Nenhum dos dois é código do Spring nem migration do Flyway — não rodam
 sozinhos em ambiente nenhum. Ver `docs/desenvolvimento/contas-de-teste.md`.
+
+App mobile (`docs/desenvolvimento/mobile.md`): o web usa React 18 e o Expo usa React 19, e o npm
+mantém o 19, o React Native e o Expo dentro de `mobile/node_modules`. **Não acrescente `react` nem
+`react-native` à raiz**, e confira com `npm ls react` depois de mexer em dependência. O Metro não
+tem configuração própria; quem prova que o bundle fecha é o `npx expo export` do job `mobile`, que
+não é required check. Os testes e o typecheck do mobile, porém, rodam também no `web` pela raiz.
 
 Vídeos: `node scripts/catalogar-video.mjs <NÓ> <url>` cataloga o canônico (verifica e credita o
 canal), `... <NÓ> --extra <url>...` acrescenta complementares (D32, teto de 4 por nó) e

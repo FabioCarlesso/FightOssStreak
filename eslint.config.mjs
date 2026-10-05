@@ -6,7 +6,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 /**
- * Lint do lado TypeScript do monorepo — `web/`, `shared/*` e os scripts de `scripts/`.
+ * Lint do lado TypeScript do monorepo — `web/`, `mobile/`, `shared/*` e os scripts de `scripts/`.
  *
  * O projeto é solo e a ruleset de `main` exige zero aprovações humanas (D18): o CI *é* a revisão.
  * Por isso o lint roda como passo do job `web`, antes dos testes, e não como job separado — job
@@ -26,6 +26,10 @@ export default tseslint.config(
       'backend/target/**',
       'shared/types/generated/**',
       'web/node_modules/.vite/**',
+      // O que o Expo gera: cache do Metro e, se alguém rodar `expo prebuild`, os projetos nativos.
+      'mobile/.expo/**',
+      'mobile/android/**',
+      'mobile/ios/**',
     ],
   },
 
@@ -62,8 +66,8 @@ export default tseslint.config(
     },
   },
 
-  // React só existe no `web/`. `shared/` é deliberadamente agnóstico de UI para ser reaproveitado
-  // inteiro no React Native (docs/arquitetura.md).
+  // React só existe no `web/` e no `mobile/`. `shared/` é deliberadamente agnóstico de UI para ser
+  // reaproveitado inteiro no React Native (docs/arquitetura.md).
   {
     files: ['web/src/**/*.{ts,tsx}'],
     extends: [reactHooks.configs['recommended-latest']],
@@ -75,6 +79,30 @@ export default tseslint.config(
     },
     plugins: {
       'react-refresh': reactRefresh,
+    },
+  },
+
+  // O app mobile (D67): mesmas regras de hooks do web. Sem `react-refresh`, que é plugin do Vite,
+  // e sem globais de navegador — no React Native não há `window` nem `document`.
+  {
+    files: ['mobile/**/*.{ts,tsx}'],
+    extends: [reactHooks.configs['recommended-latest']],
+  },
+
+  // Os testes do mobile rodam no Jest, que injeta `describe`/`it`/`expect`/`jest` como globais.
+  {
+    files: ['mobile/**/*.test.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.jest,
+    },
+  },
+
+  // Configuração do Jest do mobile: CommonJS no Node, fora do tsconfig.
+  {
+    files: ['mobile/*.config.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: globals.node,
     },
   },
 

@@ -20,7 +20,7 @@ Para instalar e rodar, veja o [README](../README.md). Este arquivo é o índice 
 | [`banco-de-dados.md`](banco-de-dados.md) | Migrations, regras para migration nova e perfis |
 | [`privacidade/`](privacidade/README.md) | O que se guarda de cada pessoa, por quanto tempo e como apagar |
 | [`repositorio.md`](repositorio.md) | `main` protegida, checks obrigatórios, Dependabot |
-| [`desenvolvimento/`](desenvolvimento/README.md) | Modo dev, testes, lint, contas de teste e prints da landing |
+| [`desenvolvimento/`](desenvolvimento/README.md) | Modo dev, testes, lint, app mobile, contas de teste e prints da landing |
 
 **Produto e conteúdo**
 
