@@ -70,7 +70,8 @@ O contexto de um required check do GitHub Actions é o **nome do job**, não o n
 
 ### Workflows que deliberadamente não são portão
 
-Dois workflows rodam fora da ruleset, e devem continuar assim:
+Três workflows rodam fora da ruleset. Os dois primeiros devem continuar assim; o terceiro espera
+decisão:
 
 - **`videos`** ([`videos.yml`](../.github/workflows/videos.yml)) verifica semanalmente se os vídeos
   catalogados continuam no ar (`docs/conteudo/videos.md`). Um vídeo que o autor tirou do ar é
@@ -81,6 +82,12 @@ Dois workflows rodam fora da ruleset, e devem continuar assim:
   em PR, em push para `main` e semanalmente. Fora da ruleset porque análise de segurança que trava
   merge por falso positivo vira coisa que se aprende a ignorar: o valor está no alerta na aba
   Security, não no portão.
+- **`mobile`** ([`mobile.yml`](../.github/workflows/mobile.yml)) roda lint, typecheck, os testes do
+  app e o bundle do Android pelo Metro (`docs/desenvolvimento/mobile.md`). Entrar na ruleset é
+  decisão separada da #140. Já roda em todo PR sem filtro de caminho, para que essa decisão seja só
+  acrescentar o nome em `main.json`. **Ele não é a única proteção do app:** `npm test` e
+  `npm run typecheck` na raiz incluem o mobile, e o job `web`, que é portão, roda os dois. O que só o
+  job `mobile` pega é o bundle do Metro.
 
 Consequência prática: **acrescentar workflow que não é portão não exige mexer na ruleset.** O
 inverso é que exige, e é onde mora o footgun.

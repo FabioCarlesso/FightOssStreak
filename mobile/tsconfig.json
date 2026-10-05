@@ -1,0 +1,11 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    // Os pacotes de shared/ exportam TypeScript cru e importam com a extensão `.ts` (D17).
+    "allowImportingTsExtensions": true,
+    "types": ["jest"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

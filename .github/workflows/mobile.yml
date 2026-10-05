@@ -1,0 +1,71 @@
+name: mobile
+
+on:
+  # Permite disparar pela aba Actions. Útil quando o push não gera evento — por exemplo,
+  # quando o commit chega por um token de app que não aciona workflow.
+  workflow_dispatch:
+  # No push a main o filtro por caminho vale: nada depende desse resultado.
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'shared/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/mobile.yml'
+  # Em PR NÃO há filtro por caminho, de propósito (D19). Este job ainda não é required check, mas
+  # a issue que o criou (#140) já pede que ele rode em todo PR: no dia em que entrar na ruleset,
+  # um filtro aqui faria o check nunca reportar e travaria todo PR que não tocasse o mobile.
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Não é required check (decisão separada da #140). Se virar, o nome entra em
+  # .github/rulesets/main.json no mesmo PR e roda-se ./scripts/apply-repo-rules.sh (regra 7).
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # O lint é do repositório inteiro, como no job `web`: as regras do mobile moram no mesmo
+      # eslint.config.mjs, e rodar só um pedaço deixaria passar o que o outro job reprovaria.
+      - name: Lint e formatação
+        run: npm run lint
+
+      # O Dependabot cobre o npm da raiz, workspaces incluídos, e pode propor subir o `react` ou o
+      # `react-native` do app sozinhos. Os dois são fixados pela SDK do Expo, e fora dela o app
+      # compila e quebra no aparelho. Esta checagem compara contra a lista da própria SDK, sem rede.
+      - name: Versões casam com a SDK do Expo
+        working-directory: mobile
+        env:
+          CI: '1'
+          EXPO_NO_TELEMETRY: '1'
+        run: npx expo install --check
+
+      - name: Typecheck
+        run: npm run typecheck --workspace @fos/mobile
+
+      - name: Testes
+        run: npm run test --workspace @fos/mobile
+
+      # O Jest não usa o Metro, então os testes passam mesmo que o bundle do app não feche — e é
+      # no Metro que o monorepo costuma quebrar: pacote de shared/ que não resolve, ou um segundo
+      # React vindo da raiz (o web usa o 18, o Expo o 19). Exportar o bundle do Android prova as
+      # duas coisas sem emulador. O iOS não entra: o bundle é o mesmo JavaScript, e o que muda
+      # entre as plataformas é nativo, que este job não compila.
+      - name: Bundle do app (Metro)
+        working-directory: mobile
+        env:
+          CI: '1'
+          EXPO_NO_TELEMETRY: '1'
+        run: npx expo export --platform android --output-dir "$RUNNER_TEMP/expo-export"

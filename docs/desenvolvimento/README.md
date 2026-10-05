@@ -41,7 +41,7 @@ Roteiro completo, e por que isto não alcança produção, em
 ## Testes
 
 ```bash
-npm test                    # regras de shared/domain + scripts + fluxos de UI do web
+npm test                    # regras de shared/domain + scripts + fluxos de UI do web + tela do mobile
 cd backend && ./mvnw test   # regras, integridade do currículo e fluxo de ponta a ponta
 npm run typecheck           # todos os workspaces TypeScript
 ```
@@ -58,7 +58,7 @@ deles, `npm run test:watch --workspace @fos/web`.
 ## Lint e formatação
 
 ```bash
-npm run lint                          # ESLint + Prettier em web/, shared/* e scripts/
+npm run lint                          # ESLint + Prettier em web/, mobile/, shared/* e scripts/
 npm run lint:fix                      # corrige o que é corrigível
 cd backend && ./mvnw spotless:check   # formatação e imports do Java
 cd backend && ./mvnw spotless:apply   # corrige
@@ -119,6 +119,7 @@ assunto.
 
 | Arquivo | Quando usar |
 |---|---|
+| [`mobile.md`](mobile.md) | Rodar o app Android e iOS: emulador, Expo Go no iPhone, dev build pelo EAS |
 | [`contas-de-teste.md`](contas-de-teste.md) | Entrar no app em `localhost` sem provedor configurado |
 | [`prints-da-landing.md`](prints-da-landing.md) | PR que mexe na aparência da árvore, do nó, do drill, da tela inicial ou do diário |
 | [`prints-historico.md`](prints-historico.md) | O que cada recaptura mudou, e as armadilhas que ela ensinou |

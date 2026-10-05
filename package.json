@@ -8,17 +8,20 @@
     "shared/domain",
     "shared/api-client",
     "shared/types",
-    "web"
+    "web",
+    "mobile"
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace @fos/web",
+    "dev:mobile": "npm run start --workspace @fos/mobile",
     "dev:backend": "cd backend && ./mvnw spring-boot:run",
     "build": "npm run build --workspace @fos/domain && npm run build --workspace @fos/api-client && npm run build --workspace @fos/web",
-    "test": "npm run test:domain && npm run test:api-client && npm run test:scripts && npm run test:web",
+    "test": "npm run test:domain && npm run test:api-client && npm run test:scripts && npm run test:web && npm run test:mobile",
     "test:domain": "npm run test --workspace @fos/domain",
     "test:api-client": "npm run test --workspace @fos/api-client",
     "test:scripts": "node --test --test-reporter=spec \"scripts/**/*.test.mjs\"",
     "test:web": "npm run test --workspace @fos/web",
+    "test:mobile": "npm run test --workspace @fos/mobile",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint . --max-warnings=0 && prettier --check .",
     "lint:fix": "eslint . --fix; prettier --write .",
