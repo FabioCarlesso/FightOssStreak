@@ -43,8 +43,13 @@ aparelho.
 ## Rodar
 
 ```bash
-npm run dev:mobile    # expo start, a partir da raiz
+npm run dev:mobile    # expo start --go, a partir da raiz
 ```
+
+Os scripts do `mobile/` sobem no modo **Expo Go** (`--go`) de propósito. Com o `expo-dev-client`
+instalado, o `expo start` puro escolhe a dev build: o QR code vira `exp+fightossstreak://`, e o Expo
+Go não abre esse endereço. Enquanto não houver dev build instalada (#143), o QR code não levaria a
+lugar nenhum.
 
 - **Emulador Android:** com o AVD aberto, aperte `a` no terminal do Expo.
 - **iPhone físico:** abra a câmera, leia o QR code do terminal e abra no Expo Go. Se a rede bloquear
@@ -55,6 +60,9 @@ pé, o Expo oferece outra porta; para fixar uma, use
 `npm run start --workspace @fos/mobile -- --port 8082`.
 
 ## Dev build (EAS)
+
+Com a dev build instalada no aparelho, o servidor sobe com
+`npm run start:dev-client --workspace @fos/mobile`, e o QR code passa a abrir nela.
 
 O Expo Go roda só os módulos nativos que vêm nele. Quando o app precisar de outro, como o login
 nativo do Google (#141) ou o Sign in with Apple, o caminho passa a ser a **dev build**: um app

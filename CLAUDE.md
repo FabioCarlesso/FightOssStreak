@@ -162,7 +162,7 @@ docs/      documentação por assunto e log de decisões (índice em docs/README
 npm install                 # workspaces: web + shared/*
 npm run dev:backend         # Spring Boot em :8080 (perfil dev, H2 em memória)
 npm run dev:web             # Vite em :5173, proxy /api -> :8080
-npm run dev:mobile          # expo start (Metro em :8081); app no emulador ou no Expo Go
+npm run dev:mobile          # expo start --go (Metro em :8081); app no emulador ou no Expo Go
 npm test                    # shared/domain + api-client + scripts + fluxos de UI do web + mobile (jest-expo)
 npm run lint                # ESLint + Prettier; lint:fix corrige
 npm run gen:types           # regenera shared/types a partir do OpenAPI

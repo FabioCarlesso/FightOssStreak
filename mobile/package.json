@@ -5,9 +5,10 @@
   "description": "App Android e iOS do FOS, em Expo (D67). Reaproveita shared/ pelos workspaces.",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --go",
+    "android": "expo start --go --android",
+    "ios": "expo start --go --ios",
+    "start:dev-client": "expo start --dev-client",
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
