@@ -36,7 +36,7 @@ Não exigem sessão, porque servem justamente a quem ainda não tem uma.
 | `POST /api/mobile/auth/senha` | app mobile: e-mail e senha → token (D68) |
 | `POST /api/mobile/auth/google` | app mobile: ID token do Google → token; `404` sem client ID configurado |
 | `POST /api/mobile/auth/apple` | app iOS: identity token da Apple e nonce → token; `404` sem a credencial da Apple |
-| `POST /api/mobile/auth/sair` | revoga o token do `Authorization` |
+| `POST /api/mobile/auth/sair` | revoga o token do `Authorization`; com token já vencido ou revogado responde `401`, que o `mobileLogout` do `api-client` trata como saída |
 
 Cadastro, reenvio e recuperação respondem **igual** para e-mail que existe e que não existe. Fluxos
 e regras em [`autenticacao.md`](autenticacao.md).

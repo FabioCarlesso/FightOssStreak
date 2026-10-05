@@ -61,16 +61,14 @@ public class MobileToken {
     }
 
     /**
-     * Registra o uso, no máximo uma vez por dia.
+     * Já é hora de gravar o uso de novo, no máximo uma vez por dia.
      *
-     * @return se mudou alguma coisa — e portanto se há o que gravar
+     * <p>Só responde, e não muda o campo: quem grava é o {@code MobileTokenRepository.touch}, em
+     * massa. Alterar a entidade carregada faria o Hibernate gravá-la no commit conferindo a linha,
+     * e um "sair" no meio do caminho faria essa gravação responder 500 (#148).
      */
-    public boolean touch(Instant now) {
-        if (now.isBefore(lastUsedAt.plus(TOUCH_EVERY))) {
-            return false;
-        }
-        this.lastUsedAt = now;
-        return true;
+    public boolean isTouchDue(Instant now) {
+        return !now.isBefore(lastUsedAt.plus(TOUCH_EVERY));
     }
 
     public Long getId() {

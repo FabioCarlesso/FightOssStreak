@@ -299,6 +299,30 @@ class MobileAuthIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName(
+            "sair com token vencido ou já revogado responde 401, e o api-client trata como saída")
+    void signingOutWithADeadTokenIs401() throws Exception {
+        String revogado = tokenGoogle("ana", "ana@example.test");
+        String vencido = tokenGoogle("ana", "ana@example.test");
+        mockMvc.perform(
+                        post("/api/mobile/auth/sair")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + revogado))
+                .andExpect(status().isNoContent());
+        avancar(Duration.ofDays(90));
+
+        // O filtro recusa antes do controller: quem decide é o token (D68), também no "sair". O
+        // aparelho já está fora nos dois casos, e o `mobileLogout` do api-client resolve com 401.
+        for (String token : List.of(revogado, vencido)) {
+            mockMvc.perform(
+                            post("/api/mobile/auth/sair")
+                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.error").value("token_invalido"));
+        }
+        assertThat(tokenRows.count()).isZero();
+    }
+
     // ------------------------------------------------------------------ senha
 
     @Test

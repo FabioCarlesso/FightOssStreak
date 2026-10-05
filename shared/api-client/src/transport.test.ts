@@ -20,6 +20,16 @@ function fetchFalso(chamadas: Chamada[], corpo: unknown = {}) {
   }) as unknown as typeof globalThis.fetch;
 }
 
+function respostaFixa(status: number, corpo: unknown) {
+  return (() =>
+    Promise.resolve(
+      new Response(JSON.stringify(corpo), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )) as unknown as typeof globalThis.fetch;
+}
+
 function cabecalhos(chamada: Chamada): Record<string, string> {
   return chamada.init.headers as Record<string, string>;
 }
@@ -97,8 +107,26 @@ describe('transporte do api-client', () => {
     const chamadas: Chamada[] = [];
     const api = createApiClient({ fetch: fetchFalso(chamadas), accessToken: () => 'este' });
 
-    await api.mobileLogout().catch(() => undefined);
+    await api.mobileLogout();
 
     assert.equal(cabecalhos(chamadas[0])['Authorization'], 'Bearer este');
+  });
+
+  it('sair com token vencido ou revogado (401) resolve: o aparelho já está fora', async () => {
+    const api = createApiClient({
+      fetch: respostaFixa(401, { error: 'token_invalido', message: 'Token do app vencido.' }),
+      accessToken: () => 'vencido',
+    });
+
+    await api.mobileLogout();
+  });
+
+  it('sair com outro erro do servidor ainda rejeita', async () => {
+    const api = createApiClient({
+      fetch: respostaFixa(500, { error: 'erro_interno', message: 'Falhou.' }),
+      accessToken: () => 'este',
+    });
+
+    await assert.rejects(api.mobileLogout(), { status: 500 });
   });
 });

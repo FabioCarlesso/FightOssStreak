@@ -72,6 +72,9 @@ public class MobileTokens {
      * <p>Token vencido por desuso é apagado aqui, na primeira vez que alguém o apresenta: a
      * varredura é preguiçosa como a da demonstração, e o efeito para quem chama é o mesmo 401 de um
      * token que nunca existiu.
+     *
+     * <p>As duas escritas daqui são em massa, porque o mesmo token chega em várias requisições
+     * simultâneas: ver {@link MobileTokenRepository}.
      */
     @Transactional
     public Optional<Long> authenticate(String raw) {
@@ -85,10 +88,12 @@ public class MobileTokens {
         MobileToken token = found.get();
         Instant now = Instant.now(clock);
         if (token.isIdleExpired(idle, now)) {
-            tokens.delete(token);
+            tokens.deleteRow(token.getId());
             return Optional.empty();
         }
-        token.touch(now);
+        if (token.isTouchDue(now)) {
+            tokens.touch(token.getId(), now);
+        }
         return Optional.of(token.getIdentityId());
     }
 
@@ -98,7 +103,7 @@ public class MobileTokens {
         if (raw == null || raw.isBlank()) {
             return;
         }
-        tokens.findByTokenHash(hash(raw.trim())).ifPresent(tokens::delete);
+        tokens.deleteRowByTokenHash(hash(raw.trim()));
     }
 
     /**

@@ -64,6 +64,13 @@ uso, **redefinir a senha** (todos os da conta, de qualquer porta) e excluir a co
 encerra**, pelo mesmo motivo de não derrubar a sessão: o app mostra o motivo em vez de voltar para
 o login, e a conta bloqueada continua podendo se excluir.
 
+Sair com um token que já morreu responde `401`, não `204`: o filtro recusa antes do controller,
+porque com `Authorization` só o token decide, também no "sair". O aparelho já está fora nos dois
+casos, e o `mobileLogout` do `api-client` resolve com `401` para o app apagar o token local. As
+escritas em `mobile_token` são todas em massa (#148): o app dispara várias requisições ao abrir
+com o mesmo token, e apagar ou atualizar pela entidade fazia a que perdesse a corrida responder
+`500` no filtro.
+
 **Configuração:** sem `FOS_MOBILE_GOOGLE_CLIENT_IDS`, a rota do Google responde `404` e o app não
 mostra o botão; sem as quatro `FOS_MOBILE_APPLE_*`, o mesmo para a Apple. `GET /api/auth/providers`
 diz quais existem em `mobileProviders`. A entrada por senha não depende de nada. A tabela está em

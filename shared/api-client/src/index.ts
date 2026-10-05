@@ -446,8 +446,23 @@ export function createApiClient(options: ApiClientOptions = {}) {
         body: JSON.stringify(body),
       }),
 
-    /** Revoga o token deste aparelho. Os outros aparelhos da conta continuam dentro. */
-    mobileLogout: () => requestNoContent('/api/mobile/auth/sair', { method: 'POST' }),
+    /**
+     * Revoga o token deste aparelho. Os outros aparelhos da conta continuam dentro.
+     *
+     * 401 também é sucesso: o token vencido ou já revogado é recusado antes de chegar ao "sair", e
+     * o resultado que a pessoa pediu — este aparelho fora — já é verdade. Propagar o erro deixaria
+     * o app sem conseguir sair, com o token velho guardado. Quem chama apaga o token local nos
+     * dois casos.
+     */
+    mobileLogout: async () => {
+      try {
+        await requestNoContent('/api/mobile/auth/sair', { method: 'POST' });
+      } catch (error) {
+        if (!(error instanceof ApiError && error.isUnauthenticated)) {
+          throw error;
+        }
+      }
+    },
 
     /** Exclusão irreversível da conta e de todo o dado dela. */
     deleteAccount: () => requestNoContent('/api/me', { method: 'DELETE' }),
