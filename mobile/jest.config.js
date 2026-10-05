@@ -20,6 +20,7 @@ const expoModulesCore = path.dirname(
 /** @type {import('jest').Config} */
 module.exports = {
   preset: 'jest-expo',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^expo-modules-core$': expoModulesCore,
     '^expo-modules-core/(.*)$': `${expoModulesCore}/$1`,

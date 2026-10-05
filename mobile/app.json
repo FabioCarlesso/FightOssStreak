@@ -3,6 +3,7 @@
     "name": "FightOssStreak",
     "slug": "fightossstreak",
     "version": "0.1.0",
+    "scheme": "fightossstreak",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "ios": {
@@ -10,6 +11,7 @@
     },
     "android": {
       "predictiveBackGestureEnabled": false
-    }
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-web-browser"]
   }
 }

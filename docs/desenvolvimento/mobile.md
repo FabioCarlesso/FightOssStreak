@@ -4,9 +4,41 @@ Como rodar o app Android e iOS em desenvolvimento. O app vive em `mobile/`, em E
 (D67), e reaproveita `@fos/domain`, `@fos/api-client` e `@fos/types` pelos workspaces do npm: a
 regra pura não é reescrita no app (D17).
 
-Hoje o app é só uma **tela de fumaça** (#140). Ela prova as duas costuras de que todo o resto vai
-depender: a regra de `@fos/domain` rodando no React Native, e o `@fos/api-client` falando com o
-backend por uma rota pública (`GET /api/auth/providers`). Telas reais e login entram na #141.
+## O que o app tem (#141)
+
+O MVP mobile cobre o ciclo de retenção, com as mesmas regras e números do web:
+
+| Tela | O que faz |
+|---|---|
+| Login | E-mail e senha, trocados por um token guardado no `expo-secure-store` (D68). **Criar conta** e **Esqueci a senha** abrem o site (`EXPO_PUBLIC_WEB_URL`), como a D68 decidiu |
+| Portões | Versão mínima (pede atualização), conta bloqueada (mostra o motivo, com sair e excluir) e aceite do aviso por versão — na mesma ordem e com o mesmo texto do web |
+| Hoje | Streak, freeze, dias ativos, heatmap e a agenda do SRS |
+| Árvore e Nó | Conceito, pré-requisitos, vídeo pelo player do YouTube com crédito ao canal (D7), quiz, drill avulso e o aviso curto |
+| Diário | As sessões e os drills avulsos do mês; registrar sessão com técnicas da agenda |
+| Conta | Sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
+
+**Nenhuma regra é reimplementada no app.** Streak, freeze e agenda vêm do backend. A grade do
+heatmap, a prévia do intervalo do drill, a conversão do formulário de sessão, os rótulos e o texto do
+aviso vêm de `@fos/domain` — o mesmo código que o web usa. Para isso, o que o web guardava em
+`web/src/content/` e em `web/src/state/sessionFields.ts` passou para `shared/domain`, e o web
+reexporta de lá.
+
+**Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
+sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo
+demonstração. Admin, painel e feedback continuam só no web.
+
+### Como o app se organiza
+
+- `app/` — rotas do **Expo Router**, uma por arquivo, só ligando o endereço à tela. `app/(app)/_layout.tsx`
+  põe os portões na frente de tudo; `(abas)` são Hoje, Árvore, Diário e Conta.
+- `src/screens/` — as telas. `src/components/` — peças reaproveitadas (portões, quiz, drill, vídeo).
+- `src/state/` — token, sessão, avisos de 401/403 e o cliente por contexto (`useApi`), que é o que
+  permite aos testes trocar a API por uma falsa.
+- **401 em chamada com token volta ao login e apaga o token; 403 `acesso_recusado` leva à tela de
+  bloqueio.** Quem percebe é o `fetch` do app (`src/api/client.ts`), e nenhuma tela precisa saber.
+- **As abas não desmontam** no Expo Router: Hoje, Árvore e Diário recarregam ao voltar o foco
+  (`useAoVoltar`). Sem isso, o streak continuava em 0 depois de registrar um drill — foi pego no
+  emulador.
 
 ## Pré-requisitos
 
@@ -36,9 +68,14 @@ nginx só atende `PUBLIC_HOST` e responde 444 a qualquer outro host (D62), e o a
 | Emulador Android | `http://10.0.2.2:8080` (o `localhost` da máquina que roda o emulador) |
 | iPhone ou Android físico | `http://<IP da máquina na rede>:8080` |
 
-O valor é embutido no bundle quando o Metro sobe, então mudá-lo exige reiniciar o `expo start`. Sem a
-variável, a tela de fumaça diz o que configurar, em vez de tentar um endereço que não existe no
-aparelho.
+O valor é embutido no bundle quando o Metro sobe, então mudá-lo exige reiniciar o `expo start`.
+
+`EXPO_PUBLIC_WEB_URL` é o site, para criar conta e recuperar a senha. Em produção é a URL pública;
+em dev pode ficar vazia, e a tela de login diz o que configurar.
+
+Para entrar em dev, use as contas de teste (`node scripts/seed-dev-users.mjs`,
+[`contas-de-teste.md`](contas-de-teste.md)): o login do app é por e-mail e senha, e as duas já
+nascem confirmadas.
 
 ## Rodar
 

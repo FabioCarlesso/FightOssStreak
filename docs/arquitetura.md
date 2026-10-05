@@ -41,7 +41,8 @@ fightossstreak/
 │   ├── nginx.conf.template    # envsubst no start: porta e upstream vêm do ambiente
 │   └── railway.json
 │
-├── mobile/                    # React Native / Expo (D67); hoje só a tela de fumaça (#140)
+├── mobile/                    # React Native / Expo (D67); MVP mobile da #141
+│   ├── app/                   # rotas do Expo Router (portões, abas, nó, nova sessão)
 │   ├── src/{components,screens,api,state}/
 │   ├── app.json · eas.json    # config do Expo e perfis de build do EAS
 │   └── jest.config.js
@@ -49,7 +50,7 @@ fightossstreak/
 ├── shared/                    # compartilhado entre web e mobile
 │   ├── types/                 # GERADO a partir do OpenAPI — não editar à mão
 │   ├── api-client/
-│   └── domain/                # regras puras: cálculo de streak, SRS, desbloqueio de nó
+│   └── domain/                # regras puras (streak, SRS, desbloqueio) + texto e rótulos que web e app mostram iguais
 │
 ├── docs/                      # este planejamento
 └── .github/workflows/         # backend.yml e web.yml (portões), mobile, saude, videos, codeql
