@@ -28,6 +28,10 @@
       "description": "Bug, conteúdo errado, troca de vídeo, sugestão"
     },
     {
+      "name": "App mobile",
+      "description": "Login do app Android e iOS, por token"
+    },
+    {
       "name": "Diário",
       "description": "Sessões de treino e vínculo de técnicas do currículo"
     },
@@ -332,6 +336,117 @@
         }
       }
     },
+    "/api/mobile/auth/senha": {
+      "post": {
+        "tags": [
+          "App mobile"
+        ],
+        "summary": "Entra com e-mail e senha e recebe o token do app",
+        "description": "As mesmas respostas do login da web: 401 sem dizer se o e-mail existe, 403 com o endereço ainda não confirmado, 429 no freio de tentativas.",
+        "operationId": "senha",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobilePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileTokenView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mobile/auth/sair": {
+      "post": {
+        "tags": [
+          "App mobile"
+        ],
+        "summary": "Revoga o token do app",
+        "description": "O token apresentado no cabeçalho Authorization deixa de valer. Os outros aparelhos da conta continuam dentro.",
+        "operationId": "sair",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/mobile/auth/google": {
+      "post": {
+        "tags": [
+          "App mobile"
+        ],
+        "summary": "Entra pelo login nativo do Google",
+        "description": "Recebe o ID token do Google e confere assinatura, emissor, prazo e audiência contra os client IDs do app. O e-mail só vincula conta quando o Google afirma email_verified (D63). 404 quando o Google não está configurado neste ambiente; 401 com token que não confere.",
+        "operationId": "google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobileGoogleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileTokenView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mobile/auth/apple": {
+      "post": {
+        "tags": [
+          "App mobile"
+        ],
+        "summary": "Entra pelo Sign in with Apple (iOS)",
+        "description": "Confere o identity token, a audiência igual ao bundle id e o nonce. O e-mail relay não vincula conta nem semeia administração. 404 quando a Apple não está configurada neste ambiente; 401 com token que não confere.",
+        "operationId": "apple",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobileAppleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileTokenView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/feedback": {
       "post": {
         "tags": [
@@ -542,7 +657,7 @@
           "Cadastro e senha"
         ],
         "summary": "Troca a senha",
-        "description": "Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.",
+        "description": "Queima os links pendentes da conta, revoga os tokens do app e encerra as sessões abertas nela. Não abre sessão: a próxima tela é o login, com a senha nova.",
         "operationId": "redefinir",
         "parameters": [
           {
@@ -1011,7 +1126,7 @@
           "Conta"
         ],
         "summary": "Exclui a conta e todo o dado dela",
-        "description": "Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes e todo o progresso. A sessão é invalidada junto.",
+        "description": "Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes, os tokens do app e todo o progresso, e revoga na Apple o acesso de quem entrou por ela. A sessão é invalidada junto.",
         "operationId": "deleteMe",
         "responses": {
           "200": {
@@ -1077,6 +1192,28 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthProviders"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/versao": {
+      "get": {
+        "tags": [
+          "App mobile"
+        ],
+        "summary": "Versão mínima do app",
+        "description": "Pública e sem segredo: responde antes do login, para o app velho saber que precisa atualizar antes de tentar entrar. É o app que compara.",
+        "operationId": "versao",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppVersionView"
                 }
               }
             }
@@ -1717,6 +1854,61 @@
           "lastFrozenOn": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "MobilePasswordRequest": {
+        "required": [
+          "email",
+          "senha"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "MobileTokenView": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "MobileGoogleRequest": {
+        "required": [
+          "idToken"
+        ],
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string"
+          }
+        }
+      },
+      "MobileAppleRequest": {
+        "required": [
+          "identityToken",
+          "nonce"
+        ],
+        "type": "object",
+        "properties": {
+          "identityToken": {
+            "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "authorizationCode": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
           }
         }
       },
@@ -2661,6 +2853,20 @@
           },
           "passwordEnabled": {
             "type": "boolean"
+          },
+          "mobileProviders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AppVersionView": {
+        "type": "object",
+        "properties": {
+          "minimumVersion": {
+            "type": "string"
           }
         }
       },

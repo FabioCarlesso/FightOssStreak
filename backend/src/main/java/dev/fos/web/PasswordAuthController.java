@@ -213,8 +213,9 @@ public class PasswordAuthController {
     @Operation(
             summary = "Troca a senha",
             description =
-                    "Queima os links pendentes da conta e encerra as sessões abertas nela. Não abre"
-                            + " sessão: a próxima tela é o login, com a senha nova.")
+                    "Queima os links pendentes da conta, revoga os tokens do app e encerra as sessões"
+                            + " abertas nela. Não abre sessão: a próxima tela é o login, com a senha"
+                            + " nova.")
     public ResponseEntity<Void> redefinir(
             @PathVariable String token, @Valid @RequestBody SenhaRequest body) {
         String email = senha.resetPassword(token, body.senha());

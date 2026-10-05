@@ -51,6 +51,6 @@ class FosPropertiesPublicUrlTest {
     }
 
     private static FosProperties comUrl(String url) {
-        return new FosProperties(null, null, null, null, null, null, null, null, null, url);
+        return new FosProperties(null, null, null, null, null, null, null, null, null, url, null);
     }
 }

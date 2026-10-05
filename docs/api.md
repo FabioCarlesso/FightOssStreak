@@ -8,6 +8,13 @@ Mapa das rotas e das regras que valem para todas. O contrato completo (corpo de 
 Tudo vive sob `/api`, que é o único caminho que o nginx encaminha ao backend (D23/D24). Sem sessão,
 qualquer rota fora da lista pública responde `401`.
 
+**O app mobile usa as mesmas rotas, com `Authorization: Bearer <token>`** no lugar do cookie (D68).
+Requisição com esse cabeçalho é decidida só pelo token: sem sessão, sem CSRF, e `401
+token_invalido` se ele não valer — mesmo que venha um cookie de sessão junto. O token não alcança
+as rotas de administração (`403`, mesmo para conta `ADMIN`). Por isso o `api-client` **não manda o token nas rotas de
+entrar nem em `/api/app/versao`**: um token vencido ainda guardado no aparelho responderia `401` ali
+e impediria o próprio login que o substitui.
+
 ## Rotas públicas
 
 Não exigem sessão, porque servem justamente a quem ainda não tem uma.
@@ -25,6 +32,11 @@ Não exigem sessão, porque servem justamente a quem ainda não tem uma.
 | `GET /api/login/oauth2/code/{provedor}` | retorno do provedor (redirect URI) |
 | `POST /api/demo/sessao` | abre uma demonstração (D39); `404` se não houver conta-modelo |
 | `POST /api/telemetria/evento` | registra um acesso a uma rota do app (D50) |
+| `GET /api/app/versao` | versão mínima do app mobile que a API atende |
+| `POST /api/mobile/auth/senha` | app mobile: e-mail e senha → token (D68) |
+| `POST /api/mobile/auth/google` | app mobile: ID token do Google → token; `404` sem client ID configurado |
+| `POST /api/mobile/auth/apple` | app iOS: identity token da Apple e nonce → token; `404` sem a credencial da Apple |
+| `POST /api/mobile/auth/sair` | revoga o token do `Authorization`; com token já vencido ou revogado responde `401`, que o `mobileLogout` do `api-client` trata como saída |
 
 Cadastro, reenvio e recuperação respondem **igual** para e-mail que existe e que não existe. Fluxos
 e regras em [`autenticacao.md`](autenticacao.md).

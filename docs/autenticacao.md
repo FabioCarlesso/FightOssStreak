@@ -37,6 +37,45 @@ progresso onde estava.
 E um degrau **antes** dos dois (D39): a landing oferece *Ver o app funcionando*, que abre uma conta
 de demonstração temporária, já com progresso de exemplo, sem pedir nada a ninguém.
 
+## No app mobile
+
+O app Android e iOS entra **por token, não por sessão** (D68). Cada login devolve um token opaco,
+que o app guarda no armazenamento seguro do aparelho e manda em `Authorization: Bearer` em toda
+requisição; o banco guarda só o hash dele. Três portas:
+
+- **E-mail e senha** (`POST /api/mobile/auth/senha`): as mesmas regras e respostas do login da web,
+  com o mesmo freio. **Cadastro, confirmação e recuperação continuam na web** — o link de e-mail
+  abre no navegador, e depois a pessoa entra no app.
+- **Google nativo** (`POST /api/mobile/auth/google`): o app manda o ID token do Google, e o backend
+  confere assinatura, emissor, prazo e audiência contra os client IDs do app. O `sub` é o mesmo da
+  web, então é a **mesma identidade** de quem entra pelo navegador. `email_verified` só vale quando
+  o Google o afirma (D63).
+- **Sign in with Apple, só no iOS** (`POST /api/mobile/auth/apple`), exigido pela App Store em app
+  que oferece Google. O backend confere o token e o **nonce**. O e-mail escondido pela Apple
+  (*relay*) não vincula conta nem semeia administração: quem quiser a mesma conta nas duas
+  plataformas entra pelo Google no iPhone também. Na exclusão da conta, o backend revoga o acesso
+  na Apple.
+
+O Facebook não entra no app. E o token do app **não administra**: as rotas de administração
+respondem `403` a ele mesmo para conta `ADMIN` — administrar continua exigindo o navegador.
+
+**O que encerra o token:** sair no aparelho (`POST /api/mobile/auth/sair`, só aquele), 90 dias sem
+uso, **redefinir a senha** (todos os da conta, de qualquer porta) e excluir a conta. **Bloquear não
+encerra**, pelo mesmo motivo de não derrubar a sessão: o app mostra o motivo em vez de voltar para
+o login, e a conta bloqueada continua podendo se excluir.
+
+Sair com um token que já morreu responde `401`, não `204`: o filtro recusa antes do controller,
+porque com `Authorization` só o token decide, também no "sair". O aparelho já está fora nos dois
+casos, e o `mobileLogout` do `api-client` resolve com `401` para o app apagar o token local. As
+escritas em `mobile_token` são todas em massa (#148): o app dispara várias requisições ao abrir
+com o mesmo token, e apagar ou atualizar pela entidade fazia a que perdesse a corrida responder
+`500` no filtro.
+
+**Configuração:** sem `FOS_MOBILE_GOOGLE_CLIENT_IDS`, a rota do Google responde `404` e o app não
+mostra o botão; sem as quatro `FOS_MOBILE_APPLE_*`, o mesmo para a Apple. `GET /api/auth/providers`
+diz quais existem em `mobileProviders`. A entrada por senha não depende de nada. A tabela está em
+[`configuracao.md`](configuracao.md#variáveis).
+
 ## Quem administra
 
 **Quem administra é o papel da conta, `app_user.role` (D49)**, e `GET /api/me` o devolve como `role`
@@ -76,7 +115,8 @@ remetente e defina `FOS_EMAIL_API_KEY` e `FOS_EMAIL_FROM` (e `FOS_PUBLIC_URL`, v
 sobra a entrada por provedor. É a única credencial cuja ausência tira uma **porta de entrada**
 inteira, e não só um botão: o cadastro *é* o e-mail de confirmação.
 
-**Habilitar um provedor** (Google e Facebook nesta fase; a Apple ainda não — ver D36):
+**Habilitar um provedor na web** (Google e Facebook; a Apple não entra na web — ver D36 e, para o
+app, a seção abaixo):
 
 1. Crie o app no provedor e cadastre o redirect URI
    `https://<seu-domínio>/api/login/oauth2/code/google` (e o equivalente para `facebook`). O

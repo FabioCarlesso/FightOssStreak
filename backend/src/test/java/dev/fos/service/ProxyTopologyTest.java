@@ -194,6 +194,7 @@ class ProxyTopologyTest {
                         new FosProperties.Proxy(saltos),
                         null,
                         null,
+                        null,
                         null),
                 clock);
     }
