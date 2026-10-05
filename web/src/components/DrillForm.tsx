@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { DrillResult, SrsView } from '@fos/types';
-import { type Recall, review } from '@fos/domain';
+import { type Recall, previewIntervalDays } from '@fos/domain';
 import { api } from '../api/client.ts';
 import { RECALL_LABELS } from '../content/recall.ts';
 
@@ -26,7 +26,7 @@ export function DrillForm({
   const [result, setResult] = useState<DrillResult | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
 
-  const preview = previewNextReview(srs, recall);
+  const preview = previewIntervalDays(srs, recall, new Date().toISOString().slice(0, 10));
 
   async function submit() {
     setSaving(true);
@@ -97,24 +97,4 @@ export function DrillForm({
       )}
     </form>
   );
-}
-
-/** Preview local do próximo intervalo, usando a mesma regra SM-2 do backend. */
-function previewNextReview(srs: SrsView | undefined, recall: Recall): number | null {
-  const today = new Date().toISOString().slice(0, 10);
-  const current =
-    srs?.scheduled && srs.nextReviewOn
-      ? {
-          repetitions: srs.repetitions ?? 0,
-          intervalDays: srs.intervalDays ?? 0,
-          easeFactor: 2.5,
-          nextReviewOn: srs.nextReviewOn,
-        }
-      : null;
-
-  // Sem estado persistido o fator de facilidade real é desconhecido, então o preview só é
-  // confiável para a primeira revisão. Melhor não prometer número do que prometer errado.
-  if (current && (current.repetitions ?? 0) > 2) return null;
-
-  return review(current, recall, today).intervalDays;
 }

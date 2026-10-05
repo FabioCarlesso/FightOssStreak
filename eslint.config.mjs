@@ -91,7 +91,7 @@ export default tseslint.config(
 
   // Os testes do mobile rodam no Jest, que injeta `describe`/`it`/`expect`/`jest` como globais.
   {
-    files: ['mobile/**/*.test.{ts,tsx}'],
+    files: ['mobile/**/*.test.{ts,tsx}', 'mobile/src/test/**', 'mobile/jest.setup.js'],
     languageOptions: {
       globals: globals.jest,
     },
@@ -99,7 +99,7 @@ export default tseslint.config(
 
   // Configuração do Jest do mobile: CommonJS no Node, fora do tsconfig.
   {
-    files: ['mobile/*.config.js'],
+    files: ['mobile/*.config.js', 'mobile/jest.setup.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: globals.node,
