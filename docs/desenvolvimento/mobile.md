@@ -15,7 +15,7 @@ O MVP mobile cobre o ciclo de retenção, com as mesmas regras e números do web
 | Hoje | Streak, freeze, dias ativos, heatmap e a agenda do SRS |
 | Árvore e Nó | Conceito, pré-requisitos, vídeo pelo player do YouTube com crédito ao canal (D7), quiz, drill avulso e o aviso curto |
 | Diário | As sessões e os drills avulsos do mês; registrar sessão com técnicas da agenda |
-| Conta | Sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
+| Conta | Lembrete de revisão (ligar, desligar e horário), sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
 
 **Nenhuma regra é reimplementada no app.** Streak, freeze e agenda vêm do backend. A grade do
 heatmap, a prévia do intervalo do drill, a conversão do formulário de sessão, os rótulos e o texto do
@@ -26,6 +26,23 @@ reexporta de lá.
 **Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
 sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo
 demonstração. Admin, painel e feedback continuam só no web.
+
+### Lembrete de revisão (#142)
+
+Notificação **local**, pelo `expo-notifications`, sem servidor de push (D70). O plano sai de
+`src/lembretes/plano.ts`, uma função pura: um aviso por dia, no horário escolhido, para cada um dos
+próximos sete dias em que houver revisão vencida, a partir do `nextReviewOn` que a árvore traz. O
+`LembretesProvider` (`src/state/lembretes.tsx`) refaz o plano ao abrir o app, ao voltar para ele e
+após cada registro, e cancela tudo quando a conta sai.
+
+- A permissão é pedida **depois do primeiro registro**, nunca na abertura.
+- O texto diz só quantas técnicas venceram: nada de nome de técnica, streak, peso ou sensação.
+- Ligado e horário ficam no aparelho (`expo-secure-store`, chave `fos.lembretes`); o padrão é 19:00.
+- Falha da API ou do nativo é lembrete perdido, nunca tela quebrada.
+
+Para testar no aparelho: registre um drill num nó (o pedido de permissão aparece), deixe uma revisão
+vencida e adiante o relógio do aparelho até o horário configurado. O Expo Go roda notificação local
+no Android e no iOS; o que ele não roda é push remoto, que o app não usa.
 
 ### Como o app se organiza
 

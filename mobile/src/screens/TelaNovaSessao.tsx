@@ -14,6 +14,7 @@ import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-na
 
 import { Botao, Cartao, Opcao, Tela } from '../components/ui';
 import { useApi } from '../state/api';
+import { useLembretes } from '../state/lembretes';
 import { useAsync } from '../state/useAsync';
 import { cores, estilos } from '../theme';
 
@@ -32,6 +33,7 @@ const DATA = /^\d{4}-\d{2}-\d{2}$/;
 export function TelaNovaSessao() {
   const api = useApi();
   const router = useRouter();
+  const { aposRegistro } = useLembretes();
   const hoje = todayIso();
   const [campos, setCampos] = useState<SessionFieldsState>(() => emptySessionFields(hoje));
   const [tecnicas, setTecnicas] = useState<Record<string, Recall>>({});
@@ -65,6 +67,7 @@ export function TelaNovaSessao() {
           ? []
           : Object.entries(tecnicas).map(([nodeCode, recall]) => ({ nodeCode, recall })),
       });
+      aposRegistro();
       router.back();
     } catch (causa) {
       setFalha(causa instanceof Error ? causa.message : String(causa));
