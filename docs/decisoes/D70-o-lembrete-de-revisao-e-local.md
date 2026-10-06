@@ -40,6 +40,14 @@ iOS e cobrem quem some por alguns dias.
 - **Sair, ser bloqueado ou excluir a conta cancela o que estava agendado.** O lembrete mora dentro
   dos portões, e ao desmontar ele cancela tudo.
 
+### O Expo Go do Android não roda o lembrete
+
+Desde a SDK 53, o Expo Go do Android não traz o módulo de push, e o `import` do `expo-notifications`
+lança erro ali, mesmo para quem só usa notificação local. O app carrega o módulo com `require`
+tardio e, no Expo Go do Android, usa um notificador inerte: o lembrete fica indisponível e a tela
+*Conta* explica. No Expo Go do iOS e em qualquer build instalada, o lembrete funciona. A alternativa
+— trocar o fluxo de dev para a dev build — fica para quando a #143 trouxer o identificador do app.
+
 ## Revisar quando
 
 - Se a medição mostrar que lembrete local não move as revisões atendidas. Aí a pergunta é a

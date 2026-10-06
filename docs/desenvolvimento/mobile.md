@@ -39,10 +39,25 @@ após cada registro, e cancela tudo quando a conta sai.
 - O texto diz só quantas técnicas venceram: nada de nome de técnica, streak, peso ou sensação.
 - Ligado e horário ficam no aparelho (`expo-secure-store`, chave `fos.lembretes`); o padrão é 19:00.
 - Falha da API ou do nativo é lembrete perdido, nunca tela quebrada.
+- **O `expo-notifications` nunca é importado no topo de um arquivo.** No Expo Go do Android, desde a
+  SDK 53, o próprio import lança erro, e como o lembrete é carregado pelo layout `(app)`, o app inteiro
+  deixava de abrir antes do login. Foi pego no emulador, na revisão da #160. O `criarNotificador`
+  (`src/lembretes/notificador.ts`) carrega o módulo com `require` tardio, e só fora do Expo Go do
+  Android; ali o lembrete fica indisponível e a tela *Conta* diz por quê. O Jest não pegava o defeito
+  porque troca o módulo por um falso, e o `expo export` só monta o bundle: quem segura agora é o
+  `src/lembretes/carga.test.ts`.
 
-Para testar no aparelho: registre um drill num nó (o pedido de permissão aparece), deixe uma revisão
-vencida e adiante o relógio do aparelho até o horário configurado. O Expo Go roda notificação local
-no Android e no iOS; o que ele não roda é push remoto, que o app não usa.
+**Onde dá para testar o lembrete de verdade:** no Expo Go do iOS e em qualquer dev build. No Expo Go
+do Android, não. No emulador sem conta Expo, a dev build sai local:
+
+```bash
+cd mobile
+npx expo run:android   # gera android/ (fora do git) e instala no emulador
+```
+
+O `expo prebuild` pede o `android.package`, que ainda não está no `app.json` (#143): use um valor
+local de teste e **não o commite**. Depois, registre um drill num nó (o pedido de permissão aparece),
+deixe uma revisão vencida e adiante o relógio do aparelho até o horário configurado.
 
 ### Como o app se organiza
 

@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { AppState } from 'react-native';
 
-import { notificadorExpo, type Notificador, type Permissao } from '../lembretes/notificador';
+import { criarNotificador, type Notificador, type Permissao } from '../lembretes/notificador';
 import { planejarLembretes, type Preferencias } from '../lembretes/plano';
 import { preferenciasStore, type PreferenciasStore } from '../lembretes/preferencias';
 import { useApi } from './api';
@@ -30,6 +30,12 @@ const LembretesContext = createContext<Lembretes | null>(null);
 // Fora do componente: um padrão recriado a cada render refaria o reagendamento a cada render.
 const relogio = () => new Date();
 
+// Criado no primeiro uso, e não na carga do módulo: é aqui que o `expo-notifications` é carregado.
+let notificadorDoAparelho: Notificador | undefined;
+function notificadorPadrao(): Notificador {
+  return (notificadorDoAparelho ??= criarNotificador());
+}
+
 /**
  * O lembrete de revisão vencida (#142), agendado no aparelho a partir da agenda do SRS.
  *
@@ -46,7 +52,7 @@ const relogio = () => new Date();
  */
 export function LembretesProvider({
   children,
-  notificador = notificadorExpo,
+  notificador = notificadorPadrao(),
   preferenciasGuardadas = preferenciasStore,
   agora = relogio,
 }: {

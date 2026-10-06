@@ -18,6 +18,15 @@ export function AjusteLembrete() {
     return <Text style={estilos.dica}>Conferindo as notificações do aparelho…</Text>;
   }
 
+  if (permissao === 'indisponivel') {
+    return (
+      <Text style={estilos.dica}>
+        Este aparelho não roda o lembrete: no Android, o Expo Go não traz o módulo de notificações.
+        Ele funciona no app instalado (dev build ou loja).
+      </Text>
+    );
+  }
+
   if (permissao === 'indefinida') {
     return (
       <View style={styles.coluna}>

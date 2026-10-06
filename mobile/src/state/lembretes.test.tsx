@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
 import { PortaoConta } from '../components/Portoes';
+import { notificadorIndisponivel } from '../lembretes/notificador';
 import { TelaConta } from '../screens/TelaConta';
 import { TelaNo } from '../screens/TelaNo';
 import { apiFalsa, comProvedores, notificadorFalso, preferenciasFalsas } from '../test/fakes';
@@ -146,6 +147,32 @@ describe('Lembrete de revisão', () => {
     await waitFor(() => expect(api.getTree).toHaveBeenCalled());
     expect(screen.getByText('app')).toBeOnTheScreen();
     expect(notificador.agendar).not.toHaveBeenCalled();
+  });
+
+  it('no Expo Go do Android o registro segue normal e a conta explica por que não há lembrete', async () => {
+    const api = apiFalsa({
+      getNode: jest.fn().mockResolvedValue(NO),
+      getTree: jest.fn().mockResolvedValue(arvoreCom('2026-10-05')),
+      logDrill: jest
+        .fn()
+        .mockResolvedValue({ nextReviewOn: '2026-10-16', streak: { currentStreak: 1 } }),
+    });
+    await comProvedores(
+      <PortaoConta>
+        <TelaNo codigo="M1.1" />
+        <TelaConta />
+      </PortaoConta>,
+      { api, notificador: notificadorIndisponivel, agora },
+    );
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Treinei isso hoje' }));
+
+    expect(await screen.findByTestId('drill-resultado')).toBeOnTheScreen();
+    expect(
+      await screen.findByText(/o Expo Go não traz o módulo de notificações/),
+    ).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Ativar lembretes' })).toBeNull();
+    expect(api.getTree).not.toHaveBeenCalled();
   });
 
   it('desligar na conta cancela tudo; o horário novo reagenda e fica guardado', async () => {
