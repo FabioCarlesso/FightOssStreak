@@ -6,6 +6,8 @@
  * - `react-native-youtube-iframe`: o player é uma WebView, que não existe no Jest. O que se testa é
  *   o crédito ao canal, não o player.
  * - `expo-web-browser`: abrir o site é efeito externo.
+ * - `expo-notifications`: os testes entregam um notificador falso ao `LembretesProvider`; o módulo
+ *   real só precisa importar sem tocar o nativo.
  */
 // Prefixo `mock`: é o único nome de fora que o Jest deixa a fábrica do `jest.mock` enxergar.
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn() };
@@ -33,6 +35,18 @@ jest.mock(
 );
 
 jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn() }));
+
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  getPermissionsAsync: jest.fn(),
+  requestPermissionsAsync: jest.fn(),
+  cancelAllScheduledNotificationsAsync: jest.fn(),
+  scheduleNotificationAsync: jest.fn(),
+  setNotificationChannelAsync: jest.fn(),
+  AndroidImportance: { DEFAULT: 3 },
+  PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
+  SchedulableTriggerInputTypes: { DATE: 'date' },
+}));
 
 beforeEach(() => {
   mockRouter.push.mockClear();

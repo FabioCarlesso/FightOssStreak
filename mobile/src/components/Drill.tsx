@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useApi } from '../state/api';
+import { useLembretes } from '../state/lembretes';
 import { cores, estilos } from '../theme';
 import { Botao, Opcao } from './ui';
 
@@ -21,6 +22,7 @@ export function Drill({
   onRegistrado: () => void;
 }) {
   const api = useApi();
+  const { aposRegistro } = useLembretes();
   const [recall, setRecall] = useState<Recall>('OK');
   const [nota, setNota] = useState('');
   const [salvando, setSalvando] = useState(false);
@@ -36,6 +38,7 @@ export function Drill({
       setResultado(await api.logDrill(codigo, { recall, note: nota.trim() || undefined }));
       setNota('');
       onRegistrado();
+      aposRegistro();
     } catch (causa) {
       setFalha(causa instanceof Error ? causa.message : String(causa));
     } finally {

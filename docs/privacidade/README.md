@@ -27,6 +27,8 @@ por quanto tempo.
 
 **O que a confirmação de e-mail guarda.** Os links de confirmação e de redefinição também vivem só como hash, valem uma vez (24 horas e 1 hora, respectivamente) e são queimados quando a senha muda.
 
+**O lembrete de revisão do app não sai do aparelho** (#142, D70). A notificação é local: não há token de dispositivo, servidor de push nem terceiro. Se o lembrete está ligado e a que horas ele toca ficam guardados só no aparelho, e o texto diz apenas quantas técnicas venceram, sem nome de técnica e sem peso ou sensação.
+
 **Nada é vendido, compartilhado ou usado para publicidade.** Não há rastreador de terceiros: nenhum
 script de outra empresa entra na página, e nenhum dado sai do banco do projeto. Os números da tela
 `/progresso` são calculados sobre esse banco.

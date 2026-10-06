@@ -15,7 +15,7 @@ O MVP mobile cobre o ciclo de retenção, com as mesmas regras e números do web
 | Hoje | Streak, freeze, dias ativos, heatmap e a agenda do SRS |
 | Árvore e Nó | Conceito, pré-requisitos, vídeo pelo player do YouTube com crédito ao canal (D7), quiz, drill avulso e o aviso curto |
 | Diário | As sessões e os drills avulsos do mês; registrar sessão com técnicas da agenda |
-| Conta | Sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
+| Conta | Lembrete de revisão (ligar, desligar e horário), sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
 
 **Nenhuma regra é reimplementada no app.** Streak, freeze e agenda vêm do backend. A grade do
 heatmap, a prévia do intervalo do drill, a conversão do formulário de sessão, os rótulos e o texto do
@@ -26,6 +26,47 @@ reexporta de lá.
 **Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
 sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo
 demonstração. Admin, painel e feedback continuam só no web.
+
+### Lembrete de revisão (#142)
+
+Notificação **local**, pelo `expo-notifications`, sem servidor de push (D70). O plano sai de
+`src/lembretes/plano.ts`, uma função pura: um aviso por dia, no horário escolhido, para cada um dos
+próximos sete dias em que houver revisão vencida, a partir do `nextReviewOn` que a árvore traz. O
+`LembretesProvider` (`src/state/lembretes.tsx`) refaz o plano ao abrir o app, ao voltar para ele e
+após cada registro, e cancela tudo quando a conta sai.
+
+- A permissão é pedida **depois do primeiro registro**, nunca na abertura.
+- O texto diz só quantas técnicas venceram: nada de nome de técnica, streak, peso ou sensação.
+- Ligado e horário ficam no aparelho (`expo-secure-store`, chave `fos.lembretes`); o padrão é 19:00.
+- **A permissão se lê pelo `canAskAgain`, e não pelo `status`.** No Android 13+, antes de qualquer
+  pedido, o `expo-notifications` responde `denied` com `canAskAgain` verdadeiro, e ler o `status`
+  fazia o app nunca perguntar — pego na dev build, na revisão da #160. O app marca no aparelho
+  (`fos.lembretes.pedido`) que já pediu, para não repetir o pedido no registro seguinte.
+- **No Android o lembrete chega com até uma hora de atraso.** Sem a permissão de alarme exato — que a
+  Play Store reserva a app de despertador e agenda —, o sistema agenda com janela de uma hora
+  (`window=+1h` no `dumpsys alarm`). Para um lembrete diário de revisão, isso é aceito.
+- Falha da API ou do nativo é lembrete perdido, nunca tela quebrada.
+- **O `expo-notifications` nunca é importado no topo de um arquivo.** No Expo Go do Android, desde a
+  SDK 53, o próprio import lança erro, e como o lembrete é carregado pelo layout `(app)`, o app inteiro
+  deixava de abrir antes do login. Foi pego no emulador, na revisão da #160. O `criarNotificador`
+  (`src/lembretes/notificador.ts`) carrega o módulo com `require` tardio, e só fora do Expo Go do
+  Android; ali o lembrete fica indisponível e a tela *Conta* diz por quê. O Jest não pegava o defeito
+  porque troca o módulo por um falso, e o `expo export` só monta o bundle: quem segura agora é o
+  `src/lembretes/carga.test.ts`.
+
+**Onde dá para testar o lembrete de verdade:** no Expo Go do iOS e em qualquer dev build. No Expo Go
+do Android, não. No emulador sem conta Expo, a dev build sai local:
+
+```bash
+cd mobile
+npx expo run:android   # gera android/ (fora do git) e instala no emulador
+```
+
+O `expo prebuild` pede o `android.package`, que ainda não está no `app.json` (#143): use um valor
+local de teste e **não o commite**. Depois, registre um drill num nó (o pedido de permissão aparece),
+deixe uma revisão vencida e adiante o relógio do aparelho até o horário configurado. No emulador,
+`adb shell settings put global auto_time 0` e `adb shell cmd alarm set-time <epoch em ms>` movem o
+relógio, e `adb shell dumpsys alarm | grep <application id>` mostra o que está agendado.
 
 ### Como o app se organiza
 
