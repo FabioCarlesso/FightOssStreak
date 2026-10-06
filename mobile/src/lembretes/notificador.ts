@@ -1,4 +1,5 @@
 import { isRunningInExpoGo } from 'expo';
+import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 import type { Lembrete } from './plano';
@@ -25,6 +26,31 @@ export interface Notificador {
 
 type Modulo = typeof import('expo-notifications');
 
+/** Se o app já mostrou o pedido do sistema neste aparelho. */
+export interface MarcaDePedido {
+  readonly jaPediu: () => Promise<boolean>;
+  readonly marcar: () => Promise<void>;
+}
+
+const CHAVE_PEDIDO = 'fos.lembretes.pedido';
+
+const marcaNoAparelho: MarcaDePedido = {
+  async jaPediu() {
+    try {
+      return (await SecureStore.getItemAsync(CHAVE_PEDIDO)) === '1';
+    } catch {
+      return false;
+    }
+  },
+  async marcar() {
+    try {
+      await SecureStore.setItemAsync(CHAVE_PEDIDO, '1');
+    } catch {
+      // sem a marca, o pior caso é o sistema mostrar o pedido mais uma vez
+    }
+  },
+};
+
 const CANAL = 'revisao';
 
 /** Onde o módulo não roda, nada é agendado e nada quebra. */
@@ -49,14 +75,16 @@ export function criarNotificador({
   expoGo = isRunningInExpoGo(),
   plataforma = Platform.OS,
   carregar = carregarModulo,
+  marca = marcaNoAparelho,
 }: {
   expoGo?: boolean;
   plataforma?: string;
   carregar?: () => Modulo;
+  marca?: MarcaDePedido;
 } = {}): Notificador {
   if (expoGo && plataforma === 'android') return notificadorIndisponivel;
   try {
-    return notificadorExpo(carregar(), plataforma);
+    return notificadorExpo(carregar(), plataforma, marca);
   } catch {
     return notificadorIndisponivel;
   }
@@ -68,7 +96,11 @@ function carregarModulo(): Modulo {
   return require('expo-notifications') as Modulo;
 }
 
-function notificadorExpo(Notifications: Modulo, plataforma: string): Notificador {
+function notificadorExpo(
+  Notifications: Modulo,
+  plataforma: string,
+  marca: MarcaDePedido,
+): Notificador {
   let configurado = false;
 
   /** Com o app aberto, o lembrete aparece como banner, igual a com ele fechado. */
@@ -87,14 +119,20 @@ function notificadorExpo(Notifications: Modulo, plataforma: string): Notificador
   }
 
   /**
-   * Pelo `status`, e não pelo `canAskAgain`: o Android 13 deixa pedir de novo depois da primeira
-   * recusa, e quem disse não uma vez não deve ver o pedido a cada registro.
+   * Pelo `canAskAgain` mais a marca do app, e **não pelo `status`**: no Android 13+, antes de
+   * qualquer pedido, o `expo-notifications` responde `denied` — as notificações do app ainda estão
+   * desligadas —, com `canAskAgain` verdadeiro. Ler o `status` fazia o app concluir que a pessoa
+   * negou e nunca perguntar; foi pego na dev build, na revisão da #160.
+   *
+   * A marca existe porque o Android deixa pedir duas vezes: quem disse não uma vez não deve ver o
+   * pedido de novo no registro seguinte. A partir daí, só pelos ajustes do aparelho.
    */
-  function traduzir(resposta: Awaited<ReturnType<Modulo['getPermissionsAsync']>>): Permissao {
+  async function traduzir(resposta: {
+    granted: boolean;
+    canAskAgain: boolean;
+  }): Promise<Permissao> {
     if (resposta.granted) return 'concedida';
-    return resposta.status === Notifications.PermissionStatus.UNDETERMINED
-      ? 'indefinida'
-      : 'negada';
+    return resposta.canAskAgain && !(await marca.jaPediu()) ? 'indefinida' : 'negada';
   }
 
   return {
@@ -103,6 +141,7 @@ function notificadorExpo(Notifications: Modulo, plataforma: string): Notificador
     },
     async pedirPermissao() {
       configurar();
+      await marca.marcar();
       return traduzir(
         await Notifications.requestPermissionsAsync({
           ios: { allowAlert: true, allowSound: true, allowBadge: false },

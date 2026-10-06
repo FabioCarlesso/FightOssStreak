@@ -1,11 +1,27 @@
 import { criarNotificador, notificadorIndisponivel } from './notificador';
 
+interface Resposta {
+  granted: boolean;
+  status: 'granted' | 'denied' | 'undetermined';
+  canAskAgain: boolean;
+}
+
+const CONCEDIDA: Resposta = { granted: true, status: 'granted', canAskAgain: true };
+/** O Android 13+ antes de qualquer pedido: `denied`, mas ainda dá para perguntar. */
+const NUNCA_PERGUNTADA_ANDROID: Resposta = { granted: false, status: 'denied', canAskAgain: true };
+const NUNCA_PERGUNTADA_IOS: Resposta = {
+  granted: false,
+  status: 'undetermined',
+  canAskAgain: true,
+};
+const BLOQUEADA: Resposta = { granted: false, status: 'denied', canAskAgain: false };
+
 /** O `expo-notifications` em miniatura: só o que o notificador usa. */
-function moduloFalso(status: 'granted' | 'denied' | 'undetermined') {
+function moduloFalso(atual: Resposta, aoPedir: Resposta = CONCEDIDA) {
   return {
     setNotificationHandler: jest.fn(),
-    getPermissionsAsync: jest.fn().mockResolvedValue({ granted: status === 'granted', status }),
-    requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: true, status: 'granted' }),
+    getPermissionsAsync: jest.fn().mockResolvedValue(atual),
+    requestPermissionsAsync: jest.fn().mockResolvedValue(aoPedir),
     cancelAllScheduledNotificationsAsync: jest.fn().mockResolvedValue(undefined),
     scheduleNotificationAsync: jest.fn().mockResolvedValue('id'),
     setNotificationChannelAsync: jest.fn().mockResolvedValue(null),
@@ -16,6 +32,26 @@ function moduloFalso(status: 'granted' | 'denied' | 'undetermined') {
 }
 
 type Carregar = NonNullable<Parameters<typeof criarNotificador>[0]>['carregar'];
+
+function marcaFalsa(jaPediu = false) {
+  let pediu = jaPediu;
+  return {
+    jaPediu: jest.fn(() => Promise.resolve(pediu)),
+    marcar: jest.fn(() => {
+      pediu = true;
+      return Promise.resolve();
+    }),
+  };
+}
+
+function notificadorCom(modulo: ReturnType<typeof moduloFalso>, marca = marcaFalsa()) {
+  return criarNotificador({
+    expoGo: false,
+    plataforma: 'android',
+    carregar: (() => modulo) as unknown as Carregar,
+    marca,
+  });
+}
 
 describe('criarNotificador', () => {
   it('no Expo Go do Android nem tenta carregar o módulo, porque o import lança erro', async () => {
@@ -38,7 +74,7 @@ describe('criarNotificador', () => {
   });
 
   it('o Expo Go do iOS carrega o módulo: lá o push só avisa, e a notificação local funciona', () => {
-    const carregar = jest.fn(() => moduloFalso('granted'));
+    const carregar = jest.fn(() => moduloFalso(CONCEDIDA));
     criarNotificador({
       expoGo: true,
       plataforma: 'ios',
@@ -49,27 +85,34 @@ describe('criarNotificador', () => {
   });
 
   it.each([
-    ['granted', 'concedida'],
-    ['undetermined', 'indefinida'],
-    ['denied', 'negada'],
-  ] as const)('permissão %s do sistema vira %s', async (status, esperado) => {
-    const modulo = moduloFalso(status);
-    const notificador = criarNotificador({
-      expoGo: false,
-      plataforma: 'android',
-      carregar: (() => modulo) as unknown as Carregar,
-    });
+    ['concedida', CONCEDIDA, 'concedida'],
+    [
+      'nunca perguntada no Android 13+ (denied, mas pode perguntar)',
+      NUNCA_PERGUNTADA_ANDROID,
+      'indefinida',
+    ],
+    ['nunca perguntada no iOS', NUNCA_PERGUNTADA_IOS, 'indefinida'],
+    ['bloqueada pelo sistema', BLOQUEADA, 'negada'],
+  ] as const)('permissão %s vira %s', async (_caso, resposta, esperado) => {
+    expect(await notificadorCom(moduloFalso(resposta)).permissao()).toBe(esperado);
+  });
 
-    expect(await notificador.permissao()).toBe(esperado);
+  it('depois que o app pediu uma vez, uma recusa vale como negada mesmo podendo perguntar de novo', async () => {
+    const marca = marcaFalsa();
+    const notificador = notificadorCom(
+      moduloFalso(NUNCA_PERGUNTADA_ANDROID, NUNCA_PERGUNTADA_ANDROID),
+      marca,
+    );
+
+    expect(await notificador.permissao()).toBe('indefinida');
+    expect(await notificador.pedirPermissao()).toBe('negada');
+    expect(marca.marcar).toHaveBeenCalled();
+    expect(await notificador.permissao()).toBe('negada');
   });
 
   it('no Android, agenda no canal próprio com gatilho de data', async () => {
-    const modulo = moduloFalso('granted');
-    const notificador = criarNotificador({
-      expoGo: false,
-      plataforma: 'android',
-      carregar: (() => modulo) as unknown as Carregar,
-    });
+    const modulo = moduloFalso(CONCEDIDA);
+    const notificador = notificadorCom(modulo);
     const quando = new Date(2026, 9, 6, 19, 0);
 
     await notificador.agendar({ quando, quantidade: 2, titulo: 'Hora de revisar', corpo: 'x' });

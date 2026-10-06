@@ -38,6 +38,13 @@ após cada registro, e cancela tudo quando a conta sai.
 - A permissão é pedida **depois do primeiro registro**, nunca na abertura.
 - O texto diz só quantas técnicas venceram: nada de nome de técnica, streak, peso ou sensação.
 - Ligado e horário ficam no aparelho (`expo-secure-store`, chave `fos.lembretes`); o padrão é 19:00.
+- **A permissão se lê pelo `canAskAgain`, e não pelo `status`.** No Android 13+, antes de qualquer
+  pedido, o `expo-notifications` responde `denied` com `canAskAgain` verdadeiro, e ler o `status`
+  fazia o app nunca perguntar — pego na dev build, na revisão da #160. O app marca no aparelho
+  (`fos.lembretes.pedido`) que já pediu, para não repetir o pedido no registro seguinte.
+- **No Android o lembrete chega com até uma hora de atraso.** Sem a permissão de alarme exato — que a
+  Play Store reserva a app de despertador e agenda —, o sistema agenda com janela de uma hora
+  (`window=+1h` no `dumpsys alarm`). Para um lembrete diário de revisão, isso é aceito.
 - Falha da API ou do nativo é lembrete perdido, nunca tela quebrada.
 - **O `expo-notifications` nunca é importado no topo de um arquivo.** No Expo Go do Android, desde a
   SDK 53, o próprio import lança erro, e como o lembrete é carregado pelo layout `(app)`, o app inteiro
@@ -57,7 +64,9 @@ npx expo run:android   # gera android/ (fora do git) e instala no emulador
 
 O `expo prebuild` pede o `android.package`, que ainda não está no `app.json` (#143): use um valor
 local de teste e **não o commite**. Depois, registre um drill num nó (o pedido de permissão aparece),
-deixe uma revisão vencida e adiante o relógio do aparelho até o horário configurado.
+deixe uma revisão vencida e adiante o relógio do aparelho até o horário configurado. No emulador,
+`adb shell settings put global auto_time 0` e `adb shell cmd alarm set-time <epoch em ms>` movem o
+relógio, e `adb shell dumpsys alarm | grep <application id>` mostra o que está agendado.
 
 ### Como o app se organiza
 

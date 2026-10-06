@@ -48,6 +48,13 @@ tardio e, no Expo Go do Android, usa um notificador inerte: o lembrete fica indi
 *Conta* explica. No Expo Go do iOS e em qualquer build instalada, o lembrete funciona. A alternativa
 — trocar o fluxo de dev para a dev build — fica para quando a #143 trouxer o identificador do app.
 
+### No Android, até uma hora de atraso
+
+Sem a permissão de alarme exato, o Android entrega o lembrete numa janela de uma hora a partir do
+horário escolhido — medido no emulador, o aviso das 19:00 chegou às 20:00. Pedir `USE_EXACT_ALARM`
+resolveria, mas a Play Store reserva essa permissão a despertador e agenda, e um lembrete diário de
+revisão não precisa de pontualidade de minuto.
+
 ## Revisar quando
 
 - Se a medição mostrar que lembrete local não move as revisões atendidas. Aí a pergunta é a
