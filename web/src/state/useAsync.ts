@@ -28,10 +28,22 @@ export function useAsync<T>(
 
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
 
-  useEffect(() => {
-    let cancelled = false;
+  // Recarga nova volta a "carregando" e limpa o erro ainda na renderização, não no efeito: assim a
+  // tela nunca pinta um quadro com as dependências novas e o estado da carga anterior. É o padrão
+  // de ajustar estado quando uma entrada muda (react.dev/learn/you-might-not-need-an-effect).
+  const chave = [...deps, reloadToken];
+  const [chaveAnterior, setChaveAnterior] = useState(chave);
+  if (
+    chave.length !== chaveAnterior.length ||
+    chave.some((v, i) => !Object.is(v, chaveAnterior[i]))
+  ) {
+    setChaveAnterior(chave);
     setLoading(true);
     setError(null);
+  }
+
+  useEffect(() => {
+    let cancelled = false;
 
     loader()
       .then((result) => {
