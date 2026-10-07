@@ -222,6 +222,13 @@ workspaces incluídos, e pode propor subir o `react` ou o `react-native` do app 
 SDK o app compila e quebra no aparelho. **PR do Dependabot que acende esse passo não se mergeia:**
 a troca de versão do app é sempre uma troca de SDK inteira (abaixo).
 
+Por isso o `.github/dependabot.yml` **ignora** o que a SDK fixa: `expo`, `expo-*`, `jest-expo`,
+`react-native`, os módulos nativos (`react-native-safe-area-context`, `react-native-screens`,
+`react-native-webview`), `@react-native/*` e o `test-renderer` (acima). Foi o que derrubou o lote
+da #158, que subia o React Native para 0.87 com a SDK 57 no 0.86. O `react` não entra na lista,
+porque o web depende dele no 18, e continua guardado só por este passo. Módulo nativo novo no app
+entra na lista do `dependabot.yml` no mesmo PR.
+
 ## Trocar de SDK
 
 ```bash

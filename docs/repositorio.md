@@ -127,7 +127,8 @@ mesmo PR.
 [`.github/dependabot.yml`](../.github/dependabot.yml) acompanha os três ecossistemas versionados —
 npm na raiz (que resolve todos os workspaces), Maven em `backend/` e as actions dos workflows —
 com verificação semanal. Patch e minor vêm agrupados em um PR por ecossistema; major vem separado,
-porque exige ler changelog.
+porque exige ler changelog. O que a SDK do Expo fixa fica de fora: sobe junto com a SDK, nunca
+pelo bot (`docs/desenvolvimento/mobile.md`).
 
 Sem automerge, de propósito. Com `required_approving_review_count: 0` seria tecnicamente possível,
 mas mergear sem ninguém olhar o changelog é justamente o que a D18 evita. O PR do bot passa pelos
