@@ -22,6 +22,19 @@ updates:
       patch-e-minor:
         applies-to: version-updates
         update-types: [minor, patch]
+    # O que a SDK do Expo fixa sobe junto com ela, por `npx expo install --fix`, nunca sozinho:
+    # fora da combinação da SDK o app compila e quebra no aparelho (docs/desenvolvimento/mobile.md).
+    # O `react` fica de fora da lista porque o web, no React 18, também depende dele.
+    ignore:
+      - dependency-name: 'expo'
+      - dependency-name: 'expo-*'
+      - dependency-name: 'jest-expo'
+      - dependency-name: 'react-native'
+      - dependency-name: 'react-native-safe-area-context'
+      - dependency-name: 'react-native-screens'
+      - dependency-name: 'react-native-webview'
+      - dependency-name: '@react-native/*'
+      - dependency-name: 'test-renderer'
     commit-message:
       prefix: chore
       include: scope
