@@ -140,9 +140,12 @@ function ListaDeContas() {
    * outros.
    */
   const [ajustes, setAjustes] = useState<Record<number, AdminUserView>>({});
-  useEffect(() => {
+  const consulta = [filtros.status, filtros.role, filtros.verificado, filtros.busca, pagina];
+  const [consultaAnterior, setConsultaAnterior] = useState(consulta);
+  if (consulta.some((v, i) => v !== consultaAnterior[i])) {
+    setConsultaAnterior(consulta);
     setAjustes({});
-  }, [filtros.status, filtros.role, filtros.verificado, filtros.busca, pagina]);
+  }
 
   /** Trocar filtro ou busca sempre volta para a primeira página: a página 4 do filtro velho não existe. */
   function aplicar(mudanca: Partial<Filtros>) {

@@ -33,9 +33,11 @@ export function PinnedNote({
   const [justSaved, setJustSaved] = useState<string | null | undefined>(undefined);
   const current = justSaved !== undefined ? justSaved : (note ?? null);
 
-  useEffect(() => {
+  const [noteAnterior, setNoteAnterior] = useState(note);
+  if (note !== noteAnterior) {
+    setNoteAnterior(note);
     setJustSaved(undefined);
-  }, [note]);
+  }
 
   // Entrar em edição precisa levar o foco junto: o botão que foi clicado desaparece para dar lugar
   // ao campo, então sem isto o foco volta para o `<body>` e quem navega por teclado fica sem

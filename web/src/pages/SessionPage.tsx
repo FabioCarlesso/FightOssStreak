@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { Recall } from '@fos/domain';
 import type { TrainingSession } from '@fos/types';
@@ -38,9 +38,14 @@ export function SessionPage() {
   // O formulário nasce do que veio do servidor, e só quando o id da tela e o do dado batem: o
   // `useAsync` preserva o dado anterior de propósito, e editar sob a URL nova gravaria na sessão
   // errada — o mesmo defeito que o `NodePage` já documenta.
-  useEffect(() => {
+  // Ajustado na renderização, e não num efeito, para o formulário não passar um quadro vazio.
+  const [origem, setOrigem] = useState<{ carregada: typeof carregada; sessionId: number } | null>(
+    null,
+  );
+  if (origem?.carregada !== carregada || origem.sessionId !== sessionId) {
+    setOrigem({ carregada, sessionId });
     if (carregada?.id === sessionId) setFields(toFields(carregada));
-  }, [carregada, sessionId]);
+  }
 
   if (session.error && !carregada) return <p className="error">{session.error.message}</p>;
   if (!carregada || carregada.id !== sessionId || !fields) {

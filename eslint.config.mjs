@@ -70,7 +70,7 @@ export default tseslint.config(
   // reaproveitado inteiro no React Native (docs/arquitetura.md).
   {
     files: ['web/src/**/*.{ts,tsx}'],
-    extends: [reactHooks.configs['recommended-latest']],
+    extends: [reactHooks.configs.flat.recommended],
     languageOptions: {
       globals: globals.browser,
     },
@@ -86,7 +86,7 @@ export default tseslint.config(
   // e sem globais de navegador — no React Native não há `window` nem `document`.
   {
     files: ['mobile/**/*.{ts,tsx}'],
-    extends: [reactHooks.configs['recommended-latest']],
+    extends: [reactHooks.configs.flat.recommended],
   },
 
   // Os testes do mobile rodam no Jest, que injeta `describe`/`it`/`expect`/`jest` como globais.
