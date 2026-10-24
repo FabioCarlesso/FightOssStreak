@@ -81,3 +81,18 @@ Registro do que cada recaptura mudou e por quê. O procedimento está em
 > celular a grade abria rolada no passado remoto — meio ano de células vazias — e a semana com
 > treino ficava fora da tela, à direita. O print saiu literalmente em branco. O conserto está no
 > componente (o invólucro abre rolado até o fim), e sem refazer o print ninguém teria olhado.
+
+> **A onda 2 (#47, #101, #103) mexeu em `/hoje` e na árvore — três arquivos recapturados.** A
+> sessão guiada (#47) pôs o botão *Revisar agora* no fim do cartão "Revise hoje", visível em
+> `hoje-desktop`; em `hoje-mobile` ele fica abaixo da dobra, e o arquivo foi **restaurado** pela
+> régua da #99. O domínio por módulo (#103) acrescentou barra e linha "N% dominado" a cada módulo,
+> e por isso `arvore-desktop` e `arvore-mobile` foram refeitos. O marco de streak (#101) não aparece:
+> a semeadura termina em 8 dias seguidos, fora da lista de marcos. `no-*`, `drill-*` e `diario-*`
+> saíram com bytes diferentes e foram restaurados — nada nessas telas mudou. O `og.jpg` saiu
+> idêntico: o celular do hero não alcança o botão novo.
+>
+> **A captura rodou contra o nginx do Compose (`--web` e `--api` em `:8081`)**, e não contra o Vite,
+> porque a 8080 da máquina estava ocupada. Para semear numa conta nova sem mexer no banco local, a
+> stack subiu como projeto separado (`docker compose -p fosprints`), com volume próprio descartado
+> depois. Sessão por `seed-dev-users.mjs` + `mint-dev-login.mjs`, confirmada com a senha — o
+> caminho de `prints-da-landing.md`; o portão nunca foi desligado.
