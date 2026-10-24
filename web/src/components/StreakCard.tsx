@@ -1,3 +1,4 @@
+import { streakMilestoneToday } from '@fos/domain';
 import type { StreakHistory, StreakView } from '@fos/types';
 import { StreakHeatmap } from './StreakHeatmap.tsx';
 
@@ -30,6 +31,11 @@ export function StreakCard({
   const freezesPerMonth = streak.freezesPerMonth ?? 0;
   const freezesRemaining = streak.freezesRemaining ?? 0;
 
+  // Uma linha dentro do cartão, e não modal nem banner: o marco informa, não premia (#101). Por
+  // isso também não há "já visto" guardado — rever a mesma frase no mesmo dia não incomoda, e no
+  // dia seguinte a corrente vale outro número e ela some sozinha.
+  const milestone = streakMilestoneToday(streak.currentStreak ?? 0, streak.drilledToday ?? false);
+
   return (
     <section className="card streak">
       <div className="streak__main">
@@ -48,6 +54,11 @@ export function StreakCard({
               ? 'Treino de hoje já registrado.'
               : 'Ainda sem registro hoje — o streak se mantém até o fim do dia.'}
           </p>
+          {milestone !== null && (
+            <p className="streak__milestone">
+              Marco de {milestone} dias seguidos, completado hoje.
+            </p>
+          )}
         </div>
       </div>
 
