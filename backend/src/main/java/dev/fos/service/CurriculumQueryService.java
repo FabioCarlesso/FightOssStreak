@@ -104,7 +104,7 @@ public class CurriculumQueryService {
                         .map(
                                 entry -> {
                                     var module = moduleAnchor.get(entry.getKey()).getModule();
-                                    return new CurriculumDtos.ModuleView(
+                                    return CurriculumDtos.ModuleView.of(
                                             module.getCode(),
                                             module.getTitle(),
                                             module.getSummary(),

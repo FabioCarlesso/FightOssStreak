@@ -32,6 +32,9 @@ const ARVORE: TreeView = {
       code: 'M0',
       title: 'Fundamentos',
       summary: 'Antes de qualquer técnica.',
+      completedNodes: 1,
+      totalNodes: 3,
+      masteryPercent: 33,
       nodes: [
         { code: 'M0.1', title: 'Postura', belt: 'BRANCA', status: 'COMPLETED' },
         { code: 'M0.2', title: 'Fuga de quadril', belt: 'BRANCA', status: 'AVAILABLE' },
@@ -121,6 +124,28 @@ describe('TreePage', () => {
     await userEvent.click(await botaoDemo());
 
     expect(screen.getByText(/nós no total/)).toHaveTextContent(RESUMO_REAL);
+  });
+
+  it('cada módulo mostra o domínio que o backend agregou (#103)', async () => {
+    renderTree();
+
+    expect(await screen.findByText(/dominado/)).toHaveTextContent(
+      '33% dominado · 1 de 3 nós concluídos',
+    );
+    expect(screen.getByRole('img', { name: '33% do módulo dominado' })).toBeInTheDocument();
+  });
+
+  it('módulo sem progresso mostra 0%, e não some', async () => {
+    const m0 = ARVORE.modules![0]!;
+    apiMock.getTree.mockResolvedValue({
+      ...ARVORE,
+      modules: [{ ...m0, completedNodes: 0, masteryPercent: 0 }],
+    });
+    renderTree();
+
+    expect(await screen.findByText(/dominado/)).toHaveTextContent(
+      '0% dominado · 0 de 3 nós concluídos',
+    );
   });
 
   it('o modo sobrevive ao recarregamento da página, e não à aba nova', async () => {

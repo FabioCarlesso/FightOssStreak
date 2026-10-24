@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { fireEvent, screen } from '@testing-library/react-native';
 
 import { apiFalsa, comProvedores } from '../test/fakes';
+import { TelaArvore } from './TelaArvore';
 import { TelaDiario } from './TelaDiario';
 import { TelaHoje } from './TelaHoje';
 import { TelaNo } from './TelaNo';
@@ -66,6 +67,46 @@ describe('Hoje', () => {
     expect(screen.getByText('para hoje')).toBeOnTheScreen();
     // O histórico do heatmap só é pedido depois do streak, que é quem grava o freeze (D55).
     expect(api.getStreakHistory).toHaveBeenCalled();
+  });
+});
+
+describe('Árvore', () => {
+  it('mostra o domínio de cada módulo como o backend agregou (#103)', async () => {
+    const api = apiFalsa({
+      getTree: jest.fn().mockResolvedValue({
+        summary: { totalNodes: 3, completedNodes: 1, availableNodes: 2, lockedNodes: 0 },
+        modules: [
+          {
+            code: 'M0',
+            title: 'Fundamentos',
+            nodes: [
+              { code: 'M0.1', title: 'Postura', status: 'COMPLETED' },
+              { code: 'M0.2', title: 'Quedas', status: 'AVAILABLE' },
+              { code: 'M0.3', title: 'Tap', status: 'AVAILABLE' },
+            ],
+            completedNodes: 1,
+            totalNodes: 3,
+            masteryPercent: 33,
+          },
+          {
+            code: 'M1',
+            title: 'Sobrevivência',
+            nodes: [{ code: 'M1.1', title: 'Fuga', status: 'LOCKED' }],
+            completedNodes: 0,
+            totalNodes: 1,
+            masteryPercent: 0,
+          },
+        ],
+      }),
+    });
+    await comProvedores(<TelaArvore />, { api });
+
+    expect(await screen.findByTestId('dominio-M0')).toHaveTextContent(
+      '33% dominado · 1 de 3 nós concluídos',
+    );
+    expect(screen.getByTestId('dominio-M1')).toHaveTextContent(
+      '0% dominado · 0 de 1 nós concluídos',
+    );
   });
 });
 

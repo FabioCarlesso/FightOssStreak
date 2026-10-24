@@ -40,6 +40,11 @@ export function TelaArvore() {
             <Text style={estilos.codigo}>{modulo.code}</Text> {modulo.title}
           </Text>
           {modulo.summary ? <Text style={estilos.dica}>{modulo.summary}</Text> : null}
+          {/* Domínio do módulo (#103): o número vem pronto do backend, igual ao do web. */}
+          <Text style={estilos.dica} testID={`dominio-${modulo.code}`}>
+            {modulo.masteryPercent ?? 0}% dominado · {modulo.completedNodes ?? 0} de{' '}
+            {modulo.totalNodes ?? modulo.nodes?.length ?? 0} nós concluídos
+          </Text>
           {modulo.nodes?.map((no) => (
             <LinhaDoNo key={no.code} no={no} />
           ))}

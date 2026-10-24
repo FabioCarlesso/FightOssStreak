@@ -429,6 +429,30 @@ button:disabled {
   font-weight: 700;
 }
 
+/* Domínio do módulo (#103): a mesma barra do streak, para o mesmo tipo de leitura. */
+.module__mastery {
+  margin: 0.6rem 0 0;
+}
+
+.module__mastery p {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.module__bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.module__bar span {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+}
+
 .node-list {
   list-style: none;
   margin: 0.8rem 0 0;
