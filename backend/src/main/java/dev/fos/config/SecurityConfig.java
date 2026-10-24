@@ -1,6 +1,5 @@
 package dev.fos.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fos.service.MobileTokens;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Quem entra, como a sessão é protegida e por onde o login passa.

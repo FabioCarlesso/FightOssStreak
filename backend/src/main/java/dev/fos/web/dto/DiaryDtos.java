@@ -60,7 +60,7 @@ public final class DiaryDtos {
             @DecimalMin(PESO_MINIMO) @DecimalMax(PESO_MAXIMO) BigDecimal weightKg,
             @Size(max = 2000) String learned,
             @Size(max = 2000) String improve,
-            @Valid List<TechniqueRequest> tecnicas) {}
+            List<@Valid TechniqueRequest> tecnicas) {}
 
     /**
      * Edição da sessão.

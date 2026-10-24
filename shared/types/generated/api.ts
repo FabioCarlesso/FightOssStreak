@@ -924,6 +924,7 @@ export interface components {
             senha: string;
         };
         EmailRequest: {
+            /** Format: email */
             email: string;
         };
         LoginRequest: {
@@ -931,6 +932,7 @@ export interface components {
             senha: string;
         };
         CadastroRequest: {
+            /** Format: email */
             email: string;
             senha: string;
             nome?: string;

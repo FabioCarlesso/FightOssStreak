@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -50,7 +50,7 @@ class ResendEmailSender implements EmailSender {
     private static ClientHttpRequestFactory comTimeout() {
         return ClientHttpRequestFactoryBuilder.detect()
                 .build(
-                        ClientHttpRequestFactorySettings.defaults()
+                        HttpClientSettings.defaults()
                                 .withConnectTimeout(CONECTAR)
                                 .withReadTimeout(LER));
     }

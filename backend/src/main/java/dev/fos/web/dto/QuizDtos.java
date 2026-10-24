@@ -20,7 +20,7 @@ public final class QuizDtos {
 
     public record OptionView(Long id, String label) {}
 
-    public record QuizSubmission(@NotEmpty @Valid List<Answer> answers) {}
+    public record QuizSubmission(@NotEmpty List<@Valid Answer> answers) {}
 
     public record Answer(@NotNull Long questionId, @NotNull Long optionId) {}
 

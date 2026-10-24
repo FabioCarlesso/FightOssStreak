@@ -164,6 +164,10 @@ fos:
 springdoc:
   api-docs:
     path: /v3/api-docs
+    # O springdoc 3 passou a gerar OpenAPI 3.1 por padrão. Fixar em 3.0 mantém o contrato
+    # (`backend/openapi.json`) e os tipos gerados de `shared/types` iguais na migração para o
+    # Spring Boot 4 (#78): trocar a versão da especificação é mudança à parte, não carona.
+    version: openapi_3_0
   swagger-ui:
     path: /swagger-ui.html
 
