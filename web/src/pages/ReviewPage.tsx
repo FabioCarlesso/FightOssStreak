@@ -100,6 +100,9 @@ function ReviewSession() {
   function avancar(nova: Saida) {
     setSaida(nova);
     setPasso((atual) => atual + 1);
+    // Registrar e pular ficam no pé do passo: sem voltar ao topo, o passo seguinte abria já no
+    // formulário de drill, com o "N de M", a confirmação e o conceito fora da tela.
+    window.scrollTo({ top: 0 });
   }
 
   return (

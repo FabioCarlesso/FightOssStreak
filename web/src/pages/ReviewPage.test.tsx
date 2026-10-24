@@ -27,6 +27,8 @@ vi.mock('../api/client.ts', async () => {
 
 const CHAVE_DEMO = 'fos.demo';
 
+let rolarAoTopo: ReturnType<typeof vi.spyOn>;
+
 /** Já na ordem do servidor — do mais atrasado para o menos. A tela não reordena. */
 const AGENDA: ReviewAgenda = {
   today: '2026-10-24',
@@ -95,10 +97,13 @@ beforeEach(() => {
   apiMock.getNode.mockReset().mockImplementation((code) => Promise.resolve(NOS[code]!));
   apiMock.logDrill.mockReset().mockImplementation((code) => Promise.resolve(resultado(code)));
   apiMock.getStreak.mockReset().mockResolvedValue({ currentStreak: 4 });
+  // O jsdom não rola a página; o espião só confere que o avanço pede para voltar ao topo.
+  rolarAoTopo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
 });
 
 afterEach(() => {
   sessionStorage.clear();
+  vi.restoreAllMocks();
 });
 
 async function registrar() {
@@ -150,6 +155,19 @@ describe('sessão guiada de revisão', () => {
     expect(await screen.findByText('2 de 3')).toBeInTheDocument();
     expect(screen.getByText(/M0\.2 pulado/)).toBeInTheDocument();
     expect(apiMock.logDrill).not.toHaveBeenCalled();
+  });
+
+  it('avançar volta ao topo, onde estão o progresso e a confirmação', async () => {
+    renderReview();
+    await screen.findByText('Conceito de M0.2.');
+
+    await registrar();
+    await screen.findByText('2 de 3');
+    expect(rolarAoTopo).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(screen.getByRole('button', { name: /pular este nó/i }));
+    await screen.findByText('3 de 3');
+    expect(rolarAoTopo).toHaveBeenCalledTimes(2);
   });
 
   it('o último passo leva à tela de fim, com revisados, pulados e o streak atualizado', async () => {
