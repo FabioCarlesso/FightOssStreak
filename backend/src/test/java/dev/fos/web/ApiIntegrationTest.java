@@ -304,6 +304,40 @@ class ApiIntegrationTest {
     }
 
     @Test
+    @DisplayName("o domínio do módulo vai de 0% a 100% conforme os nós dele são concluídos")
+    void moduleMasteryFollowsCompletedNodes() throws Exception {
+        // O primeiro módulo abre sem pré-requisito; os nós vêm da própria árvore, não de código.
+        JsonNode first = getJson("/api/curriculum/tree").get("modules").get(0);
+        List<String> codes =
+                StreamSupport.stream(first.get("nodes").spliterator(), false)
+                        .map(node -> node.get("code").asString())
+                        .toList();
+        assumeTrue(codes.size() >= 3, "o teste precisa de um módulo com ao menos 3 nós");
+
+        assertThat(first.get("completedNodes").asInt()).isZero();
+        assertThat(first.get("totalNodes").asInt()).isEqualTo(codes.size());
+        assertThat(first.get("masteryPercent").asInt())
+                .as("sem progresso é 0, não ausente")
+                .isZero();
+
+        completeNode(codes.get(0));
+        JsonNode partial = getJson("/api/curriculum/tree").get("modules").get(0);
+        assertThat(partial.get("completedNodes").asInt()).isEqualTo(1);
+        assertThat(partial.get("masteryPercent").asInt()).isEqualTo(100 / codes.size());
+
+        for (String code : codes.subList(1, codes.size())) {
+            completeNode(code);
+        }
+        JsonNode done = getJson("/api/curriculum/tree").get("modules").get(0);
+        assertThat(done.get("completedNodes").asInt()).isEqualTo(codes.size());
+        assertThat(done.get("masteryPercent").asInt()).isEqualTo(100);
+
+        // Os outros módulos não se mexem com o progresso de um.
+        JsonNode second = getJson("/api/curriculum/tree").get("modules").get(1);
+        assertThat(second.get("masteryPercent").asInt()).isZero();
+    }
+
+    @Test
     @DisplayName("errar o quiz devolve explicações e não conclui o nó")
     void failingQuizExplainsWithoutCompleting() throws Exception {
         JsonNode node = getJson("/api/nodes/M0.1");

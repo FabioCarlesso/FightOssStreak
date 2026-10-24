@@ -13,6 +13,11 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 - **Pré-requisito** = nó(s) que precisam estar concluídos para desbloquear
 - **Faixa** = nível em que a técnica costuma ser introduzida — calibra dificuldade, não trava acesso
 - IDs `M{módulo}.{nó}` são as chaves usadas no banco (`node.code`)
+- **Domínio do módulo** (#103) = nós concluídos ÷ nós do módulo, em porcentagem arredondada para
+  baixo. "Concluído" é o mesmo estado que libera os sucessores e que o resumo da árvore já conta —
+  não há critério pedagógico próprio para o domínio. O backend entrega o número pronto em cada
+  módulo de `GET /api/curriculum/tree` (`completedNodes`, `totalNodes`, `masteryPercent`), e web e
+  app só o exibem: 100% só aparece com todos os nós concluídos, e módulo sem progresso mostra 0%.
 
 ---
 

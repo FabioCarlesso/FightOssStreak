@@ -218,6 +218,13 @@ button:disabled {
   font-size: 0.85rem;
 }
 
+.streak__milestone {
+  margin: 0.4rem 0 0;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .streak__freeze {
   margin: 0.4rem 0 0;
   color: var(--muted);
@@ -427,6 +434,30 @@ button:disabled {
 .module__code {
   color: var(--accent);
   font-weight: 700;
+}
+
+/* Domínio do módulo (#103): a mesma barra do streak, para o mesmo tipo de leitura. */
+.module__mastery {
+  margin: 0.6rem 0 0;
+}
+
+.module__mastery p {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.module__bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.module__bar span {
+  display: block;
+  height: 100%;
+  background: var(--ok);
 }
 
 .node-list {
@@ -2827,4 +2858,40 @@ textarea.feedback-form__control {
   font-size: 0.8rem;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* Sessão guiada de revisão (#47) */
+.review__cta {
+  margin: 0.9rem 0 0;
+}
+
+/* Link com cara de botão: navegar não é ação de formulário, mas é a ação principal do card. */
+.button-link {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.review__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.review__progress {
+  margin: 0;
+}
+
+.review__bar .drill__result,
+.review__bar .hint {
+  margin: 0;
+}
+
+.review__skip {
+  margin: 0;
+  text-align: center;
 }

@@ -2734,6 +2734,18 @@
             "items": {
               "$ref": "#/components/schemas/NodeSummaryView"
             }
+          },
+          "completedNodes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalNodes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "masteryPercent": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

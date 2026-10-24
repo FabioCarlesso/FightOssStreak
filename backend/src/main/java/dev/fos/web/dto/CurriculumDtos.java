@@ -16,8 +16,47 @@ public final class CurriculumDtos {
     /** Árvore completa com o estado do usuário — payload da tela principal. */
     public record TreeView(List<ModuleView> modules, ProgressSummary summary) {}
 
+    /**
+     * Um módulo da árvore, com o domínio dele já agregado (#103).
+     *
+     * <p>"Dominado" é o nó {@link ProgressStatus#COMPLETED}: o mesmo critério dos "concluídos" do
+     * {@link ProgressSummary} e o mesmo que libera os sucessores no grafo. Não é um critério
+     * pedagógico novo — é a contagem que a árvore já mostra, recortada por módulo.
+     *
+     * @param masteryPercent {@code completedNodes / totalNodes} em porcentagem, arredondado para
+     *     baixo: 100 só aparece com todos os nós concluídos, e um módulo sem progresso é 0, nunca
+     *     ausente
+     */
     public record ModuleView(
-            String code, String title, String summary, List<NodeSummaryView> nodes) {}
+            String code,
+            String title,
+            String summary,
+            List<NodeSummaryView> nodes,
+            int completedNodes,
+            int totalNodes,
+            int masteryPercent) {
+
+        public static ModuleView of(
+                String code, String title, String summary, List<NodeSummaryView> nodes) {
+            int completed =
+                    (int)
+                            nodes.stream()
+                                    .filter(node -> node.status() == ProgressStatus.COMPLETED)
+                                    .count();
+            return new ModuleView(
+                    code,
+                    title,
+                    summary,
+                    nodes,
+                    completed,
+                    nodes.size(),
+                    masteryPercent(completed, nodes.size()));
+        }
+
+        static int masteryPercent(int completed, int total) {
+            return total == 0 ? 0 : completed * 100 / total;
+        }
+    }
 
     /**
      * @param prereqCodes códigos dos pré-requisitos, para a UI explicar <em>por que</em> está

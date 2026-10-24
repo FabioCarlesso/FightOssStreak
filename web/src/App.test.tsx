@@ -361,3 +361,53 @@ describe('menu de administração', () => {
     expect(apiMock.getAdminUsers).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * Entrada da sessão guiada de revisão (#47). O botão é atalho para percorrer a fila; a lista
+ * continua, e em demonstração ele some — a demonstração não grava (D31).
+ */
+describe('botão "Revisar agora" na agenda', () => {
+  const VENCIDO = {
+    today: '2026-08-18',
+    dueCount: 1,
+    due: [{ nodeCode: 'M0.2', title: 'Quedas seguras', daysOverdue: 2 }],
+  };
+
+  beforeEach(() => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+  });
+
+  it('não aparece sem nada vencido', async () => {
+    renderEm('/hoje');
+
+    await screen.findByText(/nada vencido hoje/i);
+    expect(screen.queryByRole('link', { name: /revisar agora/i })).not.toBeInTheDocument();
+  });
+
+  it('aparece com revisão vencida, e a lista continua lá', async () => {
+    apiMock.getReviewsToday.mockResolvedValue(VENCIDO);
+    renderEm('/hoje');
+
+    expect(await screen.findByRole('link', { name: /revisar agora/i })).toHaveAttribute(
+      'href',
+      '/revisar',
+    );
+    expect(screen.getByRole('link', { name: /quedas seguras/i })).toHaveAttribute(
+      'href',
+      '/no/M0.2',
+    );
+  });
+
+  it('some em modo demonstração', async () => {
+    sessionStorage.setItem('fos.demo', 'on');
+    apiMock.getReviewsToday.mockResolvedValue(VENCIDO);
+    renderEm('/hoje');
+
+    await screen.findByRole('link', { name: /quedas seguras/i });
+    expect(screen.queryByRole('link', { name: /revisar agora/i })).not.toBeInTheDocument();
+  });
+});

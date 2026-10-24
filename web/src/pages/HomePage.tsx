@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
+import { useDemoMode } from '../state/demoMode.ts';
 import { StreakCard } from '../components/StreakCard.tsx';
 import { monthRange, todayIso } from '../content/diario.ts';
 
@@ -28,6 +29,7 @@ export function HomePage() {
   const agenda = useAsync(() => api.getReviewsToday(), []);
   const mes = useMemo(() => monthRange(todayIso()), []);
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
+  const demo = useDemoMode();
 
   return (
     <div className="stack">
@@ -64,6 +66,16 @@ export function HomePage() {
             </li>
           ))}
         </ul>
+
+        {/* A lista continua: quem quer ir direto a um nó vai. O botão é para percorrer a fila
+            inteira (#47) — e some em demonstração, que não grava (D31). */}
+        {(agenda.data?.dueCount ?? 0) > 0 && !demo.enabled && (
+          <p className="review__cta">
+            <Link to="/revisar" className="button-link">
+              Revisar agora
+            </Link>
+          </p>
+        )}
       </section>
 
       <section className="card">

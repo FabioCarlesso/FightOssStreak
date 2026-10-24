@@ -1155,6 +1155,12 @@ export interface components {
             title?: string;
             summary?: string;
             nodes?: components["schemas"]["NodeSummaryView"][];
+            /** Format: int32 */
+            completedNodes?: number;
+            /** Format: int32 */
+            totalNodes?: number;
+            /** Format: int32 */
+            masteryPercent?: number;
         };
         NodeSummaryView: {
             code?: string;

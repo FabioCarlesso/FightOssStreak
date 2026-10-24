@@ -49,6 +49,11 @@ export function TreePage() {
             </h2>
           </header>
           <p className="module__summary">{module.summary}</p>
+          <ModuleMastery
+            percent={module.masteryPercent ?? 0}
+            completed={module.completedNodes ?? 0}
+            total={module.totalNodes ?? module.nodes?.length ?? 0}
+          />
 
           <ul className="node-list">
             {module.nodes?.map((node) => (
@@ -57,6 +62,32 @@ export function TreePage() {
           </ul>
         </section>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Domínio do módulo (#103). O número vem pronto do backend — "dominado" é o nó concluído, o mesmo
+ * critério do resumo acima —, e não muda com a demonstração ligada, pelo mesmo motivo dos
+ * contadores: é a referência do progresso real.
+ */
+function ModuleMastery({
+  percent,
+  completed,
+  total,
+}: {
+  percent: number;
+  completed: number;
+  total: number;
+}) {
+  return (
+    <div className="module__mastery">
+      <div className="module__bar" role="img" aria-label={`${percent}% do módulo dominado`}>
+        <span style={{ width: `${percent}%` }} />
+      </div>
+      <p>
+        <strong>{percent}%</strong> dominado · {completed} de {total} nós concluídos
+      </p>
     </div>
   );
 }

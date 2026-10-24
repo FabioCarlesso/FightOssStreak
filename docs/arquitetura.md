@@ -86,8 +86,8 @@ o backend frio, que é o caso comum de cold start. A única coisa que ela pergun
 este ambiente tem demonstração configurada (D39) — sem resposta, a página é exatamente a mesma, só
 sem aquele botão.
 
-O aceite do aviso continua sendo o primeiro a decidir em `/hoje`, `/arvore`, `/no/:code` e
-`/progresso`. Quem já entrou no app uma vez passa direto da raiz para a agenda do dia;
+O aceite do aviso continua sendo o primeiro a decidir em `/hoje`, `/arvore`, `/no/:code`,
+`/revisar` e `/progresso`. Quem já entrou no app uma vez passa direto da raiz para a agenda do dia;
 `/?ver=apresentacao` traz a apresentação de volta. Os prints que a landing exibe são refeitos pelo
 procedimento de [`desenvolvimento/prints-da-landing.md`](desenvolvimento/prints-da-landing.md).
 
