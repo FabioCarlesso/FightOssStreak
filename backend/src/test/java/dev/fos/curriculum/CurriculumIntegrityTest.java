@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fos.config.FosProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Guarda-corpo do currículo versionado.

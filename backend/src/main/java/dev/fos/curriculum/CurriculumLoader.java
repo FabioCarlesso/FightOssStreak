@@ -1,6 +1,5 @@
 package dev.fos.curriculum;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fos.config.FosProperties;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +9,8 @@ import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /** Lê o índice de módulos e cada arquivo de módulo do classpath. */
 @Component
@@ -51,7 +52,9 @@ public class CurriculumLoader {
         }
         try (InputStream in = resource.getInputStream()) {
             return objectMapper.readValue(in, type);
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
+            // Na Jackson 3 o erro de leitura é JacksonException, que não é mais IOException: sem
+            // ele aqui, JSON malformado escaparia sem dizer qual arquivo do currículo falhou.
             throw new CurriculumException(
                     "Falha ao ler currículo em " + location + ": " + e.getMessage(), e);
         }

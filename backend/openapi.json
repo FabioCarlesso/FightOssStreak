@@ -1687,6 +1687,7 @@
         "type": "object",
         "properties": {
           "answers": {
+            "minItems": 1,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Answer"
@@ -1865,9 +1866,11 @@
         "type": "object",
         "properties": {
           "email": {
+            "minLength": 1,
             "type": "string"
           },
           "senha": {
+            "minLength": 1,
             "type": "string"
           }
         }
@@ -1887,6 +1890,7 @@
         "type": "object",
         "properties": {
           "idToken": {
+            "minLength": 1,
             "type": "string"
           }
         }
@@ -1899,9 +1903,11 @@
         "type": "object",
         "properties": {
           "identityToken": {
+            "minLength": 1,
             "type": "string"
           },
           "nonce": {
+            "minLength": 1,
             "type": "string"
           },
           "authorizationCode": {
@@ -2031,6 +2037,7 @@
         "type": "object",
         "properties": {
           "senha": {
+            "minLength": 1,
             "type": "string"
           }
         }
@@ -2042,7 +2049,9 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           }
         }
       },
@@ -2054,9 +2063,11 @@
         "type": "object",
         "properties": {
           "email": {
+            "minLength": 1,
             "type": "string"
           },
           "senha": {
+            "minLength": 1,
             "type": "string"
           }
         }
@@ -2069,9 +2080,12 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "senha": {
+            "minLength": 1,
             "type": "string"
           },
           "nome": {

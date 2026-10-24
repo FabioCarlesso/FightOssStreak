@@ -28,7 +28,7 @@ revisão por repetição espaçada. A raiz (`/`) é a landing pública; o app co
 | Landing | Pública em `/`, estática e sem chamada de API, com prints das telas reais (D33) |
 | Mobile | **MVP em Expo** (D67, D69, #141): login por senha, Hoje, Árvore e Nó (vídeo e quiz), Diário e exclusão de conta, com as mesmas regras do web. Google e Apple depois da #143 — ver [como rodar](docs/desenvolvimento/mobile.md) |
 
-**Stack:** Spring Boot 3 (Java 21) · Postgres + Flyway · React + Vite (TypeScript) · nginx · Docker
+**Stack:** Spring Boot 4 (Java 21) · Postgres + Flyway · React + Vite (TypeScript) · nginx · Docker
 — detalhes em [`docs/arquitetura.md`](docs/arquitetura.md).
 
 ## Como rodar

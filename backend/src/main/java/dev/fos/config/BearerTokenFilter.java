@@ -1,6 +1,5 @@
 package dev.fos.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fos.service.MobileTokenAuthentication;
 import dev.fos.service.MobileTokens;
 import jakarta.servlet.FilterChain;
@@ -14,6 +13,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Autentica a requisição do app mobile pelo cabeçalho {@code Authorization} (#139, D68).

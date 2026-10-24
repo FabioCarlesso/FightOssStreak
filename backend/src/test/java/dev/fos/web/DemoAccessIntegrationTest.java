@@ -8,10 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.fos.model.DisclaimerAcceptance;
 import dev.fos.model.DrillLog;
 import dev.fos.model.ProgressStatus;
@@ -44,9 +40,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -55,6 +51,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Acesso demonstrativo, ponta a ponta (#62).
@@ -240,9 +240,9 @@ class DemoAccessIntegrationTest {
         MockHttpSession sessao = abrirDemo();
 
         JsonNode agenda = json(sessao, "/api/reviews/today");
-        assertThat(agenda.get("today").asText()).isEqualTo("2026-08-16");
+        assertThat(agenda.get("today").asString()).isEqualTo("2026-08-16");
         assertThat(agenda.get("dueCount").asInt()).isEqualTo(1);
-        assertThat(agenda.get("due").get(0).get("nodeCode").asText()).isEqualTo("M0.2");
+        assertThat(agenda.get("due").get(0).get("nodeCode").asString()).isEqualTo("M0.2");
         // Um dia de atraso, como na conta-modelo — o rebase preserva a distância entre os
         // eventos, não as datas.
         assertThat(agenda.get("due").get(0).get("daysOverdue").asLong()).isEqualTo(1);
@@ -271,7 +271,7 @@ class DemoAccessIntegrationTest {
                 .andExpect(jsonPath("$.passed").value(true));
 
         JsonNode drill = registrarDrill(sessao, "M0.2", Recall.EASY);
-        assertThat(LocalDate.parse(drill.get("nextReviewOn").asText()))
+        assertThat(LocalDate.parse(drill.get("nextReviewOn").asString()))
                 .as("registrar drill reagenda a revisão para frente")
                 .isAfter(LocalDate.parse("2026-08-16"));
 
