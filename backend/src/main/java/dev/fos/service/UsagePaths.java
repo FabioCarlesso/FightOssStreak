@@ -36,6 +36,7 @@ public final class UsagePaths {
                     "/diario",
                     "/diario/nova",
                     "/progresso",
+                    "/revisar",
                     "/conta",
                     "/feedback",
                     "/usuarios",

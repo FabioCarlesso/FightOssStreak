@@ -18,7 +18,8 @@ export function DrillForm({
 }: {
   nodeCode: string;
   srs?: SrsView;
-  onDone: () => void;
+  /** Recebe o resultado: a sessão de revisão (#47) avança com ele; a tela do nó só recarrega. */
+  onDone: (result: DrillResult) => void;
 }) {
   const [recall, setRecall] = useState<Recall>('OK');
   const [note, setNote] = useState('');
@@ -32,9 +33,10 @@ export function DrillForm({
     setSaving(true);
     setFailure(null);
     try {
-      setResult(await api.logDrill(nodeCode, { recall, note: note.trim() || undefined }));
+      const registrado = await api.logDrill(nodeCode, { recall, note: note.trim() || undefined });
+      setResult(registrado);
       setNote('');
-      onDone();
+      onDone(registrado);
     } catch (cause) {
       setFailure(cause instanceof Error ? cause.message : String(cause));
     } finally {

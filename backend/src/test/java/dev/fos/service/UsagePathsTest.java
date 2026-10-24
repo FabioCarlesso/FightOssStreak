@@ -43,6 +43,8 @@ class UsagePathsTest {
         // Rotas do diário (#114): as duas fixas passam inteiras.
         assertThat(UsagePaths.normalize("/diario")).isEqualTo("/diario");
         assertThat(UsagePaths.normalize("/diario/nova")).isEqualTo("/diario/nova");
+        // Sessão guiada de revisão (#47).
+        assertThat(UsagePaths.normalize("/revisar")).isEqualTo("/revisar");
         assertThat(UsagePaths.normalize("/rota-que-nao-existe")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize("/../../etc/passwd")).isEqualTo(UsagePaths.OUTRO);
         assertThat(UsagePaths.normalize(null)).isEqualTo(UsagePaths.OUTRO);
