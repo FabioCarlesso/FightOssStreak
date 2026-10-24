@@ -147,7 +147,7 @@ export async function verificarDisponibilidade(videoId, { fetchImpl = fetch } = 
 
   // Falha aqui não diz nada sobre o vídeo — o oEmbed já respondeu que ele existe. Tratar como
   // "não deu para saber" evita transformar instabilidade de rede em acusação de violação de D7.
-  let embed = { known: false, embeddable: null, orientation: null };
+  let embed;
   try {
     embed = await checkEmbeddable(videoId, { fetchImpl });
   } catch {
