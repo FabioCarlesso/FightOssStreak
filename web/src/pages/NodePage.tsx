@@ -8,17 +8,7 @@ import { PinnedNote } from '../components/PinnedNote.tsx';
 import { QuizForm } from '../components/QuizForm.tsx';
 import { ExtraVideos } from '../components/ExtraVideos.tsx';
 import { VideoEmbed } from '../components/VideoEmbed.tsx';
-
-/**
- * Linha em branco no `concept` vira parágrafo novo na tela (issue #58); texto sem linha em
- * branco continua um `<p>` só, como sempre foi.
- */
-function paragraphsOf(concept: string | undefined): string[] {
-  return (concept ?? '')
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph.length > 0);
-}
+import { paragraphsOf } from '../content/conceito.ts';
 
 /** Detalhe do nó: conceito, vídeo, quiz conceitual e registro de drill. */
 export function NodePage() {

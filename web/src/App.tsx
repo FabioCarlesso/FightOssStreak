@@ -15,6 +15,7 @@ import { LandingPage } from './pages/LandingPage.tsx';
 import { NewSessionPage } from './pages/NewSessionPage.tsx';
 import { NodePage } from './pages/NodePage.tsx';
 import { ProgressPage } from './pages/ProgressPage.tsx';
+import { ReviewPage } from './pages/ReviewPage.tsx';
 import { SessionPage } from './pages/SessionPage.tsx';
 import { TreePage } from './pages/TreePage.tsx';
 import { ConfirmEmailPage } from './pages/auth/ConfirmEmailPage.tsx';
@@ -72,6 +73,7 @@ export function App() {
           <Route path="/diario/:id" element={<SessionPage />} />
           <Route path="/no/:code" element={<NodePage />} />
           <Route path="/progresso" element={<ProgressPage />} />
+          <Route path="/revisar" element={<ReviewPage />} />
           <Route path="/conta" element={<AccountPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           {/* A própria tela redireciona quem não administra (#91): a rota existe para todo mundo

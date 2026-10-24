@@ -25,6 +25,14 @@ segunda sem a primeira.
   (D20).
 - A home lista o que drillar hoje, do mais atrasado para o menos. Rebaixar essa agenda na home é
   reverter a D56c, não mexer em layout.
+- **Sessão guiada de revisão** (`/revisar`, #47): o botão *Revisar agora*, no card da agenda,
+  percorre os vencidos um nó por vez — conceito, vídeo canônico, clipes e registro de drill, com
+  "N de M", pular e tela de fim. A fila é **capturada uma vez**, na abertura: o nó registrado deixa
+  de estar vencido, e reler a agenda a cada passo faria o total encolher no meio da sessão.
+  Reabrir a tela relê a agenda, e o que já foi registrado não volta. Pular não grava nada e não
+  mexe no SRS. Não há rota nova no backend: são `GET /api/reviews/today`, `GET /api/nodes/{code}`
+  e o mesmo `POST` de drill da tela do nó — por isso cada registro grava `was_due` como qualquer
+  outro. Fica fora do modo demonstração, que não grava.
 
 ## Diário de treino (D56, D57, D58)
 
@@ -72,7 +80,8 @@ perguntas sem passar no quiz de cada nó anterior. Com o modo ligado, uma faixa 
 todas as telas e oferece o desligar.
 
 **A demonstração não grava**: em nó que estaria bloqueado o quiz aparece só para leitura e o
-registro de drill fica fora, então progresso, streak e agenda de revisão ficam intactos, e os
+registro de drill fica fora — e a sessão guiada de revisão (`/revisar`) não abre —, então
+progresso, streak e agenda de revisão ficam intactos, e os
 contadores da árvore continuam mostrando o que está travado de verdade (D31). O estado vive na
 sessão do navegador — sobrevive a um F5, não a uma aba nova.
 

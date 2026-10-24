@@ -2852,3 +2852,39 @@ textarea.feedback-form__control {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Sessão guiada de revisão (#47) */
+.review__cta {
+  margin: 0.9rem 0 0;
+}
+
+/* Link com cara de botão: navegar não é ação de formulário, mas é a ação principal do card. */
+.button-link {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.review__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.review__progress {
+  margin: 0;
+}
+
+.review__bar .drill__result,
+.review__bar .hint {
+  margin: 0;
+}
+
+.review__skip {
+  margin: 0;
+  text-align: center;
+}
