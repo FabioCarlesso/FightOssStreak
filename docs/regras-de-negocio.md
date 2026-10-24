@@ -65,6 +65,11 @@ segunda sem a primeira.
 - Freeze manual e compra de freeze estão fora de escopo: não há economia de pontos no FOS.
 - O **heatmap** da home lê o **mesmo** conjunto de dias, por dia, em `GET /api/streak/historico`;
   dia perdoado é marcado sem entrar na escala de intensidade (D59).
+- **Marcos** (#101): 7, 30, 100 e 365 dias viram uma linha no cartão do streak, no web e no app, só
+  no dia em que o treino de hoje completa o número — sem registro hoje, o streak ancora em ontem e o
+  marco foi ontem. A regra é `streakMilestoneToday`, em `shared/domain`. Não há estado guardado nem
+  "já visto": no dia seguinte a corrente vale outro número e a linha some. O marco informa, não
+  premia — sem som, animação, pontos ou coleção de conquistas.
 
 ## Aviso de responsabilidade
 

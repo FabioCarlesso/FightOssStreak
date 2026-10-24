@@ -218,6 +218,13 @@ button:disabled {
   font-size: 0.85rem;
 }
 
+.streak__milestone {
+  margin: 0.4rem 0 0;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .streak__freeze {
   margin: 0.4rem 0 0;
   color: var(--muted);

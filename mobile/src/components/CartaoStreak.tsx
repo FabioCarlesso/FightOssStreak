@@ -1,4 +1,10 @@
-import { buildStreakHeatmap, daysBetween, type ActivityDay, type HeatmapCell } from '@fos/domain';
+import {
+  buildStreakHeatmap,
+  daysBetween,
+  streakMilestoneToday,
+  type ActivityDay,
+  type HeatmapCell,
+} from '@fos/domain';
 import type { StreakHistory, StreakView } from '@fos/types';
 import { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -25,6 +31,8 @@ export function CartaoStreak({
   const progresso = Math.min(100, Math.round((ativos / meta) * 100));
   const freezesNoMes = streak.freezesPerMonth ?? 0;
   const atual = streak.currentStreak ?? 0;
+  // Mesma regra e mesma frase do web (#101): uma linha no cartão, sem estado de "já visto".
+  const marco = streakMilestoneToday(atual, streak.drilledToday ?? false);
 
   return (
     <Cartao>
@@ -42,6 +50,11 @@ export function CartaoStreak({
               ? 'Treino de hoje já registrado.'
               : 'Ainda sem registro hoje — o streak se mantém até o fim do dia.'}
           </Text>
+          {marco !== null ? (
+            <Text style={styles.marco} testID="streak-marco">
+              Marco de {marco} dias seguidos, completado hoje.
+            </Text>
+          ) : null}
         </View>
       </View>
 
@@ -134,6 +147,7 @@ const styles = StyleSheet.create({
   contagemLinha: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
   contagem: { color: cores.texto, fontSize: 28, fontWeight: '700' },
   unidade: { color: cores.textoFraco, fontSize: 14 },
+  marco: { color: cores.texto, fontSize: 14, fontWeight: '600', marginTop: 4 },
   barra: { height: 6, borderRadius: 3, backgroundColor: cores.borda, overflow: 'hidden' },
   barraCheia: { height: 6, backgroundColor: cores.ok },
   grade: { flexDirection: 'row', gap: 3 },
