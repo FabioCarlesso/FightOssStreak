@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -45,9 +44,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
@@ -60,6 +59,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * O app mobile autenticando por token, ponta a ponta (#139, D68).
@@ -336,7 +336,7 @@ class MobileAuthIntegrationTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        String valor = json.readTree(token).get("token").asText();
+        String valor = json.readTree(token).get("token").asString();
         mockMvc.perform(get("/api/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + valor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(ENDERECO));
@@ -353,7 +353,7 @@ class MobileAuthIntegrationTest {
         String pelaSenha =
                 json.readTree(entrarComSenha(SENHA).andReturn().getResponse().getContentAsString())
                         .get("token")
-                        .asText();
+                        .asString();
         // O mesmo e-mail verificado vincula o Google à conta da senha (D47).
         String peloGoogle = tokenGoogle("ana-google", ENDERECO);
 
@@ -649,7 +649,7 @@ class MobileAuthIntegrationTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        return json.readTree(corpo).get("token").asText();
+        return json.readTree(corpo).get("token").asString();
     }
 
     private static String idTokenGoogle(String audiencia, Map<String, Object> claims)

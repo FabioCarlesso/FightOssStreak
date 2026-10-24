@@ -12,10 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.fos.curriculum.CurriculumValidator;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.UserIdentity;
@@ -37,10 +33,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.MockMvcBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -49,6 +45,10 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Percorre o fluxo real do MVP contra a aplicação inteira: sobe, ingere o currículo versionado, lê
@@ -178,8 +178,8 @@ class ApiIntegrationTest {
     void nodeDetailHidesAnswerKey() throws Exception {
         JsonNode node = getJson("/api/nodes/M0.3");
 
-        assertThat(node.get("concept").asText()).isNotBlank();
-        assertThat(node.get("safetyNotice").asText()).contains("Respeite o tap");
+        assertThat(node.get("concept").asString()).isNotBlank();
+        assertThat(node.get("safetyNotice").asString()).contains("Respeite o tap");
         assertThat(node.get("quiz")).isNotEmpty();
 
         // O cliente nunca recebe qual alternativa é a correta antes de responder.
@@ -247,15 +247,15 @@ class ApiIntegrationTest {
         JsonNode video = getJson("/api/nodes/" + code).get("video");
 
         assertThat(video.get("catalogued").asBoolean()).isTrue();
-        assertThat(video.get("youtubeId").asText()).matches(CurriculumValidator.YOUTUBE_ID_REGEX);
-        assertThat(video.get("channel").asText())
+        assertThat(video.get("youtubeId").asString()).matches(CurriculumValidator.YOUTUBE_ID_REGEX);
+        assertThat(video.get("channel").asString())
                 .as("crédito ao canal é requisito da política D7, não enfeite")
                 .isNotBlank();
-        assertThat(video.get("embedUrl").asText())
+        assertThat(video.get("embedUrl").asString())
                 .startsWith("https://www.youtube-nocookie.com/embed/")
-                .endsWith(video.get("youtubeId").asText());
-        assertThat(video.get("watchUrl").asText())
-                .isEqualTo("https://www.youtube.com/watch?v=" + video.get("youtubeId").asText());
+                .endsWith(video.get("youtubeId").asString());
+        assertThat(video.get("watchUrl").asString())
+                .isEqualTo("https://www.youtube.com/watch?v=" + video.get("youtubeId").asString());
     }
 
     @Test
@@ -264,19 +264,19 @@ class ApiIntegrationTest {
         JsonNode extras = getJson("/api/nodes/M1.3").get("extraVideos");
 
         assertThat(extras).hasSize(3);
-        assertThat(extras.get(0).get("youtubeId").asText())
+        assertThat(extras.get(0).get("youtubeId").asString())
                 .as("a ordem é curatorial e vem do JSON versionado, não do banco")
                 .isEqualTo("AkQxiCrsGo4");
 
         JsonNode primeiro = extras.get(0);
-        assertThat(primeiro.get("channel").asText())
+        assertThat(primeiro.get("channel").asString())
                 .as("crédito ao canal vale para complementar igual (D7)")
                 .isEqualTo("Guiabasicodejiujitsu");
-        assertThat(primeiro.get("orientation").asText()).isEqualTo("VERTICAL");
-        assertThat(primeiro.get("thumbnailUrl").asText())
+        assertThat(primeiro.get("orientation").asString()).isEqualTo("VERTICAL");
+        assertThat(primeiro.get("thumbnailUrl").asString())
                 .as("a tira mostra miniatura para não montar um player por clipe")
                 .isEqualTo("https://i.ytimg.com/vi/AkQxiCrsGo4/hqdefault.jpg");
-        assertThat(primeiro.get("embedUrl").asText())
+        assertThat(primeiro.get("embedUrl").asString())
                 .startsWith("https://www.youtube-nocookie.com/embed/AkQxiCrsGo4")
                 .contains("autoplay=1")
                 .as("playlist com o próprio id é o que faz o loop funcionar em vídeo único")
@@ -321,9 +321,9 @@ class ApiIntegrationTest {
                                 .getResponse()
                                 .getContentAsString());
 
-        assertThat(result.get("status").asText()).isEqualTo("IN_PROGRESS");
+        assertThat(result.get("status").asString()).isEqualTo("IN_PROGRESS");
         assertThat(result.get("feedback")).isNotEmpty();
-        assertThat(result.get("feedback").get(0).get("explanation").asText()).isNotBlank();
+        assertThat(result.get("feedback").get(0).get("explanation").asString()).isNotBlank();
     }
 
     @Test
@@ -919,7 +919,7 @@ class ApiIntegrationTest {
         for (JsonNode module : getJson("/api/curriculum/tree").get("modules")) {
             for (JsonNode node : module.get("nodes")) {
                 if (node.get("hasVideo").asBoolean() == catalogued) {
-                    return node.get("code").asText();
+                    return node.get("code").asString();
                 }
             }
         }
@@ -956,8 +956,8 @@ class ApiIntegrationTest {
     private String statusOf(JsonNode tree, String nodeCode) {
         for (JsonNode module : tree.get("modules")) {
             for (JsonNode node : module.get("nodes")) {
-                if (nodeCode.equals(node.get("code").asText())) {
-                    return node.get("status").asText();
+                if (nodeCode.equals(node.get("code").asString())) {
+                    return node.get("status").asString();
                 }
             }
         }
