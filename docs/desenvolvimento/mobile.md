@@ -247,3 +247,10 @@ npx expo-doctor
 
 Depois, rode `npm ls react` para confirmar que o React do Expo continua dentro de `mobile/`, e
 `npx expo export --platform android` para conferir que o bundle fecha.
+
+**Se o `--fix` parar em `ERESOLVE`**, como na troca da 57 para a 58: ele instala os pacotes um a um,
+e os da SDK velha ainda pedem peers da velha. Nesse caso, o `--fix` já imprimiu a lista *expected
+version*. Escreva essas versões no `mobile/package.json` e rode `npm install` na raiz, uma vez só.
+Confira com `npx expo install --check`. **Nunca use `npm audit fix` para isso**: na troca da 58 ele
+aninhou um `expo@44` dentro do SDK (D71). Depois, abra o app no Expo Go da SDK nova, que o próprio
+`expo start` oferece instalar no emulador.
