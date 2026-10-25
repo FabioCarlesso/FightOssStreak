@@ -30,19 +30,29 @@ publicada travaria quem não tem como resolvê-la, e um portão que fica vermelh
 ao PR ensina a ignorá-lo. É o mesmo raciocínio que deixou o `codeql` fora da ruleset. Como o job
 fica sempre verde, quem lê o resultado é a aba Security.
 
-**O resíduo conhecido é a cadeia do Expo SDK 57**: `@expo/cli`, `@expo/code-signing-certificates`,
-`node-forge` e `zod`, que dão os 5 high, e `expo-router`, com `query-string` e
-`decode-uri-component`, que dão os 3 moderate. Nada disso vai para o bundle do web nem passa pelo
-backend. A correção é o SDK 58, e troca de SDK do Expo é feita à parte, porque é o SDK que fixa as
-versões nativas e o Dependabot já ignora esses pacotes. O FOS-10, como foi auditado, cobre o
-backend e o web, e esses dois estão limpos.
+**Expo SDK 58 no mesmo PR.** O `npm audit` acusava mais 8 itens (5 high e 3 moderate), todos da
+cadeia do Expo SDK 57. A troca para o SDK 58 (React 19.3, React Native 0.88, `expo-router` 58)
+resolveu os 3 moderate (`expo-router` → `query-string` → `decode-uri-component`), que iam para o
+app. A única mudança de código foi a ref do `ScrollView` no `CartaoStreak`: no RN 0.88 o
+`ScrollView` virou componente de função, e a ref passou a ser `ScrollViewInstance`.
+
+**O resíduo conhecido são os 5 high, todos dentro do `@expo/cli`**, que existe só na máquina de
+quem desenvolve e no CI e não vai para o bundle do app nem para o backend:
+- `node-forge`, usado pelo `@expo/code-signing-certificates` para assinar EAS Update, não tem
+  versão corrigida publicada;
+- `zod` só foi corrigido na 4.6.6, e o `@expo/cli` 58 fixa `zod ^3`. Forçar a 4 por `overrides` não
+  serve, porque ela muda a API importada pela CLI.
+
+O que fecha esses itens é o Expo publicar uma CLI com as dependências corrigidas, e o `osv`
+continua apontando os dois até lá.
 
 ## Revisar quando
 
 Se a aba Security acumular alerta sem dono, ou quando houver uma dependência com correção
 publicada que ficou semanas parada, o scanner passou a ser ignorado. Aí a saída é tornar o job
-bloqueante para severidade alta com correção disponível, e não acrescentar outro scanner. Na troca
-para o Expo SDK 58, conferir que o resíduo acima sumiu do `npm audit`.
+bloqueante para severidade alta com correção disponível, e não acrescentar outro scanner. Quando
+o Expo publicar uma `@expo/cli` com `zod` 4 ou um `node-forge` corrigido, suba e confira que o
+resíduo acima sumiu do `npm audit`.
 
 ---
 

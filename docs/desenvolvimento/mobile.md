@@ -100,16 +100,22 @@ cp mobile/.env.example mobile/.env    # fora do git
 ```
 
 `EXPO_PUBLIC_API_URL` precisa apontar para o **backend em `:8080`**, e não para o nginx em `:8081`. O
-nginx só atende `PUBLIC_HOST` e responde 444 a qualquer outro host (D62), e o aparelho chama por
-`10.0.2.2` ou pelo IP da rede. O backend pode vir de `npm run dev:backend` ou do Compose, que publica
+nginx só atende `PUBLIC_HOST` e responde 444 a qualquer outro host (D62), e o aparelho chama pelo
+`127.0.0.1` (via `adb reverse`) ou pelo IP da rede. O backend pode vir de `npm run dev:backend` ou do Compose, que publica
 `:8080`.
 
 | Aparelho | `EXPO_PUBLIC_API_URL` |
 |---|---|
-| Emulador Android | `http://10.0.2.2:8080` (o `localhost` da máquina que roda o emulador) |
+| Emulador Android | `http://127.0.0.1:8080`, depois de `adb reverse tcp:8080 tcp:8080` |
 | iPhone ou Android físico | `http://<IP da máquina na rede>:8080` |
 
 O valor é embutido no bundle quando o Metro sobe, então mudá-lo exige reiniciar o `expo start`.
+
+**No emulador, não use `10.0.2.2`.** Na troca para a SDK 58, o app no Expo Go 58 passou a ficar
+preso em *Carregando…* com `http://10.0.2.2:8080`: o `fetch` e o `XMLHttpRequest` não respondiam e
+nem falhavam, enquanto o `nc` do shell do mesmo emulador alcançava o backend. Pelo `adb reverse`
+com `127.0.0.1`, e pelo IP da rede, respondeu na hora. A causa não foi isolada. O `adb reverse`
+precisa ser refeito a cada boot do emulador.
 
 `EXPO_PUBLIC_WEB_URL` é o site, para criar conta e recuperar a senha. Em produção é a URL pública;
 em dev pode ficar vazia, e a tela de login diz o que configurar.
@@ -193,8 +199,10 @@ Os testes renderizam a tela com a API trocada por uma resposta fixa e não tocam
 - **Dois Reacts.** O web usa o React 18 e o Expo, o 19. O npm resolve isso sozinho: o 18 fica em
   `node_modules/`, e o 19, o React Native e o Expo ficam em `mobile/node_modules/`. **Não acrescente
   `react` nem `react-native` à raiz.** Para conferir, rode `npm ls react`; todo pacote do Expo precisa
-  estar dentro de `mobile/`.
-- **Metro sem configuração.** O `@expo/metro-config` da SDK 57 já resolve os workspaces e os pacotes
+  estar dentro de `mobile/`. Desde a SDK 58, o `expo-doctor` acusa essa divisão como *duplicate
+  dependencies* (`react@19.x` no app, `react@18.x` na raiz). É esperado: o Metro resolve o React de
+  `mobile/node_modules/`, e o job `mobile` prova isso exportando o bundle.
+- **Metro sem configuração.** O `@expo/metro-config` da SDK 58 já resolve os workspaces e os pacotes
   aninhados, e por isso não existe `metro.config.js`. O job `mobile` exporta o bundle do Android
   (`npx expo export`) justamente para pegar a regressão que o Jest não pega: um pacote de `shared/`
   que não resolve, ou um segundo React vindo da raiz.
@@ -202,13 +210,13 @@ Os testes renderizam a tela com a API trocada por uma resposta fixa e não tocam
   aninha dentro de `expo/`. O `mobile/jest.config.js` aponta o import para a cópia que o `expo`
   resolve. Não instale `expo-modules-core` direto: o `expo-doctor` reprova, e a versão deixaria de
   acompanhar a do `expo`.
-- **`test-renderer` fixado em `~1.2.0`.** É o renderizador do Testing Library 14. A 1.3 puxa um
-  `react-reconciler` que pede React `^19.3`, e a SDK 57 fixa o 19.2.3. Os testes até passam, mas
-  `npm ls react` acusa peer inválido. Suba junto com a SDK, quando o React do Expo alcançar o que ele
-  pede.
-- **Um TypeScript só.** A SDK 57 sugere o TypeScript 6, e o monorepo está no 5.x, de que dependem o
+- **`test-renderer` acompanha o React do Expo.** É o renderizador do Testing Library 14, e a versão
+  dele puxa um `react-reconciler` que pede um React mínimo. Na SDK 57 (React 19.2.3) ficou fixado
+  em `~1.2.0`, porque a 1.3 pedia React `^19.3`. Na SDK 58 (React 19.3.0) subiu para `~1.3.1`. Na
+  próxima troca de SDK, confira com `npm ls react` que nenhum peer ficou inválido.
+- **Um TypeScript só.** A SDK 58 sugere o TypeScript 6, e o monorepo está no 5.x, de que dependem o
   `typescript-eslint` e o web. Por isso o `mobile/package.json` exclui `typescript` da checagem do
-  Expo (`expo.install.exclude`), e o `expo-doctor` passa limpo. Subir o TypeScript é mudança do
+  Expo (`expo.install.exclude`), e o `expo-doctor` não reclama dele. Subir o TypeScript é mudança do
   repositório inteiro, não do app.
 - **A imagem do web não leva o mobile.** O `.dockerignore` exclui `mobile/`, e o `npm ci` da imagem
   ignora o workspace ausente: instala só o que o web e `shared/` usam. Se um dia o Dockerfile do web

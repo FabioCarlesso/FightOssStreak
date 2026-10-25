@@ -6,9 +6,9 @@ name: osv
 #
 # **Não bloqueia nada, de propósito.** `fail-on-vuln: false` deixa o job verde mesmo com achado:
 # CVE sem correção publicada não pode travar o merge de quem não tem como resolvê-la — é o caso da
-# cadeia do Expo, que só se resolve na troca de SDK. Também não é required check da ruleset de
-# `main`, e não deve virar um; por isso vive em workflow próprio, longe dos jobs `backend` e `web`
-# (regra 7 do CLAUDE.md). Sem `paths:` no `pull_request:` pelo mesmo motivo da D19.
+# `@expo/cli`, que depende de o Expo publicar uma versão corrigida. Também não é required check da
+# ruleset de `main`, e não deve virar um; por isso vive em workflow próprio, longe dos jobs
+# `backend` e `web` (regra 7 do CLAUDE.md). Sem `paths:` no `pull_request:` pelo mesmo motivo da D19.
 
 on:
   pull_request:
