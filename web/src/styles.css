@@ -2860,6 +2860,20 @@ textarea.feedback-form__control {
   cursor: pointer;
 }
 
+/* Atalho "Continuar" da home (#104): dentro do card da agenda, acima da lista. */
+.resume {
+  margin: 0 0 0.75rem;
+}
+
+.resume__link {
+  display: inline-block;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
 /* Sessão guiada de revisão (#47) */
 .review__cta {
   margin: 0.9rem 0 0;

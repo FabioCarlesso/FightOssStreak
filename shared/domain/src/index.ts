@@ -49,3 +49,12 @@ export type { SessionFieldsState } from './diario.ts';
 
 export { previewIntervalDays } from './previsao.ts';
 export type { ScheduleSnapshot } from './previsao.ts';
+
+export { nextNodeToResume } from './retomar.ts';
+export type {
+  DueItem,
+  ResumeReason,
+  ResumeTarget,
+  ResumeTreeModule,
+  ResumeTreeNode,
+} from './retomar.ts';
