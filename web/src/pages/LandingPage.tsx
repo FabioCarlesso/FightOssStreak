@@ -46,7 +46,7 @@ export function LandingPage() {
   // Sem `await` em nada que a página renderize: enquanto (ou se) isto não responde, a landing é
   // exatamente a de antes.
   const ambiente = useAsync(() => api.getAuthProviders(), []);
-  const demo = useStartDemo((destino) => navigate(destino));
+  const demo = useStartDemo((destino) => void navigate(destino));
   const demoDisponivel = ambiente.data?.demoEnabled ?? false;
 
   // Quem já entrou no app uma vez tem `/` como atalho para a agenda do dia — a apresentação já

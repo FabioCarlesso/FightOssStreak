@@ -69,7 +69,7 @@ export function NewSessionPage() {
         ...toSessionBody(fields),
         tecnicas: marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
       });
-      navigate(`/diario/${criada.id}`);
+      void navigate(`/diario/${criada.id}`);
     } catch (cause) {
       setFailure(cause instanceof Error ? cause.message : String(cause));
     } finally {
