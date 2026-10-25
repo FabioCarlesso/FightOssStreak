@@ -79,6 +79,7 @@ nesta tabela, no mesmo PR.
 | [D68](D68-o-app-mobile-autentica-por-token.md) | O app mobile autentica por token opaco no banco, e entra por Google nativo, Apple (só iOS) e senha — o token não administra |
 | [D69](D69-o-app-mobile-navega-com-expo-router.md) | O app mobile navega com Expo Router, e o que web e app mostram iguais (aviso, rótulos, formulário de sessão, prévia do drill) mora em `shared/domain` |
 | [D70](D70-o-lembrete-de-revisao-e-local.md) | O lembrete de revisão é notificação local, planejada no aparelho a partir da árvore — só a contagem, permissão depois do primeiro registro, nada no servidor |
+| [D71](D71-dependencias-com-vulnerabilidade-sao-varridas.md) | Dependências com vulnerabilidade conhecida são varridas pelo `osv-scanner` em todo PR, sem travar merge — e o resíduo do Expo espera a troca de SDK (FOS-10) |
 
 ## Política de uso de vídeo (D7) — limites
 

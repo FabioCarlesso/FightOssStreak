@@ -1,0 +1,39 @@
+name: osv
+
+# Varredura de dependências com vulnerabilidade conhecida (FOS-10, #78). O `osv-scanner` lê o
+# `backend/pom.xml` (resolvendo as transitivas pelo Maven Central) e o `package-lock.json` com uma
+# ferramenta só, e publica o resultado na aba Security > Code scanning.
+#
+# **Não bloqueia nada, de propósito.** `fail-on-vuln: false` deixa o job verde mesmo com achado:
+# CVE sem correção publicada não pode travar o merge de quem não tem como resolvê-la — é o caso da
+# cadeia do Expo, que só se resolve na troca de SDK. Também não é required check da ruleset de
+# `main`, e não deve virar um; por isso vive em workflow próprio, longe dos jobs `backend` e `web`
+# (regra 7 do CLAUDE.md). Sem `paths:` no `pull_request:` pelo mesmo motivo da D19.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Toda segunda, 07:00 UTC: uma CVE nova aparece sem ninguém mexer no repositório, e é a
+    # execução agendada que a encontra.
+    - cron: '0 7 * * 1'
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+concurrency:
+  group: osv-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  osv:
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.7.0
+    with:
+      fail-on-vuln: false
+      scan-args: |-
+        -r
+        ./
