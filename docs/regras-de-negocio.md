@@ -82,6 +82,15 @@ segunda sem a primeira.
   marco foi ontem. A regra é `streakMilestoneToday`, em `shared/domain`. Não há estado guardado nem
   "já visto": no dia seguinte a corrente vale outro número e a linha some. O marco informa, não
   premia — sem som, animação, pontos ou coleção de conquistas.
+- **Imagem do marco** (#106): no dia do marco, a mesma linha traz um link discreto *Baixar imagem*,
+  que gera no navegador um PNG quadrado com o streak atual, o marco e o nome do app — e nada mais:
+  a composição (`web/src/components/imagemDoMarco.ts`) só recebe os dois números, então não tem
+  como levar e-mail, nome ou id. É desenhada direto num canvas com a fonte do sistema e baixada por
+  um `blob:` local — nenhuma requisição, nenhum terceiro (a cautela da D50) e nada que a CSP (D65)
+  precise liberar. Só no dia do marco, e não todo dia: um botão permanente faria de cada dia da
+  corrente um troféu a exibir, a gamificação que o `produto/mvp-web.md` declara como falha. Sem
+  modal, sem compartilhamento direto em rede social. Fica só no web: no app, salvar imagem exige
+  dependência nativa nova, e entra quando houver pedido.
 
 ## Aviso de responsabilidade
 
