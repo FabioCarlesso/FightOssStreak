@@ -12,7 +12,7 @@ O MVP mobile cobre o ciclo de retenção, com as mesmas regras e números do web
 |---|---|
 | Login | E-mail e senha, trocados por um token guardado no `expo-secure-store` (D68). **Criar conta** e **Esqueci a senha** abrem o site (`EXPO_PUBLIC_WEB_URL`), como a D68 decidiu |
 | Portões | Versão mínima (pede atualização), conta bloqueada (mostra o motivo, com sair e excluir) e aceite do aviso por versão — na mesma ordem e com o mesmo texto do web |
-| Hoje | Streak, freeze, dias ativos, heatmap e a agenda do SRS |
+| Hoje | Streak, freeze, dias ativos, heatmap, a agenda do SRS e o atalho *Continuar* (#104) |
 | Árvore e Nó | Conceito, pré-requisitos, vídeo pelo player do YouTube com crédito ao canal (D7), quiz, drill avulso e o aviso curto |
 | Diário | As sessões e os drills avulsos do mês; registrar sessão com técnicas da agenda |
 | Conta | Lembrete de revisão (ligar, desligar e horário), sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |

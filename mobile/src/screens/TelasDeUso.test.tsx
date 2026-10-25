@@ -70,6 +70,40 @@ describe('Hoje', () => {
   });
 });
 
+describe('Hoje: atalho "Continuar" (#104)', () => {
+  it('sem nada vencido, leva ao próximo nó liberado da árvore', async () => {
+    const api = apiFalsa({
+      getTree: jest.fn().mockResolvedValue({
+        modules: [
+          {
+            code: 'M1',
+            nodes: [
+              { code: 'M1.1', title: 'Fuga de montada', status: 'COMPLETED', prereqCodes: [] },
+              { code: 'M1.2', title: 'Fuga de 100kg', status: 'AVAILABLE', prereqCodes: ['M1.1'] },
+            ],
+          },
+        ],
+      }),
+    });
+    await comProvedores(<TelaHoje />, { api });
+
+    await fireEvent.press(await screen.findByText('Continuar: Fuga de 100kg'));
+    expect(router.push).toHaveBeenCalledWith('/no/M1.2');
+  });
+
+  it('tudo em dia: diz isso, sem atalho', async () => {
+    const api = apiFalsa({
+      getTree: jest.fn().mockResolvedValue({
+        modules: [{ code: 'M1', nodes: [{ code: 'M1.1', status: 'COMPLETED', prereqCodes: [] }] }],
+      }),
+    });
+    await comProvedores(<TelaHoje />, { api });
+
+    expect(await screen.findByText(/^Tudo em dia/)).toBeOnTheScreen();
+    expect(screen.queryByText(/^Continuar:/)).toBeNull();
+  });
+});
+
 describe('Árvore', () => {
   it('mostra o domínio de cada módulo como o backend agregou (#103)', async () => {
     const api = apiFalsa({

@@ -33,6 +33,18 @@ segunda sem a primeira.
   mexe no SRS. Não há rota nova no backend: são `GET /api/reviews/today`, `GET /api/nodes/{code}`
   e o mesmo `POST` de drill da tela do nó — por isso cada registro grava `was_due` como qualquer
   outro. Fica fora do modo demonstração, que não grava.
+- **Continuar de onde parei** (#104): o card da agenda traz um atalho *Continuar: <nó>* para a
+  tela do nó (`/no/<código>`), no web e no app. A regra é `nextNodeToResume`, em `shared/domain`, e
+  **não é uma segunda fila**: com revisão vencida ele aponta para o **primeiro** da agenda, na
+  ordem que o servidor já devolveu, sem reordenar. Só sem nada vencido ele olha a árvore
+  (`GET /api/curriculum/tree`), na ordem do currículo: primeiro o nó **em andamento**
+  (`IN_PROGRESS` — drillado, quiz ainda não passou, que é literalmente onde a pessoa parou), depois
+  o primeiro **liberado** (`AVAILABLE`). Nunca `LOCKED` nem `COMPLETED`, e o pré-requisito é
+  reconferido com `isUnlocked` contra os concluídos da própria árvore. Sem nenhum dos dois, a agenda
+  diz *tudo em dia* e não mostra atalho; com a árvore ainda carregando ou fora do ar, fica o texto
+  de antes. O atalho mora **dentro** do card da agenda, e não acima dele (D56c). Não há rota nova.
+  No modo demonstração ele continua: a árvore devolve o status real, e o atalho só navega — quem
+  decide se o nó grava é a tela do nó.
 
 ## Diário de treino (D56, D57, D58)
 
