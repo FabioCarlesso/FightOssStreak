@@ -1,4 +1,4 @@
-import { monthRange, todayIso } from '@fos/domain';
+import { monthRange, nextNodeToResume, todayIso, type ResumeTarget } from '@fos/domain';
 import { Link, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -16,6 +16,9 @@ import { estilos } from '../theme';
  * A agenda vem logo abaixo do streak e antes do diário, como no web (D56c): é o que o produto se
  * propõe a responder. O histórico do heatmap é pedido **depois** do streak, porque `GET /api/streak`
  * é quem grava o dia perdoado (D55); em paralelo, o cartão e a grade discordariam sobre o mesmo dia.
+ *
+ * O atalho "Continuar" (#104) é o mesmo do web e mora dentro do cartão da agenda: a regra é
+ * `nextNodeToResume`, de `shared/domain`, que pega o primeiro vencido e só sem vencido olha a árvore.
  */
 export function TelaHoje() {
   const api = useApi();
@@ -26,6 +29,7 @@ export function TelaHoje() {
     [streak.data],
   );
   const agenda = useAsync(() => api.getReviewsToday(), []);
+  const arvore = useAsync(() => api.getTree(), []);
   const mes = useMemo(() => monthRange(todayIso()), []);
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
 
@@ -33,13 +37,23 @@ export function TelaHoje() {
   const { reload: recarregarStreak } = streak;
   const { reload: recarregarAgenda } = agenda;
   const { reload: recarregarDiario } = diario;
+  const { reload: recarregarArvore } = arvore;
   useAoVoltar(
     useCallback(() => {
       recarregarStreak();
       recarregarAgenda();
       recarregarDiario();
-    }, [recarregarStreak, recarregarAgenda, recarregarDiario]),
+      recarregarArvore();
+    }, [recarregarStreak, recarregarAgenda, recarregarDiario, recarregarArvore]),
   );
+
+  // `undefined`: sem vencido e sem árvore ainda não se sabe se é "tudo em dia" ou "há nó novo".
+  const fila = agenda.data?.due ?? [];
+  const continuar: ResumeTarget | null | undefined = !agenda.data
+    ? undefined
+    : fila.length === 0 && !arvore.data
+      ? undefined
+      : nextNodeToResume(fila, arvore.data?.modules ?? []);
 
   if (streak.loading && !streak.data && agenda.loading && !agenda.data) return <Carregando />;
 
@@ -54,10 +68,21 @@ export function TelaHoje() {
           {agenda.data ? <Pilula texto={String(agenda.data.dueCount ?? 0)} /> : null}
         </View>
         {agenda.error ? <Text style={estilos.erro}>{agenda.error.message}</Text> : null}
-        {agenda.data && (agenda.data.due?.length ?? 0) === 0 ? (
+        {agenda.data && fila.length === 0 ? (
           <Text style={estilos.dica}>
-            Nada vencido hoje. Conclua nós na árvore para começar a alimentar a agenda de revisão.
+            {continuar === null
+              ? 'Tudo em dia: nada vencido hoje e nenhum nó novo para começar.'
+              : continuar === undefined
+                ? 'Nada vencido hoje. Conclua nós na árvore para começar a alimentar a agenda de revisão.'
+                : 'Nada vencido hoje.'}
           </Text>
+        ) : null}
+        {continuar ? (
+          <Botao
+            titulo={`Continuar: ${continuar.title}`}
+            variante="secundario"
+            onPress={() => router.push(`/no/${continuar.code}`)}
+          />
         ) : null}
         {agenda.data?.due?.map((item) => (
           <Link key={item.nodeCode} href={`/no/${item.nodeCode}`} asChild>

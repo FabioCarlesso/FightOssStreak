@@ -1,3 +1,4 @@
+import { nextNodeToResume, type ResumeTarget } from '@fos/domain';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client.ts';
@@ -15,6 +16,10 @@ import { monthRange, todayIso } from '../content/diario.ts';
  * O diário entra **abaixo** dela, e isso é decisão e não layout (D56c): a agenda é o único
  * elemento que o caderno não faz, e rebaixá-la seria virar o BJJ Notes com quiz junto. O contador
  * de treinos no mês é número **descritivo, sem meta** — quem tem meta é a agenda.
+ *
+ * O atalho "Continuar" (#104) mora **dentro** do card da agenda, e não num card acima dele, pelo
+ * mesmo motivo: com revisão vencida ele aponta para o primeiro da própria agenda, e só sem nada
+ * vencido ele sugere o próximo nó da árvore — onde antes havia apenas "conclua nós na árvore".
  */
 export function HomePage() {
   const streak = useAsync(() => api.getStreak(), []);
@@ -27,9 +32,13 @@ export function HomePage() {
     [streak.data],
   );
   const agenda = useAsync(() => api.getReviewsToday(), []);
+  // A árvore só decide o atalho quando não há nada vencido, mas é pedida junto: esperar a agenda
+  // para só então buscá-la deixaria o "Continuar" aparecer em dois tempos.
+  const tree = useAsync(() => api.getTree(), []);
   const mes = useMemo(() => monthRange(todayIso()), []);
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
   const demo = useDemoMode();
+  const continuar = agenda.data ? resumeFrom(agenda.data.due, tree.data?.modules) : undefined;
 
   return (
     <div className="stack">
@@ -44,12 +53,9 @@ export function HomePage() {
         {agenda.loading && <p className="empty">Carregando agenda…</p>}
         {agenda.error && <p className="error">{agenda.error.message}</p>}
 
-        {agenda.data && agenda.data.due?.length === 0 && (
-          <p className="empty">
-            Nada vencido hoje. Conclua nós na <Link to="/arvore">árvore</Link> para começar a
-            alimentar a agenda de revisão.
-          </p>
-        )}
+        {agenda.data && agenda.data.due?.length === 0 && <EmptyAgenda continuar={continuar} />}
+
+        {(agenda.data?.due?.length ?? 0) > 0 && <ContinueLink continuar={continuar} />}
 
         <ul className="due-list">
           {agenda.data?.due?.map((item) => (
@@ -101,6 +107,57 @@ export function HomePage() {
         </p>
       </section>
     </div>
+  );
+}
+
+/**
+ * `undefined` enquanto a árvore não chegou (ou falhou) e não há vencido: aí não se sabe ainda se é
+ * "tudo em dia" ou "há nó novo", e afirmar qualquer um dos dois seria errar metade das vezes.
+ */
+function resumeFrom(
+  due: Parameters<typeof nextNodeToResume>[0] | undefined,
+  modules: Parameters<typeof nextNodeToResume>[1] | undefined,
+): ResumeTarget | null | undefined {
+  const fila = due ?? [];
+  if (fila.length === 0 && modules === undefined) return undefined;
+  return nextNodeToResume(fila, modules ?? []);
+}
+
+const RESUME_HINT: Record<ResumeTarget['reason'], string> = {
+  REVISAO: 'a revisão mais atrasada',
+  EM_ANDAMENTO: 'nó em andamento',
+  NOVO: 'próximo nó liberado da árvore',
+};
+
+function ContinueLink({ continuar }: { continuar: ResumeTarget | null | undefined }) {
+  if (!continuar) return null;
+  return (
+    <p className="resume">
+      <Link to={`/no/${continuar.code}`} className="resume__link">
+        Continuar: <strong>{continuar.title}</strong>
+      </Link>{' '}
+      <span className="hint">— {RESUME_HINT[continuar.reason]}</span>
+    </p>
+  );
+}
+
+function EmptyAgenda({ continuar }: { continuar: ResumeTarget | null | undefined }) {
+  if (continuar === null) {
+    return <p className="empty">Tudo em dia: nada vencido hoje e nenhum nó novo para começar.</p>;
+  }
+  if (continuar === undefined) {
+    return (
+      <p className="empty">
+        Nada vencido hoje. Conclua nós na <Link to="/arvore">árvore</Link> para começar a alimentar
+        a agenda de revisão.
+      </p>
+    );
+  }
+  return (
+    <>
+      <p className="empty">Nada vencido hoje.</p>
+      <ContinueLink continuar={continuar} />
+    </>
   );
 }
 

@@ -1,6 +1,7 @@
 import type { StreakView } from '@fos/types';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StreakCard } from './StreakCard.tsx';
 
 /**
@@ -89,5 +90,79 @@ describe('marco de streak na home', () => {
     render(<StreakCard streak={{ ...BASE, currentStreak: 7, drilledToday: false }} />);
 
     expect(screen.queryByText(/marco de/i)).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * Imagem do marco (#106). A composição é testada em `imagemDoMarco.test.ts`; aqui, que o botão só
+ * existe no dia do marco e que o clique entrega um PNG para download, sem requisição nenhuma.
+ *
+ * O jsdom não desenha canvas nem cria `blob:`: os dois são trocados por dublês que registram o que
+ * a página pediu.
+ */
+describe('imagem do marco na home', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  function dublesDoNavegador() {
+    const textos: string[] = [];
+    const ctx = {
+      fillRect: vi.fn(),
+      fillText: vi.fn((texto: string) => textos.push(texto)),
+    };
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx as never);
+    vi.spyOn(HTMLCanvasElement.prototype, 'toBlob').mockImplementation((cb, type) => {
+      cb(new Blob(['png'], { type }));
+    });
+    const createObjectURL = vi.fn((blob: Blob) => (blob ? 'blob:fos/imagem' : ''));
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL, revokeObjectURL }));
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    const baixados: { href: string; download: string }[] = [];
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      baixados.push({ href: this.href, download: this.download });
+    });
+    return { textos, createObjectURL, fetchSpy, baixados };
+  }
+
+  it('no dia do marco, o botão baixa um PNG com o streak, sem chamar rede', async () => {
+    const { textos, createObjectURL, fetchSpy, baixados } = dublesDoNavegador();
+    render(<StreakCard streak={{ ...BASE, currentStreak: 30, longestStreak: 30 }} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Baixar imagem' }));
+
+    expect(baixados).toEqual([{ href: 'blob:fos/imagem', download: 'fos-marco-30-dias.png' }]);
+    expect(createObjectURL.mock.calls[0]?.[0].type).toBe('image/png');
+    expect(textos).toContain('30');
+    expect(textos).toContain('FightOssStreak');
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('fora do dia do marco não oferece imagem', () => {
+    render(<StreakCard streak={{ ...BASE, currentStreak: 8, longestStreak: 8 }} />);
+
+    expect(screen.queryByRole('button', { name: /baixar imagem/i })).not.toBeInTheDocument();
+  });
+
+  it('com 7 dias mas sem treino hoje também não oferece', () => {
+    render(<StreakCard streak={{ ...BASE, currentStreak: 7, drilledToday: false }} />);
+
+    expect(screen.queryByRole('button', { name: /baixar imagem/i })).not.toBeInTheDocument();
+  });
+
+  it('sem canvas no navegador, avisa em vez de falhar calado', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    render(<StreakCard streak={{ ...BASE, currentStreak: 7, longestStreak: 7 }} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Baixar imagem' }));
+
+    expect(
+      await screen.findByText('Não foi possível gerar a imagem neste navegador.'),
+    ).toBeInTheDocument();
   });
 });

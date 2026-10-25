@@ -96,3 +96,12 @@ Registro do que cada recaptura mudou e por quê. O procedimento está em
 > stack subiu como projeto separado (`docker compose -p fosprints`), com volume próprio descartado
 > depois. Sessão por `seed-dev-users.mjs` + `mint-dev-login.mjs`, confirmada com a senha — o
 > caminho de `prints-da-landing.md`; o portão nunca foi desligado.
+
+> **A onda 3 (#104, #106) mexeu só em `/hoje`, e por isso recapturou dois arquivos.** O atalho
+> *Continuar* (#104) entrou no topo do cartão "Revise hoje" e aparece em `hoje-desktop` e
+> `hoje-mobile`. Com a agenda semeada, ele aponta para a revisão mais atrasada (M0.4), o primeiro
+> da própria lista. A imagem do marco (#106) não aparece, pelo motivo que já valia para a #101: a
+> semeadura termina em 8 dias seguidos, fora da lista de marcos. `no-*`, `drill-*` e `diario-*`
+> saíram com bytes diferentes e foram **restaurados**, pela régua da #99. O `og.jpg` saiu idêntico.
+> A captura repetiu o caminho da onda 2: stack em projeto separado (`docker compose -p fosprints`),
+> com volume descartado depois, e sessão por `seed-dev-users.mjs` + `mint-dev-login.mjs`.

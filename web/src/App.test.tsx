@@ -5,6 +5,7 @@ import type {
   DemoSession,
   DiaryTimeline,
   DisclaimerStatus,
+  NodeDetail,
   ReviewAgenda,
   StreakHistory,
   StreakView,
@@ -38,6 +39,7 @@ const { apiMock } = vi.hoisted(() => ({
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
     getDiary: vi.fn<() => Promise<DiaryTimeline>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
+    getNode: vi.fn<(code: string) => Promise<NodeDetail>>(),
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
     startDemo: vi.fn<() => Promise<DemoSession>>(),
     getAdminUsers: vi.fn<() => Promise<AdminUserPage>>(),
@@ -396,10 +398,8 @@ describe('botão "Revisar agora" na agenda', () => {
       'href',
       '/revisar',
     );
-    expect(screen.getByRole('link', { name: /quedas seguras/i })).toHaveAttribute(
-      'href',
-      '/no/M0.2',
-    );
+    // `^M0.2`: o item da lista, e não o atalho "Continuar", que aponta para o mesmo nó (#104).
+    expect(screen.getByRole('link', { name: /^M0\.2/ })).toHaveAttribute('href', '/no/M0.2');
   });
 
   it('some em modo demonstração', async () => {
@@ -407,7 +407,87 @@ describe('botão "Revisar agora" na agenda', () => {
     apiMock.getReviewsToday.mockResolvedValue(VENCIDO);
     renderEm('/hoje');
 
-    await screen.findByRole('link', { name: /quedas seguras/i });
+    await screen.findByRole('link', { name: /^M0\.2/ });
     expect(screen.queryByRole('link', { name: /revisar agora/i })).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * "Continuar de onde parei" (#104). A regra é `nextNodeToResume`, testada em `shared/domain`; aqui
+ * vale o que só a tela garante: que o atalho mora na agenda, leva ao nó certo e que "tudo em dia"
+ * não vira link quebrado.
+ */
+describe('atalho "Continuar" na agenda', () => {
+  const ARVORE: TreeView = {
+    modules: [
+      {
+        code: 'M0',
+        title: 'Fundamentos',
+        nodes: [
+          { code: 'M0.1', title: 'Etiqueta de tatame', status: 'COMPLETED', prereqCodes: [] },
+          { code: 'M0.2', title: 'Quedas seguras', status: 'AVAILABLE', prereqCodes: ['M0.1'] },
+          { code: 'M0.3', title: 'Como tocar (tap)', status: 'LOCKED', prereqCodes: ['M0.2'] },
+        ],
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    apiMock.getDisclaimer.mockResolvedValue({
+      accepted: true,
+      currentVersion: '2026-08',
+      acceptedVersion: '2026-08',
+    });
+    // Nunca resolve: o teste só precisa saber para qual nó a tela foi, não desenhá-lo.
+    apiMock.getNode.mockReturnValue(new Promise(() => {}));
+  });
+
+  it('com revisão vencida, aponta para a primeira da agenda, e não para um nó novo', async () => {
+    apiMock.getTree.mockResolvedValue(ARVORE);
+    apiMock.getReviewsToday.mockResolvedValue({
+      today: '2026-08-18',
+      dueCount: 2,
+      due: [
+        { nodeCode: 'M0.1', title: 'Etiqueta de tatame', daysOverdue: 4 },
+        { nodeCode: 'M0.9', title: 'Outro', daysOverdue: 1 },
+      ],
+    });
+    renderEm('/hoje');
+
+    const atalho = await screen.findByRole('link', { name: /continuar: etiqueta de tatame/i });
+    expect(atalho).toHaveAttribute('href', '/no/M0.1');
+  });
+
+  it('sem nada vencido, o clique leva ao próximo nó liberado da árvore', async () => {
+    apiMock.getTree.mockResolvedValue(ARVORE);
+    renderEm('/hoje');
+
+    await userEvent.click(await screen.findByRole('link', { name: /continuar: quedas seguras/i }));
+
+    await waitFor(() => expect(apiMock.getNode).toHaveBeenCalledWith('M0.2'));
+  });
+
+  it('tudo em dia: diz isso, sem atalho nenhum', async () => {
+    apiMock.getTree.mockResolvedValue({
+      modules: [
+        {
+          code: 'M0',
+          nodes: [{ code: 'M0.1', title: 'Etiqueta', status: 'COMPLETED', prereqCodes: [] }],
+        },
+      ],
+    });
+    renderEm('/hoje');
+
+    expect(await screen.findByText(/tudo em dia/i)).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /continuar/i })).not.toBeInTheDocument();
+  });
+
+  it('com a árvore fora do ar, volta ao texto de antes, sem prometer nada', async () => {
+    apiMock.getTree.mockRejectedValue(new Error('fora'));
+    renderEm('/hoje');
+
+    expect(await screen.findByText(/nada vencido hoje/i)).toBeInTheDocument();
+    expect(screen.queryByText(/tudo em dia/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /continuar/i })).not.toBeInTheDocument();
   });
 });

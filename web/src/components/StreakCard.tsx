@@ -1,5 +1,8 @@
 import { streakMilestoneToday } from '@fos/domain';
 import type { StreakHistory, StreakView } from '@fos/types';
+import { useState } from 'react';
+import { baixarImagemDoMarco } from './baixarImagemDoMarco.ts';
+import { comporImagemDoMarco } from './imagemDoMarco.ts';
 import { StreakHeatmap } from './StreakHeatmap.tsx';
 
 /**
@@ -35,6 +38,19 @@ export function StreakCard({
   // isso também não há "já visto" guardado — rever a mesma frase no mesmo dia não incomoda, e no
   // dia seguinte a corrente vale outro número e ela some sozinha.
   const milestone = streakMilestoneToday(streak.currentStreak ?? 0, streak.drilledToday ?? false);
+  const [falhaNaImagem, setFalhaNaImagem] = useState(false);
+
+  // A imagem (#106) é oferecida só no dia do marco, junto da linha dele, e não todo dia: um botão
+  // permanente transformaria cada dia de corrente em troféu a exibir — a gamificação que o
+  // `docs/produto/mvp-web.md` declara como falha. Gerada inteira no navegador.
+  async function baixarImagem(marco: number) {
+    setFalhaNaImagem(false);
+    try {
+      await baixarImagemDoMarco(comporImagemDoMarco(streak.currentStreak ?? 0, marco));
+    } catch {
+      setFalhaNaImagem(true);
+    }
+  }
 
   return (
     <section className="card streak">
@@ -56,7 +72,19 @@ export function StreakCard({
           </p>
           {milestone !== null && (
             <p className="streak__milestone">
-              Marco de {milestone} dias seguidos, completado hoje.
+              <span>Marco de {milestone} dias seguidos, completado hoje.</span>{' '}
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => void baixarImagem(milestone)}
+              >
+                Baixar imagem
+              </button>
+            </p>
+          )}
+          {milestone !== null && falhaNaImagem && (
+            <p className="streak__hint" role="status">
+              Não foi possível gerar a imagem neste navegador.
             </p>
           )}
         </div>
