@@ -38,7 +38,7 @@ export function SignInPage() {
       await api.signInWithPassword(email, senha);
       // Navegação do router, e não `window.location`: a sessão já está no cookie, e recarregar a
       // página inteira só descartaria o app que acabou de carregar.
-      navigate('/hoje', { replace: true });
+      void navigate('/hoje', { replace: true });
     } catch (cause) {
       // A senha estava certa e o e-mail não foi confirmado: é o único caso em que a tela tem uma
       // saída concreta a oferecer, e escondê-la atrás de "não conseguimos entrar" deixaria a

@@ -7,7 +7,7 @@ import {
 } from '@fos/domain';
 import type { StreakHistory, StreakView } from '@fos/types';
 import { useRef } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 
 import { cores, estilos } from '../theme';
 import { Cartao } from './ui';
@@ -83,7 +83,7 @@ export function CartaoStreak({
 }
 
 function Heatmap({ historico }: { historico: StreakHistory }) {
-  const rolagem = useRef<ScrollView>(null);
+  const rolagem = useRef<ScrollViewInstance>(null);
   const { from, to } = historico;
   if (!from || !to) return null;
 

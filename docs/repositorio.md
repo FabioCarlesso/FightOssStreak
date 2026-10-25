@@ -70,7 +70,7 @@ O contexto de um required check do GitHub Actions é o **nome do job**, não o n
 
 ### Workflows que deliberadamente não são portão
 
-Três workflows rodam fora da ruleset. Os dois primeiros devem continuar assim; o terceiro espera
+Quatro workflows rodam fora da ruleset. Os três primeiros devem continuar assim; o último espera
 decisão:
 
 - **`videos`** ([`videos.yml`](../.github/workflows/videos.yml)) verifica semanalmente se os vídeos
@@ -82,6 +82,11 @@ decisão:
   em PR, em push para `main` e semanalmente. Fora da ruleset porque análise de segurança que trava
   merge por falso positivo vira coisa que se aprende a ignorar: o valor está no alerta na aba
   Security, não no portão.
+- **`osv`** ([`osv.yml`](../.github/workflows/osv.yml)) roda o `osv-scanner` sobre o
+  `backend/pom.xml` e o `package-lock.json` em PR, em push para `main` e semanalmente (D71, FOS-10).
+  Fica verde mesmo com achado (`fail-on-vuln: false`): uma CVE sem correção publicada não pode
+  travar o merge de quem não tem como resolvê-la. O resultado vai para a aba Security, como o do
+  `codeql`.
 - **`mobile`** ([`mobile.yml`](../.github/workflows/mobile.yml)) roda lint, typecheck, os testes do
   app e o bundle do Android pelo Metro (`docs/desenvolvimento/mobile.md`). Entrar na ruleset é
   decisão separada da #140. Já roda em todo PR sem filtro de caminho, para que essa decisão seja só

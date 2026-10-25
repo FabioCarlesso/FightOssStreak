@@ -48,7 +48,7 @@ function Confirmacao({ token }: { token: string }) {
       await api.confirmEmail(token, senha);
       // A sessão já veio no cookie da resposta: navegação do router basta, e recarregar a página
       // inteira só descartaria o app que acabou de carregar.
-      navigate('/hoje', { replace: true });
+      void navigate('/hoje', { replace: true });
     } catch (cause) {
       // O `mensagemDeErro` fala do par e-mail/senha, que é o certo na entrada; aqui o endereço
       // não está em jogo — quem chegou tem o link —, então a mensagem fala só da senha.

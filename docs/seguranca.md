@@ -145,7 +145,7 @@ que ela achou e o que já foi corrigido:
 | FOS-07 | Cadastro não confirmado nunca expira, apesar de o e-mail dizer que some | Baixa | Pendente |
 | FOS-08 | Compose publica backend e Postgres em todas as interfaces, sem passar pelo nginx | Baixa | Pendente |
 | FOS-09 | Teto global de demonstrações vivas pode ser esgotado por poucos endereços | Baixa | Pendente |
-| FOS-10 | Dependências desatualizadas (Spring Boot 3.4.1, `react-router`, `vite`) | Baixa | Parcial — backend em Spring Boot 4.1.2; `react-router`, `vite` e o scanner no CI pendentes em [#78](https://github.com/FabioCarlesso/FightOssStreak/issues/78) |
+| FOS-10 | Dependências desatualizadas (Spring Boot 3.4.1, `react-router`, `vite`) | Baixa | Corrigido — [D71](decisoes/D71-dependencias-com-vulnerabilidade-sao-varridas.md) |
 | FOS-11 | Feedback sem freio de volume por conta e fila sem paginação | Baixa | Pendente |
 | FOS-12 | Workflows sem `permissions:` explícito, actions e imagens base sem pinagem, base de geolocalização sem checksum | Informativa | Pendente |
 | FOS-13 | Perfil padrão `dev` quando `SPRING_PROFILES_ACTIVE` falta (ver [`deploy.md`](deploy.md#detalhes-que-não-são-óbvios)) | Informativa | Pendente |
