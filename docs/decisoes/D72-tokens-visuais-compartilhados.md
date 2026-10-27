@@ -41,7 +41,7 @@ próprio `shared/tokens/src/index.ts`. As escolhas que mudam o app:
 |---|---|---|
 | fundo | `#0e0f13` | `bg` `#0f1115` |
 | cartão | `#181a20` | `surface` `#171a21` |
-| borda | `#2a2c33` | `border` `#2a2f3a` (chip e campo passam a `border-control` `#606a7c`, #181) |
+| borda | `#2a2c33` | `border` `#2a2f3a` (chip e campo passam a `border-control` `#687284`, #181) |
 | texto | `#f2f2f2` | `text` `#e8eaf0` |
 | texto fraco | `#9a9ba3` | `muted` `#9aa3b2` |
 | placeholder | `#6b6d75` | `muted` — o cinza antigo não passava AA |

@@ -1,74 +1,9 @@
-:root {
-  /*
-   * Tokens de design (#182). Nomes e valores são o contrato comum ao web e ao mobile (#183):
-   * literal de cor, tamanho de fonte, espaçamento e raio fora daqui é exceção. As únicas cores
-   * puras admitidas fora do :root são #000 e #fff, e cada uso traz comentário.
-   */
-
-  /* Cores */
-  --bg: #0f1115;
-  --surface: #171a21;
-  --surface-2: #1e222b;
-  --border: #2a2f3a;
-  --border-control: #606a7c;
-  --text: #e8eaf0;
-  --muted: #9aa3b2;
-  --accent: #e2703a;
-  --accent-hover: #ef7f47;
-  --accent-soft: rgba(226, 112, 58, 0.15);
-  --on-accent: #150a03;
-  --ok: #4caf7d;
-  --ok-soft: rgba(76, 175, 125, 0.15);
-  --warn: #e46b66;
-  --warn-soft: rgba(228, 107, 102, 0.15);
-  --muted-soft: rgba(154, 163, 178, 0.15);
-  --caution: #f2a65a;
-  --danger: #c0392b;
-  --fundo-campo: #0f1218;
-  --frozen: #6aa9e0;
-  --heat-1: rgba(76, 175, 125, 0.35);
-  --heat-2: rgba(76, 175, 125, 0.65);
-  --belt-branca: #f2f2f2;
-  --belt-preta: #1a1a1a;
-  --belt-azul: #2f5fb3;
-  --belt-roxa: #6b3fa0;
-  --phone-frame: #22262f;
-  --scrim: rgba(15, 17, 21, 0.72);
-  --shadow-faint: rgb(0 0 0 / 15%);
-  --shadow: rgb(0 0 0 / 35%);
-  --shadow-strong: rgb(0 0 0 / 45%);
-  --shadow-heavy: rgb(0 0 0 / 70%);
-
-  /* Tipografia (o clamp() da landing fica fora da escala) */
-  --text-2xs: 0.7rem;
-  --text-xs: 0.8rem;
-  --text-sm: 0.85rem;
-  --text-md: 0.9rem;
-  --text-base: 0.95rem;
-  --text-lg: 1.05rem;
-  --text-xl: 1.35rem;
-  --text-2xl: 1.8rem;
-  --text-3xl: 2.4rem;
-
-  /* Espaçamento */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2.5rem;
-
-  /* Raio */
-  --radius-xs: 2px;
-  --radius-sm: 6px;
-  --radius-control: 8px;
-  --radius-md: 10px;
-  --radius: 12px;
-  --radius-lg: 28px;
-  --radius-pill: 999px;
-
-  color-scheme: dark;
-}
+/*
+ * Os tokens de design (cores, escala tipográfica, espaçamento e raio) vêm de `tokens.css`, gerado
+ * a partir de `shared/tokens` (D72) e importado antes deste arquivo. Literal de cor, tamanho de
+ * fonte, espaçamento ou raio aqui é exceção: as únicas cores puras admitidas são #000 e #fff, e
+ * cada uso traz comentário.
+ */
 
 * {
   box-sizing: border-box;
@@ -110,7 +45,7 @@ a {
 
 button {
   background: var(--accent);
-  color: #fff; /* #fff puro: exceção do contrato de tokens */
+  color: var(--on-accent);
   border: none;
   border-radius: var(--radius-control);
   padding: 0.6rem 1.1rem;
@@ -122,6 +57,24 @@ button {
 button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/*
+ * Foco de teclado (#181). O contorno padrão do navegador some no fundo escuro, então todo
+ * clicável ganha o mesmo anel na cor da marca (5,0:1 no pior fundo, --surface-2). Fica num lugar
+ * só para que componente novo herde em vez de reinventar; regras de foco por componente (campo
+ * que troca a cor da borda, CTA da landing) continuam valendo por especificidade. Opção do drill e
+ * chip escondem o rádio/checkbox, e por isso o anel vai no rótulo que o envolve.
+ */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+.due-list__item:focus-visible,
+.node-row__inner:focus-visible,
+.drill__option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .app {
@@ -771,7 +724,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: 0.55rem 0.7rem;
   cursor: pointer;
@@ -784,7 +737,10 @@ button:disabled {
 }
 
 .drill__option input {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .drill__option span {
@@ -804,7 +760,7 @@ button:disabled {
   margin-top: 0.3rem;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: var(--space-2) 0.6rem;
   font: inherit;
@@ -866,7 +822,7 @@ button:disabled {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: var(--space-2) 0.6rem;
   font: inherit;
@@ -1014,8 +970,10 @@ button:disabled {
   border-color: var(--accent);
 }
 
+/* Contorno, não preenchimento: texto --warn sobre o --accent herdado do `button` dava 1,1:1. */
 button.danger {
-  border-color: var(--warn);
+  background: transparent;
+  border: 1px solid var(--warn);
   color: var(--warn);
 }
 
@@ -1087,7 +1045,7 @@ button.danger {
 .login__email input {
   padding: 0.6rem var(--space-3);
   border-radius: var(--radius-control);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   background: var(--fundo-campo);
   color: inherit;
   font: inherit;
@@ -1687,7 +1645,7 @@ button.landing__button--ghost {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: var(--space-2) 0.6rem;
   font: inherit;
@@ -2684,7 +2642,7 @@ textarea.feedback-form__control {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: 0.45rem 0.55rem;
   font: inherit;
@@ -2796,7 +2754,7 @@ textarea.feedback-form__control {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: var(--space-2) 0.6rem;
   font: inherit;
@@ -2844,7 +2802,7 @@ textarea.feedback-form__control {
  * para o leitor de tela, que é o que um `display: none` levaria junto.
  */
 .chip {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-pill);
   padding: 0.3rem var(--space-3);
   font-size: var(--text-sm);
@@ -2890,7 +2848,7 @@ textarea.feedback-form__control {
 .session-techniques__item select {
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-control);
   padding: var(--space-1) 0.4rem;
   font: inherit;
@@ -2940,7 +2898,7 @@ textarea.feedback-form__control {
 .button-link {
   display: inline-block;
   background: var(--accent);
-  color: #fff; /* #fff puro: exceção do contrato de tokens */
+  color: var(--on-accent);
   border-radius: var(--radius-control);
   padding: 0.55rem 1.1rem;
   font-weight: 600;

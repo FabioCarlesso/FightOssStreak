@@ -21,7 +21,7 @@ export const cores = {
   surface2: '#1e222b',
   border: '#2a2f3a',
   /** Borda de controle (chip, campo, opção): a decorativa não passava 3:1 contra o fundo (#181). */
-  borderControl: '#606a7c',
+  borderControl: '#687284',
   text: '#e8eaf0',
   muted: '#9aa3b2',
   accent: '#e2703a',
