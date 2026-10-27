@@ -9,6 +9,10 @@ Web e app só tinham o tema escuro, e o claro ficou fora das #181 e #183. A #187
   sistema não diz nada, vale o escuro, que continua sendo o tema de referência.
 - **A tela Conta tem um seletor Sistema / Escuro / Claro**, no web e no app, que sobrescreve o
   sistema. Trocar não recarrega nada.
+- **O cabeçalho tem um atalho ☀️/🌙** (o do web e o das abas do app) que troca entre claro e escuro
+  com um clique. É escolha manual, igual a escolher no seletor; voltar a seguir o sistema é na
+  Conta, em *Sistema*. No web, atalho e seletor leem o mesmo estado (`useSyncExternalStore`), então
+  trocar num atualiza o outro na mesma tela.
 - **A escolha fica no aparelho**, não na conta: `localStorage` (`fos.tema`) no web e
   `expo-secure-store` (mesma chave) no app — o armazenamento que o token e o lembrete (#142) já usam,
   sem dependência nova. Nada vai para a API, o banco ou o OpenAPI. Escolher na conta exigiria coluna,
@@ -48,7 +52,10 @@ Web e app só tinham o tema escuro, e o claro ficou fora das #181 e #183. A #187
   (na raiz, acima do login), o `useTema()` (cores, estilos comuns e a escolha) e o `criarEstilos()`,
   que cria o `StyleSheet` de um componente uma vez por tema. `cores` e `estilos` estáticos deixaram de
   ser exportados: import estático congelaria o escuro, e o typecheck agora pega quem esquecer. A
-  `StatusBar` acompanha o tema, e o `app.json` passou a `userInterfaceStyle: automatic`.
+  `StatusBar` acompanha o tema, e o `app.json` passou a `userInterfaceStyle: automatic`. No Android
+  essa chave só vale em app próprio (dev build ou loja) com o **`expo-system-ui`** instalado — sem
+  ele o Android trava o app no claro e *Sistema* deixaria de seguir o aparelho. O Expo Go já traz o
+  módulo, e por isso o defeito não aparece nele; a conferência foi feita numa dev build local.
 
 ### O que não acompanha o tema
 

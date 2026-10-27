@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 
+import { AtalhoDeTema } from '../../../src/components/AtalhoDeTema';
 import { useTema } from '../../../src/state/tema';
 
 /** As quatro abas do MVP mobile. Admin, painel e feedback continuam só no web (#141). */
@@ -16,6 +17,8 @@ export default function AbasLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: cores.cartao },
         headerTintColor: cores.texto,
+        // Troca claro/escuro com um toque, em qualquer aba (D74).
+        headerRight: () => <AtalhoDeTema />,
         tabBarStyle: { backgroundColor: cores.cartao, borderTopColor: cores.borda },
         tabBarActiveTintColor: cores.destaque,
         tabBarInactiveTintColor: cores.textoFraco,

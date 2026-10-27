@@ -33,8 +33,11 @@ mas cor e estilo com cor saem do `useTema()` de `src/state/tema.tsx`, que devolv
 `const useEstilos = criarEstilos((cores) => StyleSheet.create({...}))` no módulo, e o componente
 chama `useEstilos()`: o `StyleSheet` é criado uma vez por tema. Não há `cores` nem `estilos`
 estáticos para importar — congelariam o escuro. O tema segue o modo do aparelho
-(`userInterfaceStyle: automatic` no `app.json`), a tela *Conta* sobrescreve, e a escolha fica no
-`expo-secure-store` (`fos.tema`). Para conferir, alterne o modo escuro do emulador ou use o seletor.
+(`userInterfaceStyle: automatic` no `app.json`), a tela *Conta* e o atalho ☀️/🌙 do cabeçalho
+sobrescrevem, e a escolha fica no `expo-secure-store` (`fos.tema`). Para conferir, alterne o modo
+escuro do emulador ou use o seletor. **Não remova o `expo-system-ui`**: no Android, sem ele o
+`userInterfaceStyle` não vale em dev build nem na loja, e *Sistema* fica preso no claro — o Expo Go
+traz o módulo embutido e esconde o problema.
 
 **Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
 sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo

@@ -212,3 +212,33 @@
     font-size: var(--text-sm);
   }
 }
+
+/*
+ * Atalho de tema no cabeçalho (D74): troca claro/escuro com um clique. É um controle, então a
+ * borda é a de controle, e não herda o fundo laranja do `button` global.
+ */
+.tema-atalho {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-md);
+  line-height: 1;
+}
+
+.tema-atalho:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+/* No toque, o `button` global ganha 44px de altura (base.css); o atalho fica redondo do mesmo tamanho. */
+@media (pointer: coarse) {
+  .tema-atalho {
+    width: 44px;
+    height: 44px;
+  }
+}

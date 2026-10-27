@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
+import { AtalhoDeTema } from './components/AtalhoDeTema.tsx';
 import { AuthGate } from './components/AuthGate.tsx';
 import { DemoAccountBanner } from './components/DemoAccountBanner.tsx';
 import { DemoModeBanner } from './components/DemoModeBanner.tsx';
@@ -146,6 +147,7 @@ function AppChrome() {
           )}
         </nav>
         <div className="app__account">
+          <AtalhoDeTema />
           <Link to="/conta" className="app__account-name">
             {account.displayName}
           </Link>

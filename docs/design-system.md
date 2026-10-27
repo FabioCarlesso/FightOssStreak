@@ -79,7 +79,8 @@ sistema não diz qual modo usa.
 
 - **Como é escolhido.** Por padrão, o tema segue o sistema — `prefers-color-scheme` no web,
   `useColorScheme` no app. Na tela *Conta*, o seletor **Sistema / Escuro / Claro** sobrescreve o
-  sistema. A troca vale na hora, sem recarregar, e a escolha fica **só no aparelho** (`localStorage`
+  sistema, e o atalho ☀️/🌙 do cabeçalho troca entre claro e escuro com um clique (é escolha
+  manual; voltar a seguir o sistema é na Conta). A troca vale na hora, sem recarregar, e a escolha fica **só no aparelho** (`localStorage`
   no web, `expo-secure-store` no app): não é dado de conta e a coleta de uso não a registra.
 - **De onde vêm as cores.** `cores` é o escuro e `coresClaras` traz o que muda no claro, ambos em
   `shared/tokens/src/index.ts`. No web, o `tokens.css` gerado tem os dois (`npm run gen:tokens`), e

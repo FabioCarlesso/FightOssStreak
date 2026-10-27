@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * Tema da interface (D74, #187): segue o sistema por padrão, e a tela Conta deixa escolher
@@ -30,12 +30,15 @@ const ATRIBUTO: Record<PreferenciaDeTema, 'dark' | 'light' | null> = {
   claro: 'light',
 };
 
+/** A escolha quando o `localStorage` não responde: vale até fechar a aba. */
+let semArmazenamento: PreferenciaDeTema = 'sistema';
+
 export function lerPreferenciaDeTema(): PreferenciaDeTema {
   try {
     const salvo = localStorage.getItem(CHAVE_DO_TEMA);
     return salvo === 'escuro' || salvo === 'claro' ? salvo : 'sistema';
   } catch {
-    return 'sistema';
+    return semArmazenamento;
   }
 }
 
@@ -50,6 +53,7 @@ export function aplicarTema(
 }
 
 function gravar(preferencia: PreferenciaDeTema): void {
+  semArmazenamento = preferencia;
   try {
     if (preferencia === 'sistema') localStorage.removeItem(CHAVE_DO_TEMA);
     else localStorage.setItem(CHAVE_DO_TEMA, preferencia);
@@ -58,13 +62,49 @@ function gravar(preferencia: PreferenciaDeTema): void {
   }
 }
 
-/** A preferência atual e o jeito de trocá-la: aplica na hora e guarda no navegador. */
+/*
+ * Quem mostra a escolha são dois lugares ao mesmo tempo — o atalho do cabeçalho e o seletor da
+ * tela Conta —, então o estado é um só, fora dos componentes: trocar num atualiza o outro.
+ */
+const ouvintes = new Set<() => void>();
+
+function assinar(ouvinte: () => void): () => void {
+  ouvintes.add(ouvinte);
+  return () => ouvintes.delete(ouvinte);
+}
+
+/** Aplica na hora, guarda no navegador e avisa quem estiver mostrando a escolha. */
+export function escolherTema(preferencia: PreferenciaDeTema): void {
+  aplicarTema(preferencia);
+  gravar(preferencia);
+  ouvintes.forEach((ouvinte) => ouvinte());
+}
+
+/** A preferência atual e o jeito de trocá-la. */
 export function useTema(): [PreferenciaDeTema, (preferencia: PreferenciaDeTema) => void] {
-  const [preferencia, setPreferencia] = useState(lerPreferenciaDeTema);
-  const escolher = useCallback((nova: PreferenciaDeTema) => {
-    aplicarTema(nova);
-    gravar(nova);
-    setPreferencia(nova);
-  }, []);
-  return [preferencia, escolher];
+  return [useSyncExternalStore(assinar, lerPreferenciaDeTema), escolherTema];
+}
+
+const CONSULTA_CLARO = '(prefers-color-scheme: light)';
+
+function assinarSistema(ouvinte: () => void): () => void {
+  if (typeof window.matchMedia !== 'function') return () => undefined;
+  const consulta = window.matchMedia(CONSULTA_CLARO);
+  consulta.addEventListener('change', ouvinte);
+  return () => consulta.removeEventListener('change', ouvinte);
+}
+
+function sistemaEstaClaro(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia(CONSULTA_CLARO).matches;
+}
+
+/**
+ * O tema que está na tela agora: a escolha, ou o do sistema quando a escolha é Sistema. Sistema
+ * que não diz nada é escuro, como no CSS gerado.
+ */
+export function useTemaEfetivo(): 'escuro' | 'claro' {
+  const [preferencia] = useTema();
+  const claro = useSyncExternalStore(assinarSistema, sistemaEstaClaro);
+  if (preferencia !== 'sistema') return preferencia;
+  return claro ? 'claro' : 'escuro';
 }
