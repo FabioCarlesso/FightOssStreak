@@ -114,3 +114,13 @@ Registro do que cada recaptura mudou e por quê. O procedimento está em
 > depois, e a sessão foi aberta pelo `seed-dev-users.mjs` mais o login com senha. Uma primeira
 > tentativa com a conta do banco local saiu com o heatmap inflado por semeaduras anteriores e foi
 > descartada: semeie sempre numa conta nova.
+
+> **O tema claro (#187, D74) recapturou os onze arquivos.** O atalho ☀️ entrou no cabeçalho de
+> todas as telas, e na árvore o nó bloqueado deixou de ser translúcido e passou a usar texto fraco
+> (`--muted`). Os prints continuam no **tema escuro**, o de referência: o script agora força
+> `prefers-color-scheme: dark` pelo CDP, porque o Chrome headless anuncia `light` e, com o tema
+> claro existindo, o app abriria claro. O caminho foi o mesmo da onda 3: projeto separado
+> (`docker compose -p fosprints`) com volume próprio, descartado depois, e login com senha numa
+> conta recém-semeada. **Armadilha nova:** `docker compose -p fosprints up` sem `--build`
+> reaproveita a imagem que sobrou da recaptura anterior, e a primeira captura saiu sem o atalho.
+> Suba sempre com `--build`.

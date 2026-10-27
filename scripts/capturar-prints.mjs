@@ -526,6 +526,13 @@ async function capturar(cdp, base, telaBase, formato, saida) {
       },
       sessionId,
     );
+    // O print é do tema escuro, o de referência (D74): a moldura da landing é pensada em volta
+    // dele. Sem isto o Chrome headless anuncia `prefers-color-scheme: light` e o app abre claro.
+    await cdp.enviar(
+      'Emulation.setEmulatedMedia',
+      { features: [{ name: 'prefers-color-scheme', value: 'dark' }] },
+      sessionId,
+    );
 
     await cdp.enviar('Page.navigate', { url: `${base}${tela.rota}` }, sessionId);
     await esperarSeletor(cdp, sessionId, tela.esperar);
