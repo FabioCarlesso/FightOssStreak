@@ -179,6 +179,19 @@
   margin: 0;
 }
 
+/* Escolha do tema (D74): os chips do diário (`.chip`, em diario.css), em linha. */
+.tema-escolha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tema-escolha__nota {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
 /* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
 
 @media (max-width: 640px) {

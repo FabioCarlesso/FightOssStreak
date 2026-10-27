@@ -6,13 +6,14 @@ import { Cartao, Carregando, FalhaDaApi, Pilula, Tela } from '../components/ui';
 import { useApi } from '../state/api';
 import { useAoVoltar } from '../state/useAoVoltar';
 import { useAsync } from '../state/useAsync';
-import { cores, estilos } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
 
 /**
  * Árvore do currículo, com o bloqueio já resolvido pelo backend, como no web. O modo demonstração
  * do web não vem para o app: ele existe para inspecionar o currículo no navegador.
  */
 export function TelaArvore() {
+  const { estilos } = useTema();
   const api = useApi();
   const arvore = useAsync(() => api.getTree(), []);
   useAoVoltar(arvore.reload);
@@ -55,6 +56,8 @@ export function TelaArvore() {
 }
 
 function LinhaDoNo({ no }: { no: NodeSummary }) {
+  const { estilos } = useTema();
+  const styles = useEstilos();
   const bloqueado = no.status === 'LOCKED';
   const corpo = (
     <View style={[styles.linha, bloqueado && { opacity: 0.55 }]}>
@@ -96,14 +99,16 @@ function icone(status: NodeSummary['status']): string {
   }
 }
 
-const styles = StyleSheet.create({
-  linha: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 8,
-    borderTopWidth: 1,
-    borderTopColor: cores.borda,
-  },
-  icone: { color: cores.texto, width: 20, textAlign: 'center' },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    linha: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 8,
+      borderTopWidth: 1,
+      borderTopColor: cores.borda,
+    },
+    icone: { color: cores.texto, width: 20, textAlign: 'center' },
+  }),
+);

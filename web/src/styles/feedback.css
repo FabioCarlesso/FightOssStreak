@@ -58,11 +58,6 @@ textarea.feedback-form__control {
   resize: vertical;
 }
 
-.feedback-form__control:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-}
-
 .feedback-form__control::placeholder {
   color: var(--muted);
 }
@@ -118,7 +113,7 @@ textarea.feedback-form__control {
 
 /* O código do nó com a mesma cara que ele tem na árvore e na agenda. */
 .feedback-item__node {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--muted);
   border: 1px solid var(--border);

@@ -2,7 +2,7 @@
   "name": "@fos/tokens",
   "version": "0.1.0",
   "private": true,
-  "description": "Tokens visuais compartilhados entre web e mobile: cores, tipografia, espaçamento e raio (D72).",
+  "description": "Tokens visuais compartilhados entre web e mobile: cores, foco, tipografia, espaçamento e raio; fonte e sombra composta são só do web (D72).",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

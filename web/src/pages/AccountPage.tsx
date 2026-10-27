@@ -1,4 +1,5 @@
 import { DeleteAccount } from '../components/DeleteAccount.tsx';
+import { EscolhaDeTema } from '../components/EscolhaDeTema.tsx';
 import { useAccount } from '../state/account.ts';
 
 /**
@@ -34,6 +35,8 @@ export function AccountPage() {
           <dd>{demo ? 'demonstração pública' : rotuloDoProvedor(account.provider)}</dd>
         </dl>
       </section>
+
+      <EscolhaDeTema />
 
       <section className="card">
         <header className="card__header">

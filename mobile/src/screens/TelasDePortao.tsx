@@ -6,7 +6,7 @@ import { ExcluirConta } from '../components/ExcluirConta';
 import { Botao, Cartao, Tela } from '../components/ui';
 import { useApi } from '../state/api';
 import { useSessao } from '../state/session';
-import { estilos } from '../theme';
+import { useTema } from '../state/tema';
 
 /**
  * As telas que um portão mostra no lugar do app: atualização obrigatória, conta bloqueada e aviso
@@ -15,6 +15,7 @@ import { estilos } from '../theme';
 
 /** O app está abaixo da versão mínima que a API atende (#139). */
 export function TelaAtualizar({ minima }: { minima: string }) {
+  const { estilos } = useTema();
   return (
     <Tela segura>
       <Cartao>
@@ -35,6 +36,7 @@ export function TelaAtualizar({ minima }: { minima: string }) {
  * bloquear não pode virar sequestro de dado pessoal.
  */
 export function TelaBloqueada() {
+  const { estilos } = useTema();
   const { sair, contaExcluida } = useSessao();
   return (
     <Tela segura>
@@ -73,6 +75,7 @@ export function TelaAviso({
   nome?: string;
   onAceito: () => void;
 }) {
+  const { estilos } = useTema();
   const api = useApi();
   const { sair } = useSessao();
   const [aceitando, setAceitando] = useState(false);

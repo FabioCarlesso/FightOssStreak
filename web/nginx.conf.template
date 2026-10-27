@@ -44,6 +44,8 @@ server_tokens off;
 map $uri $cache_control {
     ~^/assets/     "public, max-age=31536000, immutable";
     /index.html    "no-cache";
+    # Sem hash no nome, como o HTML: o script do tema (D74) revalida a cada acesso.
+    /tema.js       "no-cache";
     default        "";
 }
 

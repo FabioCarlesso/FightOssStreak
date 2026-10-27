@@ -18,7 +18,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.55;
   -webkit-text-size-adjust: 100%;
 }
@@ -65,20 +65,25 @@ button:disabled {
 }
 
 /*
- * Foco de teclado (#181). O contorno padrão do navegador some no fundo escuro, então todo
- * clicável ganha o mesmo anel na cor da marca (5,0:1 no pior fundo, --surface-2). Fica num lugar
- * só para que componente novo herde em vez de reinventar; regras de foco por componente (campo
- * que troca a cor da borda, CTA da landing) continuam valendo por especificidade. Opção do drill e
- * chip escondem o rádio/checkbox, e por isso o anel vai no rótulo que o envolve.
+ * Foco de teclado (#181, #186). O contorno padrão do navegador some no fundo escuro, então todo
+ * clicável e todo campo ganham o mesmo anel, em `--focus` (hoje o accent: 5,0:1 no pior fundo,
+ * --surface-2). Fica num lugar só para que componente novo herde em vez de reinventar: não dê
+ * `outline: none` a campo, porque a classe dele vence esta regra por especificidade e o campo
+ * fica sem anel. A exceção é o CTA da landing, que troca a cor do anel de propósito. Opção do
+ * drill e chip escondem o rádio/checkbox (com `opacity: 0`, que apaga também o contorno dele), e
+ * por isso o anel vai no rótulo que o envolve.
  */
 button:focus-visible,
 a:focus-visible,
 summary:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
 [tabindex]:focus-visible,
 .due-list__item:focus-visible,
 .node-row__inner:focus-visible,
 .drill__option:has(input:focus-visible) {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

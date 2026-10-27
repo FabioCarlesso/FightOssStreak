@@ -8,7 +8,7 @@ import { Botao, Cartao, Carregando, Pilula, Tela } from '../components/ui';
 import { useApi } from '../state/api';
 import { useAoVoltar } from '../state/useAoVoltar';
 import { useAsync } from '../state/useAsync';
-import { estilos } from '../theme';
+import { useTema } from '../state/tema';
 
 /**
  * Hoje: streak e, principalmente, o que revisar — a mesma tela inicial do web.
@@ -21,6 +21,7 @@ import { estilos } from '../theme';
  * `nextNodeToResume`, de `shared/domain`, que pega o primeiro vencido e só sem vencido olha a árvore.
  */
 export function TelaHoje() {
+  const { estilos } = useTema();
   const api = useApi();
   const router = useRouter();
   const streak = useAsync(() => api.getStreak(), []);

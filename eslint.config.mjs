@@ -114,6 +114,16 @@ export default tseslint.config(
     },
   },
 
+  // Script clássico servido como está pelo `public/` do web, antes do bundle (D74): sem módulo e
+  // no navegador.
+  {
+    files: ['web/public/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: globals.browser,
+    },
+  },
+
   // O Vite roda no Node, não no navegador.
   {
     files: ['web/vite.config.ts'],

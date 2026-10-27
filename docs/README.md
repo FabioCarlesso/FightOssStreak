@@ -10,6 +10,7 @@ Para instalar e rodar, veja o [README](../README.md). Este arquivo é o índice 
 | Arquivo | O que contém |
 |---|---|
 | [`arquitetura.md`](arquitetura.md) | Stack, estrutura do monorepo, web e landing, e o porquê das escolhas |
+| [`design-system.md`](design-system.md) | Qual token usar em tela nova: superfície, borda, destaque, foco, status e escala. O porquê está na [D72](decisoes/D72-tokens-visuais-compartilhados.md) (tokens) e na [D73](decisoes/D73-css-por-area.md) (CSS por área) |
 | [`regras-de-negocio.md`](regras-de-negocio.md) | Desbloqueio, SRS, diário, streak e freeze, aceite, modo demonstração |
 | [`api.md`](api.md) | Mapa de rotas, erros e CORS |
 | [`autenticacao.md`](autenticacao.md) | Cadastro, login, papéis, bloqueio, exclusão de conta e demonstração pública |
@@ -63,6 +64,7 @@ regra fica no arquivo de referência; o motivo dela fica na decisão, e um apont
 | Uma migration | [`banco-de-dados.md`](banco-de-dados.md) |
 | O que se coleta, guarda ou apaga de alguém | [`privacidade/`](privacidade/README.md) — a promessa está lá por escrito |
 | Camada, pacote, estrutura do monorepo | [`arquitetura.md`](arquitetura.md) |
+| Regra de uso de token visual (qual cor, borda, foco ou tamanho usar) | [`design-system.md`](design-system.md) — o valor do token muda em `shared/tokens`, não lá |
 | Testes, lint, ferramenta de desenvolvimento | [`desenvolvimento/`](desenvolvimento/README.md) |
 | Ruleset, checks obrigatórios, jobs de CI | [`repositorio.md`](repositorio.md) |
 | Aparência de tela que aparece na landing | [`desenvolvimento/prints-da-landing.md`](desenvolvimento/prints-da-landing.md) (refazer o print) |
@@ -81,7 +83,8 @@ acima no mesmo PR. Arquivo que passar de ~200 linhas se divide por assunto.
 |---|---|
 | Corpo de request e response por rota | `backend/openapi.json`, gerado do código, e o Swagger UI |
 | Tipos do cliente | `shared/types/generated/`, gerado do OpenAPI (`npm run gen:types`) |
-| Cores, tipografia, espaçamento e raio | `shared/tokens/src/index.ts`; o `web/src/tokens.css` é gerado dele (`npm run gen:tokens`, D72) |
+| Cores, foco, fontes, tipografia, espaçamento, raio e sombras | `shared/tokens/src/index.ts`; o `web/src/tokens.css` é gerado dele (`npm run gen:tokens`, D72) |
+| Tema escuro e claro: como é escolhido, o que é fixo | [`design-system.md`](design-system.md) (D74) |
 | Lista de nós, quizzes e pré-requisitos | `backend/src/main/resources/curriculum/*.json` |
 | Árvore de arquivos classe a classe | O próprio repositório |
 

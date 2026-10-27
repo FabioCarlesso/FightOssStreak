@@ -12,7 +12,8 @@ import {
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { cores, espaco, estilos, raio, texto } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
+import { espaco, raio, texto } from '../theme';
 
 /** Peças de interface que todas as telas usam: tela rolável, cartão, botão, pílula e estados. */
 
@@ -21,6 +22,7 @@ import { cores, espaco, estilos, raio, texto } from '../theme';
  * navegador e não têm cabeçalho para afastá-las da barra de status.
  */
 export function Tela({ children, segura = false }: { children: ReactNode; segura?: boolean }) {
+  const { cores, estilos } = useTema();
   const recuos = useSafeAreaInsets();
   return (
     <ScrollView
@@ -40,6 +42,7 @@ export function Tela({ children, segura = false }: { children: ReactNode; segura
 }
 
 export function Cartao({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const { estilos } = useTema();
   return <View style={[estilos.cartao, style]}>{children}</View>;
 }
 
@@ -54,6 +57,8 @@ export function Botao({
   desabilitado?: boolean;
   variante?: 'primario' | 'secundario' | 'perigo';
 }) {
+  const { cores } = useTema();
+  const styles = useEstilos();
   return (
     <Pressable
       accessibilityRole="button"
@@ -92,6 +97,8 @@ export function Opcao({
   onPress: () => void;
   dica?: string;
 }) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   return (
     <Pressable
       accessibilityRole="radio"
@@ -111,6 +118,8 @@ export function Opcao({
 }
 
 export function Pilula({ texto, atencao = false }: { texto: string; atencao?: boolean }) {
+  const { cores } = useTema();
+  const styles = useEstilos();
   return (
     <View style={[styles.pilula, atencao && { borderColor: cores.aviso }]}>
       <Text style={[styles.pilulaTexto, atencao && { color: cores.aviso }]}>{texto}</Text>
@@ -119,6 +128,8 @@ export function Pilula({ texto, atencao = false }: { texto: string; atencao?: bo
 }
 
 export function Carregando({ texto = 'Carregando…' }: { texto?: string }) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   return (
     <View style={styles.centro}>
       <ActivityIndicator color={cores.destaque} />
@@ -129,6 +140,7 @@ export function Carregando({ texto = 'Carregando…' }: { texto?: string }) {
 
 /** Falha de rede ou da API, com o caminho de volta. */
 export function FalhaDaApi({ erro, onRetry }: { erro: Error; onRetry: () => void }) {
+  const { estilos } = useTema();
   return (
     <Tela segura>
       <Cartao>
@@ -140,43 +152,45 @@ export function FalhaDaApi({ erro, onRetry }: { erro: Error; onRetry: () => void
   );
 }
 
-const styles = StyleSheet.create({
-  botao: {
-    backgroundColor: cores.destaque,
-    borderRadius: raio.radiusMd,
-    paddingVertical: espaco.space3,
-    paddingHorizontal: espaco.space4,
-    alignItems: 'center',
-  },
-  botaoSecundario: { backgroundColor: 'transparent', borderWidth: 1, borderColor: cores.borda },
-  botaoPerigo: { backgroundColor: cores.perigo },
-  botaoTexto: { color: cores.sobreDestaque, fontSize: texto.textBase, fontWeight: '600' },
-  // Branco puro, exceção permitida fora dos tokens: sobre o vermelho de `perigo` o texto escuro
-  // de `sobreDestaque` não lê, e o branco passa AA.
-  botaoPerigoTexto: { color: '#fff' },
-  opcao: {
-    borderWidth: 1,
-    borderColor: cores.bordaControle,
-    borderRadius: raio.radiusMd,
-    paddingVertical: espaco.space2,
-    paddingHorizontal: espaco.space3,
-  },
-  opcaoSelecionada: { backgroundColor: cores.destaque, borderColor: cores.destaque },
-  opcaoTexto: { color: cores.texto, fontSize: texto.textSm, fontWeight: '600' },
-  pilula: {
-    borderWidth: 1,
-    borderColor: cores.borda,
-    borderRadius: raio.radiusPill,
-    paddingVertical: 2,
-    paddingHorizontal: espaco.space2,
-    alignSelf: 'flex-start',
-  },
-  pilulaTexto: { color: cores.textoFraco, fontSize: texto.textXs },
-  centro: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: espaco.space2,
-    padding: espaco.space5,
-  },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    botao: {
+      backgroundColor: cores.destaque,
+      borderRadius: raio.radiusMd,
+      paddingVertical: espaco.space3,
+      paddingHorizontal: espaco.space4,
+      alignItems: 'center',
+    },
+    botaoSecundario: { backgroundColor: 'transparent', borderWidth: 1, borderColor: cores.borda },
+    botaoPerigo: { backgroundColor: cores.perigo },
+    botaoTexto: { color: cores.sobreDestaque, fontSize: texto.textBase, fontWeight: '600' },
+    // Branco puro, exceção permitida fora dos tokens: sobre o vermelho de `perigo` o texto escuro
+    // de `sobreDestaque` não lê, e o branco passa AA.
+    botaoPerigoTexto: { color: '#fff' },
+    opcao: {
+      borderWidth: 1,
+      borderColor: cores.bordaControle,
+      borderRadius: raio.radiusMd,
+      paddingVertical: espaco.space2,
+      paddingHorizontal: espaco.space3,
+    },
+    opcaoSelecionada: { backgroundColor: cores.destaque, borderColor: cores.destaque },
+    opcaoTexto: { color: cores.texto, fontSize: texto.textSm, fontWeight: '600' },
+    pilula: {
+      borderWidth: 1,
+      borderColor: cores.borda,
+      borderRadius: raio.radiusPill,
+      paddingVertical: 2,
+      paddingHorizontal: espaco.space2,
+      alignSelf: 'flex-start',
+    },
+    pilulaTexto: { color: cores.textoFraco, fontSize: texto.textXs },
+    centro: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: espaco.space2,
+      padding: espaco.space5,
+    },
+  }),
+);

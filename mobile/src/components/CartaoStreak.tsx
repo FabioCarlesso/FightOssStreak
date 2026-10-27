@@ -9,7 +9,8 @@ import type { StreakHistory, StreakView } from '@fos/types';
 import { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 
-import { cores, estilos, raio } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
+import { raio, type Cores } from '../theme';
 import { Cartao } from './ui';
 
 /**
@@ -26,6 +27,8 @@ export function CartaoStreak({
   streak: StreakView;
   historico?: StreakHistory | null;
 }) {
+  const { estilos } = useTema();
+  const styles = useEstilos();
   const ativos = streak.activeDaysLast30 ?? 0;
   const meta = streak.targetDaysLast30 ?? 12;
   const progresso = Math.min(100, Math.round((ativos / meta) * 100));
@@ -83,6 +86,8 @@ export function CartaoStreak({
 }
 
 function Heatmap({ historico }: { historico: StreakHistory }) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   const rolagem = useRef<ScrollViewInstance>(null);
   const { from, to } = historico;
   if (!from || !to) return null;
@@ -108,7 +113,7 @@ function Heatmap({ historico }: { historico: StreakHistory }) {
               {semana.map((celula, linha) => (
                 <View
                   key={celula?.day ?? `vazio-${linha}`}
-                  style={[styles.celula, estiloDaCelula(celula)]}
+                  style={[styles.celula, estiloDaCelula(celula, cores)]}
                 />
               ))}
             </View>
@@ -127,7 +132,7 @@ function rotulo(mapa: { activeDays: number; from: string; to: string }): string 
   );
 }
 
-function estiloDaCelula(celula: HeatmapCell | null) {
+function estiloDaCelula(celula: HeatmapCell | null, cores: Cores) {
   // Dia que ainda não chegou não é dia sem treino: fica invisível. Perdoado vem antes da
   // intensidade porque dia coberto tem `level` 0 e se pintaria de falta (D55).
   if (celula === null) return { backgroundColor: 'transparent' };
@@ -141,16 +146,18 @@ function curto(dia: string): string {
   return `${d}/${mes}`;
 }
 
-const styles = StyleSheet.create({
-  linha: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  chama: { fontSize: 32 },
-  contagemLinha: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
-  contagem: { color: cores.texto, fontSize: 28, fontWeight: '700' },
-  unidade: { color: cores.textoFraco, fontSize: 14 },
-  marco: { color: cores.texto, fontSize: 14, fontWeight: '600', marginTop: 4 },
-  barra: { height: 6, borderRadius: 3, backgroundColor: cores.borda, overflow: 'hidden' },
-  barraCheia: { height: 6, backgroundColor: cores.ok },
-  grade: { flexDirection: 'row', gap: 3 },
-  semana: { gap: 3 },
-  celula: { width: 12, height: 12, borderRadius: raio.radiusXs },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    linha: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    chama: { fontSize: 32 },
+    contagemLinha: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
+    contagem: { color: cores.texto, fontSize: 28, fontWeight: '700' },
+    unidade: { color: cores.textoFraco, fontSize: 14 },
+    marco: { color: cores.texto, fontSize: 14, fontWeight: '600', marginTop: 4 },
+    barra: { height: 6, borderRadius: 3, backgroundColor: cores.borda, overflow: 'hidden' },
+    barraCheia: { height: 6, backgroundColor: cores.ok },
+    grade: { flexDirection: 'row', gap: 3 },
+    semana: { gap: 3 },
+    celula: { width: 12, height: 12, borderRadius: raio.radiusXs },
+  }),
+);

@@ -48,7 +48,7 @@ export type ImagemDoMarco = {
 };
 
 // As cores do tema escuro, lidas de `shared/tokens` (D72): o canvas não enxerga variável CSS, e a
-// imagem sai igual em qualquer tela.
+// imagem sai igual em qualquer tela — e em qualquer tema, porque ela é fixa no escuro (D74).
 const FUNDO = cores.bg;
 const TEXTO = cores.text;
 const APAGADO = cores.muted;

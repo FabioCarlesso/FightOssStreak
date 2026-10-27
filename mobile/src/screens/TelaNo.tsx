@@ -7,7 +7,7 @@ import { Cartao, Carregando, FalhaDaApi, Pilula, Tela } from '../components/ui';
 import { Video } from '../components/Video';
 import { useApi } from '../state/api';
 import { useAsync } from '../state/useAsync';
-import { estilos } from '../theme';
+import { useTema } from '../state/tema';
 
 /** Linha em branco no `concept` vira parágrafo novo, como no web (#58). */
 function paragrafos(conceito: string | undefined): string[] {
@@ -25,6 +25,7 @@ function paragrafos(conceito: string | undefined): string[] {
  * modo demonstração.
  */
 export function TelaNo({ codigo }: { codigo: string }) {
+  const { estilos } = useTema();
   const api = useApi();
   const no = useAsync(() => api.getNode(codigo), [codigo]);
 

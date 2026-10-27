@@ -15,7 +15,7 @@ O MVP mobile cobre o ciclo de retenção, com as mesmas regras e números do web
 | Hoje | Streak, freeze, dias ativos, heatmap, a agenda do SRS e o atalho *Continuar* (#104) |
 | Árvore e Nó | Conceito, pré-requisitos, vídeo pelo player do YouTube com crédito ao canal (D7), quiz, drill avulso e o aviso curto |
 | Diário | As sessões e os drills avulsos do mês; registrar sessão com técnicas da agenda |
-| Conta | Lembrete de revisão (ligar, desligar e horário), sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
+| Conta | Aparência (Sistema / Escuro / Claro, D74), lembrete de revisão (ligar, desligar e horário), sair (revoga o token) e excluir a conta (`DELETE /api/me`, exigência das lojas) |
 
 **Nenhuma regra é reimplementada no app.** Streak, freeze e agenda vêm do backend. A grade do
 heatmap, a prévia do intervalo do drill, a conversão do formulário de sessão, os rótulos e o texto do
@@ -25,8 +25,19 @@ reexporta de lá.
 
 **Nenhuma cor é escolhida no app.** `src/theme.ts` lê cor, tamanho de fonte, espaçamento e raio de
 `@fos/tokens` — a mesma fonte que gera o `:root` do web (D72) — e os expõe com os nomes que as telas
-usam (`cores`, `estilos`, `texto`, `espaco`, `raio`). Tom novo entra em `shared/tokens`, nunca como
-literal numa tela.
+usam. Tom novo entra em `shared/tokens`, nunca como literal numa tela.
+
+**Cor vem do tema em uso** (D74). Medida é estática (`texto`, `espaco`, `raio`, de `src/theme.ts`),
+mas cor e estilo com cor saem do `useTema()` de `src/state/tema.tsx`, que devolve `cores`, os
+`estilos` comuns e a escolha. Estilo próprio de um componente nasce com
+`const useEstilos = criarEstilos((cores) => StyleSheet.create({...}))` no módulo, e o componente
+chama `useEstilos()`: o `StyleSheet` é criado uma vez por tema. Não há `cores` nem `estilos`
+estáticos para importar — congelariam o escuro. O tema segue o modo do aparelho
+(`userInterfaceStyle: automatic` no `app.json`), a tela *Conta* e o atalho ☀️/🌙 do cabeçalho
+sobrescrevem, e a escolha fica no `expo-secure-store` (`fos.tema`). Para conferir, alterne o modo
+escuro do emulador ou use o seletor. **Não remova o `expo-system-ui`**: no Android, sem ele o
+`userInterfaceStyle` não vale em dev build nem na loja, e *Sistema* fica preso no claro — o Expo Go
+traz o módulo embutido e esconde o problema.
 
 **Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
 sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo

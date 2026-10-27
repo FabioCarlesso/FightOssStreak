@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 
 import { ApiError } from '../api/client';
 import { useApi } from '../state/api';
-import { cores, estilos } from '../theme';
+import { useTema } from '../state/tema';
 import { Botao, Opcao } from './ui';
 
 /**
@@ -20,6 +20,7 @@ export function Quiz({
   perguntas: readonly QuizQuestionView[];
   onConcluido: () => void;
 }) {
+  const { cores, estilos } = useTema();
   const api = useApi();
   const [respostas, setRespostas] = useState<Record<number, number>>({});
   const [resultado, setResultado] = useState<QuizResult | null>(null);

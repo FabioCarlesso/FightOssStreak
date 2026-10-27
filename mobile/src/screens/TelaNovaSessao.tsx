@@ -16,7 +16,8 @@ import { Botao, Cartao, Opcao, Tela } from '../components/ui';
 import { useApi } from '../state/api';
 import { useLembretes } from '../state/lembretes';
 import { useAsync } from '../state/useAsync';
-import { cores, espaco, estilos, raio, texto } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
+import { espaco, raio, texto } from '../theme';
 
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -31,6 +32,8 @@ const DATA = /^\d{4}-\d{2}-\d{2}$/;
  * do web: campo vazio vira "não informado", nunca zero.
  */
 export function TelaNovaSessao() {
+  const { estilos } = useTema();
+  const styles = useEstilos();
   const api = useApi();
   const router = useRouter();
   const { aposRegistro } = useLembretes();
@@ -209,6 +212,8 @@ export function TelaNovaSessao() {
 }
 
 function Campo({ rotulo, multiline, ...props }: { rotulo: string } & TextInputProps) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   return (
     <View style={{ gap: 4 }}>
       <Text style={estilos.dica}>{rotulo}</Text>
@@ -223,16 +228,18 @@ function Campo({ rotulo, multiline, ...props }: { rotulo: string } & TextInputPr
   );
 }
 
-const styles = StyleSheet.create({
-  opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  linha: { flexDirection: 'row', gap: 12 },
-  campo: {
-    borderWidth: 1,
-    borderColor: cores.bordaControle,
-    borderRadius: raio.radiusMd,
-    paddingHorizontal: espaco.space3,
-    paddingVertical: 10,
-    color: cores.texto,
-    fontSize: texto.textBase,
-  },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    linha: { flexDirection: 'row', gap: 12 },
+    campo: {
+      borderWidth: 1,
+      borderColor: cores.bordaControle,
+      borderRadius: raio.radiusMd,
+      paddingHorizontal: espaco.space3,
+      paddingVertical: 10,
+      color: cores.texto,
+      fontSize: texto.textBase,
+    },
+  }),
+);

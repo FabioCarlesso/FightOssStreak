@@ -62,8 +62,17 @@
   color: var(--text);
 }
 
+/*
+ * Bloqueado se lê pelo 🔒 e pelo texto fraco — não por opacidade. Com `opacity: 0.5` o título e o
+ * código caíam para 2,6:1 no escuro e 2,1:1 no claro (Lighthouse/axe), e o nó bloqueado é
+ * informação que se lê: o que vem depois e o que falta para chegar lá.
+ */
 .node-row--locked .node-row__inner {
-  opacity: 0.5;
+  color: var(--muted);
+}
+
+.node-row--locked .node-row__code {
+  color: var(--muted);
 }
 
 .node-row--completed .node-row__status {
