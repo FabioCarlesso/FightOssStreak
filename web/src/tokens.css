@@ -60,3 +60,63 @@
   --radius-lg: 28px;
   --radius-pill: 999px;
 }
+
+/* Tema claro pelo sistema, a menos que a pessoa tenha escolhido o escuro na tela Conta. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface-2: #eef0f3;
+    --border: #d6dae1;
+    --border-control: #7a8395;
+    --text: #161a21;
+    --muted: #576071;
+    --accent: #a04516;
+    --accent-hover: #8a3a12;
+    --accent-soft: rgba(160, 69, 22, 0.12);
+    --on-accent: #ffffff;
+    --ok: #1f6e47;
+    --ok-soft: rgba(31, 110, 71, 0.12);
+    --warn: #b02f2b;
+    --warn-soft: rgba(176, 47, 43, 0.12);
+    --muted-soft: rgba(87, 96, 113, 0.12);
+    --caution: #8a5a00;
+    --danger: #a8281b;
+    --fundo-campo: #ffffff;
+    --frozen: #2a6aa8;
+    --heat-1: rgba(31, 110, 71, 0.3);
+    --heat-2: rgba(31, 110, 71, 0.6);
+    --scrim: rgba(22, 26, 33, 0.45);
+  }
+}
+
+/* Tema claro escolhido na tela Conta, com o sistema em qualquer modo. */
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f3;
+  --border: #d6dae1;
+  --border-control: #7a8395;
+  --text: #161a21;
+  --muted: #576071;
+  --accent: #a04516;
+  --accent-hover: #8a3a12;
+  --accent-soft: rgba(160, 69, 22, 0.12);
+  --on-accent: #ffffff;
+  --ok: #1f6e47;
+  --ok-soft: rgba(31, 110, 71, 0.12);
+  --warn: #b02f2b;
+  --warn-soft: rgba(176, 47, 43, 0.12);
+  --muted-soft: rgba(87, 96, 113, 0.12);
+  --caution: #8a5a00;
+  --danger: #a8281b;
+  --fundo-campo: #ffffff;
+  --frozen: #2a6aa8;
+  --heat-1: rgba(31, 110, 71, 0.3);
+  --heat-2: rgba(31, 110, 71, 0.6);
+  --scrim: rgba(22, 26, 33, 0.45);
+}

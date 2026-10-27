@@ -1,10 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 
-import { cores } from '../../../src/theme';
+import { useTema } from '../../../src/state/tema';
 
 /** As quatro abas do MVP mobile. Admin, painel e feedback continuam só no web (#141). */
 export default function AbasLayout() {
+  const { cores } = useTema();
   const icone = (emoji: string) =>
     function Icone() {
       return <Text style={{ fontSize: 18 }}>{emoji}</Text>;

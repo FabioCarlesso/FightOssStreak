@@ -5,7 +5,8 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useApi } from '../state/api';
 import { useLembretes } from '../state/lembretes';
-import { cores, estilos, raio } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
+import { raio } from '../theme';
 import { Botao, Opcao } from './ui';
 
 /**
@@ -21,6 +22,8 @@ export function Drill({
   srs?: SrsView;
   onRegistrado: () => void;
 }) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   const api = useApi();
   const { aposRegistro } = useLembretes();
   const [recall, setRecall] = useState<Recall>('OK');
@@ -89,15 +92,17 @@ export function Drill({
   );
 }
 
-const styles = StyleSheet.create({
-  opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  campo: {
-    borderWidth: 1,
-    borderColor: cores.bordaControle,
-    borderRadius: raio.radiusMd,
-    padding: 10,
-    color: cores.texto,
-    minHeight: 60,
-    textAlignVertical: 'top',
-  },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    campo: {
+      borderWidth: 1,
+      borderColor: cores.bordaControle,
+      borderRadius: raio.radiusMd,
+      padding: 10,
+      color: cores.texto,
+      minHeight: 60,
+      textAlignVertical: 'top',
+    },
+  }),
+);

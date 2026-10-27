@@ -25,4 +25,17 @@ describe('web/src/tokens.css', () => {
     assert.match(css, /--space-6: 2\.5rem;/);
     assert.match(css, /--radius-pill: 999px;/);
   });
+
+  it('escreve o tema claro para o sistema e para a escolha manual (D74)', () => {
+    const css = gerarCss();
+    const [escuro, resto] = css.split('@media (prefers-color-scheme: light)');
+    assert.ok(resto, 'falta o bloco do tema claro pelo sistema');
+    assert.match(escuro, /:root \{\n {2}color-scheme: dark;/);
+    assert.match(resto, /:root:not\(\[data-theme='dark'\]\) \{\n {4}color-scheme: light;/);
+    assert.match(resto, /\n\[data-theme='light'\] \{\n {2}color-scheme: light;/);
+    // Os dois blocos claros trazem o mesmo valor, e nenhum repete o que é fixo por natureza.
+    assert.equal(resto.match(/--bg: #f5f6f8;/g)?.length, 2);
+    assert.equal(resto.match(/--accent: #a04516;/g)?.length, 2);
+    assert.doesNotMatch(resto, /--belt-|--phone-frame|--shadow|--text-xs|--radius/);
+  });
 });
