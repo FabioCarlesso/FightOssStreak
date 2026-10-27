@@ -1,15 +1,72 @@
 :root {
+  /*
+   * Tokens de design (#182). Nomes e valores são o contrato comum ao web e ao mobile (#183):
+   * literal de cor, tamanho de fonte, espaçamento e raio fora daqui é exceção. As únicas cores
+   * puras admitidas fora do :root são #000 e #fff, e cada uso traz comentário.
+   */
+
+  /* Cores */
   --bg: #0f1115;
   --surface: #171a21;
   --surface-2: #1e222b;
   --border: #2a2f3a;
+  --border-control: #606a7c;
   --text: #e8eaf0;
   --muted: #9aa3b2;
   --accent: #e2703a;
+  --accent-hover: #ef7f47;
   --accent-soft: rgba(226, 112, 58, 0.15);
+  --on-accent: #150a03;
   --ok: #4caf7d;
-  --warn: #d9534f;
+  --ok-soft: rgba(76, 175, 125, 0.15);
+  --warn: #e46b66;
+  --warn-soft: rgba(228, 107, 102, 0.15);
+  --muted-soft: rgba(154, 163, 178, 0.15);
+  --caution: #f2a65a;
+  --danger: #c0392b;
+  --fundo-campo: #0f1218;
+  --frozen: #6aa9e0;
+  --heat-1: rgba(76, 175, 125, 0.35);
+  --heat-2: rgba(76, 175, 125, 0.65);
+  --belt-branca: #f2f2f2;
+  --belt-preta: #1a1a1a;
+  --belt-azul: #2f5fb3;
+  --belt-roxa: #6b3fa0;
+  --phone-frame: #22262f;
+  --scrim: rgba(15, 17, 21, 0.72);
+  --shadow-faint: rgb(0 0 0 / 15%);
+  --shadow: rgb(0 0 0 / 35%);
+  --shadow-strong: rgb(0 0 0 / 45%);
+  --shadow-heavy: rgb(0 0 0 / 70%);
+
+  /* Tipografia (o clamp() da landing fica fora da escala) */
+  --text-2xs: 0.7rem;
+  --text-xs: 0.8rem;
+  --text-sm: 0.85rem;
+  --text-md: 0.9rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.05rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.8rem;
+  --text-3xl: 2.4rem;
+
+  /* Espaçamento */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+
+  /* Raio */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-control: 8px;
+  --radius-md: 10px;
   --radius: 12px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
   color-scheme: dark;
 }
 
@@ -53,11 +110,11 @@ a {
 
 button {
   background: var(--accent);
-  color: #fff;
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 0.6rem 1.1rem;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
 }
@@ -70,54 +127,54 @@ button:disabled {
 .app {
   max-width: 860px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: var(--space-5) var(--space-4) 3rem;
 }
 
 .app__header {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-4);
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-5);
 }
 
 .app__brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .app__logo {
-  font-size: 2rem;
+  font-size: var(--text-2xl);
 }
 
 .app__header h1 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: var(--text-xl);
 }
 
 .app__tagline {
   margin: 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .app__nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .app__nav a {
   display: inline-flex;
   align-items: center;
   padding: 0.4rem 0.9rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   text-decoration: none;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .app__nav a.active {
@@ -127,17 +184,17 @@ button:disabled {
 }
 
 .app__footer {
-  margin-top: 2.5rem;
-  padding-top: 1rem;
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .card {
@@ -151,17 +208,17 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .card h2 {
   margin: 0 0 0.4rem;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
 }
 
 .card h3 {
-  margin: 1.2rem 0 0.5rem;
-  font-size: 0.85rem;
+  margin: 1.2rem 0 var(--space-2);
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
@@ -170,43 +227,43 @@ button:disabled {
 .badge {
   background: var(--accent-soft);
   color: var(--accent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.1rem 0.6rem;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .empty,
 .hint {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .error {
   color: var(--warn);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 /* Streak */
 .streak__main {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .streak__flame {
-  font-size: 2.4rem;
+  font-size: var(--text-3xl);
 }
 
 .streak__count {
   margin: 0;
-  font-size: 2rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   line-height: 1.1;
 }
 
 .streak__unit {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   font-weight: 400;
   color: var(--muted);
 }
@@ -215,25 +272,25 @@ button:disabled {
 .streak__record {
   margin: 0.2rem 0 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .streak__milestone {
   margin: 0.4rem 0 0;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
 .streak__freeze {
   margin: 0.4rem 0 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .streak__meta {
-  margin-top: 1rem;
-  font-size: 0.85rem;
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
@@ -244,7 +301,7 @@ button:disabled {
 .streak__bar {
   height: 6px;
   background: var(--surface-2);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
@@ -264,7 +321,7 @@ button:disabled {
  * caixa o cartão inteiro esticaria a home no celular (a mesma guarda do topo deste arquivo).
  */
 .heatmap {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }
 
 .heatmap__scroll {
@@ -281,7 +338,7 @@ button:disabled {
 
 .heatmap__month {
   width: 11px;
-  font-size: 0.65rem;
+  font-size: var(--text-2xs);
   line-height: 1.2;
   color: var(--muted);
   white-space: nowrap;
@@ -296,7 +353,7 @@ button:disabled {
 .heatmap__cell {
   width: 11px;
   height: 11px;
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   background: var(--surface-2);
 }
 
@@ -310,11 +367,11 @@ button:disabled {
 }
 
 .heatmap__cell--1 {
-  background: rgba(76, 175, 125, 0.35);
+  background: var(--heat-1);
 }
 
 .heatmap__cell--2 {
-  background: rgba(76, 175, 125, 0.65);
+  background: var(--heat-2);
 }
 
 .heatmap__cell--3 {
@@ -327,7 +384,7 @@ button:disabled {
  */
 .heatmap__cell--frozen {
   background: var(--surface-2);
-  box-shadow: inset 0 0 0 1.5px #6aa9e0;
+  box-shadow: inset 0 0 0 1.5px var(--frozen);
 }
 
 .heatmap__legend {
@@ -335,9 +392,9 @@ button:disabled {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin: 0.5rem 0 0;
-  font-size: 0.8rem;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -350,7 +407,7 @@ button:disabled {
 /* Agenda */
 .due-list {
   list-style: none;
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -361,10 +418,10 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
   padding: 0.65rem 0.8rem;
   background: var(--surface-2);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   text-decoration: none;
   color: var(--text);
 }
@@ -384,11 +441,11 @@ button:disabled {
   min-width: 3.2rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .pill {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
   white-space: nowrap;
 }
@@ -406,13 +463,13 @@ button:disabled {
 /* Critérios de sucesso do MVP */
 .metric__value {
   margin: 0.2rem 0 0;
-  font-size: 1.8rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .metric__detail {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   font-weight: 400;
   color: var(--muted);
 }
@@ -420,14 +477,14 @@ button:disabled {
 .metric__target {
   margin: 0 0 0.4rem;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 /* Árvore */
 .tree__summary,
 .module__summary {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   margin: 0.2rem 0 0;
 }
 
@@ -444,13 +501,13 @@ button:disabled {
 .module__mastery p {
   margin: 0.3rem 0 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .module__bar {
   height: 6px;
   background: var(--surface-2);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
@@ -475,7 +532,7 @@ button:disabled {
   gap: 0.6rem;
   padding: 0.55rem 0.7rem;
   background: var(--surface-2);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   text-decoration: none;
   color: var(--text);
 }
@@ -507,14 +564,14 @@ button:disabled {
 .node-row__code {
   flex: none;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   min-width: 3.2rem;
 }
 
 .node-row__title {
   flex: 1;
   min-width: 0;
-  font-size: 0.94rem;
+  font-size: var(--text-base);
 }
 
 .node-row__tags {
@@ -527,52 +584,52 @@ button:disabled {
 
 .node-row__hint {
   margin: 0.15rem 0 0 3.6rem;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .tag {
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.05rem 0.5rem;
+  border-radius: var(--radius-pill);
+  padding: 0.05rem var(--space-2);
 }
 
 .belt {
-  font-size: 0.68rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.05em;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.1rem 0.55rem;
   border: 1px solid var(--border);
 }
 
 .belt--branca {
-  background: #f2f2f2;
-  color: #1a1a1a;
+  background: var(--belt-branca);
+  color: var(--belt-preta);
 }
 
 .belt--azul {
-  background: #2f5fb3;
-  color: #fff;
+  background: var(--belt-azul);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
 }
 
 .belt--roxa {
-  background: #6b3fa0;
-  color: #fff;
+  background: var(--belt-roxa);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
 }
 
 /* Nó */
 .node__breadcrumb {
   margin: 0 0 0.4rem;
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .node__title {
-  margin: 0 0 0.5rem;
-  font-size: 1.3rem;
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xl);
 }
 
 .node__code {
@@ -581,26 +638,26 @@ button:disabled {
 
 .node__concept {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--text-lg);
 }
 
 .node__concept + .node__concept {
-  margin-top: 0.75rem;
+  margin-top: var(--space-3);
 }
 
 .node__locked {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);
   padding: 0.6rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-md);
 }
 
 .prereqs {
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .prereqs a {
@@ -615,9 +672,9 @@ button:disabled {
 .video__frame {
   position: relative;
   padding-top: 56.25%;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   overflow: hidden;
-  background: #000;
+  background: #000; /* #000 puro: fundo de vídeo, exceção do contrato */
 }
 
 .video__frame iframe {
@@ -629,22 +686,22 @@ button:disabled {
 }
 
 .video figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.82rem;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 /* Quiz */
 .quiz__question {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
+  border-radius: var(--radius-control);
+  padding: 0.8rem var(--space-4);
   margin: 0 0 0.8rem;
 }
 
 .quiz__question legend {
   font-weight: 600;
-  font-size: 0.94rem;
+  font-size: var(--text-base);
   padding: 0 0.35rem;
 }
 
@@ -653,12 +710,12 @@ button:disabled {
   gap: 0.6rem;
   align-items: flex-start;
   padding: 0.35rem 0;
-  font-size: 0.92rem;
+  font-size: var(--text-md);
   cursor: pointer;
 }
 
 .quiz-result__score {
-  font-size: 1.4rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--ok);
   margin: 0;
@@ -670,7 +727,7 @@ button:disabled {
 
 .quiz-result__list {
   list-style: none;
-  margin: 1rem 0;
+  margin: var(--space-4) 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -679,7 +736,7 @@ button:disabled {
 
 .quiz-result__list li {
   border-left: 3px solid var(--border);
-  padding-left: 0.75rem;
+  padding-left: var(--space-3);
 }
 
 .quiz-result__list li.correct {
@@ -692,13 +749,13 @@ button:disabled {
 
 .quiz-result__prompt {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   font-weight: 600;
 }
 
 .quiz-result__explanation {
   margin: 0.2rem 0 0;
-  font-size: 0.87rem;
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
@@ -706,7 +763,7 @@ button:disabled {
 .drill__options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.5rem;
+  gap: var(--space-2);
   margin-bottom: 0.8rem;
 }
 
@@ -715,10 +772,10 @@ button:disabled {
   flex-direction: column;
   gap: 0.1rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 0.55rem 0.7rem;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .drill__option--on {
@@ -732,13 +789,13 @@ button:disabled {
 
 .drill__option span {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
 }
 
 .drill__note {
   display: block;
   margin-bottom: 0.8rem;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
@@ -748,21 +805,21 @@ button:disabled {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   resize: vertical;
 }
 
 .drill__result {
   margin: 0.7rem 0 0;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--ok);
 }
 
 .safety-notice {
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   color: var(--muted);
   background: var(--surface);
   border: 1px dashed var(--border);
@@ -786,7 +843,7 @@ button:disabled {
 .pinned-note__label {
   display: block;
   margin: 0 0 0.35rem;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -795,13 +852,13 @@ button:disabled {
 
 .pinned-note__text {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   white-space: pre-wrap;
 }
 
 .pinned-note__empty {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
@@ -810,18 +867,18 @@ button:disabled {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   resize: vertical;
 }
 
 .pinned-note__buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 
 /* Botão de texto: anotar é ação secundária ao lado de responder o quiz e registrar o drill. */
@@ -831,7 +888,7 @@ button:disabled {
   padding: 0.35rem 0;
   color: var(--accent);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -857,16 +914,16 @@ button:disabled {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
   margin: 0;
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 /* `pre-wrap`: a anotação foi digitada em textarea, e as quebras de linha são do autor. */
 .drill-history__note {
-  margin: 0.25rem 0 0;
-  font-size: 0.9rem;
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-md);
   white-space: pre-wrap;
 }
 
@@ -876,14 +933,14 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 1rem;
+  padding: var(--space-5) var(--space-4);
 }
 
 .gate__card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: var(--space-5);
   max-width: 460px;
 }
 
@@ -893,26 +950,26 @@ button:disabled {
 
 .gate__card h2 {
   margin-top: 0;
-  font-size: 1.2rem;
+  font-size: var(--text-xl);
 }
 
 .gate__text {
   max-height: 45vh;
   overflow-y: auto;
-  padding-right: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  padding-right: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
 }
 
 .gate__version {
   margin: 0.6rem 0 0;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .gate__error {
   color: var(--warn);
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
 }
 
 /*
@@ -924,13 +981,13 @@ button:disabled {
 .gate__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 .gate__danger {
   margin-top: 1.25rem;
-  padding-top: 1rem;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border);
 }
 
@@ -938,12 +995,12 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }
 
 .login__provider {
   display: block;
-  padding: 0.7rem 1rem;
+  padding: 0.7rem var(--space-4);
   text-align: center;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -963,13 +1020,13 @@ button.danger {
 }
 
 .danger-zone {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 
 .danger-zone__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 /*
@@ -980,7 +1037,7 @@ button.danger {
  */
 .senha__regra {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -989,14 +1046,14 @@ button.danger {
   align-items: center;
   gap: 0.6rem;
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .senha__barra {
   flex: 1;
   height: 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--border);
   overflow: hidden;
 }
@@ -1015,23 +1072,23 @@ button.danger {
 /* Botão que se comporta como link: usado onde a ação é secundária e o espaço, curto. */
 /* Telas de fronteira: alternativas discretas, nunca concorrentes da ação principal. */
 .login__alternativa {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .login__email {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 .login__email input {
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid var(--borda, #2a2f3a);
-  background: var(--fundo-campo, #0f1218);
+  padding: 0.6rem var(--space-3);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--fundo-campo);
   color: inherit;
   font: inherit;
 }
@@ -1050,7 +1107,7 @@ button.danger {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .app__account-name {
@@ -1069,9 +1126,9 @@ button.danger {
 .account {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.35rem 1rem;
+  gap: 0.35rem var(--space-4);
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .account dt {
@@ -1093,8 +1150,8 @@ button.danger {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1109,13 +1166,13 @@ button.danger {
 
 .requests__meta {
   margin: 0.15rem 0 0;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .requests__actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 /*
@@ -1130,8 +1187,8 @@ button.danger {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   padding: 0.65rem 0.9rem;
   background: var(--accent-soft);
   border: 1px solid var(--accent);
@@ -1142,7 +1199,7 @@ button.danger {
   flex: 1;
   min-width: 12rem;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .demo-toggle,
@@ -1151,8 +1208,8 @@ button.danger {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-xs);
   white-space: nowrap;
 }
 
@@ -1179,8 +1236,8 @@ button.danger {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   padding: 0.65rem 0.9rem;
   background: var(--surface);
   border: 1px dashed var(--muted);
@@ -1191,7 +1248,7 @@ button.danger {
   flex: 1;
   min-width: 12rem;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .demo-account button {
@@ -1199,8 +1256,8 @@ button.danger {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border);
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-xs);
   white-space: nowrap;
 }
 
@@ -1223,13 +1280,13 @@ button.danger {
 .landing {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 3rem;
+  padding: var(--space-6) 1.25rem 3rem;
 }
 
 .landing__hero {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: 2.5rem;
+  gap: var(--space-6);
   align-items: center;
   padding-bottom: 3rem;
   border-bottom: 1px solid var(--border);
@@ -1238,10 +1295,10 @@ button.danger {
 .landing__brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   margin: 0 0 1.1rem;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
@@ -1260,25 +1317,25 @@ button.danger {
   margin: 1.1rem 0 0;
   max-width: 48ch;
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
   text-wrap: pretty;
 }
 
 .landing__lead--small {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
 }
 
 .landing__cta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin: 1.6rem 0 0;
 }
 
 /*
  * Texto escuro sobre o accent, e não branco como nos botões do app.
  *
- * Branco sobre #e2703a dá ~3.2:1, que em AA só vale como texto grande — e o CTA de uma landing
+ * Branco sobre o --accent dá ~3.2:1, que em AA só vale como texto grande — e o CTA de uma landing
  * aparece também em corpo normal no rodapé. Escuro sobre o mesmo accent dá ~5.9:1 e passa em
  * qualquer tamanho, sem precisar apagar a cor da marca para um tom lavado.
  */
@@ -1286,11 +1343,11 @@ button.danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
+  padding: 0.8rem var(--space-5);
+  border-radius: var(--radius-md);
   background: var(--accent);
-  color: #150a03;
-  font-size: 1.05rem;
+  color: var(--on-accent);
+  font-size: var(--text-lg);
   font-weight: 700;
   text-decoration: none;
 }
@@ -1314,11 +1371,11 @@ button.landing__button--ghost {
 .landing__erro {
   margin: 0.9rem 0 0;
   color: var(--warn);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .landing__button:hover {
-  background: #ef7f47;
+  background: var(--accent-hover);
 }
 
 .landing__button:focus-visible {
@@ -1340,7 +1397,7 @@ button.landing__button--ghost {
 .landing__note {
   margin: 0.9rem 0 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 /* Moldura de celular: o alvo real de uso do app é o telefone, e o hero mostra isso em vez de
@@ -1348,11 +1405,11 @@ button.landing__button--ghost {
 .landing__phone {
   justify-self: center;
   width: min(268px, 100%);
-  border: 8px solid #22262f;
-  border-radius: 28px;
+  border: 8px solid var(--phone-frame);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #22262f;
-  box-shadow: 0 18px 40px rgb(0 0 0 / 45%);
+  background: var(--phone-frame);
+  box-shadow: 0 18px 40px var(--shadow-strong);
 }
 
 .landing__phone img {
@@ -1377,7 +1434,7 @@ button.landing__button--ghost {
 .landing__section--split {
   display: grid;
   grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 1rem 2.5rem;
+  gap: var(--space-4) var(--space-6);
   align-items: start;
 }
 
@@ -1441,17 +1498,17 @@ button.landing__button--ghost {
   height: 2.4rem;
   margin: 0 0 0.8rem;
   border: 1px solid var(--accent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .landing__step h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xl);
 }
 
 .landing__step p {
@@ -1469,9 +1526,9 @@ button.landing__button--ghost {
   width: 100%;
   height: auto;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 30px rgb(0 0 0 / 35%);
+  box-shadow: 0 12px 30px var(--shadow);
 }
 
 /* O que faz / o que não é */
@@ -1481,7 +1538,7 @@ button.landing__button--ghost {
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .landing__feature {
@@ -1493,18 +1550,18 @@ button.landing__button--ghost {
 
 .landing__feature h3 {
   margin: 0 0 0.35rem;
-  font-size: 1rem;
+  font-size: var(--text-lg);
 }
 
 .landing__feature p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 /* Os limites não são recurso: cartão com fundo os venderia como se fossem. */
 .landing__grid--plain .landing__feature {
-  padding: 0.15rem 0 0.15rem 1rem;
+  padding: 0.15rem 0 0.15rem var(--space-4);
   background: none;
   border: 0;
   border-left: 2px solid var(--border);
@@ -1526,7 +1583,7 @@ button.landing__button--ghost {
   align-items: flex-start;
   gap: 0.65rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: var(--text-base);
 }
 
 .landing__status-mark {
@@ -1545,10 +1602,10 @@ button.landing__button--ghost {
 /* Aviso */
 .landing__warning > p:first-of-type {
   margin: 0.8rem 0 0;
-  padding: 0.9rem 1rem;
+  padding: 0.9rem var(--space-4);
   background: var(--accent-soft);
   border-left: 3px solid var(--accent);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   color: var(--text);
 }
 
@@ -1580,7 +1637,7 @@ button.landing__button--ghost {
   padding-top: 1.8rem;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .landing__footer p {
@@ -1619,7 +1676,7 @@ button.landing__button--ghost {
 
 /* Mesma etiqueta em versalete da anotação fixada: rótulo de campo não disputa com o título. */
 .feedback-form__label {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1631,10 +1688,10 @@ button.landing__button--ghost {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 textarea.feedback-form__control {
@@ -1659,7 +1716,7 @@ textarea.feedback-form__control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .feedback-form__actions .hint,
@@ -1691,29 +1748,29 @@ textarea.feedback-form__control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .feedback-item__category {
   margin: 0;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
 }
 
 /* O código do nó com a mesma cara que ele tem na árvore e na agenda. */
 .feedback-item__node {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.05rem 0.5rem;
+  border-radius: var(--radius-pill);
+  padding: 0.05rem var(--space-2);
 }
 
 .feedback-item__status {
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.05rem 0.55rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1723,29 +1780,29 @@ textarea.feedback-form__control {
 
 /* Um estado, uma cor: aberto pede ação, resolvido é bom, recusado é fim de linha. */
 .feedback-item__status--em-analise {
-  background: rgba(154, 163, 178, 0.15);
+  background: var(--muted-soft);
   color: var(--muted);
 }
 
 .feedback-item__status--resolvido {
-  background: rgba(76, 175, 125, 0.15);
+  background: var(--ok-soft);
   color: var(--ok);
 }
 
 .feedback-item__status--recusado {
-  background: rgba(217, 83, 79, 0.15);
+  background: var(--warn-soft);
   color: var(--warn);
 }
 
 .feedback-item__meta {
   margin: 0.2rem 0 0;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 .feedback-item__message {
-  margin: 0.5rem 0 0;
-  font-size: 0.92rem;
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-md);
   /* O texto veio de textarea: as quebras de linha são de quem escreveu. */
   white-space: pre-wrap;
 }
@@ -1753,7 +1810,7 @@ textarea.feedback-form__control {
 .feedback-item__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
   margin-top: 0.7rem;
 }
 
@@ -1765,8 +1822,8 @@ textarea.feedback-form__control {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
@@ -1790,7 +1847,7 @@ textarea.feedback-form__control {
 /* Recusado realça em vermelho, e não em laranja: o realce concorda com a chip do mesmo estado. */
 .feedback-item__action--atual.danger {
   border-color: var(--warn);
-  background: rgba(217, 83, 79, 0.15);
+  background: var(--warn-soft);
   color: var(--warn);
 }
 
@@ -1815,7 +1872,7 @@ textarea.feedback-form__control {
   grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto;
   align-items: end;
   gap: 0.7rem;
-  margin: 0.9rem 0 1rem;
+  margin: 0.9rem 0 var(--space-4);
 }
 
 .admin-users__filtro--acoes {
@@ -1833,7 +1890,7 @@ textarea.feedback-form__control {
   width: 100%;
   min-width: 54rem;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
 }
 
 .admin-users__tabela th,
@@ -1846,7 +1903,7 @@ textarea.feedback-form__control {
 }
 
 .admin-users__tabela thead th {
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
@@ -1871,9 +1928,9 @@ textarea.feedback-form__control {
 .admin-users__chip {
   display: inline-block;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.05rem 0.55rem;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -1885,7 +1942,7 @@ textarea.feedback-form__control {
 
 .admin-users__chip--bloqueada {
   border-color: var(--warn);
-  background: rgba(217, 83, 79, 0.15);
+  background: var(--warn-soft);
   color: var(--warn);
 }
 
@@ -1901,7 +1958,7 @@ textarea.feedback-form__control {
 
 .admin-users__acoes button {
   padding: 0.3rem 0.65rem;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text);
@@ -1921,7 +1978,7 @@ textarea.feedback-form__control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .admin-users__paginacao {
@@ -1929,7 +1986,7 @@ textarea.feedback-form__control {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin-top: 0.9rem;
 }
 
@@ -1950,8 +2007,8 @@ textarea.feedback-form__control {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 1rem;
-  background: rgba(15, 17, 21, 0.72);
+  padding: var(--space-5) var(--space-4);
+  background: var(--scrim);
 }
 
 .dialogo__card {
@@ -1965,7 +2022,7 @@ textarea.feedback-form__control {
 
 .dialogo__card h3 {
   margin: 0 0 0.6rem;
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
 }
 
 .dialogo__alvo {
@@ -1979,15 +2036,15 @@ textarea.feedback-form__control {
 
 .dialogo__efeito {
   margin: 0 0 0.9rem;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   color: var(--muted);
 }
 
 .dialogo__acoes {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 /* ==========================================================================
@@ -2000,7 +2057,7 @@ textarea.feedback-form__control {
 
 @media (max-width: 640px) {
   .app {
-    padding: 1.1rem 0.85rem 2.5rem;
+    padding: 1.1rem 0.85rem var(--space-6);
   }
 
   .app__header {
@@ -2009,7 +2066,7 @@ textarea.feedback-form__control {
   }
 
   .card {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 
   /* O botão da demonstração divide o cabeçalho com o título; sem quebra ele espremeria os dois. */
@@ -2045,7 +2102,7 @@ textarea.feedback-form__control {
   .node-row__label {
     grid-area: label;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
 
   .node-row__tags {
@@ -2054,7 +2111,7 @@ textarea.feedback-form__control {
 
   /* Alinhado ao padding do card do nó, não mais ao layout de uma linha só. */
   .node-row__hint {
-    margin: 0.25rem 0 0 0.7rem;
+    margin: var(--space-1) 0 0 0.7rem;
   }
 
   /* Duas colunas fixas: com `auto-fit` e base de 150px o grid caía para uma coluna só. */
@@ -2068,7 +2125,7 @@ textarea.feedback-form__control {
   }
 
   .gate {
-    padding: 1rem 0.85rem;
+    padding: var(--space-4) 0.85rem;
   }
 
   .gate__card {
@@ -2081,7 +2138,7 @@ textarea.feedback-form__control {
 
   /* Landing */
   .landing {
-    padding: 1.5rem 0.9rem 2.5rem;
+    padding: var(--space-5) 0.9rem var(--space-6);
   }
 
   .landing__hero,
@@ -2098,7 +2155,7 @@ textarea.feedback-form__control {
     width: 2.1rem;
     height: 2.1rem;
     margin-bottom: 0.6rem;
-    font-size: 0.95rem;
+    font-size: var(--text-base);
   }
 
   .landing__hero {
@@ -2107,7 +2164,7 @@ textarea.feedback-form__control {
   }
 
   .landing__step {
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .landing__phone {
@@ -2146,26 +2203,26 @@ textarea.feedback-form__control {
   /* `align-items: flex-start` continua valendo: opção de três linhas não deve centralizar o radio. */
   .quiz__option {
     min-height: 44px;
-    padding: 0.5rem 0;
+    padding: var(--space-2) 0;
   }
 }
 
 @media (max-width: 380px) {
   .app {
-    padding: 1rem 0.65rem 2.5rem;
+    padding: var(--space-4) 0.65rem var(--space-6);
   }
 
   .app__logo {
-    font-size: 1.6rem;
+    font-size: var(--text-2xl);
   }
 
   .app__header h1 {
-    font-size: 1.15rem;
+    font-size: var(--text-lg);
   }
 
   .app__nav a {
     padding: 0.4rem 0.7rem;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
   }
 
   .card {
@@ -2205,15 +2262,15 @@ textarea.feedback-form__control {
 /* Clipes complementares — "No tatame" (D32) */
 .clips__intro {
   margin: 0 0 0.9rem;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
 .clips {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin: 0;
-  padding: 0 0 0.25rem;
+  padding: 0 0 var(--space-1);
   list-style: none;
   /* Tira rolável em vez de grade que quebra linha: em celular, três cards verticais empilhados
      ocupariam a tela inteira e empurrariam o quiz para fora dela. */
@@ -2241,9 +2298,9 @@ textarea.feedback-form__control {
 
 .clip__frame {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   overflow: hidden;
-  background: #000;
+  background: #000; /* #000 puro: fundo de vídeo, exceção do contrato */
 }
 
 .clip__frame iframe {
@@ -2278,21 +2335,21 @@ textarea.feedback-form__control {
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 1.6rem;
-  color: #fff;
-  text-shadow: 0 1px 6px rgb(0 0 0 / 70%);
-  background: rgb(0 0 0 / 15%);
+  font-size: var(--text-2xl);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
+  text-shadow: 0 1px 6px var(--shadow-heavy);
+  background: var(--shadow-faint);
 }
 
 .clip__play:hover .clip__badge,
 .clip__play:focus-visible .clip__badge {
-  background: rgb(0 0 0 / 35%);
+  background: var(--shadow);
 }
 
 .clip__title,
 .clip__credit {
   margin: 0.4rem 0 0;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   line-height: 1.35;
   color: var(--muted);
 }
@@ -2310,7 +2367,7 @@ textarea.feedback-form__control {
 
 .clip__credit {
   margin-top: 0.2rem;
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
 }
 
 /*
@@ -2328,7 +2385,7 @@ textarea.feedback-form__control {
 
 .painel__periodo {
   padding: 0.3rem 0.7rem;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -2352,9 +2409,9 @@ textarea.feedback-form__control {
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: var(--surface-2);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--muted);
 }
 
@@ -2362,19 +2419,19 @@ textarea.feedback-form__control {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: 0.8rem;
-  margin: 0.5rem 0 1rem;
+  margin: var(--space-2) 0 var(--space-4);
 }
 
 .painel__numero-bloco {
   padding: 0.7rem 0.8rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: var(--surface-2);
 }
 
 .painel__numero-titulo {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
@@ -2382,14 +2439,14 @@ textarea.feedback-form__control {
 
 .painel__numero-valor {
   margin: 0.1rem 0 0;
-  font-size: 1.6rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   line-height: 1.1;
 }
 
 .painel__numero-comparativo {
   margin: 0.15rem 0 0;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -2437,7 +2494,7 @@ textarea.feedback-form__control {
   display: flex;
   gap: 0.9rem;
   margin: 0.3rem 0 0;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -2474,7 +2531,7 @@ textarea.feedback-form__control {
   align-items: center;
   gap: 0.6rem;
   padding: 0.3rem 0;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .painel__degrau {
@@ -2514,12 +2571,12 @@ textarea.feedback-form__control {
 .painel__perfil {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .painel__coluna-titulo {
   margin: 0 0 0.3rem;
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
@@ -2541,11 +2598,11 @@ textarea.feedback-form__control {
 /* --- Saúde do site (#86) ---------------------------------------------------------------- */
 
 .saude__linha-erros {
-  stroke: var(--danger, #c0392b);
+  stroke: var(--danger);
 }
 
 .saude__chave--erros::before {
-  background: var(--danger, #c0392b);
+  background: var(--danger);
 }
 
 /* Três colunas: caminho elástico, qualificador, número à direita. O caminho é `code` porque é
@@ -2556,8 +2613,8 @@ textarea.feedback-form__control {
   display: grid;
   grid-template-columns: minmax(6rem, 1fr) auto auto;
   align-items: baseline;
-  gap: 0.5rem;
-  padding: 0.25rem 0;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -2571,14 +2628,14 @@ textarea.feedback-form__control {
 }
 
 .saude__caminho {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   overflow-wrap: anywhere;
 }
 
 .saude__erro,
 .saude__latencia,
 .saude__perfis {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -2599,7 +2656,7 @@ textarea.feedback-form__control {
  * ========================================================================== */
 
 .diary__cta {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   white-space: nowrap;
 }
 
@@ -2613,9 +2670,9 @@ textarea.feedback-form__control {
 .diary__filter {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
   min-width: 0;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2628,10 +2685,10 @@ textarea.feedback-form__control {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 0.45rem 0.55rem;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   text-transform: none;
   letter-spacing: normal;
   font-weight: 400;
@@ -2639,7 +2696,7 @@ textarea.feedback-form__control {
 
 .diary__count {
   margin: 0.4rem 0 0;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   color: var(--muted);
 }
 
@@ -2662,7 +2719,7 @@ textarea.feedback-form__control {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .diary-session__kind {
@@ -2672,7 +2729,7 @@ textarea.feedback-form__control {
 /* `pre-wrap`: o texto foi digitado em textarea, e as quebras de linha são do autor. */
 .diary-session__text {
   margin: 0.3rem 0 0;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   white-space: pre-wrap;
 }
 
@@ -2682,11 +2739,11 @@ textarea.feedback-form__control {
 
 .diary-technique {
   list-style: none;
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   padding: 0;
   display: grid;
   gap: 0.35rem;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .diary-technique li {
@@ -2699,12 +2756,12 @@ textarea.feedback-form__control {
 .diary-technique__note {
   width: 100%;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   white-space: pre-wrap;
 }
 
 .drill-history__session {
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 /* Formulário da sessão */
@@ -2726,7 +2783,7 @@ textarea.feedback-form__control {
   flex-direction: column;
   gap: 0.3rem;
   min-width: 0;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2740,10 +2797,10 @@ textarea.feedback-form__control {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-md);
   text-transform: none;
   letter-spacing: normal;
   font-weight: 400;
@@ -2767,7 +2824,7 @@ textarea.feedback-form__control {
 }
 
 .session-form__group legend {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2788,9 +2845,9 @@ textarea.feedback-form__control {
  */
 .chip {
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.3rem 0.75rem;
-  font-size: 0.85rem;
+  border-radius: var(--radius-pill);
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-sm);
   cursor: pointer;
   background: var(--surface-2);
 }
@@ -2819,25 +2876,25 @@ textarea.feedback-form__control {
   margin: 0.6rem 0 0;
   padding: 0;
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .session-techniques__item {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  font-size: 0.9rem;
+  gap: var(--space-2);
+  font-size: var(--text-md);
 }
 
 .session-techniques__item select {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.25rem 0.4rem;
+  border-radius: var(--radius-control);
+  padding: var(--space-1) 0.4rem;
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .session-link {
@@ -2855,21 +2912,21 @@ textarea.feedback-form__control {
   padding: 0;
   color: var(--accent);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   text-decoration: underline;
   cursor: pointer;
 }
 
 /* Atalho "Continuar" da home (#104): dentro do card da agenda, acima da lista. */
 .resume {
-  margin: 0 0 0.75rem;
+  margin: 0 0 var(--space-3);
 }
 
 .resume__link {
   display: inline-block;
   padding: 0.45rem 0.8rem;
   border: 1px solid var(--accent);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   color: var(--accent);
   text-decoration: none;
 }
@@ -2883,8 +2940,8 @@ textarea.feedback-form__control {
 .button-link {
   display: inline-block;
   background: var(--accent);
-  color: #fff;
-  border-radius: 8px;
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
+  border-radius: var(--radius-control);
   padding: 0.55rem 1.1rem;
   font-weight: 600;
   text-decoration: none;
