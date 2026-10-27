@@ -5,7 +5,8 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { ApiError, webUrl as webUrlPadrao } from '../api/client';
 import { Botao, Cartao, Tela } from '../components/ui';
 import { useSessao } from '../state/session';
-import { cores, espaco, estilos, raio, texto } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
+import { espaco, raio, texto } from '../theme';
 
 /**
  * Entrada por e-mail e senha (D47, D68). Google e Apple entram depois da #143, quando houver
@@ -16,6 +17,8 @@ import { cores, espaco, estilos, raio, texto } from '../theme';
  * lá. As respostas de erro são as mesmas do login da web — 401 sem dizer se o e-mail existe.
  */
 export function TelaLogin({ webUrl = webUrlPadrao }: { webUrl?: string }) {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   const { entrar } = useSessao();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -111,15 +114,17 @@ function mensagemDe(causa: unknown): string {
   return causa instanceof Error ? causa.message : String(causa);
 }
 
-const styles = StyleSheet.create({
-  cabecalho: { paddingTop: 24, paddingBottom: 8, gap: 4 },
-  campo: {
-    borderWidth: 1,
-    borderColor: cores.bordaControle,
-    borderRadius: raio.radiusMd,
-    paddingHorizontal: espaco.space3,
-    paddingVertical: 10,
-    color: cores.texto,
-    fontSize: texto.textBase,
-  },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    cabecalho: { paddingTop: 24, paddingBottom: 8, gap: 4 },
+    campo: {
+      borderWidth: 1,
+      borderColor: cores.bordaControle,
+      borderRadius: raio.radiusMd,
+      paddingHorizontal: espaco.space3,
+      paddingVertical: 10,
+      color: cores.texto,
+      fontSize: texto.textBase,
+    },
+  }),
+);

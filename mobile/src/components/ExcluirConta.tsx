@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { useApi } from '../state/api';
-import { estilos } from '../theme';
+import { useTema } from '../state/tema';
 import { Botao } from './ui';
 
 /**
@@ -12,6 +12,7 @@ import { Botao } from './ui';
  * streak, progresso e agenda não pode ser do tamanho de um "cancelar".
  */
 export function ExcluirConta({ onExcluida }: { onExcluida: () => void }) {
+  const { estilos } = useTema();
   const api = useApi();
   const [confirmando, setConfirmando] = useState(false);
   const [excluindo, setExcluindo] = useState(false);

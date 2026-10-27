@@ -82,6 +82,7 @@ nesta tabela, no mesmo PR.
 | [D71](D71-dependencias-com-vulnerabilidade-sao-varridas.md) | Dependências com vulnerabilidade conhecida são varridas pelo `osv-scanner` em todo PR, sem travar merge; o Expo sobe para o SDK 58 e o resíduo fica dentro do `@expo/cli` (FOS-10) |
 | [D72](D72-tokens-visuais-compartilhados.md) | Cor, tipografia, espaçamento e raio moram em `shared/tokens`: o app importa, o `:root` do web é gerado (`npm run gen:tokens`), e onde os dois divergiam vale o valor do web (#183) |
 | [D73](D73-css-por-area.md) | O CSS do web é dividido por área em `web/src/styles/`, importado em `main.tsx` numa ordem fixa que é a da cascata; `@media` no arquivo da área; CSS Modules só para tela nova, sem migrar as existentes (#184) |
+| [D74](D74-tema-claro.md) | Tema claro em `shared/tokens`, com contraste conferido por teste nos dois temas: segue o sistema, a tela Conta sobrescreve (Sistema / Escuro / Claro), a escolha fica só no aparelho; web e app juntos, landing também; faixas, moldura, prints, sombras e imagem do marco ficam fixos (#187) |
 
 ## Política de uso de vídeo (D7) — limites
 

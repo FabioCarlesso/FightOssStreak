@@ -2,13 +2,14 @@ import { Stack } from 'expo-router';
 
 import { PortaoAviso, PortaoConta, PortaoVersao } from '../../src/components/Portoes';
 import { LembretesProvider } from '../../src/state/lembretes';
-import { cores } from '../../src/theme';
+import { useTema } from '../../src/state/tema';
 
 /**
  * Tudo que é do app passa pelos portões, na ordem: versão mínima, conta e aviso. O lembrete de
  * revisão (#142) fica depois deles, para só existir com conta e cair junto com ela.
  */
 export default function AppLayout() {
+  const { cores } = useTema();
   return (
     <PortaoVersao>
       <PortaoConta>

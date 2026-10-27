@@ -2,13 +2,14 @@ import type { VideoView } from '@fos/types';
 import { Linking, Text, useWindowDimensions, View } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
-import { estilos } from '../theme';
+import { useTema } from '../state/tema';
 
 /**
  * Vídeo pelo player oficial do YouTube, embutido (D7): nada é baixado nem re-hospedado, e o crédito
  * ao canal fica junto do player. Nó sem vídeo catalogado é estado normal, e a tela diz isso.
  */
 export function Video({ video }: { video?: VideoView }) {
+  const { estilos } = useTema();
   const { width } = useWindowDimensions();
 
   if (!video?.catalogued || !video.youtubeId) {

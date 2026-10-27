@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { cores, espacoPx, foco, nomeCss, px, textoPx, variaveisCss } from './index.ts';
+import {
+  cores,
+  coresClaras,
+  espacoPx,
+  nomeCss,
+  px,
+  textoPx,
+  variaveisCss,
+  variaveisDoTemaClaro,
+} from './index.ts';
 
 describe('tokens', () => {
   it('converte a chave camelCase no nome da variável CSS do contrato', () => {
@@ -22,7 +31,8 @@ describe('tokens', () => {
   it('expõe foco, fonte e sombra no CSS, com o foco valendo o accent (#186)', () => {
     const css = new Map(variaveisCss());
     assert.equal(css.get('--focus'), cores.accent);
-    assert.equal(foco.focus, cores.accent);
+    assert.equal(cores.focus, cores.accent);
+    assert.equal(new Map(variaveisDoTemaClaro()).get('--focus'), coresClaras.accent);
     assert.ok(css.get('--font-sans')?.endsWith('sans-serif'));
     assert.ok(css.get('--font-mono')?.endsWith('monospace'));
     assert.equal(css.get('--shadow-device'), '0 18px 40px var(--shadow-strong)');

@@ -9,6 +9,7 @@ import type { PreferenciasStore } from '../lembretes/preferencias';
 import { ApiProvider } from '../state/api';
 import { LembretesProvider } from '../state/lembretes';
 import { SessionProvider } from '../state/session';
+import { TemaProvider, type PreferenciaDeTema, type PreferenciaDeTemaStore } from '../state/tema';
 import type { TokenStore } from '../state/token';
 
 /**
@@ -104,6 +105,19 @@ export function preferenciasFalsas(inicial: Preferencias = PREFERENCIAS_PADRAO) 
   return Object.assign(store as PreferenciasStore & typeof store, { atual: () => valor });
 }
 
+/** A escolha de tema guardada no aparelho (D74), em memória. */
+export function temaFalso(inicial: PreferenciaDeTema = 'sistema') {
+  let valor = inicial;
+  const store = {
+    get: jest.fn(() => Promise.resolve(valor)),
+    set: jest.fn((nova: PreferenciaDeTema) => {
+      valor = nova;
+      return Promise.resolve();
+    }),
+  };
+  return Object.assign(store as PreferenciaDeTemaStore & typeof store, { atual: () => valor });
+}
+
 export async function comProvedores(
   elemento: ReactElement,
   {
@@ -111,27 +125,31 @@ export async function comProvedores(
     tokens = cofreFalso(),
     notificador = notificadorFalso(),
     preferencias = preferenciasFalsas(),
+    tema = temaFalso(),
     agora,
   }: {
     api?: Api;
     tokens?: TokenStore;
     notificador?: Notificador;
     preferencias?: PreferenciasStore;
+    tema?: PreferenciaDeTemaStore;
     agora?: () => Date;
   } = {},
 ) {
   return await render(
-    <ApiProvider api={api}>
-      <SessionProvider tokens={tokens}>
-        <LembretesProvider
-          notificador={notificador}
-          preferenciasGuardadas={preferencias}
-          agora={agora}
-        >
-          {elemento}
-        </LembretesProvider>
-      </SessionProvider>
-    </ApiProvider>,
+    <TemaProvider guardada={tema}>
+      <ApiProvider api={api}>
+        <SessionProvider tokens={tokens}>
+          <LembretesProvider
+            notificador={notificador}
+            preferenciasGuardadas={preferencias}
+            agora={agora}
+          >
+            {elemento}
+          </LembretesProvider>
+        </SessionProvider>
+      </ApiProvider>
+    </TemaProvider>,
   );
 }
 

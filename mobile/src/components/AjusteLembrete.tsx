@@ -2,7 +2,7 @@ import { Linking, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { formatarHorario, moverHorario } from '../lembretes/plano';
 import { useLembretes } from '../state/lembretes';
-import { cores, estilos } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
 import { Botao } from './ui';
 
 /**
@@ -12,6 +12,8 @@ import { Botao } from './ui';
  * quem negou só reativa nos ajustes do aparelho, porque o sistema não deixa o app perguntar de novo.
  */
 export function AjusteLembrete() {
+  const { cores, estilos } = useTema();
+  const styles = useEstilos();
   const { preferencias, permissao, salvar, pedirPermissao } = useLembretes();
 
   if (!preferencias || !permissao) {
@@ -95,14 +97,16 @@ export function AjusteLembrete() {
   );
 }
 
-const styles = StyleSheet.create({
-  coluna: { gap: 8 },
-  linha: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  horario: {
-    color: cores.texto,
-    fontSize: 16,
-    fontWeight: '600',
-    minWidth: 56,
-    textAlign: 'center',
-  },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    coluna: { gap: 8 },
+    linha: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    horario: {
+      color: cores.texto,
+      fontSize: 16,
+      fontWeight: '600',
+      minWidth: 56,
+      textAlign: 'center',
+    },
+  }),
+);

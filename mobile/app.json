@@ -5,7 +5,7 @@
     "version": "0.1.0",
     "scheme": "fightossstreak",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false
     },

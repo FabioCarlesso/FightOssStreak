@@ -15,7 +15,7 @@ import { Botao, Cartao, Carregando, FalhaDaApi, Pilula, Tela } from '../componen
 import { useApi } from '../state/api';
 import { useAoVoltar } from '../state/useAoVoltar';
 import { useAsync } from '../state/useAsync';
-import { cores, estilos } from '../theme';
+import { criarEstilos, useTema } from '../state/tema';
 
 /**
  * O diário do mês corrente (#114, D56): um bloco por dia, com as sessões e os drills avulsos.
@@ -24,6 +24,7 @@ import { cores, estilos } from '../theme';
  * edição de sessão ficam no web por enquanto.
  */
 export function TelaDiario() {
+  const { estilos } = useTema();
   const api = useApi();
   const router = useRouter();
   const mes = useMemo(() => monthRange(todayIso()), []);
@@ -62,6 +63,8 @@ export function TelaDiario() {
 }
 
 function BlocoDoDia({ dia }: { dia: DiaryDay }) {
+  const { estilos } = useTema();
+  const styles = useEstilos();
   return (
     <Cartao>
       <View style={styles.cabecalho}>
@@ -87,6 +90,8 @@ function BlocoDoDia({ dia }: { dia: DiaryDay }) {
 }
 
 function LinhaDaSessao({ sessao }: { sessao: TrainingSession }) {
+  const { estilos } = useTema();
+  const styles = useEstilos();
   return (
     <View style={styles.sessao}>
       <View style={styles.pilulas}>
@@ -107,8 +112,10 @@ function LinhaDaSessao({ sessao }: { sessao: TrainingSession }) {
   );
 }
 
-const styles = StyleSheet.create({
-  cabecalho: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sessao: { gap: 4, paddingTop: 8, borderTopWidth: 1, borderTopColor: cores.borda },
-  pilulas: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
-});
+const useEstilos = criarEstilos((cores) =>
+  StyleSheet.create({
+    cabecalho: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    sessao: { gap: 4, paddingTop: 8, borderTopWidth: 1, borderTopColor: cores.borda },
+    pilulas: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
+  }),
+);

@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#0f1115" />
+    <!-- O `--bg` de cada tema (shared/tokens, D74): a barra do navegador acompanha o sistema. -->
+    <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
+    <!-- Síncrono e antes do CSS: aplica o tema escolhido na tela Conta sem piscar (D74). -->
+    <script src="/tema.js"></script>
     <title>FightOssStreak</title>
     <meta
       name="description"
