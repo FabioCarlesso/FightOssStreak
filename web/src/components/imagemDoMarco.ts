@@ -10,6 +10,8 @@
  * para compor a imagem (a mesma cautela da D50 com terceiros).
  */
 
+import { cores } from '@fos/tokens';
+
 /** Quadrada, porque é o formato que as redes aceitam sem cortar. */
 export const LADO_DA_IMAGEM = 1080;
 
@@ -45,11 +47,12 @@ export type ImagemDoMarco = {
   nomeDoArquivo: string;
 };
 
-// As cores do tema escuro do web (`styles.css`), fixas: a imagem sai igual em qualquer tela.
-const FUNDO = '#0f1115';
-const TEXTO = '#e8eaf0';
-const APAGADO = '#9aa3b2';
-const DESTAQUE = '#e2703a';
+// As cores do tema escuro, lidas de `shared/tokens` (D72): o canvas não enxerga variável CSS, e a
+// imagem sai igual em qualquer tela.
+const FUNDO = cores.bg;
+const TEXTO = cores.text;
+const APAGADO = cores.muted;
+const DESTAQUE = cores.accent;
 
 export function comporImagemDoMarco(currentStreak: number, marco: number): ImagemDoMarco {
   const lado = LADO_DA_IMAGEM;

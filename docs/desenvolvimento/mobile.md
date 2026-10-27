@@ -23,6 +23,11 @@ aviso vêm de `@fos/domain` — o mesmo código que o web usa. Para isso, o que 
 `web/src/content/` e em `web/src/state/sessionFields.ts` passou para `shared/domain`, e o web
 reexporta de lá.
 
+**Nenhuma cor é escolhida no app.** `src/theme.ts` lê cor, tamanho de fonte, espaçamento e raio de
+`@fos/tokens` — a mesma fonte que gera o `:root` do web (D72) — e os expõe com os nomes que as telas
+usam (`cores`, `estilos`, `texto`, `espaco`, `raio`). Tom novo entra em `shared/tokens`, nunca como
+literal numa tela.
+
 **Ficam fora, por ora:** Google e Apple (depois da #143, que traz credencial e dev build), edição de
 sessão, filtros do diário, anotação fixada e histórico de drills do nó, clipes complementares e o modo
 demonstração. Admin, painel e feedback continuam só no web.

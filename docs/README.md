@@ -81,6 +81,7 @@ acima no mesmo PR. Arquivo que passar de ~200 linhas se divide por assunto.
 |---|---|
 | Corpo de request e response por rota | `backend/openapi.json`, gerado do código, e o Swagger UI |
 | Tipos do cliente | `shared/types/generated/`, gerado do OpenAPI (`npm run gen:types`) |
+| Cores, tipografia, espaçamento e raio | `shared/tokens/src/index.ts`; o `web/src/tokens.css` é gerado dele (`npm run gen:tokens`, D72) |
 | Lista de nós, quizzes e pré-requisitos | `backend/src/main/resources/curriculum/*.json` |
 | Árvore de arquivos classe a classe | O próprio repositório |
 
