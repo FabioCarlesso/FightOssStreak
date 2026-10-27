@@ -7,8 +7,10 @@
   --muted: #9aa3b2;
   --accent: #e2703a;
   --accent-soft: rgba(226, 112, 58, 0.15);
+  --on-accent: #150a03;
+  --border-control: #606a7c;
   --ok: #4caf7d;
-  --warn: #d9534f;
+  --warn: #e46b66;
   --radius: 12px;
   color-scheme: dark;
 }
@@ -53,7 +55,7 @@ a {
 
 button {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border: none;
   border-radius: 8px;
   padding: 0.6rem 1.1rem;
@@ -65,6 +67,24 @@ button {
 button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/*
+ * Foco de teclado (#181). O contorno padrão do navegador some no fundo escuro, então todo
+ * clicável ganha o mesmo anel na cor da marca (5,0:1 no pior fundo, --surface-2). Fica num lugar
+ * só para que componente novo herde em vez de reinventar; regras de foco por componente (campo
+ * que troca a cor da borda, CTA da landing) continuam valendo por especificidade. Opção do drill e
+ * chip escondem o rádio/checkbox, e por isso o anel vai no rótulo que o envolve.
+ */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+.due-list__item:focus-visible,
+.node-row__inner:focus-visible,
+.drill__option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .app {
@@ -714,7 +734,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.55rem 0.7rem;
   cursor: pointer;
@@ -727,7 +747,10 @@ button:disabled {
 }
 
 .drill__option input {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .drill__option span {
@@ -747,7 +770,7 @@ button:disabled {
   margin-top: 0.3rem;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.5rem 0.6rem;
   font: inherit;
@@ -809,7 +832,7 @@ button:disabled {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.5rem 0.6rem;
   font: inherit;
@@ -957,8 +980,10 @@ button:disabled {
   border-color: var(--accent);
 }
 
+/* Contorno, não preenchimento: texto --warn sobre o --accent herdado do `button` dava 1,1:1. */
 button.danger {
-  border-color: var(--warn);
+  background: transparent;
+  border: 1px solid var(--warn);
   color: var(--warn);
 }
 
@@ -1030,7 +1055,7 @@ button.danger {
 .login__email input {
   padding: 0.6rem 0.75rem;
   border-radius: 8px;
-  border: 1px solid var(--borda, #2a2f3a);
+  border: 1px solid var(--border-control);
   background: var(--fundo-campo, #0f1218);
   color: inherit;
   font: inherit;
@@ -1630,7 +1655,7 @@ button.landing__button--ghost {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.5rem 0.6rem;
   font: inherit;
@@ -2627,7 +2652,7 @@ textarea.feedback-form__control {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.45rem 0.55rem;
   font: inherit;
@@ -2739,7 +2764,7 @@ textarea.feedback-form__control {
   width: 100%;
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.5rem 0.6rem;
   font: inherit;
@@ -2787,7 +2812,7 @@ textarea.feedback-form__control {
  * para o leitor de tela, que é o que um `display: none` levaria junto.
  */
 .chip {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 999px;
   padding: 0.3rem 0.75rem;
   font-size: 0.85rem;
@@ -2833,7 +2858,7 @@ textarea.feedback-form__control {
 .session-techniques__item select {
   background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   padding: 0.25rem 0.4rem;
   font: inherit;
@@ -2883,7 +2908,7 @@ textarea.feedback-form__control {
 .button-link {
   display: inline-block;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border-radius: 8px;
   padding: 0.55rem 1.1rem;
   font-weight: 600;
