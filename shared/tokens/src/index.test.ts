@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { espacoPx, nomeCss, px, textoPx, variaveisCss } from './index.ts';
+import { cores, espacoPx, foco, nomeCss, px, textoPx, variaveisCss } from './index.ts';
 
 describe('tokens', () => {
   it('converte a chave camelCase no nome da variável CSS do contrato', () => {
@@ -17,6 +17,16 @@ describe('tokens', () => {
   it('não tem duas variáveis com o mesmo nome', () => {
     const nomes = variaveisCss().map(([nome]) => nome);
     assert.equal(new Set(nomes).size, nomes.length);
+  });
+
+  it('expõe foco, fonte e sombra no CSS, com o foco valendo o accent (#186)', () => {
+    const css = new Map(variaveisCss());
+    assert.equal(css.get('--focus'), cores.accent);
+    assert.equal(foco.focus, cores.accent);
+    assert.ok(css.get('--font-sans')?.endsWith('sans-serif'));
+    assert.ok(css.get('--font-mono')?.endsWith('monospace'));
+    assert.equal(css.get('--shadow-device'), '0 18px 40px var(--shadow-strong)');
+    assert.equal(css.get('--shadow-print'), '0 12px 30px var(--shadow)');
   });
 
   it('converte rem em px inteiro para o app', () => {

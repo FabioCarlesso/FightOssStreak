@@ -6,6 +6,10 @@
  * - O web não importa este arquivo: `npm run gen:tokens` escreve o `:root` de `web/src/tokens.css`
  *   a partir dele, e um teste em `scripts/` reprova o CI se o CSS estiver desatualizado.
  * - O app (`mobile/src/theme.ts`) importa direto: cor como string, tamanho em px.
+ * - `fonte` e as sombras compostas (`sombra`) são só do web: o React Native usa a fonte do sistema
+ *   (não há família a escolher sem empacotar arquivo de fonte) e não entende `box-shadow` em
+ *   string — sombra no app é `shadowColor`/`elevation`, e para isso as cores `shadow*` bastam.
+ *   O `foco` vale para os dois.
  *
  * TypeScript puro, sem `react` nem `react-native`, e só com sintaxe que o Node apaga sozinho (o
  * gerador importa este arquivo sem compilar). Mudar um valor aqui muda os dois apps; tema claro
@@ -50,6 +54,34 @@ export const cores = {
   shadow: 'rgb(0 0 0 / 35%)',
   shadowStrong: 'rgb(0 0 0 / 45%)',
   shadowHeavy: 'rgb(0 0 0 / 70%)',
+} as const;
+
+/**
+ * Cor do anel de foco (#186). Hoje é o `accent`, mas é token próprio para que foco e marca possam
+ * mudar separadamente (o tema claro precisa disso) sem mexer na regra de foco do CSS.
+ */
+export const foco = {
+  focus: cores.accent,
+} as const;
+
+/**
+ * Famílias de fonte, só para o web (#186): o React Native usa a fonte do sistema, que é o que a
+ * pilha `fontSans` pede ao navegador de qualquer forma.
+ */
+export const fonte = {
+  fontSans: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+  fontMono: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+} as const;
+
+/**
+ * Sombras compostas do web (#186): deslocamento e desfoque junto com a cor. `device` é a moldura do
+ * celular da landing, `print` é o print solto. A cor entra como `var()` da cor de sombra, e não
+ * copiada, para acompanhar quem redefinir a cor. Por isso o valor só faz sentido em CSS — o app
+ * não usa `box-shadow` (ver o cabeçalho).
+ */
+export const sombra = {
+  shadowDevice: `0 18px 40px var(--${nomeCss('shadowStrong')})`,
+  shadowPrint: `0 12px 30px var(--${nomeCss('shadow')})`,
 } as const;
 
 /** Escala tipográfica, em rem. O `clamp()` dos títulos da landing fica no CSS. */
@@ -120,6 +152,10 @@ export function variaveisCss(): Array<[nome: string, valor: string]> {
     Object.entries(escala).map(([k, v]): [string, string] => [`--${nomeCss(k)}`, `${v}${unidade}`]);
   return [
     ...Object.entries(cores).map(([k, v]): [string, string] => [`--${nomeCss(k)}`, v]),
+    ...Object.entries({ ...foco, ...fonte, ...sombra }).map(([k, v]): [string, string] => [
+      `--${nomeCss(k)}`,
+      v,
+    ]),
     ...comUnidade(texto, 'rem'),
     ...comUnidade(espaco, 'rem'),
     ...comUnidade(raio, 'px'),
