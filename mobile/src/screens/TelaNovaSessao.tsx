@@ -16,7 +16,7 @@ import { Botao, Cartao, Opcao, Tela } from '../components/ui';
 import { useApi } from '../state/api';
 import { useLembretes } from '../state/lembretes';
 import { useAsync } from '../state/useAsync';
-import { cores, estilos } from '../theme';
+import { cores, espaco, estilos, raio, texto } from '../theme';
 
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -228,11 +228,11 @@ const styles = StyleSheet.create({
   linha: { flexDirection: 'row', gap: 12 },
   campo: {
     borderWidth: 1,
-    borderColor: cores.borda,
-    borderRadius: 10,
-    paddingHorizontal: 12,
+    borderColor: cores.bordaControle,
+    borderRadius: raio.radiusMd,
+    paddingHorizontal: espaco.space3,
     paddingVertical: 10,
     color: cores.texto,
-    fontSize: 15,
+    fontSize: texto.textBase,
   },
 });

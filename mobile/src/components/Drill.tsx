@@ -5,7 +5,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useApi } from '../state/api';
 import { useLembretes } from '../state/lembretes';
-import { cores, estilos } from '../theme';
+import { cores, estilos, raio } from '../theme';
 import { Botao, Opcao } from './ui';
 
 /**
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
   opcoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   campo: {
     borderWidth: 1,
-    borderColor: cores.borda,
-    borderRadius: 10,
+    borderColor: cores.bordaControle,
+    borderRadius: raio.radiusMd,
     padding: 10,
     color: cores.texto,
     minHeight: 60,

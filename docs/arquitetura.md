@@ -50,7 +50,8 @@ fightossstreak/
 ├── shared/                    # compartilhado entre web e mobile
 │   ├── types/                 # GERADO a partir do OpenAPI — não editar à mão
 │   ├── api-client/
-│   └── domain/                # regras puras (streak, SRS, desbloqueio) + texto e rótulos que web e app mostram iguais
+│   ├── domain/                # regras puras (streak, SRS, desbloqueio) + texto e rótulos que web e app mostram iguais
+│   └── tokens/                # cor, tipografia, espaçamento e raio (D72); o :root do web é gerado daqui
 │
 ├── docs/                      # este planejamento
 └── .github/workflows/         # backend.yml e web.yml (portões), mobile, saude, videos, codeql
@@ -64,6 +65,9 @@ fightossstreak/
   em vez de um dump de SQL.
 - **`shared/types` é gerado.** Springdoc-openapi expõe o spec; `openapi-typescript` gera os tipos.
   Colocar num script `npm run gen:types` e rodar no CI para falhar se estiver desatualizado.
+- **`shared/tokens` é a fonte única do visual** (D72). O app importa os valores; o web recebe
+  `web/src/tokens.css`, gerado por `npm run gen:tokens`, e o `npm test` falha se ele estiver
+  desatualizado.
 - **`shared/domain` é o que mais se paga na migração para RN** — cálculo de streak, agendamento de
   SRS e lógica de desbloqueio são idênticos em web e mobile e não dependem de UI.
 - **CI sem filtro de caminho em PR**: `backend.yml` e `web.yml` rodam em todo pull request, porque

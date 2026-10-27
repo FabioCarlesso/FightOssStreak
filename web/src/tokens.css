@@ -1,0 +1,62 @@
+/*
+ * GERADO por scripts/gen-tokens.mjs a partir de shared/tokens (D72) — não edite à mão.
+ * Para mudar um token, edite shared/tokens/src/index.ts e rode `npm run gen:tokens`.
+ */
+:root {
+  color-scheme: dark;
+
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --border: #2a2f3a;
+  --border-control: #606a7c;
+  --text: #e8eaf0;
+  --muted: #9aa3b2;
+  --accent: #e2703a;
+  --accent-hover: #ef7f47;
+  --accent-soft: rgba(226, 112, 58, 0.15);
+  --on-accent: #150a03;
+  --ok: #4caf7d;
+  --ok-soft: rgba(76, 175, 125, 0.15);
+  --warn: #e46b66;
+  --warn-soft: rgba(228, 107, 102, 0.15);
+  --muted-soft: rgba(154, 163, 178, 0.15);
+  --caution: #f2a65a;
+  --danger: #c0392b;
+  --fundo-campo: #0f1218;
+  --frozen: #6aa9e0;
+  --heat-1: rgba(76, 175, 125, 0.35);
+  --heat-2: rgba(76, 175, 125, 0.65);
+  --belt-branca: #f2f2f2;
+  --belt-preta: #1a1a1a;
+  --belt-azul: #2f5fb3;
+  --belt-roxa: #6b3fa0;
+  --phone-frame: #22262f;
+  --scrim: rgba(15, 17, 21, 0.72);
+  --shadow-faint: rgb(0 0 0 / 15%);
+  --shadow: rgb(0 0 0 / 35%);
+  --shadow-strong: rgb(0 0 0 / 45%);
+  --shadow-heavy: rgb(0 0 0 / 70%);
+  --text-2xs: 0.7rem;
+  --text-xs: 0.8rem;
+  --text-sm: 0.85rem;
+  --text-md: 0.9rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.05rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.8rem;
+  --text-3xl: 2.4rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-control: 8px;
+  --radius-md: 10px;
+  --radius: 12px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+}
