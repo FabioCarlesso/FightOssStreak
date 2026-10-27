@@ -7,6 +7,9 @@
     <!-- O `--bg` de cada tema (shared/tokens, D74): a barra do navegador acompanha o sistema. -->
     <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
+    <!-- O app tem tema escuro e claro próprios (D74): extensão de modo escuro (Dark Reader) não
+         repinta por cima, senão as cores dos tokens saem misturadas com as dela. -->
+    <meta name="darkreader-lock" />
     <!-- Síncrono e antes do CSS: aplica o tema escolhido na tela Conta sem piscar (D74). -->
     <script src="/tema.js"></script>
     <title>FightOssStreak</title>

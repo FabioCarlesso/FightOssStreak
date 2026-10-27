@@ -40,7 +40,10 @@ Web e app só tinham o tema escuro, e o claro ficou fora das #181 e #183. A #187
   tira, em Sistema). Para não piscar escuro antes de virar claro, `web/public/tema.js` aplica o
   atributo **antes do bundle**, carregado de forma síncrona no `<head>`. Arquivo à parte, e não
   script inline, porque a CSP é `script-src 'self'` — **a CSP não foi afrouxada**. O nginx serve o
-  arquivo com `no-cache`, como o HTML, porque o nome não tem hash.
+  arquivo com `no-cache`, como o HTML, porque o nome não tem hash. O `index.html` também leva
+  `<meta name="darkreader-lock">`: extensão de modo escuro (Dark Reader) repintava por cima dos
+  tokens e o tema saía misturado — o claro com fundo escuro e botão no laranja do claro. Foi pego
+  na revisão, num Chrome com a extensão ligada.
 - **App.** `theme.ts` mapeia os dois conjuntos (`paletas`); `state/tema.tsx` tem o `TemaProvider`
   (na raiz, acima do login), o `useTema()` (cores, estilos comuns e a escolha) e o `criarEstilos()`,
   que cria o `StyleSheet` de um componente uma vez por tema. `cores` e `estilos` estáticos deixaram de
