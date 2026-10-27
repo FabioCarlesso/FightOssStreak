@@ -105,3 +105,12 @@ Registro do que cada recaptura mudou e por quê. O procedimento está em
 > saíram com bytes diferentes e foram **restaurados**, pela régua da #99. O `og.jpg` saiu idêntico.
 > A captura repetiu o caminho da onda 2: stack em projeto separado (`docker compose -p fosprints`),
 > com volume descartado depois, e sessão por `seed-dev-users.mjs` + `mint-dev-login.mjs`.
+
+> **O design system (#181–#184) mexeu na aparência de todas as telas, e por isso recapturou os onze
+> arquivos.** O que mudou nos prints: a borda dos controles ficou mais clara (`--border-control`), o
+> texto dos botões de destaque ficou escuro (`--on-accent`), e alguns tamanhos de fonte foram
+> arredondados para a escala de tokens. O layout não mudou. A captura usou o mesmo caminho da onda 3:
+> o banco subiu num projeto separado (`docker compose -p fosprints`) com volume próprio, descartado
+> depois, e a sessão foi aberta pelo `seed-dev-users.mjs` mais o login com senha. Uma primeira
+> tentativa com a conta do banco local saiu com o heatmap inflado por semeaduras anteriores e foi
+> descartada: semeie sempre numa conta nova.
