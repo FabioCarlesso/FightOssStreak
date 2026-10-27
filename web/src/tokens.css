@@ -37,6 +37,11 @@
   --shadow: rgb(0 0 0 / 35%);
   --shadow-strong: rgb(0 0 0 / 45%);
   --shadow-heavy: rgb(0 0 0 / 70%);
+  --focus: #e2703a;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow-device: 0 18px 40px var(--shadow-strong);
+  --shadow-print: 0 12px 30px var(--shadow);
   --text-2xs: 0.7rem;
   --text-xs: 0.8rem;
   --text-sm: 0.85rem;

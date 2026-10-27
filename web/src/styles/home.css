@@ -144,7 +144,7 @@
  */
 .heatmap__cell--frozen {
   background: var(--surface-2);
-  box-shadow: inset 0 0 0 1.5px var(--frozen);
+  box-shadow: inset 0 0 0 1.5px var(--frozen); /* exceção do contrato de tokens: contorno, não sombra */
 }
 
 .heatmap__legend {

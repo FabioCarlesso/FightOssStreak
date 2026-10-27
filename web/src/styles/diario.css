@@ -167,13 +167,6 @@
   resize: vertical;
 }
 
-.session-form__field input:focus-visible,
-.session-form__field select:focus-visible,
-.session-form__field textarea:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-}
-
 .session-form__group {
   border: none;
   margin: 0;
@@ -224,7 +217,7 @@
 }
 
 .chip:focus-within {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

@@ -52,7 +52,7 @@ fightossstreak/
 │   ├── types/                 # GERADO a partir do OpenAPI — não editar à mão
 │   ├── api-client/
 │   ├── domain/                # regras puras (streak, SRS, desbloqueio) + texto e rótulos que web e app mostram iguais
-│   └── tokens/                # cor, tipografia, espaçamento e raio (D72); o :root do web é gerado daqui
+│   └── tokens/                # cor, foco, fonte, tipografia, espaçamento, raio e sombra (D72); o :root do web é gerado daqui
 │
 ├── docs/                      # este planejamento
 └── .github/workflows/         # backend.yml e web.yml (portões), mobile, saude, videos, codeql
