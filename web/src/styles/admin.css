@@ -1,0 +1,515 @@
+/*
+ * Administração: usuários, painel de uso e saúde do site
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `feedback.css`.
+ */
+
+.requests {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.requests__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.requests__item:last-child {
+  border-bottom: none;
+}
+
+.requests__name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.requests__meta {
+  margin: 0.15rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.requests__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/*
+ * Usuários (#91)
+ *
+ * A única tabela do app, e ela existe porque é o formato certo aqui: sete campos por conta, lidos
+ * em comparação uns com os outros. O preço é largura, e o preço é pago com rolagem própria — tabela
+ * larga que estoura o `body` arrasta a página inteira para o lado em qualquer celular.
+ */
+.admin-users__filtros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 0.7rem;
+  margin: 0.9rem 0 var(--space-4);
+}
+
+.admin-users__filtro--acoes {
+  display: flex;
+  align-items: end;
+}
+
+.admin-users__rolagem {
+  overflow-x: auto;
+  /* A rolagem é da tabela, não da página: sem isto o `min-width` abaixo empurraria o app inteiro. */
+  max-width: 100%;
+}
+
+.admin-users__tabela {
+  width: 100%;
+  min-width: 54rem;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.admin-users__tabela th,
+.admin-users__tabela td {
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-users__tabela thead th {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-users__tabela tbody tr:last-child th,
+.admin-users__tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-users__nome {
+  font-weight: 600;
+}
+
+.admin-users__voce {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Chip neutra por padrão: o realce é para o que foge do normal — bloqueada, não confirmada, admin. */
+.admin-users__chip {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0.05rem 0.55rem;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.admin-users__chip--admin {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.admin-users__chip--bloqueada {
+  border-color: var(--warn);
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.admin-users__chip--aviso {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.admin-users__acoes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.admin-users__acoes button {
+  padding: 0.3rem 0.65rem;
+  font-size: var(--text-xs);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.admin-users__acoes button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-users__acoes button.danger:hover:not(:disabled) {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.admin-users__falha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-users__paginacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: 0.9rem;
+}
+
+.admin-users__paginacao .hint {
+  margin: 0;
+}
+
+/*
+ * Confirmação de ação sobre uma pessoa
+ *
+ * Sobreposição de tela inteira porque é isso que a confirmação precisa fazer: parar o que estava
+ * acontecendo. O e-mail em destaque é o conteúdo, não decoração — é ele que responde "quem?".
+ */
+.dialogo {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) var(--space-4);
+  background: var(--scrim);
+}
+
+.dialogo__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  max-width: 440px;
+  width: 100%;
+}
+
+.dialogo__card h3 {
+  margin: 0 0 0.6rem;
+  font-size: var(--text-lg);
+}
+
+.dialogo__alvo {
+  margin: 0 0 0.6rem;
+  overflow-wrap: anywhere;
+}
+
+.dialogo__rotulo {
+  color: var(--muted);
+}
+
+.dialogo__efeito {
+  margin: 0 0 0.9rem;
+  font-size: var(--text-md);
+  color: var(--muted);
+}
+
+.dialogo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/*
+ * Painel do administrador (#85)
+ *
+ * Os gráficos são SVG escrito à mão, sem biblioteca: o web tem três dependências de runtime e uma
+ * linha com umas barras não justifica a quarta no bundle de quem abre a landing. O que a folha de
+ * estilo faz aqui é só cor e espaçamento — a geometria é calculada no componente, porque ela
+ * depende do dado.
+ */
+.painel__periodos {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.painel__periodo {
+  padding: 0.3rem 0.7rem;
+  font-size: var(--text-xs);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.painel__periodo:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.painel__periodo--ativo {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Aviso de estado da coleta, não de erro: a agregação atrasada é normal, e a cor precisa dizer
+   "leia antes de concluir" em vez de "algo quebrou". */
+.painel__aviso {
+  margin: 0.6rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.painel__numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.8rem;
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.painel__numero-bloco {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+}
+
+.painel__numero-titulo {
+  margin: 0;
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.painel__numero-valor {
+  margin: 0.1rem 0 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.painel__numero-comparativo {
+  margin: 0.15rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.painel__variacao {
+  font-weight: 600;
+}
+
+.painel__variacao--sobe {
+  color: var(--ok);
+}
+
+.painel__variacao--desce {
+  color: var(--warn);
+}
+
+.painel__grafico {
+  margin-bottom: 0.4rem;
+}
+
+.painel__linha {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.painel__linha polyline {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  /* `non-scaling-stroke`: o viewBox é esticado até a largura do card, e sem isto a espessura do
+     traço seria esticada junto. */
+  vector-effect: non-scaling-stroke;
+}
+
+.painel__linha-visitas {
+  stroke: var(--accent);
+}
+
+.painel__linha-visitantes {
+  stroke: var(--muted);
+}
+
+.painel__legenda {
+  display: flex;
+  gap: 0.9rem;
+  margin: 0.3rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.painel__chave::before {
+  content: '';
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.15rem;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+.painel__chave--visitas::before {
+  background: var(--accent);
+}
+
+.painel__chave--visitantes::before {
+  background: var(--muted);
+}
+
+/* Três colunas fixas: rótulo elástico, barra elástica, número alinhado à direita. A grade é a
+   mesma no funil e nos rankings de propósito — comparar duas listas exige que elas se pareçam. */
+.painel__lista,
+.painel__funil {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.painel__item,
+.painel__degrau {
+  display: grid;
+  grid-template-columns: minmax(6rem, 11rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+  font-size: var(--text-sm);
+}
+
+.painel__degrau {
+  grid-template-columns: minmax(6rem, 13rem) minmax(0, 1fr) auto auto;
+}
+
+.painel__rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.painel__barra {
+  display: block;
+  width: 100%;
+  height: 0.55rem;
+}
+
+.painel__barra rect {
+  fill: var(--accent);
+}
+
+.painel__numero {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  min-width: 3rem;
+}
+
+.painel__conversao {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  text-align: right;
+  min-width: 3.2rem;
+}
+
+.painel__perfil {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-4);
+}
+
+.painel__coluna-titulo {
+  margin: 0 0 0.3rem;
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+/* A grade dos rankings largos não cabe aqui: uma coluna do perfil tem uns 250px, e 11rem de
+   rótulo mais 3rem de número mais os gaps deixariam 8px para a barra — que então desenharia
+   igual para 150 e para 90, dizendo o contrário do que existe para dizer. Rótulo e número mais
+   curtos devolvem a barra à escala. */
+.painel__coluna .painel__item {
+  grid-template-columns: minmax(3rem, 7rem) minmax(2.5rem, 1fr) auto;
+  gap: 0.4rem;
+}
+
+.painel__coluna .painel__numero {
+  min-width: 2rem;
+}
+
+/* --- Saúde do site (#86) ---------------------------------------------------------------- */
+
+.saude__linha-erros {
+  stroke: var(--danger);
+}
+
+.saude__chave--erros::before {
+  background: var(--danger);
+}
+
+/* Três colunas: caminho elástico, qualificador, número à direita. O caminho é `code` porque é
+   literalmente um padrão de rota — e quebra em qualquer ponto, senão `/api/admin/usuarios/{id}`
+   estoura a largura do card no celular. */
+.saude__rota,
+.saude__subida {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.saude__subida {
+  grid-template-columns: auto 1fr;
+}
+
+.saude__rota:last-child,
+.saude__subida:last-child {
+  border-bottom: none;
+}
+
+.saude__caminho {
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.saude__erro,
+.saude__latencia,
+.saude__perfis {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.saude__perfis {
+  text-align: right;
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 380px) {
+  /* Cinco colunas de filtro em 320px dariam ~50px cada: viram duas, e a busca ocupa a linha. */
+  .admin-users__filtros {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .admin-users__filtro--busca,
+  .admin-users__filtro--acoes {
+    grid-column: 1 / -1;
+  }
+}

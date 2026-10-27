@@ -1,0 +1,214 @@
+/*
+ * Moldura do app: cabeçalho, navegação, rodapé, conta no topo e faixas de demonstração
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `base.css`.
+ */
+
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) 3rem;
+}
+
+.app__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.app__logo {
+  font-size: var(--text-2xl);
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.app__tagline {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.app__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.app__nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--muted);
+  font-size: var(--text-md);
+}
+
+.app__nav a.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.app__footer {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.app__account {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--text-sm);
+}
+
+.app__account-name {
+  color: var(--muted);
+  text-decoration: none;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app__account-name:hover {
+  color: var(--text);
+}
+
+/*
+ * Modo demonstração
+ *
+ * Tudo aqui existe para o modo não passar despercebido: a faixa fica no topo de qualquer tela e o
+ * botão da árvore diz em texto se está ligado. Um modo que ignora a progressão e se parece com o
+ * app normal seria pior que não ter modo nenhum.
+ */
+.demo-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: 0.65rem 0.9rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+.demo-banner__text {
+  flex: 1;
+  min-width: 12rem;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.demo-toggle,
+.demo-banner button {
+  flex: none;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.demo-toggle--on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.demo-banner button {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/*
+ * Conta de demonstração (#62)
+ *
+ * Outra faixa, outro aviso: a de cima diz que a árvore está aberta para inspeção e nada é gravado;
+ * esta diz o contrário — grava, sim, numa conta que não é sua e que expira. Cor diferente de
+ * propósito, para as duas não se confundirem quando aparecem juntas.
+ */
+.demo-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: 0.65rem 0.9rem;
+  background: var(--surface);
+  border: 1px dashed var(--muted);
+  border-radius: var(--radius);
+}
+
+.demo-account__text {
+  flex: 1;
+  min-width: 12rem;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.demo-account button {
+  flex: none;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.3rem var(--space-3);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 640px) {
+  .app {
+    padding: 1.1rem 0.85rem var(--space-6);
+  }
+
+  .app__header {
+    gap: 0.85rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .app__nav a {
+    padding: 0.4rem 0.85rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .app {
+    padding: var(--space-4) 0.65rem var(--space-6);
+  }
+
+  .app__logo {
+    font-size: var(--text-2xl);
+  }
+
+  .app__header h1 {
+    font-size: var(--text-lg);
+  }
+
+  .app__nav a {
+    padding: 0.4rem 0.7rem;
+    font-size: var(--text-sm);
+  }
+}

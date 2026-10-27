@@ -34,7 +34,8 @@ fightossstreak/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── api/
-│   │   └── state/
+│   │   ├── state/
+│   │   └── styles/            # CSS por área, importado em main.tsx na ordem da cascata (D73)
 │   ├── package.json
 │   ├── vite.config.ts
 │   ├── Dockerfile             # nginx servindo o dist/ e proxiando /api (D23)
@@ -68,6 +69,10 @@ fightossstreak/
 - **`shared/tokens` é a fonte única do visual** (D72). O app importa os valores; o web recebe
   `web/src/tokens.css`, gerado por `npm run gen:tokens`, e o `npm test` falha se ele estiver
   desatualizado.
+- **O CSS do web é dividido por área** (D73): `web/src/styles/` tem um arquivo por tela ou grupo
+  de telas, com as `@media` de cada área no próprio arquivo, e todos são importados em
+  `web/src/main.tsx`, depois do `tokens.css`, numa ordem que é a da cascata. Área nova entra no fim;
+  CSS Module é opção só para tela nova.
 - **`shared/domain` é o que mais se paga na migração para RN** — cálculo de streak, agendamento de
   SRS e lógica de desbloqueio são idênticos em web e mobile e não dependem de UI.
 - **CI sem filtro de caminho em PR**: `backend.yml` e `web.yml` rodam em todo pull request, porque

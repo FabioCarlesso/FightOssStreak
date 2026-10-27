@@ -1,0 +1,212 @@
+/*
+ * Base: reset, tipografia, botões, foco, card e utilitários
+ *
+ * Os tokens de design (cores, escala tipográfica, espaçamento e raio) vêm de `tokens.css`, gerado
+ * a partir de `shared/tokens` (D72) e importado antes dos arquivos de `styles/`. Literal de cor,
+ * tamanho de fonte, espaçamento ou raio aqui ou em qualquer arquivo da pasta é exceção: as únicas
+ * cores puras admitidas são #000 e #fff, e cada uso traz comentário.
+ *
+ * O CSS do web é dividido por área (D73) e importado em `main.tsx` numa ordem fixa. Este é o
+ * primeiro: tudo o que vem depois pode sobrescrever o que está aqui com a mesma especificidade.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+/*
+ * Guardas contra estouro horizontal. Título de nó e caminho de arquivo em <code> são as fontes
+ * reais de palavra longa aqui; sem isso um único token estica a página inteira no celular.
+ */
+img,
+iframe {
+  max-width: 100%;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p,
+li {
+  overflow-wrap: break-word;
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: var(--radius-control);
+  padding: 0.6rem 1.1rem;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/*
+ * Foco de teclado (#181). O contorno padrão do navegador some no fundo escuro, então todo
+ * clicável ganha o mesmo anel na cor da marca (5,0:1 no pior fundo, --surface-2). Fica num lugar
+ * só para que componente novo herde em vez de reinventar; regras de foco por componente (campo
+ * que troca a cor da borda, CTA da landing) continuam valendo por especificidade. Opção do drill e
+ * chip escondem o rádio/checkbox, e por isso o anel vai no rótulo que o envolve.
+ */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+.due-list__item:focus-visible,
+.node-row__inner:focus-visible,
+.drill__option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card h2 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-lg);
+}
+
+.card h3 {
+  margin: 1.2rem 0 var(--space-2);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.6rem;
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.empty,
+.hint {
+  color: var(--muted);
+  font-size: var(--text-md);
+}
+
+.error {
+  color: var(--warn);
+  font-size: var(--text-md);
+}
+
+/* Contorno, não preenchimento: texto --warn sobre o --accent herdado do `button` dava 1,1:1. */
+button.danger {
+  background: transparent;
+  border: 1px solid var(--warn);
+  color: var(--warn);
+}
+
+/* Botão que se comporta como link: usado onde a ação é secundária e o espaço, curto. */
+.linklike {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Ação destrutiva de baixo risco: desvincular não apaga nada, então não merece peso de botão. */
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--text-xs);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Link com cara de botão: navegar não é ação de formulário, mas é a ação principal do card. */
+.button-link {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--space-4);
+  }
+
+  /* O botão da demonstração divide o cabeçalho com o título; sem quebra ele espremeria os dois. */
+  .card__header {
+    flex-wrap: wrap;
+  }
+}
+
+/*
+ * Alvos de toque.
+ *
+ * Vale por dispositivo, não por largura: o celular em paisagem tem ~740px e continua sendo dedo.
+ * Separado do bloco acima justamente por isso — e assim o desktop com mouse fica intocado.
+ */
+@media (pointer: coarse) {
+  button,
+  .app__nav a,
+  .node-row__inner,
+  .due-list__item,
+  .landing__button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 0.9rem 0.8rem;
+  }
+}

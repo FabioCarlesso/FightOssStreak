@@ -20,7 +20,7 @@ para os dois apps e não pode puxar o React de nenhum deles para a raiz.
   que o contrato da #182 permite (branco e preto puros), com comentário.
 - **O web recebe CSS.** `npm run gen:tokens` (`scripts/gen-tokens.mjs`) escreve
   `web/src/tokens.css`, um `:root` com todas as variáveis e o `color-scheme: dark`, importado antes do
-  `styles.css`. O arquivo é versionado, diz no cabeçalho que é gerado, e
+  CSS das áreas (`web/src/styles/`, D73). O arquivo é versionado, diz no cabeçalho que é gerado, e
   `scripts/gen-tokens.test.mjs` reprova o `npm test` se ele não bater com o pacote — o mesmo freio
   do `gen:types`, sem passo novo no CI. A saída já sai no formato do Prettier, então o arquivo não
   precisa de exceção no `.prettierignore`.
