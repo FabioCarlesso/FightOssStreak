@@ -5,7 +5,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { ApiError, webUrl as webUrlPadrao } from '../api/client';
 import { Botao, Cartao, Tela } from '../components/ui';
 import { useSessao } from '../state/session';
-import { cores, estilos } from '../theme';
+import { cores, espaco, estilos, raio, texto } from '../theme';
 
 /**
  * Entrada por e-mail e senha (D47, D68). Google e Apple entram depois da #143, quando houver
@@ -115,11 +115,11 @@ const styles = StyleSheet.create({
   cabecalho: { paddingTop: 24, paddingBottom: 8, gap: 4 },
   campo: {
     borderWidth: 1,
-    borderColor: cores.borda,
-    borderRadius: 10,
-    paddingHorizontal: 12,
+    borderColor: cores.bordaControle,
+    borderRadius: raio.radiusMd,
+    paddingHorizontal: espaco.space3,
     paddingVertical: 10,
     color: cores.texto,
-    fontSize: 15,
+    fontSize: texto.textBase,
   },
 });

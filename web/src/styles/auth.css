@@ -1,0 +1,196 @@
+/*
+ * Telas de fronteira: portão do disclaimer, login, cadastro com senha e conta
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `revisao.css`.
+ */
+
+/* Portão do disclaimer */
+.gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) var(--space-4);
+}
+
+.gate__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  max-width: 460px;
+}
+
+.gate__card--wide {
+  max-width: 680px;
+}
+
+.gate__card h2 {
+  margin-top: 0;
+  font-size: var(--text-xl);
+}
+
+.gate__text {
+  max-height: 45vh;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
+}
+
+.gate__version {
+  margin: 0.6rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.gate__error {
+  color: var(--warn);
+  font-size: var(--text-sm);
+}
+
+/*
+ * Login, fila de acesso e conta (#24)
+ *
+ * Tudo reaproveita o card do portão: são telas de fronteira, não do app — quem as vê ainda não
+ * entrou. Um visual próprio aqui só faria a fronteira parecer o produto.
+ */
+.gate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.gate__danger {
+  margin-top: 1.25rem;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.login__providers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: var(--space-4);
+}
+
+.login__provider {
+  display: block;
+  padding: 0.7rem var(--space-4);
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login__provider:hover {
+  border-color: var(--accent);
+}
+
+.danger-zone {
+  margin-top: var(--space-2);
+}
+
+.danger-zone__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/*
+ * Cadastro com senha (#82): a regra dita antes do erro, e a força como informação.
+ *
+ * A barra NÃO reprova composição — só o mínimo de comprimento reprova, e quem reprova é o servidor.
+ * Ela existe para dar retorno enquanto se digita, não para virar um segundo portão.
+ */
+.senha__regra {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.senha__forca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.senha__barra {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.senha__barra > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 120ms linear;
+}
+
+.senha__forca--1 .senha__barra > span {
+  background: var(--warn);
+}
+/* Telas de fronteira: alternativas discretas, nunca concorrentes da ação principal. */
+.login__alternativa {
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: var(--text-md);
+}
+
+.login__email {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.login__email input {
+  padding: 0.6rem var(--space-3);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-control);
+  background: var(--fundo-campo);
+  color: inherit;
+  font: inherit;
+}
+
+.account {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem var(--space-4);
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+.account dt {
+  color: var(--muted);
+}
+
+.account dd {
+  margin: 0;
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 640px) {
+  .gate {
+    padding: var(--space-4) 0.85rem;
+  }
+
+  .gate__card {
+    padding: 1.15rem;
+  }
+
+  .gate__text {
+    max-height: 52vh;
+  }
+}

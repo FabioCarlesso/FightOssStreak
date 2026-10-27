@@ -2,7 +2,7 @@
 #
 #   docker build -f web/Dockerfile .
 #
-# @fos/domain, @fos/api-client e @fos/types exportam TypeScript direto de src/ (não têm
+# @fos/domain, @fos/tokens, @fos/api-client e @fos/types exportam TypeScript direto de src/ (não têm
 # dist/), então o Vite compila o código dos workspaces junto com o do web. Sem os pacotes
 # irmãos no contexto, o build quebra na resolução dos imports.
 
@@ -14,6 +14,7 @@ WORKDIR /app
 # Manifests antes do código: mexer em src/ não invalida a camada do `npm ci`.
 COPY package.json package-lock.json ./
 COPY shared/domain/package.json shared/domain/
+COPY shared/tokens/package.json shared/tokens/
 COPY shared/api-client/package.json shared/api-client/
 COPY shared/types/package.json shared/types/
 COPY web/package.json web/

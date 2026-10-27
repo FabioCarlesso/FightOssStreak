@@ -1,0 +1,193 @@
+/*
+ * Árvore: módulos, linhas de nó, faixas e chips
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `home.css`. A regra de 380px do
+ * código do nó também cobre o `.due-list__code` da agenda.
+ */
+
+/* Árvore */
+.tree__summary,
+.module__summary {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0.2rem 0 0;
+}
+
+.module__code {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Domínio do módulo (#103): a mesma barra do streak, para o mesmo tipo de leitura. */
+.module__mastery {
+  margin: 0.6rem 0 0;
+}
+
+.module__mastery p {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.module__bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.module__bar span {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+}
+
+.node-list {
+  list-style: none;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.node-row__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.node-row--locked .node-row__inner {
+  opacity: 0.5;
+}
+
+.node-row--completed .node-row__status {
+  color: var(--ok);
+}
+
+.node-row__status {
+  flex: none;
+}
+
+/*
+ * Código e título andam juntos: é esse par que ocupa o espaço livre da linha e o que, no mobile,
+ * fica em cima enquanto as chips descem para a linha de baixo.
+ */
+.node-row__label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.node-row__code {
+  flex: none;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  min-width: 3.2rem;
+}
+
+.node-row__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-base);
+}
+
+.node-row__tags {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.node-row__hint {
+  margin: 0.15rem 0 0 3.6rem;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.tag {
+  font-size: var(--text-2xs);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0.05rem var(--space-2);
+}
+
+.belt {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--border);
+}
+
+.belt--branca {
+  background: var(--belt-branca);
+  color: var(--belt-preta);
+}
+
+.belt--azul {
+  background: var(--belt-azul);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
+}
+
+.belt--roxa {
+  background: var(--belt-roxa);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 640px) {
+  /*
+   * A linha de nó vira grade: ícone de status na primeira coluna, código + título na segunda e as
+   * chips embaixo, alinhadas ao título. Antes as chips disputavam a mesma linha sem poder encolher
+   * e o título era espremido até uma palavra por linha.
+   */
+  .node-row__inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'status label'
+      '.      tags';
+    align-items: start;
+    row-gap: 0.4rem;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .node-row__status {
+    grid-area: status;
+  }
+
+  /* Título de duas ou três linhas: o código acompanha a primeira, não o meio do bloco. */
+  .node-row__label {
+    grid-area: label;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .node-row__tags {
+    grid-area: tags;
+  }
+
+  /* Alinhado ao padding do card do nó, não mais ao layout de uma linha só. */
+  .node-row__hint {
+    margin: var(--space-1) 0 0 0.7rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .node-row__code,
+  .due-list__code {
+    min-width: 2.8rem;
+  }
+}

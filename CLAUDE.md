@@ -152,7 +152,7 @@ Ferramenta pessoal de **revisão e retenção** do que é aprendido no tatame. *
 backend/   Spring Boot + Postgres (fonte da verdade de progresso e SRS)
 web/       React + Vite (MVP)
 mobile/    Expo + React Native (D67), reaproveita shared/
-shared/    domain (regras puras), api-client, types (gerados)
+shared/    domain (regras puras), tokens (visual, D72), api-client, types (gerados)
 docs/      documentação por assunto e log de decisões (índice em docs/README.md)
 ```
 
@@ -166,6 +166,7 @@ npm run dev:mobile          # expo start --go (Metro em :8081); app no emulador 
 npm test                    # shared/domain + api-client + scripts + fluxos de UI do web + mobile (jest-expo)
 npm run lint                # ESLint + Prettier; lint:fix corrige
 npm run gen:types           # regenera shared/types a partir do OpenAPI
+npm run gen:tokens          # regenera web/src/tokens.css a partir de shared/tokens (D72)
 cd backend && ./mvnw test   # testes do backend
 cd backend && ./mvnw spotless:check   # formatação do Java; spotless:apply corrige
 docker compose up -d db     # só o Postgres local (perfil prod-like)

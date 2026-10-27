@@ -12,7 +12,7 @@ import {
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { cores, estilos } from '../theme';
+import { cores, espaco, estilos, raio, texto } from '../theme';
 
 /** Peças de interface que todas as telas usam: tela rolável, cartão, botão, pílula e estados. */
 
@@ -27,7 +27,10 @@ export function Tela({ children, segura = false }: { children: ReactNode; segura
       style={{ backgroundColor: cores.fundo }}
       contentContainerStyle={[
         estilos.tela,
-        segura && { paddingTop: recuos.top + 16, paddingBottom: recuos.bottom + 16 },
+        segura && {
+          paddingTop: recuos.top + espaco.space4,
+          paddingBottom: recuos.bottom + espaco.space4,
+        },
       ]}
       keyboardShouldPersistTaps="handled"
     >
@@ -64,7 +67,13 @@ export function Botao({
         (pressed || desabilitado) && { opacity: desabilitado ? 0.5 : 0.8 },
       ]}
     >
-      <Text style={[styles.botaoTexto, variante === 'secundario' && { color: cores.texto }]}>
+      <Text
+        style={[
+          styles.botaoTexto,
+          variante === 'secundario' && { color: cores.texto },
+          variante === 'perigo' && styles.botaoPerigoTexto,
+        ]}
+      >
         {titulo}
       </Text>
     </Pressable>
@@ -91,9 +100,11 @@ export function Opcao({
       onPress={onPress}
       style={[styles.opcao, selecionada && styles.opcaoSelecionada]}
     >
-      <Text style={[styles.opcaoTexto, selecionada && { color: cores.fundo }]}>{rotulo}</Text>
+      <Text style={[styles.opcaoTexto, selecionada && { color: cores.sobreDestaque }]}>
+        {rotulo}
+      </Text>
       {dica ? (
-        <Text style={[estilos.dica, selecionada && { color: cores.fundo }]}>{dica}</Text>
+        <Text style={[estilos.dica, selecionada && { color: cores.sobreDestaque }]}>{dica}</Text>
       ) : null}
     </Pressable>
   );
@@ -132,31 +143,40 @@ export function FalhaDaApi({ erro, onRetry }: { erro: Error; onRetry: () => void
 const styles = StyleSheet.create({
   botao: {
     backgroundColor: cores.destaque,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderRadius: raio.radiusMd,
+    paddingVertical: espaco.space3,
+    paddingHorizontal: espaco.space4,
     alignItems: 'center',
   },
   botaoSecundario: { backgroundColor: 'transparent', borderWidth: 1, borderColor: cores.borda },
   botaoPerigo: { backgroundColor: cores.perigo },
-  botaoTexto: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  botaoTexto: { color: cores.sobreDestaque, fontSize: texto.textBase, fontWeight: '600' },
+  // Branco puro, exceção permitida fora dos tokens: sobre o vermelho de `perigo` o texto escuro
+  // de `sobreDestaque` não lê, e o branco passa AA.
+  botaoPerigoTexto: { color: '#fff' },
   opcao: {
     borderWidth: 1,
-    borderColor: cores.borda,
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    borderColor: cores.bordaControle,
+    borderRadius: raio.radiusMd,
+    paddingVertical: espaco.space2,
+    paddingHorizontal: espaco.space3,
   },
   opcaoSelecionada: { backgroundColor: cores.destaque, borderColor: cores.destaque },
-  opcaoTexto: { color: cores.texto, fontSize: 14, fontWeight: '600' },
+  opcaoTexto: { color: cores.texto, fontSize: texto.textSm, fontWeight: '600' },
   pilula: {
     borderWidth: 1,
     borderColor: cores.borda,
-    borderRadius: 999,
+    borderRadius: raio.radiusPill,
     paddingVertical: 2,
-    paddingHorizontal: 8,
+    paddingHorizontal: espaco.space2,
     alignSelf: 'flex-start',
   },
-  pilulaTexto: { color: cores.textoFraco, fontSize: 12 },
-  centro: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 24 },
+  pilulaTexto: { color: cores.textoFraco, fontSize: texto.textXs },
+  centro: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: espaco.space2,
+    padding: espaco.space5,
+  },
 });

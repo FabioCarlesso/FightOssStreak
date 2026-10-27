@@ -9,7 +9,7 @@ import type { StreakHistory, StreakView } from '@fos/types';
 import { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 
-import { cores, estilos } from '../theme';
+import { cores, estilos, raio } from '../theme';
 import { Cartao } from './ui';
 
 /**
@@ -152,5 +152,5 @@ const styles = StyleSheet.create({
   barraCheia: { height: 6, backgroundColor: cores.ok },
   grade: { flexDirection: 'row', gap: 3 },
   semana: { gap: 3 },
-  celula: { width: 12, height: 12, borderRadius: 2 },
+  celula: { width: 12, height: 12, borderRadius: raio.radiusXs },
 });

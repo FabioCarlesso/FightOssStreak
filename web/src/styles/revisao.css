@@ -1,0 +1,194 @@
+/*
+ * Revisão: quiz, drill e a sessão guiada (#47)
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `no.css`.
+ */
+
+/* Quiz */
+.quiz__question {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0.8rem var(--space-4);
+  margin: 0 0 0.8rem;
+}
+
+.quiz__question legend {
+  font-weight: 600;
+  font-size: var(--text-base);
+  padding: 0 0.35rem;
+}
+
+.quiz__option {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.35rem 0;
+  font-size: var(--text-md);
+  cursor: pointer;
+}
+
+.quiz-result__score {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ok);
+  margin: 0;
+}
+
+.quiz-result__score--fail {
+  color: var(--accent);
+}
+
+.quiz-result__list {
+  list-style: none;
+  margin: var(--space-4) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.quiz-result__list li {
+  border-left: 3px solid var(--border);
+  padding-left: var(--space-3);
+}
+
+.quiz-result__list li.correct {
+  border-color: var(--ok);
+}
+
+.quiz-result__list li.wrong {
+  border-color: var(--warn);
+}
+
+.quiz-result__prompt {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.quiz-result__explanation {
+  margin: 0.2rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* Drill */
+.drill__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-2);
+  margin-bottom: 0.8rem;
+}
+
+.drill__option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.drill__option--on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.drill__option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.drill__option span {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.drill__note {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.drill__note textarea {
+  width: 100%;
+  margin-top: 0.3rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
+  font: inherit;
+  font-size: var(--text-md);
+  resize: vertical;
+}
+
+.drill__result {
+  margin: 0.7rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--ok);
+}
+
+.safety-notice {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+  margin: 0;
+}
+
+/* Sessão guiada de revisão (#47) */
+.review__cta {
+  margin: 0.9rem 0 0;
+}
+
+.review__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.review__progress {
+  margin: 0;
+}
+
+.review__bar .drill__result,
+.review__bar .hint {
+  margin: 0;
+}
+
+.review__skip {
+  margin: 0;
+  text-align: center;
+}
+
+/* Responsivo (D26): 640px e 380px por largura; alvo de toque por `pointer: coarse`. */
+
+@media (max-width: 640px) {
+  /* Duas colunas fixas: com `auto-fit` e base de 150px o grid caía para uma coluna só. */
+  .drill__options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (pointer: coarse) {
+  /* `align-items: flex-start` continua valendo: opção de três linhas não deve centralizar o radio. */
+  .quiz__option {
+    min-height: 44px;
+    padding: var(--space-2) 0;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Empilha as opções de recall: em 320px duas colunas deixariam ~120px por opção. */
+  .drill__options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

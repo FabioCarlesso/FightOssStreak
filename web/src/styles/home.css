@@ -1,0 +1,255 @@
+/*
+ * Home: streak, heatmap, agenda de revisão, critérios do MVP e atalho "Continuar"
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `layout.css`.
+ */
+
+/* Streak */
+.streak__main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.streak__flame {
+  font-size: var(--text-3xl);
+}
+
+.streak__count {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.streak__unit {
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.streak__hint,
+.streak__record {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.streak__milestone {
+  margin: 0.4rem 0 0;
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.streak__freeze {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.streak__meta {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.streak__meta p {
+  margin: 0.4rem 0 0;
+}
+
+.streak__bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.streak__bar span {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+}
+
+/*
+ * Heatmap de streak (#102).
+ *
+ * A grade é de colunas, uma por semana, com os sete dias empilhados — a orientação do calendário
+ * de contribuições, e a única que cabe em meia tela de celular sem virar rolagem vertical.
+ *
+ * `overflow-x` no invólucro, e não na página: vinte e seis colunas passam de 320px, e sem esta
+ * caixa o cartão inteiro esticaria a home no celular (a mesma guarda do topo deste arquivo).
+ */
+.heatmap {
+  margin-top: var(--space-4);
+}
+
+.heatmap__scroll {
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.heatmap__months,
+.heatmap__grid {
+  display: flex;
+  gap: 3px;
+  min-width: min-content;
+}
+
+.heatmap__month {
+  width: 11px;
+  font-size: var(--text-2xs);
+  line-height: 1.2;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.heatmap__week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmap__cell {
+  width: 11px;
+  height: 11px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+}
+
+/* Dia que ainda não chegou: ocupa o lugar na coluna e não se pinta de falta. */
+.heatmap__cell--future {
+  background: transparent;
+}
+
+.heatmap__cell--0 {
+  background: var(--surface-2);
+}
+
+.heatmap__cell--1 {
+  background: var(--heat-1);
+}
+
+.heatmap__cell--2 {
+  background: var(--heat-2);
+}
+
+.heatmap__cell--3 {
+  background: var(--ok);
+}
+
+/*
+ * Perdoado não é falta nem treino: o contorno diz "este dia foi coberto" sem entrar na escala de
+ * intensidade, que mede treino.
+ */
+.heatmap__cell--frozen {
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1.5px var(--frozen);
+}
+
+.heatmap__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.heatmap__scale {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Agenda */
+.due-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.due-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0.65rem 0.8rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  color: var(--text);
+}
+
+/*
+ * Segue bloco com conteúdo inline — o código é `inline-block` e o título flui depois dele, então a
+ * quebra já é natural. O que faltava era `min-width: 0`: sem isso o item não encolhia abaixo do
+ * próprio conteúdo e empurrava o prazo para fora do card.
+ */
+.due-list__main {
+  display: block;
+  min-width: 0;
+}
+
+.due-list__code {
+  display: inline-block;
+  min-width: 3.2rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-sm);
+}
+
+.pill {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill--late {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.pill--met {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+/* Critérios de sucesso do MVP */
+.metric__value {
+  margin: 0.2rem 0 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric__detail {
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.metric__target {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* Atalho "Continuar" da home (#104): dentro do card da agenda, acima da lista. */
+.resume {
+  margin: 0 0 var(--space-3);
+}
+
+.resume__link {
+  display: inline-block;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-control);
+  color: var(--accent);
+  text-decoration: none;
+}

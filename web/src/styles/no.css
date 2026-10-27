@@ -1,0 +1,291 @@
+/*
+ * Nó: conceito, pré-requisitos, vídeo, clipes "No tatame", anotação fixada e histórico
+ *
+ * Ordem de import em `main.tsx` é cascata (D73): vem depois de `arvore.css`.
+ */
+
+/* Nó */
+.node__breadcrumb {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.node__title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xl);
+}
+
+.node__code {
+  color: var(--accent);
+}
+
+.node__concept {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.node__concept + .node__concept {
+  margin-top: var(--space-3);
+}
+
+.node__locked {
+  background: var(--surface-2);
+  border-left: 3px solid var(--accent);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-md);
+}
+
+.prereqs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-md);
+}
+
+.prereqs a {
+  text-decoration: none;
+}
+
+/* Vídeo */
+.video {
+  margin: 0;
+}
+
+.video__frame {
+  position: relative;
+  padding-top: 56.25%;
+  border-radius: var(--radius-control);
+  overflow: hidden;
+  background: #000; /* #000 puro: fundo de vídeo, exceção do contrato */
+}
+
+.video__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* Anotação fixada e histórico de anotações do nó (#45) */
+
+/*
+ * Barra lateral em vez de cartão com fundo: a anotação divide o card com o conceito, e um fundo
+ * próprio a faria disputar peso com ele. A barra diz "isto aqui é seu" sem gritar.
+ */
+.pinned-note {
+  margin-top: 0.9rem;
+  border-left: 3px solid var(--accent);
+  padding: 0.1rem 0 0.1rem 0.8rem;
+}
+
+.pinned-note__label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.pinned-note__text {
+  margin: 0;
+  font-size: var(--text-base);
+  white-space: pre-wrap;
+}
+
+.pinned-note__empty {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.pinned-note__input {
+  width: 100%;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) 0.6rem;
+  font: inherit;
+  font-size: var(--text-md);
+  resize: vertical;
+}
+
+.pinned-note__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* Botão de texto: anotar é ação secundária ao lado de responder o quiz e registrar o drill. */
+.pinned-note__action {
+  background: none;
+  border: none;
+  padding: 0.35rem 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pinned-note .hint {
+  margin: 0.4rem 0 0;
+}
+
+.drill-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.drill-history__item {
+  border-left: 2px solid var(--border);
+  padding-left: 0.7rem;
+}
+
+.drill-history__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* `pre-wrap`: a anotação foi digitada em textarea, e as quebras de linha são do autor. */
+.drill-history__note {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-md);
+  white-space: pre-wrap;
+}
+
+/* Mesmo bloco do "Nó bloqueado", com a barra em outra cor: o estado é outro. */
+.node__demo {
+  border-left-color: var(--ok);
+}
+
+/* Clipes complementares — "No tatame" (D32) */
+.clips__intro {
+  margin: 0 0 0.9rem;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.clips {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0 0 var(--space-1);
+  list-style: none;
+  /* Tira rolável em vez de grade que quebra linha: em celular, três cards verticais empilhados
+     ocupariam a tela inteira e empurrariam o quiz para fora dela. */
+  overflow-x: auto;
+}
+
+.clip {
+  flex: 0 0 auto;
+  width: 150px;
+}
+
+/* Um clipe de celular é 9:16. Enfiado no frame 16:9 do canônico, vira tarja preta dos dois lados
+   com a imagem espremida no meio — daí a orientação vir no dado, detectada pelo script. */
+.clip--vertical .clip__frame {
+  aspect-ratio: 9 / 16;
+}
+
+.clip--horizontal {
+  width: 240px;
+}
+
+.clip--horizontal .clip__frame {
+  aspect-ratio: 16 / 9;
+}
+
+.clip__frame {
+  position: relative;
+  border-radius: var(--radius-control);
+  overflow: hidden;
+  background: #000; /* #000 puro: fundo de vídeo, exceção do contrato */
+}
+
+.clip__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.clip__play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* A miniatura do YouTube é sempre 4:3, com o vídeo vertical centralizado e barras nas laterais.
+   Um recorte 9:16 centralizado devolve exatamente a área do vídeo — daí `cover`. */
+.clip__play img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clip__badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-2xl);
+  color: #fff; /* #fff puro: exceção do contrato de tokens */
+  text-shadow: 0 1px 6px var(--shadow-heavy);
+  background: var(--shadow-faint);
+}
+
+.clip__play:hover .clip__badge,
+.clip__play:focus-visible .clip__badge {
+  background: var(--shadow);
+}
+
+.clip__title,
+.clip__credit {
+  margin: 0.4rem 0 0;
+  font-size: var(--text-xs);
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* Os títulos são taquigrafia de aula e chegam a quatro linhas ("... aula do dia 04 de abril"),
+   o que deixava cada card com uma altura diferente. Recortar aqui é seguro — o texto inteiro
+   segue no `title` do elemento. O crédito ao canal fica de fora do recorte de propósito: D7 exige
+   que ele esteja visível, então ele não pode ser a parte que some. */
+.clip__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.clip__credit {
+  margin-top: 0.2rem;
+  font-size: var(--text-2xs);
+}

@@ -80,6 +80,8 @@ nesta tabela, no mesmo PR.
 | [D69](D69-o-app-mobile-navega-com-expo-router.md) | O app mobile navega com Expo Router, e o que web e app mostram iguais (aviso, rótulos, formulário de sessão, prévia do drill) mora em `shared/domain` |
 | [D70](D70-o-lembrete-de-revisao-e-local.md) | O lembrete de revisão é notificação local, planejada no aparelho a partir da árvore — só a contagem, permissão depois do primeiro registro, nada no servidor |
 | [D71](D71-dependencias-com-vulnerabilidade-sao-varridas.md) | Dependências com vulnerabilidade conhecida são varridas pelo `osv-scanner` em todo PR, sem travar merge; o Expo sobe para o SDK 58 e o resíduo fica dentro do `@expo/cli` (FOS-10) |
+| [D72](D72-tokens-visuais-compartilhados.md) | Cor, tipografia, espaçamento e raio moram em `shared/tokens`: o app importa, o `:root` do web é gerado (`npm run gen:tokens`), e onde os dois divergiam vale o valor do web (#183) |
+| [D73](D73-css-por-area.md) | O CSS do web é dividido por área em `web/src/styles/`, importado em `main.tsx` numa ordem fixa que é a da cascata; `@media` no arquivo da área; CSS Modules só para tela nova, sem migrar as existentes (#184) |
 
 ## Política de uso de vídeo (D7) — limites
 
