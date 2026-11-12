@@ -693,7 +693,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M3.4"],
       "positions": ["GUARDA_X"],
-      "concept": "A guarda X resolve o problema de jogar por baixo contra quem está em pé: em vez de puxar o oponente para o chão, quem está embaixo se coloca sob o centro de gravidade dele e passa a sustentar o peso de uma perna inteira.\n\nCom o X por baixo de uma perna, o oponente fica com um só pé de apoio de verdade, e estender as pernas de baixo empurra essa base para longe: ele precisa cair ou dar um passo. É comum chegar nela pela guarda de gancho de M3.4, quando o oponente se levanta.\n\nO erro comum é deixar a perna presa escapar para o lado: sem o braço segurando essa perna junto ao corpo, a base volta a ser dupla e o X vira pernas soltas no ar.",
+      "concept": "A guarda X resolve o problema de jogar por baixo contra quem está em pé: em vez de puxar o oponente para o chão, quem está embaixo se coloca sob o centro de gravidade dele e passa a sustentar o peso de uma perna inteira.\n\nCom o X por baixo de uma perna, o oponente fica com um só pé de apoio de verdade, e estender as pernas de baixo empurra essa base para longe: ele precisa cair ou dar um passo. É comum chegar nela pela guarda de gancho de M3.4, quando o oponente se levanta.\n\nO erro comum é soltar a outra perna: o braço abraça a perna que não está no X, e sem esse abraço o oponente dá o passo, recupera a base dupla e o X vira pernas soltas no ar.",
       "video": null,
       "quiz": [
         {
@@ -748,19 +748,19 @@
         },
         {
           "prompt": "Qual o erro comum na guarda X?",
-          "explanation": "Deixar a perna presa escapar para o lado devolve a base dupla ao oponente.",
+          "explanation": "Soltar a perna que não está no X deixa o oponente dar o passo e recuperar a base dupla.",
           "options": [
-            { "text": "Deixar a perna presa escapar para o lado", "correct": true },
-            { "text": "Segurar a perna junto ao corpo", "correct": false },
+            { "text": "Soltar a perna que não está no X", "correct": true },
+            { "text": "Abraçar a outra perna junto ao corpo", "correct": false },
             { "text": "Ficar debaixo do centro de gravidade", "correct": false },
             { "text": "Usar as duas pernas no X", "correct": false }
           ]
         },
         {
-          "prompt": "O que impede a perna presa de escapar na guarda X?",
-          "explanation": "O braço que segura essa perna junto ao corpo de quem está embaixo.",
+          "prompt": "Na guarda X, o que controla a perna que não está no X?",
+          "explanation": "O braço de quem está embaixo, abraçando essa perna junto ao corpo.",
           "options": [
-            { "text": "O braço segurando a perna junto ao corpo", "correct": true },
+            { "text": "O braço abraçando essa perna junto ao corpo", "correct": true },
             { "text": "Os pés cruzados nas costas do oponente", "correct": false },
             { "text": "A pegada na gola do oponente", "correct": false },
             { "text": "Ficar sentado longe", "correct": false }
@@ -787,7 +787,7 @@
       "prereqs": ["M3.8"],
       "positions": ["GUARDA_X"],
       "aliases": ["x guard sweep"],
-      "concept": "A raspagem da guarda X é a consequência do controle de M3.8: quem já sustenta o peso de uma perna do oponente só precisa decidir para que lado tirar a outra base.\n\nEsticar o X leva a perna presa para longe, enquanto a mão de baixo impede o pé livre de dar o passo de recuperação. Sem nenhum dos dois apoios, a queda vai para trás ou para o lado, e quem estava embaixo sobe junto, já por cima. A transição para a queda de uma perna de M6.2 segue o mesmo princípio, terminando em pé.\n\nO erro comum é raspar e ficar no chão: o oponente cai, mas cai de guarda, e a raspagem não vira mudança de posição.",
+      "concept": "A raspagem da guarda X é a consequência do controle de M3.8: quem já sustenta o peso de uma perna do oponente só precisa decidir para que lado tirar a outra base.\n\nEsticar o X leva a perna presa nele para longe, enquanto o braço que abraça a outra perna impede esse pé de dar o passo de recuperação. Sem nenhum dos dois apoios, a queda vai para trás ou para o lado, e quem estava embaixo sobe junto, já por cima. A transição para a queda de uma perna de M6.2 segue o mesmo princípio, terminando em pé.\n\nO erro comum é raspar e ficar no chão: o oponente cai, mas cai de guarda, e a raspagem não vira mudança de posição.",
       "video": null,
       "quiz": [
         {
@@ -811,10 +811,10 @@
           ]
         },
         {
-          "prompt": "Qual o papel da mão de baixo na raspagem da guarda X?",
-          "explanation": "Impedir o pé livre de dar o passo que recuperaria a base.",
+          "prompt": "Qual o papel do braço que abraça a outra perna na raspagem da guarda X?",
+          "explanation": "Impedir que esse pé dê o passo que recuperaria a base.",
           "options": [
-            { "text": "Impedir o pé livre de dar o passo de recuperação", "correct": true },
+            { "text": "Impedir o passo de recuperação daquele pé", "correct": true },
             { "text": "Segurar a gola para um estrangulamento", "correct": false },
             { "text": "Apoiar no chão para se levantar", "correct": false },
             { "text": "Empurrar a cabeça do oponente", "correct": false }
@@ -857,7 +857,7 @@
             { "text": "Ficar no chão em vez de subir junto", "correct": true },
             { "text": "Subir rápido demais", "correct": false },
             { "text": "Segurar a perna depois da queda", "correct": false },
-            { "text": "Usar a mão de baixo", "correct": false }
+            { "text": "Abraçar a outra perna", "correct": false }
           ]
         },
         {
@@ -1066,7 +1066,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M3.1"],
       "positions": ["DE_LA_RIVA"],
-      "concept": "A De La Riva resolve o problema de jogar contra quem está em pé e quer passar pelo lado: o gancho por fora da perna da frente prende o oponente num ponto fixo, e a passagem por aquele lado deixa de existir.\n\nSegurando o tornozelo da perna enganchada, quem está embaixo controla a base dela; o gancho leva o joelho do oponente para fora enquanto o outro pé empurra o quadril, e a base fica tensionada em duas direções. Dessa tensão saem as raspagens e também entradas para as costas.\n\nO erro comum é manter o gancho sem a pegada no tornozelo: o oponente dá um passo para trás, o pé enganchado fica solto e sobra uma guarda aberta comum, sem o ponto fixo que dava sentido a ela.",
+      "concept": "A De La Riva resolve o problema de jogar contra quem está em pé e quer passar pelo lado: o gancho por fora da perna da frente prende o oponente num ponto fixo, e a passagem por aquele lado fica bloqueada.\n\nSegurando o tornozelo da perna enganchada, quem está embaixo controla a base dela; o gancho leva o joelho do oponente para fora enquanto o outro pé empurra o quadril, e a base fica tensionada em duas direções. Dessa tensão saem as raspagens e também entradas para as costas.\n\nO erro comum é manter o gancho sem a pegada no tornozelo: o oponente dá um passo para trás, o pé enganchado fica solto e sobra uma guarda aberta comum, sem o ponto fixo que dava sentido a ela.",
       "video": null,
       "quiz": [
         {
@@ -1091,9 +1091,9 @@
         },
         {
           "prompt": "O que o gancho faz com a passagem pelo lado dele?",
-          "explanation": "Prende o oponente num ponto fixo, e a passagem por ali deixa de existir.",
+          "explanation": "Prende o oponente num ponto fixo, e a passagem por ali fica bloqueada.",
           "options": [
-            { "text": "A passagem por ali deixa de existir", "correct": true },
+            { "text": "A passagem por ali fica bloqueada", "correct": true },
             { "text": "A passagem fica mais fácil", "correct": false },
             { "text": "Não muda nada", "correct": false },
             { "text": "Vira uma queda", "correct": false }
@@ -1106,7 +1106,7 @@
             { "text": "Controla a base da perna enganchada", "correct": true },
             { "text": "É obrigatória pela regra", "correct": false },
             { "text": "Serve para finalizar a perna", "correct": false },
-            { "text": "Impede o oponente de falar", "correct": false }
+            { "text": "Prende a perna de trás do oponente", "correct": false }
           ]
         },
         {

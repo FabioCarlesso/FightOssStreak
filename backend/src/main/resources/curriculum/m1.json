@@ -644,7 +644,7 @@
       "prereqs": ["M1.2"],
       "positions": ["QUATRO_APOIOS"],
       "aliases": ["sair da tartaruga"],
-      "concept": "Os quatro apoios são o lugar onde se cai quando a guarda foi passada e não deu tempo de enquadrar: protegem pescoço e peito, mas deixam costas e lados para quem está por cima. São posição de passagem, não de descanso.\n\nA defesa se sustenta enquanto cotovelos e joelhos ficam colados, sem espaço para um gancho entrar. Ela existe para comprar o instante de voltar para a guarda pelo lado oposto ao peso do oponente, com o movimento de quadril de M1.2.\n\nO erro comum é ficar parado esperando: cada segundo ali é tempo para o seat belt e os ganchos de M5.2. Apoiar o braço longe do corpo também abre o espaço por onde entram o gancho e o crucifixo.",
+      "concept": "Os quatro apoios são o lugar onde se cai quando a guarda foi passada e não deu tempo de enquadrar: protegem pescoço e peito, mas deixam costas e lados para quem está por cima. São posição de passagem, não de descanso.\n\nA defesa se sustenta enquanto cotovelos e joelhos ficam colados, sem espaço para um gancho entrar. Ela existe para comprar o instante de girar o quadril e recolocar as pernas entre os dois, o mesmo trabalho de quadril de M1.2, antes que o controle de costas se feche.\n\nO erro comum é ficar parado esperando: cada segundo ali é tempo para o seat belt e os ganchos de M5.2. Apoiar o braço longe do corpo também abre o espaço por onde entram o gancho e o crucifixo.",
       "video": null,
       "quiz": [
         {
@@ -678,18 +678,18 @@
           ]
         },
         {
-          "prompt": "Para que lado a reposição costuma ir em relação ao peso do oponente?",
-          "explanation": "Para o lado oposto ao do peso dele, onde há menos resistência para virar.",
+          "prompt": "O que a reposição de guarda a partir dos quatro apoios precisa recolocar entre os dois?",
+          "explanation": "As pernas: é com elas de volta entre os dois que a guarda existe de novo.",
           "options": [
-            { "text": "Para o lado oposto ao do peso dele", "correct": true },
-            { "text": "Para o mesmo lado do peso, empurrando", "correct": false },
-            { "text": "Sempre para frente", "correct": false },
-            { "text": "Tanto faz: o lado não importa", "correct": false }
+            { "text": "As pernas", "correct": true },
+            { "text": "Os braços, abraçando a cintura do oponente", "correct": false },
+            { "text": "A cabeça, apoiada no tatame", "correct": false },
+            { "text": "Nada: basta esperar nos quatro apoios", "correct": false }
           ]
         },
         {
           "prompt": "Que movimento de outro nó a reposição de guarda reaproveita?",
-          "explanation": "O movimento de quadril de M1.2, o mesmo das fugas por baixo.",
+          "explanation": "O trabalho de quadril de M1.2, o mesmo das fugas por baixo: girar o quadril para recolocar as pernas.",
           "options": [
             { "text": "O movimento de quadril de M1.2", "correct": true },
             { "text": "O sprawl de M6.4", "correct": false },
@@ -724,7 +724,7 @@
             { "text": "De quem ataca por cima", "correct": true },
             { "text": "De quem defende, que descansa", "correct": false },
             { "text": "De nenhum dos dois", "correct": false },
-            { "text": "Do árbitro, que reinicia em pé", "correct": false }
+            { "text": "De quem defende, se ficar bem fechado", "correct": false }
           ]
         }
       ]

@@ -401,7 +401,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M5.2"],
       "positions": ["QUATRO_APOIOS", "COSTAS"],
-      "concept": "Os quatro apoios parecem fechados, mas deixam as costas viradas para quem ataca. O problema de quem está por cima é transformar essa exposição em controle de costas de verdade, com o seat belt e os ganchos de M5.2, antes que o oponente volte para a guarda.\n\nO tronco vem antes das pernas. Com o peito colado nas costas e o seat belt encaixado, o oponente não se afasta nem vira sem levar quem ataca junto; aí os ganchos entram pelo espaço entre cotovelo e joelho, o mesmo que a defesa de M1.7 tenta fechar.\n\nO erro comum é enfiar os ganchos antes de controlar o tronco: o oponente rola e quem ataca cai por baixo. Procurar o pescoço antes dos ganchos também costuma devolver a posição.",
+      "concept": "Os quatro apoios parecem fechados, mas deixam as costas viradas para quem ataca. O problema de quem está por cima é transformar essa exposição em controle de costas de verdade, com o seat belt e os ganchos de M5.2, antes que o oponente volte para a guarda.\n\nO tronco vem antes das pernas. Com o peito colado nas costas e o seat belt encaixado, o oponente não se afasta nem vira sem levar quem ataca junto; aí os ganchos entram pelo espaço entre cotovelo e joelho, o mesmo que a defesa de M1.7 tenta fechar.\n\nO erro comum é enfiar os ganchos antes de controlar o tronco: sem o seat belt, o oponente gira para dentro, tira os ganchos e volta para a guarda. Procurar o pescoço antes dos ganchos também costuma devolver a posição.",
       "video": null,
       "quiz": [
         {
@@ -466,7 +466,7 @@
         },
         {
           "prompt": "Qual o erro comum ao pegar as costas dos quatro apoios?",
-          "explanation": "Enfiar os ganchos antes de controlar o tronco: o oponente rola e quem ataca cai por baixo.",
+          "explanation": "Enfiar os ganchos antes de controlar o tronco: sem o seat belt, o oponente gira para dentro, tira os ganchos e volta para a guarda.",
           "options": [
             { "text": "Enfiar os ganchos antes de controlar o tronco", "correct": true },
             { "text": "Encaixar o seat belt primeiro", "correct": false },

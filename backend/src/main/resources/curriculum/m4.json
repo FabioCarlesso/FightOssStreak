@@ -595,7 +595,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
       "positions": ["NORTE_SUL"],
-      "concept": "O norte-sul resolve o problema de manter o controle por cima quando o oponente começa a enquadrar o 100kg: girando até ficar alinhado em sentido oposto, quem está por cima tira os apoios que o enquadramento usava.\n\nNo 100kg o oponente empurra o quadril de quem está por cima; no norte-sul esse quadril está longe, e o peso cai sobre o peito dele, com os braços presos junto à cabeça. Dali o controle volta para qualquer lado do 100kg de M4.1, ou para o estrangulamento de M4.8.\n\nO erro comum é ficar alto, com o peito longe: sem peso sobre o peito, quem está embaixo vira para os quatro apoios ou recoloca as pernas na frente, e o controle se perde na troca de lado que deveria mantê-lo.",
+      "concept": "O norte-sul resolve o problema de manter o controle por cima quando o oponente começa a enquadrar o 100kg: girando até ficar alinhado em sentido oposto, quem está por cima tira os apoios que o enquadramento usava.\n\nNo 100kg o oponente empurra o quadril de quem está por cima; no norte-sul esse quadril está longe, o peso cai sobre o peito dele, e os braços perdem o alvo que tinham para empurrar. Dali o controle volta para qualquer lado do 100kg de M4.1, ou para o estrangulamento de M4.8.\n\nO erro comum é ficar alto, com o peito longe: sem peso sobre o peito, quem está embaixo vira para os quatro apoios ou recoloca as pernas na frente, e o controle se perde na troca de lado que deveria mantê-lo.",
       "video": null,
       "quiz": [
         {
@@ -639,11 +639,11 @@
           ]
         },
         {
-          "prompt": "Onde ficam os braços de quem está embaixo no norte-sul?",
-          "explanation": "Presos junto à cabeça, sem alcance para empurrar o quadril.",
+          "prompt": "O que acontece com os braços de quem está embaixo no norte-sul?",
+          "explanation": "Perdem o alvo: o quadril que eles empurravam no 100kg agora está longe.",
           "options": [
-            { "text": "Presos junto à cabeça", "correct": true },
-            { "text": "Livres para empurrar o quadril", "correct": false },
+            { "text": "Perdem o quadril como alvo para empurrar", "correct": true },
+            { "text": "Ganham o quadril mais perto para empurrar", "correct": false },
             { "text": "Cruzados nas costas", "correct": false },
             { "text": "Segurando as pernas de cima", "correct": false }
           ]
@@ -664,7 +664,7 @@
           "options": [
             { "text": "Ficar alto, com o peito longe do oponente", "correct": true },
             { "text": "Colar o peito no oponente", "correct": false },
-            { "text": "Prender os braços junto à cabeça", "correct": false },
+            { "text": "Tirar o quadril do alcance dos braços dele", "correct": false },
             { "text": "Mudar de eixo a partir do 100kg", "correct": false }
           ]
         },
@@ -782,7 +782,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1"],
       "positions": ["CRUCIFIXO"],
-      "concept": "O crucifixo resolve o problema de finalizar quem defende bem com os dois braços: um braço preso entre as pernas de quem ataca e o outro controlado pelas mãos tiram do oponente as duas ferramentas de defesa ao mesmo tempo.\n\nCom os braços abertos, longe do pescoço e do peito, quem está preso não consegue enquadrar nem proteger o pescoço, e estrangulamentos e chaves de braço ganham caminho livre. A entrada costuma surgir quando o oponente vira para os quatro apoios ou estica o braço no 100kg de M4.1.\n\nO erro comum é prender o braço só com o pé, sem cruzar as pernas: ele escorrega, o cotovelo volta para o corpo e o crucifixo se desfaz. Outro é soltar o segundo braço antes de usá-lo.",
+      "concept": "O crucifixo resolve o problema de finalizar quem defende bem com os dois braços: um braço preso entre as pernas de quem ataca e o outro controlado pelas mãos tiram do oponente as duas ferramentas de defesa ao mesmo tempo.\n\nCom os braços abertos, longe do pescoço e do peito, quem está preso não consegue enquadrar nem proteger o pescoço, e estrangulamentos e chaves de braço ganham caminho livre. A entrada costuma surgir quando o oponente vira para os quatro apoios ou estica o braço no 100kg de M4.1.\n\nO erro comum é prender o braço só com o pé, sem cruzar as pernas: ele escorrega e o crucifixo se desfaz. E com os dois braços presos, quem está embaixo pode não conseguir bater com a mão: o tap com o pé ou falado vale, e quem aplica precisa escutar (M0.3).",
       "video": null,
       "quiz": [
         {
@@ -820,9 +820,9 @@
           "explanation": "Enquadrar e proteger o pescoço: os dois dependem dos cotovelos perto do corpo.",
           "options": [
             { "text": "Enquadrar nem proteger o pescoço", "correct": true },
-            { "text": "Respirar", "correct": false },
-            { "text": "Bater", "correct": false },
-            { "text": "Falar", "correct": false }
+            { "text": "Mover as pernas", "correct": false },
+            { "text": "Virar a cabeça", "correct": false },
+            { "text": "Dobrar os joelhos", "correct": false }
           ]
         },
         {
@@ -856,13 +856,13 @@
           ]
         },
         {
-          "prompt": "Que outro erro o conceito do crucifixo aponta?",
-          "explanation": "Soltar o controle do segundo braço antes de usá-lo.",
+          "prompt": "Com os dois braços presos no crucifixo, como quem está embaixo dá o tap?",
+          "explanation": "Pode não conseguir bater com a mão: o tap com o pé ou falado vale, e quem aplica precisa escutar e soltar (M0.3).",
           "options": [
-            { "text": "Soltar o segundo braço antes de usá-lo", "correct": true },
-            { "text": "Usar o segundo braço", "correct": false },
-            { "text": "Manter as pernas cruzadas", "correct": false },
-            { "text": "Finalizar devagar", "correct": false }
+            { "text": "Com o pé ou falando: o tap verbal vale", "correct": true },
+            { "text": "Não dá para bater, então é aguentar até soltar", "correct": false },
+            { "text": "Só com a mão, como em qualquer finalização", "correct": false },
+            { "text": "Esperando o árbitro interromper", "correct": false }
           ]
         }
       ]
