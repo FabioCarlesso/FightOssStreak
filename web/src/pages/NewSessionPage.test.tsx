@@ -257,4 +257,16 @@ describe('NewSessionPage', () => {
     expect(screen.queryByRole('button', { name: /M4\.1/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /M7\.1/ })).not.toBeInTheDocument();
   });
+
+  it('técnica marcada antes de trocar para descanso não viaja junto', async () => {
+    renderPage();
+
+    await userEvent.click(await screen.findByRole('checkbox', { name: /queda de base/i }));
+    await userEvent.click(screen.getByRole('radio', { name: /descanso/i }));
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+
+    const corpo = apiMock.createTrainingSession.mock.calls[0]![0];
+    expect(corpo.kind).toBe('DESCANSO');
+    expect(corpo.tecnicas).toEqual([]);
+  });
 });

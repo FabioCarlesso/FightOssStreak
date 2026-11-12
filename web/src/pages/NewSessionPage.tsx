@@ -95,7 +95,12 @@ export function NewSessionPage() {
     try {
       const criada = await api.createTrainingSession({
         ...toSessionBody(fields),
-        tecnicas: marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
+        // Descanso não recebe técnica (D58): o que ficou marcado antes de trocar o tipo não vai,
+        // senão o backend recusaria a sessão inteira.
+        tecnicas:
+          fields.kind === 'DESCANSO'
+            ? []
+            : marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
       });
       if (kindRecordsAttire(fields.kind)) lembrarKimono(fields.attire);
       void navigate(`/diario/${criada.id}`);
