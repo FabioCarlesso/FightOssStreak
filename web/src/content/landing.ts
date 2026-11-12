@@ -81,10 +81,10 @@ export const DEMO = {
  * #59 (D44) — banco de 8 perguntas por nó, com rotação a cada revisão.
  */
 export const NUMEROS = {
-  nodes: 46,
+  nodes: 56,
   modules: 9,
-  quizQuestions: 368,
-  quizNodes: 46,
+  quizQuestions: 448,
+  quizNodes: 56,
   quizModules: 'M0 a M8',
   canonicalVideos: 43,
   videoModules: 'M0 a M7',
