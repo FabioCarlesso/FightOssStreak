@@ -48,6 +48,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/graduacao/requisitos/ordem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reordena a checklist: todos os ids, cada um uma vez */
+        put: operations["reorder"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/telemetria/evento": {
         parameters: {
             query?: never;
@@ -211,6 +228,26 @@ export interface paths {
          * @description Confere o identity token, a audiência igual ao bundle id e o nonce. O e-mail relay não vincula conta nem semeia administração. 404 quando a Apple não está configurada neste ambiente; 401 com token que não confere.
          */
         post: operations["apple"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/graduacao/requisitos/importar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cola a lista da academia: um requisito por linha, acrescentado ao fim
+         * @description Linhas vazias e marcadores (•, -, *, 1., a)) são limpos. Acima do teto de itens ou de tamanho de linha responde 400.
+         */
+        post: operations["importText"];
         delete?: never;
         options?: never;
         head?: never;
@@ -474,6 +511,27 @@ export interface paths {
         patch: operations["update"];
         trace?: never;
     };
+    "/api/graduacao/requisitos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove um requisito */
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Edita um requisito: texto, marcação à mão ou nós ligados
+         * @description Campo ausente fica como está. `nodeCodes` substitui os nós ligados.
+         */
+        patch: operations["update_1"];
+        trace?: never;
+    };
     "/api/streak": {
         parameters: {
             query?: never;
@@ -581,6 +639,27 @@ export interface paths {
          * @description Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes, os tokens do app e todo o progresso, e revoga na Apple o acesso de quem entrou por ela. A sessão é invalidada junto.
          */
         delete: operations["deleteMe"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/graduacao/requisitos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Checklist do próximo grau, com o status de cada requisito
+         * @description O status vem do progresso dos nós ligados; sem nó, da marcação à mão.
+         */
+        get: operations["checklist"];
+        put?: never;
+        post?: never;
+        /** Apaga a checklist inteira; nós e progresso não são tocados */
+        delete: operations["deleteAll"];
         options?: never;
         head?: never;
         patch?: never;
@@ -803,6 +882,35 @@ export interface components {
             goal?: components["schemas"]["GoalView"];
             classes?: components["schemas"]["ClassCount"];
         };
+        ReorderRequest: {
+            ids: number[];
+        };
+        ChecklistView: {
+            label?: string;
+            items?: components["schemas"]["RequirementView"][];
+            /** Format: int32 */
+            done?: number;
+            /** Format: int32 */
+            total?: number;
+            nodeCodes?: string[];
+        };
+        LinkedNodeView: {
+            code?: string;
+            title?: string;
+            /** @enum {string} */
+            status?: "LOCKED" | "AVAILABLE" | "IN_PROGRESS" | "COMPLETED";
+        };
+        RequirementView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int32 */
+            order?: number;
+            text?: string;
+            /** @enum {string} */
+            status?: "PENDENTE" | "EM_ANDAMENTO" | "CONCLUIDO";
+            manualDone?: boolean;
+            nodes?: components["schemas"]["LinkedNodeView"][];
+        };
         /** @description Uma mudança de rota no app. Nada aqui identifica quem navega. */
         EventRequest: {
             caminho?: string;
@@ -949,6 +1057,10 @@ export interface components {
             authorizationCode?: string;
             nome?: string;
         };
+        ImportRequest: {
+            label?: string;
+            text: string;
+        };
         FeedbackRequest: {
             /** @enum {string} */
             category: "BUG" | "CONTEUDO_ERRADO" | "TROCA_DE_VIDEO" | "SUGESTAO_FUNCIONALIDADE" | "OUTRO";
@@ -1045,6 +1157,11 @@ export interface components {
             weightKg?: number;
             learned?: string;
             improve?: string;
+        };
+        RequirementPatch: {
+            text?: string;
+            manualDone?: boolean;
+            nodeCodes?: string[];
         };
         HistoryDay: {
             /** Format: date */
@@ -1531,6 +1648,30 @@ export interface operations {
             };
         };
     };
+    reorder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChecklistView"];
+                };
+            };
+        };
+    };
     evento: {
         parameters: {
             query?: never;
@@ -1767,6 +1908,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["MobileTokenView"];
+                };
+            };
+        };
+    };
+    importText: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChecklistView"];
                 };
             };
         };
@@ -2145,6 +2310,54 @@ export interface operations {
             };
         };
     };
+    delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChecklistView"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequirementPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChecklistView"];
+                };
+            };
+        };
+    };
     streak: {
         parameters: {
             query?: never;
@@ -2272,6 +2485,44 @@ export interface operations {
         };
     };
     deleteMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    checklist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChecklistView"];
+                };
+            };
+        };
+    };
+    deleteAll: {
         parameters: {
             query?: never;
             header?: never;

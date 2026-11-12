@@ -43,6 +43,8 @@ class UsagePathsTest {
         // Rotas do diário (#114): as duas fixas passam inteiras.
         assertThat(UsagePaths.normalize("/diario")).isEqualTo("/diario");
         assertThat(UsagePaths.normalize("/diario/nova")).isEqualTo("/diario/nova");
+        // Checklist do próximo grau (#196).
+        assertThat(UsagePaths.normalize("/graduacao")).isEqualTo("/graduacao");
         // Mapa de posições (#194).
         assertThat(UsagePaths.normalize("/posicoes")).isEqualTo("/posicoes");
         // Sessão guiada de revisão (#47).

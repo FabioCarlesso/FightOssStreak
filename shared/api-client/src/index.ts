@@ -20,6 +20,9 @@ import type {
   FeedbackStatus,
   FeedbackView,
   GraduationGoalRequest,
+  RequirementChecklist,
+  RequirementImportRequest,
+  RequirementPatch,
   GraduationView,
   HealthView,
   MvpMetrics,
@@ -402,6 +405,39 @@ export function createApiClient(options: ApiClientOptions = {}) {
 
     /** Tira a meta. As sessões do diário ficam. */
     deleteGraduationGoal: () => requestNoContent('/api/graduacao', { method: 'DELETE' }),
+
+    /**
+     * Checklist do próximo grau (#196, D78). Sem checklist, `items` vem vazio. Toda escrita
+     * devolve a checklist inteira, com o status já recalculado.
+     */
+    getRequirements: () => request<RequirementChecklist>('/api/graduacao/requisitos'),
+
+    /** Cola a lista da academia: um requisito por linha, acrescentado ao fim. */
+    importRequirements: (body: RequirementImportRequest) =>
+      request<RequirementChecklist>('/api/graduacao/requisitos/importar', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+
+    /** Edição parcial: texto, marcação à mão ou nós ligados (estes, só depois de confirmados). */
+    updateRequirement: (id: number, patch: RequirementPatch) =>
+      request<RequirementChecklist>(`/api/graduacao/requisitos/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(patch),
+      }),
+
+    /** A ordem nova, com todos os ids da checklist. */
+    reorderRequirements: (ids: number[]) =>
+      request<RequirementChecklist>('/api/graduacao/requisitos/ordem', {
+        method: 'PUT',
+        body: JSON.stringify({ ids }),
+      }),
+
+    deleteRequirement: (id: number) =>
+      request<RequirementChecklist>(`/api/graduacao/requisitos/${id}`, { method: 'DELETE' }),
+
+    /** Apaga a checklist inteira, quando o grau chegou. Nós e progresso ficam. */
+    deleteRequirements: () => requestNoContent('/api/graduacao/requisitos', { method: 'DELETE' }),
 
     /** Critérios de sucesso do MVP medidos sobre o uso real (docs/produto/mvp-web.md). */
     getMvpMetrics: (days?: number) =>

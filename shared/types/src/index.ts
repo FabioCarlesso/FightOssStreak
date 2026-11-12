@@ -164,3 +164,13 @@ export type { components, paths } from '../generated/api.ts';
  * próprias posições em `positionCodes`.
  */
 export type CurriculumPosition = Schemas['PositionView'];
+
+/**
+ * Requisitos do próximo grau como checklist pessoal (#196, D78): o texto que a academia de quem usa
+ * entregou, colado pela própria pessoa. O status de cada requisito é derivado no servidor.
+ */
+export type RequirementChecklist = Schemas['ChecklistView'];
+export type Requirement = Schemas['RequirementView'];
+export type RequirementLinkedNode = Schemas['LinkedNodeView'];
+export type RequirementImportRequest = Schemas['ImportRequest'];
+export type RequirementPatch = Schemas['RequirementPatch'];

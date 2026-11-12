@@ -43,8 +43,14 @@ export function HomePage() {
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
   // Próximo grau (#193, D75): sem meta, o card não aparece.
   const graduacao = useAsync(() => api.getGraduation(), []);
+  // Checklist do próximo grau (#196, D78): marca os nós dela na agenda e dá preferência a eles no
+  // "Continuar" — sem reordenar a fila do SRS (D56c).
+  const requisitos = useAsync(() => api.getRequirements(), []);
+  const doGrau = useMemo(() => new Set(requisitos.data?.nodeCodes ?? []), [requisitos.data]);
   const demo = useDemoMode();
-  const continuar = agenda.data ? resumeFrom(agenda.data.due, tree.data?.modules) : undefined;
+  const continuar = agenda.data
+    ? resumeFrom(agenda.data.due, tree.data?.modules, doGrau)
+    : undefined;
 
   return (
     <div className="stack">
@@ -70,6 +76,9 @@ export function HomePage() {
                 <span className="due-list__main">
                   <span className="due-list__code">{item.nodeCode}</span>
                   <span className="due-list__title">{item.title}</span>
+                  {doGrau.has(item.nodeCode ?? '') && (
+                    <span className="pill pill--grade">próximo grau</span>
+                  )}
                 </span>
                 <span className={overdueClass(item.daysOverdue ?? 0)}>
                   {formatOverdue(item.daysOverdue ?? 0)}
@@ -125,10 +134,11 @@ export function HomePage() {
 function resumeFrom(
   due: Parameters<typeof nextNodeToResume>[0] | undefined,
   modules: Parameters<typeof nextNodeToResume>[1] | undefined,
+  preferred: ReadonlySet<string>,
 ): ResumeTarget | null | undefined {
   const fila = due ?? [];
   if (fila.length === 0 && modules === undefined) return undefined;
-  return nextNodeToResume(fila, modules ?? []);
+  return nextNodeToResume(fila, modules ?? [], preferred);
 }
 
 const RESUME_HINT: Record<ResumeTarget['reason'], string> = {
@@ -144,7 +154,10 @@ function ContinueLink({ continuar }: { continuar: ResumeTarget | null | undefine
       <Link to={`/no/${continuar.code}`} className="resume__link">
         Continuar: <strong>{continuar.title}</strong>
       </Link>{' '}
-      <span className="hint">— {RESUME_HINT[continuar.reason]}</span>
+      <span className="hint">
+        — {RESUME_HINT[continuar.reason]}
+        {continuar.nextGrade ? ', da checklist do próximo grau' : ''}
+      </span>
     </p>
   );
 }

@@ -4,9 +4,10 @@ import type {
   AuthProviders,
   DemoSession,
   DiaryTimeline,
-  GraduationView,
   DisclaimerStatus,
+  GraduationView,
   NodeDetail,
+  RequirementChecklist,
   ReviewAgenda,
   StreakHistory,
   StreakView,
@@ -40,6 +41,7 @@ const { apiMock } = vi.hoisted(() => ({
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
     getDiary: vi.fn<() => Promise<DiaryTimeline>>(),
     getGraduation: vi.fn<() => Promise<GraduationView>>(),
+    getRequirements: vi.fn<() => Promise<RequirementChecklist>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
     getNode: vi.fn<(code: string) => Promise<NodeDetail>>(),
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
@@ -109,6 +111,7 @@ beforeEach(() => {
   });
   // O card do próximo grau (#193) fica no fim da home e só aparece com meta configurada.
   apiMock.getGraduation.mockResolvedValue({});
+  apiMock.getRequirements.mockResolvedValue({ items: [], nodeCodes: [] });
   apiMock.getTree.mockResolvedValue({
     modules: [],
     summary: { totalNodes: 46, completedNodes: 0, availableNodes: 1, lockedNodes: 45 },
@@ -469,6 +472,46 @@ describe('atalho "Continuar" na agenda', () => {
     await userEvent.click(await screen.findByRole('link', { name: /continuar: quedas seguras/i }));
 
     await waitFor(() => expect(apiMock.getNode).toHaveBeenCalledWith('M0.2'));
+  });
+
+  it('com checklist do próximo grau, o atalho prefere o nó dela (#196)', async () => {
+    apiMock.getTree.mockResolvedValue({
+      modules: [
+        {
+          code: 'M0',
+          nodes: [
+            ...(ARVORE.modules?.[0]?.nodes ?? []),
+            { code: 'M0.5', title: 'Pegadas de gi', status: 'AVAILABLE', prereqCodes: [] },
+          ],
+        },
+      ],
+    });
+    apiMock.getRequirements.mockResolvedValue({ items: [], nodeCodes: ['M0.5'] });
+    renderEm('/hoje');
+
+    expect(
+      await screen.findByRole('link', { name: /continuar: pegadas de gi/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/da checklist do próximo grau/i)).toBeInTheDocument();
+  });
+
+  it('na agenda, o nó da checklist ganha a marca, e a ordem da fila não muda (#196)', async () => {
+    apiMock.getTree.mockResolvedValue(ARVORE);
+    apiMock.getReviewsToday.mockResolvedValue({
+      today: '2026-08-18',
+      dueCount: 2,
+      due: [
+        { nodeCode: 'M0.1', title: 'Etiqueta de tatame', daysOverdue: 3 },
+        { nodeCode: 'M0.2', title: 'Quedas seguras', daysOverdue: 1 },
+      ],
+    });
+    apiMock.getRequirements.mockResolvedValue({ items: [], nodeCodes: ['M0.2'] });
+    renderEm('/hoje');
+
+    const marca = await screen.findByText('próximo grau');
+    expect(marca.closest('a')).toHaveAttribute('href', '/no/M0.2');
+    const itens = screen.getAllByRole('link').filter((a) => a.classList.contains('due-list__item'));
+    expect(itens.map((a) => a.getAttribute('href'))).toEqual(['/no/M0.1', '/no/M0.2']);
   });
 
   it('tudo em dia: diz isso, sem atalho nenhum', async () => {

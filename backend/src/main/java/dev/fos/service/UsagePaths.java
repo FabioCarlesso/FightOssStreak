@@ -34,6 +34,7 @@ public final class UsagePaths {
                     "/hoje",
                     "/arvore",
                     "/posicoes",
+                    "/graduacao",
                     "/diario",
                     "/diario/nova",
                     "/progresso",

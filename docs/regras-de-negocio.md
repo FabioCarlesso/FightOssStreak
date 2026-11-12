@@ -80,6 +80,24 @@ segunda sem a primeira.
   mostra feito, mínimo e quanto falta, e não premia: bater o mínimo não muda cor. A última linha
   lembra que mínimo de aulas não é graduação — quem decide é o professor.
 
+## Requisitos do próximo grau (D78)
+
+- **A lista é da conta e vem de fora**: a pessoa cola o texto que a academia entregou, um requisito
+  por linha. Linhas vazias e marcadores (`•`, `-`, `*`, `1.`, `2)`, `(3)`, `a)`) são limpos; número
+  sem pontuação ("100kg") e decimal ("1.5") são texto. Tetos: 60 requisitos por checklist, 200
+  caracteres por linha (recusada com o número da linha, e não cortada) e 8000 no texto colado.
+  Colar de novo **acrescenta** ao fim; o rótulo em branco mantém o atual. Uma checklist por conta.
+- **A ligação com nós é confirmada pela pessoa**: a sugestão (`suggestTechniques`) pontua as
+  palavras do requisito contra título, apelido e posição dos nós, vem desmarcada, e só vira vínculo
+  na confirmação. O vínculo guarda o código do nó (D11).
+- **Status derivado do progresso gravado**: com nós, concluído quando todos estão `COMPLETED`, em
+  andamento quando algum está `IN_PROGRESS` ou `COMPLETED`, pendente nos outros casos. Sem nó, vale
+  a marcação à mão, que não conta para requisito com nó. Regra pura `requirementStatus` em
+  `shared/domain`, espelhada em `GraduationRequirementService.statusOf` (D17).
+- **Na home**: os nós ligados ganham a marca "próximo grau" na agenda, **sem reordenar** a fila. Sem
+  revisão vencida, o *Continuar* procura primeiro um nó da checklist em andamento, depois liberado,
+  e só então a árvore inteira (`nextNodeToResume` com `preferred`).
+
 ## Streak e freeze
 
 - O streak é **derivado a cada leitura** e conta **dia com registro**:

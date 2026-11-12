@@ -10,12 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import dev.fos.model.Attire;
 import dev.fos.model.GraduationGoal;
+import dev.fos.model.GraduationRequirement;
 import dev.fos.model.SessionKind;
 import dev.fos.model.TrainingSession;
 import dev.fos.model.UsageDaily;
 import dev.fos.model.UsageDimension;
 import dev.fos.model.UsageEventType;
 import dev.fos.repo.GraduationGoalRepository;
+import dev.fos.repo.GraduationRequirementRepository;
 import dev.fos.repo.TrainingSessionRepository;
 import dev.fos.repo.UsageDailyRepository;
 import dev.fos.repo.UsageEventRepository;
@@ -85,6 +87,7 @@ class AdminPanelIntegrationTest {
     @Autowired private UsageEventRepository events;
     @Autowired private TrainingSessionRepository sessoes;
     @Autowired private GraduationGoalRepository metas;
+    @Autowired private GraduationRequirementRepository requisitos;
 
     /** Os ids das contas plantadas — o diário precisa de dono, e o painel não pode saber quem é. */
     private final Map<String, Long> contas = new HashMap<>();
@@ -143,6 +146,16 @@ class AdminPanelIntegrationTest {
         meta.touch(Instant.parse("2026-08-26T10:00:00Z"));
         metas.save(meta);
 
+        // A checklist do próximo grau (#196, D78): texto que veio da academia da pessoa.
+        GraduationRequirement requisito =
+                new GraduationRequirement(
+                        contas.get("ana"),
+                        0,
+                        "Requisito colado da academia",
+                        Instant.parse("2026-08-26T10:00:00Z"));
+        requisito.setNodeCodes(java.util.List.of("M0.1"));
+        requisitos.save(requisito);
+
         String corpo =
                 mockMvc.perform(get("/api/admin/painel").with(as("dono")))
                         .andExpect(status().isOk())
@@ -172,7 +185,11 @@ class AdminPanelIntegrationTest {
                 .doesNotContain("nogi")
                 .doesNotContain("graduation")
                 .doesNotContain("mintotal")
-                .doesNotContain("grau");
+                .doesNotContain("grau")
+                // A checklist (#196, D78): nem o texto colado nem o nome do recurso.
+                .doesNotContain("requisito")
+                .doesNotContain("requirement")
+                .doesNotContain("academia");
     }
 
     @Test

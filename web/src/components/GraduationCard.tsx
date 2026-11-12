@@ -57,6 +57,9 @@ export function GraduationCard({ graduation }: { graduation: GraduationView | nu
         Conta só o que está registrado como <em>Aula</em>. Mínimo de aulas não é graduação: quem
         decide o grau é o professor.
       </p>
+      <p className="hint">
+        <Link to="/graduacao">Requisitos do próximo grau</Link>
+      </p>
     </section>
   );
 }
