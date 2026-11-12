@@ -15,6 +15,7 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Uma posição do mapa de posições (#194, D76): guarda fechada, montada, costas...
@@ -54,8 +55,14 @@ public class CurriculumPosition {
     @Column(name = "order_index", nullable = false)
     private int orderIndex;
 
-    /** Na ordem do JSON: o primeiro apelido é o que a tela mostra primeiro. */
-    @ElementCollection(fetch = FetchType.EAGER)
+    /**
+     * Na ordem do JSON: o primeiro apelido é o que a tela mostra primeiro.
+     *
+     * <p>Em lote, e não {@code EAGER} solto: a árvore lê as 15 posições a cada requisição, e sem o
+     * lote o Hibernate fazia uma consulta de apelidos por posição.
+     */
+    @BatchSize(size = 64)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "curriculum_position_alias",
             joinColumns = @JoinColumn(name = "position_id"))
