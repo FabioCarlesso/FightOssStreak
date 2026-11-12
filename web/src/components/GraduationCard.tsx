@@ -1,5 +1,5 @@
 import { graduationLines, type GraduationLine } from '@fos/domain';
-import type { GraduationView } from '@fos/types';
+import type { GraduationView, RequirementChecklist } from '@fos/types';
 import { Link } from 'react-router-dom';
 import { formatDay } from '../content/diario.ts';
 
@@ -13,11 +13,43 @@ import { formatDay } from '../content/diario.ts';
  *
  * Informa e não premia: bater o mínimo não muda cor nem vira destaque, e a última linha lembra que
  * quem decide o grau é o professor.
+ *
+ * A checklist de requisitos (#196, D78) também abre o card: quem colou a lista da academia sem
+ * configurar mínimo de aulas precisa achar a checklist pela home, e não só pela tela Conta.
  */
-export function GraduationCard({ graduation }: { graduation: GraduationView | null }) {
+export function GraduationCard({
+  graduation,
+  requirements = null,
+  showRequirementsLink = true,
+}: {
+  graduation: GraduationView | null;
+  requirements?: RequirementChecklist | null;
+  /** Falso na própria tela da checklist, que não precisa de link para si mesma. */
+  showRequirementsLink?: boolean;
+}) {
   const goal = graduation?.goal;
   const classes = graduation?.classes;
-  if (!goal || !classes) return null;
+  const totalRequisitos = requirements?.total ?? 0;
+  const linkRequisitos = showRequirementsLink && (
+    <p className="hint">
+      <Link to="/graduacao">
+        Requisitos do próximo grau
+        {totalRequisitos > 0 && ` (${requirements?.done ?? 0} de ${totalRequisitos} concluídos)`}
+      </Link>
+    </p>
+  );
+
+  if (!goal || !classes) {
+    if (totalRequisitos === 0) return null;
+    return (
+      <section className="card graduation" aria-labelledby="graduacao-titulo">
+        <h2 id="graduacao-titulo">
+          Próximo grau{requirements?.label ? `: ${requirements.label}` : ''}
+        </h2>
+        {linkRequisitos}
+      </section>
+    );
+  }
 
   const linhas = graduationLines(goal, {
     total: classes.total ?? 0,
@@ -57,9 +89,7 @@ export function GraduationCard({ graduation }: { graduation: GraduationView | nu
         Conta só o que está registrado como <em>Aula</em>. Mínimo de aulas não é graduação: quem
         decide o grau é o professor.
       </p>
-      <p className="hint">
-        <Link to="/graduacao">Requisitos do próximo grau</Link>
-      </p>
+      {linkRequisitos}
     </section>
   );
 }

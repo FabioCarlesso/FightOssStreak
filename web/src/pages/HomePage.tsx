@@ -122,7 +122,7 @@ export function HomePage() {
         </p>
       </section>
 
-      <GraduationCard graduation={graduacao.data} />
+      <GraduationCard graduation={graduacao.data} requirements={requisitos.data} />
     </div>
   );
 }

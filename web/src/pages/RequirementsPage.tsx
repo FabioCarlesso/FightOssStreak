@@ -87,7 +87,7 @@ export function RequirementsPage() {
         </p>
       </section>
 
-      <GraduationCard graduation={graduacao.data} />
+      <GraduationCard graduation={graduacao.data} showRequirementsLink={false} />
 
       {itens.length > 0 && (
         <section className="card">
