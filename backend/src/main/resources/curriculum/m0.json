@@ -106,6 +106,7 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": [],
+      "positions": ["EM_PE"],
       "concept": "Você vai cair — em pé, raspado ou derrubado — e a queda é a habilidade que decide se isso custa nada ou custa uma cirurgia.\n\nO princípio é distribuir o impacto por uma área grande do corpo em vez de concentrá-lo numa articulação: a superfície do braço absorve o choque, o queixo colado no peito impede a cabeça de bater, e soltar o ar no instante do impacto evita que a respiração trave junto com o corpo. É mecânica, não técnica de exibição.\n\nO erro mais comum de quem nunca treinou é o reflexo oposto: esticar o braço para o chão tentando frear a queda com a mão. Isso concentra o peso do corpo inteiro em punho, cotovelo e ombro — a combinação mais comum de fratura e luxação em treino, e exatamente o que cair bem existe para evitar.",
       "video": {
         "youtubeId": "aauMRslfCyo",
@@ -202,6 +203,7 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": [],
+      "aliases": ["bater", "tap out"],
       "concept": "O tap é o mecanismo que torna possível treinar finalizações de verdade sem se machucar: ele converte uma lesão em uma informação, antes que ela aconteça.\n\nO ponto é tocar antes do dano, não no limite dele. Em torção articular a dor avisa com antecedência suficiente; em estrangulamento o apagão pode chegar sem um aviso de dor equivalente, e por isso a margem de erro é menor. Tocar cedo não é fraqueza — é o que garante treinar de novo amanhã.\n\nO erro que mais custa é do outro lado da posição: não reconhecer o tap do parceiro na hora, inclusive tap verbal ou batida no tatame quando os braços estão presos. Soltar imediatamente, sem confirmar e sem hesitar, é obrigação de quem está por cima — não uma cortesia.",
       "video": {
         "youtubeId": "sBfx-lqdPgE",
@@ -298,6 +300,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": [],
+      "positions": ["QUATRO_APOIOS", "EM_PE"],
       "concept": "Postura é o que decide se a força do oponente encontra estrutura óssea ou músculo cansado — e músculo cansado sempre perde.\n\nAs três bases resolvem o mesmo problema em situações diferentes: em pé, joelhos flexionados e centro de gravidade baixo evitam a queda; de quatro apoios, cotovelos colados ao corpo e coluna neutra impedem que te virem; sentado na guarda, coluna ereta e quadril móvel mantêm a distância sob seu controle.\n\nO erro que atravessa as três bases é sempre o mesmo: braço esticado longe do corpo. Ele vira alavanca de graça para o oponente — pegada fácil, entrada de queda, material pronto para chave de braço — não importa qual das três posturas você está segurando naquele momento.",
       "video": {
         "youtubeId": "KuZtR1mogvY",
@@ -394,6 +397,7 @@
       "order": 5,
       "unlockRule": "ALL",
       "prereqs": [],
+      "positions": ["EM_PE"],
       "concept": "No gi, a pegada é o que substitui a força: ela conecta você ao oponente e transforma movimento de quadril em controle do corpo dele.\n\nPor isso pegada é pré-requisito conceitual de quase tudo — raspagem, passagem e estrangulamento começam com uma pegada específica, não com o movimento em si. Quem controla a manga controla o braço, e com o braço controla a postura inteira do oponente.\n\nO erro comum é manter uma pegada com o cotovelo longe do corpo: ela custa mais para quem a segura do que para quem a sofre, porque gasta força onde deveria gastar estrutura. Uma pegada só vale a energia que exige se o cotovelo estiver colado perto de você.",
       "video": {
         "youtubeId": "MR4nJQ6qhuU",

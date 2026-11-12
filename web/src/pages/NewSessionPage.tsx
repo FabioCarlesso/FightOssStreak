@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Recall } from '@fos/domain';
+import type { NodeSummary } from '@fos/types';
 import { api } from '../api/client.ts';
 import { SessionFields } from '../components/SessionFields.tsx';
+import { TechniquePicker } from '../components/TechniquePicker.tsx';
 import {
   type SessionFieldsState,
   emptySessionFields,
@@ -24,7 +26,8 @@ import { useAsync } from '../state/useAsync.ts';
  *
  * As técnicas vêm pré-listadas com o que o SRS marcou para hoje: quem acabou de treinar não deveria
  * ter que lembrar o código do nó. Nenhuma vem marcada — marcar por padrão registraria treino que
- * não houve, e é o SRS que pagaria a conta.
+ * não houve, e é o SRS que pagaria a conta. O que a aula trouxe fora da agenda entra pela busca
+ * por nome, apelido ou posição (#194, D76), e já entra marcado: foi escolhido de propósito.
  */
 export function NewSessionPage() {
   const navigate = useNavigate();
@@ -38,6 +41,9 @@ export function NewSessionPage() {
   const [failure, setFailure] = useState<string | null>(null);
 
   const agenda = useAsync(() => api.getReviewsToday(), []);
+  const tree = useAsync(() => api.getTree(), []);
+  // Técnicas escolhidas pela busca, fora da agenda de hoje: precisam do título para a lista.
+  const [extras, setExtras] = useState<Array<{ nodeCode: string; title: string }>>([]);
 
   // Modo demonstração não grava (D31): registrar aqui mexeria em streak, SRS e progresso de
   // verdade, que é exatamente o que a inspeção do currículo não pode fazer.
@@ -54,6 +60,25 @@ export function NewSessionPage() {
   }
 
   const marcadas = Object.keys(tecnicas);
+  const vencidas = (agenda.data?.due ?? []).map((item) => ({
+    nodeCode: item.nodeCode ?? '',
+    title: item.title ?? '',
+  }));
+  const listadas = [
+    ...vencidas,
+    ...extras.filter((extra) => !vencidas.some((item) => item.nodeCode === extra.nodeCode)),
+  ];
+
+  function adicionar(node: NodeSummary) {
+    const code = node.code ?? '';
+    if (!code) return;
+    setExtras((atual) =>
+      atual.some((extra) => extra.nodeCode === code)
+        ? atual
+        : [...atual, { nodeCode: code, title: node.title ?? '' }],
+    );
+    setTecnicas((atual) => (atual[code] ? atual : { ...atual, [code]: 'OK' }));
+  }
 
   function toggle(nodeCode: string) {
     setTecnicas((atual) => {
@@ -70,7 +95,12 @@ export function NewSessionPage() {
     try {
       const criada = await api.createTrainingSession({
         ...toSessionBody(fields),
-        tecnicas: marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
+        // Descanso não recebe técnica (D58): o que ficou marcado antes de trocar o tipo não vai,
+        // senão o backend recusaria a sessão inteira.
+        tecnicas:
+          fields.kind === 'DESCANSO'
+            ? []
+            : marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
       });
       if (kindRecordsAttire(fields.kind)) lembrarKimono(fields.attire);
       void navigate(`/diario/${criada.id}`);
@@ -121,14 +151,12 @@ export function NewSessionPage() {
             </p>
 
             {agenda.loading && !agenda.data && <p className="empty">Carregando agenda…</p>}
-            {agenda.data && agenda.data.due?.length === 0 && (
-              <p className="empty">
-                Nada vencido hoje. Dá para vincular técnicas depois, pela tela da sessão.
-              </p>
+            {agenda.data && agenda.data.due?.length === 0 && extras.length === 0 && (
+              <p className="empty">Nada vencido hoje. Busque abaixo o que vocês treinaram.</p>
             )}
 
             <ul className="session-techniques">
-              {agenda.data?.due?.map((item) => {
+              {listadas.map((item) => {
                 const marcada = tecnicas[item.nodeCode ?? ''] != null;
                 return (
                   <li key={item.nodeCode} className="session-techniques__item">
@@ -162,6 +190,13 @@ export function NewSessionPage() {
                 );
               })}
             </ul>
+
+            <h3 className="session-techniques__more">Outra técnica</h3>
+            <TechniquePicker
+              tree={tree.data}
+              onPick={adicionar}
+              exclude={listadas.map((item) => item.nodeCode)}
+            />
           </>
         )}
       </section>

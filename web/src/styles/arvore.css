@@ -200,3 +200,37 @@
     min-width: 2.8rem;
   }
 }
+
+/* Mapa de posições (#194, D76): mesma linha de nó da árvore, debaixo de cada posição. */
+.tree__links {
+  margin: 0.6rem 0 0;
+  font-size: var(--text-sm);
+}
+
+.position-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.2rem;
+}
+
+.position__name {
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+.position__aliases {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.position__identify {
+  margin: 0.4rem 0 0;
+  font-size: var(--text-sm);
+}
+
+.position .empty {
+  margin: 0.5rem 0 0;
+}

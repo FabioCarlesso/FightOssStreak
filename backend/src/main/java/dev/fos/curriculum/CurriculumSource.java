@@ -15,7 +15,7 @@ public final class CurriculumSource {
 
     /** Conteúdo de {@code modules.json}. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Index(String version, String scope, List<ModuleRef> modules) {}
+    public record Index(String version, String scope, String positions, List<ModuleRef> modules) {}
 
     public record ModuleRef(int order, String file) {}
 
@@ -34,7 +34,36 @@ public final class CurriculumSource {
             String concept,
             VideoSpec video,
             List<ExtraVideoSpec> extraVideos,
-            List<QuestionSpec> quiz) {
+            List<QuestionSpec> quiz,
+            List<String> positions,
+            List<String> aliases) {
+
+        /** Nó sem posição nem apelido — o formato de antes da #194, que continua válido. */
+        public NodeSpec(
+                String code,
+                String title,
+                String belt,
+                int order,
+                String unlockRule,
+                List<String> prereqs,
+                String concept,
+                VideoSpec video,
+                List<ExtraVideoSpec> extraVideos,
+                List<QuestionSpec> quiz) {
+            this(
+                    code,
+                    title,
+                    belt,
+                    order,
+                    unlockRule,
+                    prereqs,
+                    concept,
+                    video,
+                    extraVideos,
+                    quiz,
+                    null,
+                    null);
+        }
 
         public List<String> prereqs() {
             return prereqs == null ? List.of() : prereqs;
@@ -51,6 +80,50 @@ public final class CurriculumSource {
 
         public String unlockRule() {
             return unlockRule == null || unlockRule.isBlank() ? "ALL" : unlockRule;
+        }
+
+        /**
+         * Posições de onde a técnica parte (#194, D76). Opcional: técnica de etiqueta ou de jogo
+         * integrado não parte de posição nenhuma.
+         */
+        public List<String> positions() {
+            return positions == null ? List.of() : positions;
+        }
+
+        /** Apelidos do nó para a busca do diário (#194, D76). Opcional. */
+        public List<String> aliases() {
+            return aliases == null ? List.of() : aliases;
+        }
+    }
+
+    /** Conteúdo de {@code positions.json} (#194, D76). */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record PositionsFile(List<PositionSpec> positions) {
+
+        public List<PositionSpec> positions() {
+            return positions == null ? List.of() : positions;
+        }
+    }
+
+    /**
+     * Uma posição do mapa (#194, D76).
+     *
+     * @param family {@code GUARDA} | {@code CONTROLE_POR_CIMA} | {@code COSTAS} | {@code TRANSICAO}
+     *     | {@code EM_PE}
+     * @param perspective {@code BAIXO} | {@code CIMA} | {@code NEUTRA}
+     * @param identify como reconhecer a posição, em uma ou duas frases — nunca como chegar nela
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record PositionSpec(
+            String code,
+            String name,
+            List<String> aliases,
+            String family,
+            String perspective,
+            String identify) {
+
+        public List<String> aliases() {
+            return aliases == null ? List.of() : aliases;
         }
     }
 

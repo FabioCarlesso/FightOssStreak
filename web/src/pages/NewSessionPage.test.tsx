@@ -1,4 +1,4 @@
-import type { ReviewAgenda, TrainingSession, TrainingSessionRequest } from '@fos/types';
+import type { ReviewAgenda, TrainingSession, TrainingSessionRequest, TreeView } from '@fos/types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -22,6 +22,7 @@ import { DemoModeProvider } from '../state/DemoModeProvider.tsx';
 const { apiMock } = vi.hoisted(() => ({
   apiMock: {
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
+    getTree: vi.fn<() => Promise<TreeView>>(),
     createTrainingSession: vi.fn<(s: TrainingSessionRequest) => Promise<TrainingSession>>(),
   },
 }));
@@ -43,6 +44,57 @@ const AGENDA: ReviewAgenda = {
   due: [{ nodeCode: 'M0.1', title: 'Queda de base', daysOverdue: 2 }],
 };
 
+/** Árvore mínima com posições e apelidos — o que a busca de técnica usa (#194). */
+const ARVORE: TreeView = {
+  modules: [
+    {
+      code: 'M3',
+      title: 'Guarda aberta',
+      nodes: [
+        {
+          code: 'M3.6',
+          title: 'Meia-guarda: conceito',
+          positionCodes: ['MEIA_GUARDA'],
+          aliases: [],
+        },
+        {
+          code: 'M3.7',
+          title: 'Raspagem de meia-guarda',
+          positionCodes: ['MEIA_GUARDA'],
+          aliases: [],
+        },
+      ],
+    },
+    {
+      code: 'M4',
+      title: 'Controle superior',
+      nodes: [
+        {
+          code: 'M4.1',
+          title: '100kg: manutenção e pressão',
+          positionCodes: ['CEM_QUILOS'],
+          aliases: [],
+        },
+        {
+          code: 'M7.1',
+          title: 'Kimura',
+          positionCodes: ['CEM_QUILOS'],
+          aliases: ['chave de ombro'],
+        },
+      ],
+    },
+  ],
+  positions: [
+    { code: 'MEIA_GUARDA', name: 'Meia-guarda', aliases: ['half guard'], family: 'GUARDA' },
+    {
+      code: 'CEM_QUILOS',
+      name: '100kg',
+      aliases: ['lateral', 'side control'],
+      family: 'CONTROLE_POR_CIMA',
+    },
+  ],
+};
+
 function renderPage() {
   return render(
     <MemoryRouter>
@@ -58,6 +110,7 @@ beforeEach(() => {
   sessionStorage.clear();
   localStorage.clear();
   apiMock.getReviewsToday.mockResolvedValue(AGENDA);
+  apiMock.getTree.mockResolvedValue(ARVORE);
   apiMock.createTrainingSession.mockResolvedValue({ id: 7, trainedOn: '2026-03-10' });
   // A data padrão do formulário sai de `new Date()`. Sem relógio fixo, um teste que roda perto da
   // meia-noite montaria o corpo com a data de um dia e afirmaria a de outro.
@@ -167,5 +220,53 @@ describe('NewSessionPage', () => {
     await userEvent.click(screen.getByRole('radio', { name: /físico/i }));
     await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
     expect(localStorage.getItem('fos.ultimoKimono')).toBe('NOGI');
+  });
+
+  it('a técnica fora da agenda é achada pelo apelido e entra marcada (#194)', async () => {
+    renderPage();
+
+    // "side control" não está em título nenhum: é apelido da posição de onde M4.1 e M7.1 partem.
+    await userEvent.type(
+      await screen.findByRole('searchbox', { name: /buscar técnica/i }),
+      'side control',
+    );
+    expect(screen.getByRole('button', { name: /M4\.1/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /M7\.1/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /M3\.6/ })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /M7\.1/ }));
+
+    // Escolher pela busca já é a decisão: a técnica entra marcada, sem segundo toque.
+    expect(screen.getByRole('checkbox', { name: /kimura/i })).toBeChecked();
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+    expect(apiMock.createTrainingSession.mock.calls[0]![0].tecnicas).toEqual([
+      { nodeCode: 'M7.1', recall: 'OK' },
+    ]);
+  });
+
+  it('o filtro por posição lista só as técnicas daquela posição (#194)', async () => {
+    renderPage();
+
+    await userEvent.selectOptions(
+      await screen.findByRole('combobox', { name: /posição/i }),
+      'MEIA_GUARDA',
+    );
+
+    expect(screen.getByRole('button', { name: /M3\.6/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /M3\.7/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /M4\.1/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /M7\.1/ })).not.toBeInTheDocument();
+  });
+
+  it('técnica marcada antes de trocar para descanso não viaja junto', async () => {
+    renderPage();
+
+    await userEvent.click(await screen.findByRole('checkbox', { name: /queda de base/i }));
+    await userEvent.click(screen.getByRole('radio', { name: /descanso/i }));
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+
+    const corpo = apiMock.createTrainingSession.mock.calls[0]![0];
+    expect(corpo.kind).toBe('DESCANSO');
+    expect(corpo.tecnicas).toEqual([]);
   });
 });

@@ -1,6 +1,8 @@
 package dev.fos.web.dto;
 
 import dev.fos.model.Belt;
+import dev.fos.model.PositionFamily;
+import dev.fos.model.PositionPerspective;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.UnlockRule;
 import dev.fos.model.VideoOrientation;
@@ -13,8 +15,30 @@ public final class CurriculumDtos {
 
     private CurriculumDtos() {}
 
-    /** Árvore completa com o estado do usuário — payload da tela principal. */
-    public record TreeView(List<ModuleView> modules, ProgressSummary summary) {}
+    /**
+     * Árvore completa com o estado do usuário — payload da tela principal.
+     *
+     * @param positions o mapa de posições (#194, D76), na ordem do currículo. Vem dentro da árvore,
+     *     e não em rota própria, porque toda tela que usa posição — {@code /posicoes} e a busca de
+     *     técnica do diário — precisa também dos nós e do status de cada um, que só a árvore traz
+     */
+    public record TreeView(
+            List<ModuleView> modules, ProgressSummary summary, List<PositionView> positions) {}
+
+    /**
+     * Uma posição do mapa (#194, D76). Os nós que partem dela não vêm aqui: cada nó da árvore diz
+     * as próprias posições em {@code positionCodes}, e repetir a lista dos dois lados seria uma
+     * segunda verdade.
+     *
+     * @param identify como reconhecer a posição — nunca como chegar nela nem o que fazer dali (D1)
+     */
+    public record PositionView(
+            String code,
+            String name,
+            List<String> aliases,
+            PositionFamily family,
+            PositionPerspective perspective,
+            String identify) {}
 
     /**
      * Um módulo da árvore, com o domínio dele já agregado (#103).
@@ -66,6 +90,9 @@ public final class CurriculumDtos {
      *     nó com banco de 8 serve só {@code QuizRotation.QUESTIONS_PER_ATTEMPT} (4) por vez. Hoje
      *     só sinaliza a etiqueta "quiz" em {@code TreePage.tsx} quando maior que zero, mas uma tela
      *     futura que exiba o número precisa saber que é o banco, não a prova.
+     * @param positionCodes posições de onde a técnica parte (#194, D76); vazio é técnica que não
+     *     parte de posição nenhuma (etiqueta, jogo integrado)
+     * @param aliases apelidos do nó, para a busca do diário (#194, D76)
      */
     public record NodeSummaryView(
             String code,
@@ -77,7 +104,9 @@ public final class CurriculumDtos {
             boolean hasVideo,
             int quizQuestionCount,
             Integer lastQuizScore,
-            LocalDate nextReviewOn) {}
+            LocalDate nextReviewOn,
+            List<String> positionCodes,
+            List<String> aliases) {}
 
     public record ProgressSummary(
             int totalNodes, int completedNodes, int availableNodes, int lockedNodes) {}

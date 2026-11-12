@@ -25,6 +25,7 @@ import tools.jackson.databind.ObjectMapper;
 class CurriculumIntegrityTest {
 
     private List<CurriculumSource.Module> modules;
+    private List<CurriculumSource.PositionSpec> positions;
     private CurriculumValidator validator;
 
     @BeforeEach
@@ -45,6 +46,7 @@ class CurriculumIntegrityTest {
         CurriculumLoader loader =
                 new CurriculumLoader(new ObjectMapper(), new DefaultResourceLoader(), properties);
         modules = loader.load();
+        positions = loader.loadPositions();
         validator = new CurriculumValidator();
     }
 
@@ -52,7 +54,191 @@ class CurriculumIntegrityTest {
     @DisplayName(
             "o currículo versionado é íntegro: sem ciclos, referências quebradas ou quiz inválido")
     void curriculumIsValid() {
-        validator.validate(modules);
+        validator.validate(modules, positions);
+    }
+
+    @Test
+    @DisplayName("o mapa de posições traz a lista inicial da #194, na ordem por família")
+    void positionsHaveTheInitialList() {
+        assertThat(positions)
+                .extracting(CurriculumSource.PositionSpec::code)
+                .containsExactly(
+                        "GUARDA_FECHADA",
+                        "GUARDA_ABERTA",
+                        "MEIA_GUARDA",
+                        "GUARDA_BORBOLETA",
+                        "GUARDA_ARANHA",
+                        "DE_LA_RIVA",
+                        "GUARDA_X",
+                        "CEM_QUILOS",
+                        "MONTADA",
+                        "JOELHO_NA_BARRIGA",
+                        "NORTE_SUL",
+                        "CRUCIFIXO",
+                        "COSTAS",
+                        "QUATRO_APOIOS",
+                        "EM_PE");
+    }
+
+    @Test
+    @DisplayName("meia-guarda liga M3.6 e M3.7, e as posições sem técnica ficam vazias (#194)")
+    void halfGuardLinksItsNodes() {
+        Map<String, List<String>> nodesByPosition =
+                byCode().values().stream()
+                        .flatMap(
+                                node ->
+                                        node.positions().stream()
+                                                .map(position -> Map.entry(position, node.code())))
+                        .collect(
+                                Collectors.groupingBy(
+                                        Map.Entry::getKey,
+                                        Collectors.mapping(
+                                                Map.Entry::getValue, Collectors.toList())));
+
+        assertThat(nodesByPosition.get("MEIA_GUARDA")).containsExactlyInAnyOrder("M3.6", "M3.7");
+        // As lacunas que a fase 3 (#195) vai preencher: a tela diz "ainda não há técnica".
+        assertThat(nodesByPosition)
+                .doesNotContainKeys(
+                        "GUARDA_ARANHA", "DE_LA_RIVA", "GUARDA_X", "NORTE_SUL", "CRUCIFIXO");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita nó que aponta para posição inexistente (#194)")
+    void rejectsUnknownPosition() {
+        CurriculumSource.Module broken = moduleWithTaxonomy(List.of("LUA"), List.of());
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken), List.of(position("MONTADA"))))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("posição inexistente 'LUA'");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita código de posição duplicado (#194)")
+    void rejectsDuplicatePositionCode() {
+        assertThatThrownBy(
+                        () ->
+                                validator.validate(
+                                        List.of(moduleWithTaxonomy(List.of(), List.of())),
+                                        List.of(position("MONTADA"), position("MONTADA"))))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("Código de posição duplicado: MONTADA");
+    }
+
+    @Test
+    @DisplayName(
+            "o validador rejeita apelido que leva a duas posições, sem olhar acento, caixa ou"
+                    + " hífen (#194)")
+    void rejectsAliasSharedBetweenPositions() {
+        CurriculumSource.PositionSpec lateral =
+                new CurriculumSource.PositionSpec(
+                        "CEM_QUILOS",
+                        "100kg",
+                        List.of("Lateral"),
+                        "CONTROLE_POR_CIMA",
+                        "CIMA",
+                        IDENTIFY);
+        CurriculumSource.PositionSpec outra =
+                new CurriculumSource.PositionSpec(
+                        "OUTRA",
+                        "Outra",
+                        List.of("látêral"),
+                        "CONTROLE_POR_CIMA",
+                        "CIMA",
+                        IDENTIFY);
+        CurriculumSource.PositionSpec meia =
+                new CurriculumSource.PositionSpec(
+                        "MEIA", "Meia-guarda", List.of(), "GUARDA", "BAIXO", IDENTIFY);
+        CurriculumSource.PositionSpec meiaDeNovo =
+                new CurriculumSource.PositionSpec(
+                        "MEIA_2", "Meia", List.of("meia guarda"), "GUARDA", "BAIXO", IDENTIFY);
+        CurriculumSource.Module module = moduleWithTaxonomy(List.of(), List.of());
+
+        assertThatThrownBy(() -> validator.validate(List.of(module), List.of(lateral, outra)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("repete um termo de busca da posição CEM_QUILOS");
+        assertThatThrownBy(() -> validator.validate(List.of(module), List.of(meia, meiaDeNovo)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("repete um termo de busca da posição MEIA");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita identify fora da faixa de tamanho (#194)")
+    void rejectsIdentifyOutOfRange() {
+        CurriculumSource.Module module = moduleWithTaxonomy(List.of(), List.of());
+        CurriculumSource.PositionSpec curto =
+                new CurriculumSource.PositionSpec(
+                        "CURTO", "Curto", List.of(), "GUARDA", "BAIXO", "posição de guarda");
+        CurriculumSource.PositionSpec longo =
+                new CurriculumSource.PositionSpec(
+                        "LONGO",
+                        "Longo",
+                        List.of(),
+                        "GUARDA",
+                        "BAIXO",
+                        "x".repeat(CurriculumValidator.MAX_IDENTIFY_LENGTH + 1));
+
+        assertThatThrownBy(() -> validator.validate(List.of(module), List.of(curto)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de");
+        assertThatThrownBy(() -> validator.validate(List.of(module), List.of(longo)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("fora da faixa de");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita família de posição que não existe (#194)")
+    void rejectsUnknownFamily() {
+        CurriculumSource.PositionSpec voando =
+                new CurriculumSource.PositionSpec(
+                        "VOO", "Voo", List.of(), "AR", "NEUTRA", IDENTIFY);
+
+        assertThatThrownBy(
+                        () ->
+                                validator.validate(
+                                        List.of(moduleWithTaxonomy(List.of(), List.of())),
+                                        List.of(voando)))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("família inválida 'AR'");
+    }
+
+    @Test
+    @DisplayName("o validador rejeita apelido repetido no mesmo nó (#194)")
+    void rejectsRepeatedNodeAlias() {
+        CurriculumSource.Module broken = moduleWithTaxonomy(List.of(), List.of("Armbar", "armbar"));
+
+        assertThatThrownBy(() -> validator.validate(List.of(broken), List.of()))
+                .isInstanceOf(CurriculumException.class)
+                .hasMessageContaining("apelido repetido");
+    }
+
+    private static final String IDENTIFY =
+            "Um está deitado de costas e o outro está por cima, numa descrição do que se vê.";
+
+    private CurriculumSource.PositionSpec position(String code) {
+        return new CurriculumSource.PositionSpec(
+                code, code, List.of(), "CONTROLE_POR_CIMA", "CIMA", IDENTIFY);
+    }
+
+    private CurriculumSource.Module moduleWithTaxonomy(
+            List<String> nodePositions, List<String> nodeAliases) {
+        return new CurriculumSource.Module(
+                "MX",
+                "Quebrado",
+                "resumo",
+                List.of(
+                        new CurriculumSource.NodeSpec(
+                                "MX.1",
+                                "t",
+                                "BRANCA",
+                                1,
+                                "ALL",
+                                List.of(),
+                                "conceito",
+                                null,
+                                List.of(),
+                                List.of(),
+                                nodePositions,
+                                nodeAliases)));
     }
 
     @Test

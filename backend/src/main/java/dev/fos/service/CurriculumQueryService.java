@@ -9,6 +9,7 @@ import dev.fos.model.SrsReview;
 import dev.fos.model.UserNodeKey;
 import dev.fos.model.UserProgress;
 import dev.fos.model.VideoRef;
+import dev.fos.repo.CurriculumPositionRepository;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizAttemptRepository;
@@ -45,6 +46,7 @@ public class CurriculumQueryService {
     private final SrsReviewRepository srsRepository;
     private final DrillLogRepository drillLogRepository;
     private final UnlockService unlockService;
+    private final CurriculumPositionRepository positionRepository;
 
     public CurriculumQueryService(
             NodeRepository nodeRepository,
@@ -53,7 +55,8 @@ public class CurriculumQueryService {
             UserProgressRepository progressRepository,
             SrsReviewRepository srsRepository,
             DrillLogRepository drillLogRepository,
-            UnlockService unlockService) {
+            UnlockService unlockService,
+            CurriculumPositionRepository positionRepository) {
         this.nodeRepository = nodeRepository;
         this.quizQuestionRepository = quizQuestionRepository;
         this.quizAttemptRepository = quizAttemptRepository;
@@ -61,6 +64,7 @@ public class CurriculumQueryService {
         this.srsRepository = srsRepository;
         this.drillLogRepository = drillLogRepository;
         this.unlockService = unlockService;
+        this.positionRepository = positionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +100,9 @@ public class CurriculumQueryService {
                                             : null,
                                     srs.containsKey(node.getId())
                                             ? srs.get(node.getId()).getNextReviewOn()
-                                            : null));
+                                            : null,
+                                    List.copyOf(node.getPositionCodes()),
+                                    List.copyOf(node.getAliases())));
         }
 
         List<CurriculumDtos.ModuleView> modules =
@@ -112,7 +118,21 @@ public class CurriculumQueryService {
                                 })
                         .toList();
 
-        return new CurriculumDtos.TreeView(modules, summarize(statuses));
+        return new CurriculumDtos.TreeView(modules, summarize(statuses), positions());
+    }
+
+    private List<CurriculumDtos.PositionView> positions() {
+        return positionRepository.findAllByOrderByOrderIndexAsc().stream()
+                .map(
+                        position ->
+                                new CurriculumDtos.PositionView(
+                                        position.getCode(),
+                                        position.getName(),
+                                        List.copyOf(position.getAliases()),
+                                        position.getFamily(),
+                                        position.getPerspective(),
+                                        position.getIdentify()))
+                .toList();
     }
 
     @Transactional(readOnly = true)

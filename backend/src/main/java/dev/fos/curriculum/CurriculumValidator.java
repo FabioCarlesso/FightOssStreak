@@ -1,8 +1,11 @@
 package dev.fos.curriculum;
 
 import dev.fos.model.Belt;
+import dev.fos.model.PositionFamily;
+import dev.fos.model.PositionPerspective;
 import dev.fos.model.UnlockRule;
 import dev.fos.model.VideoOrientation;
+import java.text.Normalizer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -10,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -87,12 +91,159 @@ public class CurriculumValidator {
      */
     public static final int MIN_QUIZ_QUESTIONS = 8;
 
-    /** Executa todas as checagens e lança na primeira violação encontrada. */
+    /**
+     * Faixa de tamanho do {@code identify} de uma posição (#194, D76). O piso barra o rótulo que
+     * não descreve nada ("posição de guarda"); o teto é o de uma ou duas frases — mais que isso é o
+     * texto deixando de dizer <i>o que se vê</i> para começar a dizer <i>o que se faz</i>, e isso é
+     * o que a D1 proíbe.
+     */
+    public static final int MIN_IDENTIFY_LENGTH = 60;
+
+    public static final int MAX_IDENTIFY_LENGTH = 280;
+
+    /** Teto de um apelido, de posição ou de nó: é o nome que se ouve no tatame, não uma frase. */
+    public static final int MAX_ALIAS_LENGTH = 60;
+
+    private static final Pattern POSITION_CODE = Pattern.compile("[A-Z][A-Z0-9_]{1,39}");
+
+    /** Executa as checagens de um currículo sem mapa de posições. */
     public void validate(List<CurriculumSource.Module> modules) {
+        validate(modules, List.of());
+    }
+
+    /** Executa todas as checagens e lança na primeira violação encontrada. */
+    public void validate(
+            List<CurriculumSource.Module> modules, List<CurriculumSource.PositionSpec> positions) {
         Map<String, CurriculumSource.NodeSpec> byCode = indexNodes(modules);
+        Set<String> positionCodes = validatePositions(positions);
         validateFields(modules, byCode);
+        validateNodeTaxonomy(byCode, positionCodes);
         validatePrereqReferences(byCode);
         validateNoCycles(byCode);
+    }
+
+    /**
+     * O mapa de posições (#194, D76): código único, família e perspectiva válidas, {@code identify}
+     * na faixa e sem quebra de linha, e nenhum apelido que leve a duas posições.
+     *
+     * <p>Apelido repetido é comparado sem acento e sem caixa, e contra o nome das outras posições
+     * também: "Lateral" como apelido de duas posições, ou como apelido de uma e nome de outra,
+     * faria a busca do diário devolver as duas para quem digitou uma.
+     *
+     * @return os códigos válidos, para conferir as referências dos nós
+     */
+    private Set<String> validatePositions(List<CurriculumSource.PositionSpec> positions) {
+        Set<String> codes = new HashSet<>();
+        Map<String, String> termOwner = new HashMap<>();
+
+        for (CurriculumSource.PositionSpec position : positions) {
+            String code = position.code();
+            if (code == null || !POSITION_CODE.matcher(code).matches()) {
+                throw new CurriculumException("Posição com código inválido: '" + code + "'");
+            }
+            if (!codes.add(code)) {
+                throw new CurriculumException("Código de posição duplicado: " + code);
+            }
+            String where = "posição " + code;
+            requireText(position.name(), where + ": nome vazio");
+
+            try {
+                PositionFamily.valueOf(position.family());
+            } catch (IllegalArgumentException | NullPointerException e) {
+                throw new CurriculumException(
+                        where + ": família inválida '" + position.family() + "'");
+            }
+            try {
+                PositionPerspective.valueOf(position.perspective());
+            } catch (IllegalArgumentException | NullPointerException e) {
+                throw new CurriculumException(
+                        where + ": perspectiva inválida '" + position.perspective() + "'");
+            }
+
+            requireText(position.identify(), where + ": identify vazio");
+            String identify = position.identify().strip();
+            if (identify.length() < MIN_IDENTIFY_LENGTH
+                    || identify.length() > MAX_IDENTIFY_LENGTH) {
+                throw new CurriculumException(
+                        where
+                                + ": identify com "
+                                + identify.length()
+                                + " caracteres, fora da faixa de "
+                                + MIN_IDENTIFY_LENGTH
+                                + " a "
+                                + MAX_IDENTIFY_LENGTH);
+            }
+            if (identify.contains("\n")) {
+                throw new CurriculumException(where + ": identify é um parágrafo só");
+            }
+
+            claimTerm(termOwner, position.name(), code, where + ": nome");
+            for (String alias : position.aliases()) {
+                validateAlias(alias, where);
+                claimTerm(termOwner, alias, code, where + ": apelido '" + alias + "'");
+            }
+        }
+        return codes;
+    }
+
+    /**
+     * Um termo de busca (nome ou apelido) aponta para uma posição só. O mesmo termo repetido
+     * <i>dentro</i> da mesma posição também é erro: é digitação duplicada no JSON.
+     */
+    private void claimTerm(Map<String, String> owner, String term, String code, String where) {
+        String previous = owner.putIfAbsent(searchKey(term), code);
+        if (previous != null) {
+            throw new CurriculumException(
+                    where + " repete um termo de busca da posição " + previous);
+        }
+    }
+
+    /** Posições e apelidos de cada nó (#194, D76). */
+    private void validateNodeTaxonomy(
+            Map<String, CurriculumSource.NodeSpec> byCode, Set<String> positionCodes) {
+        for (CurriculumSource.NodeSpec node : byCode.values()) {
+            String where = "nó " + node.code();
+            Set<String> seen = new HashSet<>();
+            for (String position : node.positions()) {
+                if (!positionCodes.contains(position)) {
+                    throw new CurriculumException(
+                            where + ": posição inexistente '" + position + "'");
+                }
+                if (!seen.add(position)) {
+                    throw new CurriculumException(where + ": posição repetida '" + position + "'");
+                }
+            }
+            Set<String> aliases = new HashSet<>();
+            for (String alias : node.aliases()) {
+                validateAlias(alias, where);
+                if (!aliases.add(searchKey(alias))) {
+                    throw new CurriculumException(where + ": apelido repetido '" + alias + "'");
+                }
+            }
+        }
+    }
+
+    private void validateAlias(String alias, String where) {
+        requireText(alias, where + ": apelido vazio");
+        if (alias.strip().length() > MAX_ALIAS_LENGTH) {
+            throw new CurriculumException(
+                    where + ": apelido com mais de " + MAX_ALIAS_LENGTH + " caracteres");
+        }
+    }
+
+    /**
+     * A chave com que a busca compara termos: sem acento, sem caixa, hífen valendo espaço e sem
+     * espaço sobrando — "Meia-guarda" e "meia guarda" são o mesmo termo. Espelha {@code searchKey}
+     * de {@code shared/domain/src/posicoes.ts} (D17), que é quem busca de fato.
+     */
+    static String searchKey(String term) {
+        String semAcento =
+                Normalizer.normalize(term.strip(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        return semAcento
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[-_]", " ")
+                .replaceAll("\\s+", " ")
+                .strip();
     }
 
     private Map<String, CurriculumSource.NodeSpec> indexNodes(

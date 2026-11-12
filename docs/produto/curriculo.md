@@ -174,6 +174,19 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 3. **Quiz conceitual** (3–5 perguntas testando compreensão: *quando usar*, *qual o erro comum*, *o que o oponente faz*)
 4. **Registro de drill** ("treinei isso hoje") → alimenta streak e agenda o SRS
 
+## Mapa de posições
+Além do módulo, cada nó diz de que **posição** a técnica parte (D76, #194). São 15 posições em `curriculum/positions.json`, agrupadas em cinco famílias:
+
+| Família | Posições | Técnicas no currículo |
+|---|---|---|
+| Guardas | guarda fechada, guarda aberta, meia-guarda, guarda de gancho (borboleta), guarda aranha, De La Riva, guarda X | aranha, De La Riva e guarda X ainda sem nó |
+| Controle por cima | 100kg, montada, joelho na barriga, norte-sul, crucifixo | norte-sul e crucifixo ainda sem nó |
+| Costas | costas | M1.6, M5.2–M5.4, M7.1 |
+| Transição | quatro apoios (tartaruga) | M0.4, M7.2 |
+| Em pé | em pé | M0.2, M0.4, M0.5, M6.x, M7.2, M7.3 |
+
+Cada posição tem um texto curto de **como reconhecê-la**, e nunca de como chegar nela (D1). A tela `/posicoes` lista as posições com as técnicas de cada uma, e o diário busca técnica por nome, apelido ou posição. As posições sem nó são as lacunas que a fase 3 (#195) vai preencher. Nó de etiqueta e de jogo integrado (M0.1, M0.3, M8.x) não parte de posição nenhuma, e isso é válido.
+
 ## Notas de design
 - **SRS não revisa teoria, agenda drill.** Esse é o diferencial: o app abre e diz *"hoje revise fuga de montada e raspagem de tesoura"*, priorizando nós antigos e os de quiz com erro.
 - Nós com múltiplos pré-requisitos (M1.5, M7.1, M7.4) são bons **checkpoints** de revisão consolidada.

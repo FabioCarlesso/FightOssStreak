@@ -29,6 +29,7 @@ dizendo o porquê; este arquivo é só o mapa.
 | `V17__training_session` | `training_session` e `drill_log.session_id` | D56–D58, #114 |
 | `V18__facebook_email_nao_verificado` | e-mail de provedor só é verificado quando o provedor afirma | D63 |
 | `V20__graduacao` | `training_session.attire` (com/sem kimono, anulável) e `graduation_goal` (uma linha por conta) | D75, #193 |
+| `V21__mapa_de_posicoes` | `curriculum_position` e `curriculum_position_alias` (o mapa de posições), `node_position` e `node_alias` (de que posição o nó parte e os apelidos dele): projeção do currículo, nenhum dado de usuário | D76, #194 |
 
 ## Regras que valem para toda migration
 

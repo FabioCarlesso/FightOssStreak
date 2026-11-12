@@ -2989,6 +2989,56 @@
           "nextReviewOn": {
             "type": "string",
             "format": "date"
+          },
+          "positionCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PositionView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "GUARDA",
+              "CONTROLE_POR_CIMA",
+              "COSTAS",
+              "TRANSICAO",
+              "EM_PE"
+            ]
+          },
+          "perspective": {
+            "type": "string",
+            "enum": [
+              "BAIXO",
+              "CIMA",
+              "NEUTRA"
+            ]
+          },
+          "identify": {
+            "type": "string"
           }
         }
       },
@@ -3024,6 +3074,12 @@
           },
           "summary": {
             "$ref": "#/components/schemas/ProgressSummary"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PositionView"
+            }
           }
         }
       },

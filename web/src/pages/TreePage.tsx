@@ -39,6 +39,9 @@ export function TreePage() {
           <strong>{summary?.lockedNodes ?? 0}</strong> bloqueados · {summary?.totalNodes ?? 0} nós
           no total
         </p>
+        <p className="tree__links">
+          <Link to="/posicoes">Ver as técnicas por posição</Link>
+        </p>
       </section>
 
       {tree.data.modules?.map((module) => (
@@ -92,7 +95,8 @@ function ModuleMastery({
   );
 }
 
-function NodeRow({ node, demo }: { node: NodeSummary; demo: boolean }) {
+/** Linha de nó da árvore — reaproveitada pelo mapa de posições (#194), com o mesmo status. */
+export function NodeRow({ node, demo }: { node: NodeSummary; demo: boolean }) {
   const lockedByProgress = node.status === 'LOCKED';
   // Em demonstração o nó bloqueado é apresentado como disponível — o bloqueio sempre foi só de
   // apresentação, o backend já entrega conceito, vídeo e quiz de qualquer nó. A dica de

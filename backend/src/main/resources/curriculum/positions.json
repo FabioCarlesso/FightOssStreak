@@ -1,0 +1,124 @@
+{
+  "positions": [
+    {
+      "code": "GUARDA_FECHADA",
+      "name": "Guarda fechada",
+      "aliases": ["closed guard", "guarda cruzada"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Um está deitado de costas com as pernas cruzadas em volta da cintura do outro, que fica de joelhos entre elas. Enquanto os tornozelos seguem cruzados, quem está por cima não consegue se afastar."
+    },
+    {
+      "code": "GUARDA_ABERTA",
+      "name": "Guarda aberta",
+      "aliases": ["open guard"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo mantém as pernas entre si e o oponente, mas sem cruzar os tornozelos: pés no quadril, nos bíceps ou no chão, controlando a distância em vez de prender a cintura."
+    },
+    {
+      "code": "MEIA_GUARDA",
+      "name": "Meia-guarda",
+      "aliases": ["half guard"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo prende uma só perna do oponente entre as suas. A outra perna de quem está por cima já passou, e o tronco dele costuma estar colado ou quase colado ao de quem defende."
+    },
+    {
+      "code": "GUARDA_BORBOLETA",
+      "name": "Guarda de gancho",
+      "aliases": ["borboleta", "butterfly guard", "guarda borboleta"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo fica sentado, e não deitado, com os peitos dos pés enganchados por dentro das coxas do oponente. Os joelhos ficam abertos e o tronco perto do tronco do outro."
+    },
+    {
+      "code": "GUARDA_ARANHA",
+      "name": "Guarda aranha",
+      "aliases": ["spider guard", "aranha"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo segura as duas mangas do oponente e apoia um ou os dois pés nos bíceps dele, com as pernas esticadas ou em gancho em volta dos braços. Os braços de quem está por cima ficam presos à distância."
+    },
+    {
+      "code": "DE_LA_RIVA",
+      "name": "De La Riva",
+      "aliases": ["DLR", "guarda De La Riva"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo enrola uma perna por fora da perna da frente do oponente, com o pé enganchado por dentro da coxa dele, e costuma segurar o tornozelo dessa mesma perna. Quem está por cima geralmente está em pé."
+    },
+    {
+      "code": "GUARDA_X",
+      "name": "Guarda X",
+      "aliases": ["X guard"],
+      "family": "GUARDA",
+      "perspective": "BAIXO",
+      "identify": "Quem está por baixo fica sob o oponente em pé, com as duas pernas cruzadas em X por baixo de uma das pernas dele: um pé atrás do joelho, o outro na frente do quadril. O peso de quem está em pé fica sobre esse X."
+    },
+    {
+      "code": "CEM_QUILOS",
+      "name": "100kg",
+      "aliases": ["lateral", "side control", "cem quilos", "controle lateral"],
+      "family": "CONTROLE_POR_CIMA",
+      "perspective": "CIMA",
+      "identify": "Quem está por cima fica atravessado sobre o tronco de quem está de costas no chão, peito com peito, já fora das pernas dele. Os quadris dos dois formam mais ou menos um T."
+    },
+    {
+      "code": "MONTADA",
+      "name": "Montada",
+      "aliases": ["mount", "montado"],
+      "family": "CONTROLE_POR_CIMA",
+      "perspective": "CIMA",
+      "identify": "Quem está por cima fica sentado sobre o tronco ou o quadril de quem está de costas no chão, com um joelho de cada lado do corpo dele. As pernas de quem está por baixo ficam fora do jogo."
+    },
+    {
+      "code": "JOELHO_NA_BARRIGA",
+      "name": "Joelho na barriga",
+      "aliases": ["knee on belly", "knee on stomach"],
+      "family": "CONTROLE_POR_CIMA",
+      "perspective": "CIMA",
+      "identify": "Quem está por cima apoia um joelho sobre a barriga ou o peito de quem está de costas no chão, com a outra perna esticada para o lado como base. O quadril de quem ataca fica alto, sem encostar no outro."
+    },
+    {
+      "code": "NORTE_SUL",
+      "name": "Norte-sul",
+      "aliases": ["north-south"],
+      "family": "CONTROLE_POR_CIMA",
+      "perspective": "CIMA",
+      "identify": "Os dois ficam alinhados em sentidos opostos: quem está por cima deita peito com peito sobre quem está de costas, mas com a cabeça voltada para os pés dele. As cabeças ficam perto da barriga um do outro."
+    },
+    {
+      "code": "CRUCIFIXO",
+      "name": "Crucifixo",
+      "aliases": ["crucifix"],
+      "family": "CONTROLE_POR_CIMA",
+      "perspective": "CIMA",
+      "identify": "Quem ataca fica por trás ou de lado do oponente e prende um dos braços dele entre as próprias pernas, enquanto controla o outro braço com as mãos. Os dois braços de quem defende ficam abertos, longe do pescoço."
+    },
+    {
+      "code": "COSTAS",
+      "name": "Costas",
+      "aliases": ["back control", "pegada nas costas", "back mount"],
+      "family": "COSTAS",
+      "perspective": "CIMA",
+      "identify": "Quem ataca fica atrás do oponente, peito colado às costas dele, normalmente com os calcanhares por dentro das coxas como ganchos e um braço por cima e outro por baixo dos ombros. Vale sentado, deitado ou de lado."
+    },
+    {
+      "code": "QUATRO_APOIOS",
+      "name": "Quatro apoios",
+      "aliases": ["tartaruga", "turtle"],
+      "family": "TRANSICAO",
+      "perspective": "BAIXO",
+      "identify": "Quem defende fica de joelhos e cotovelos no chão, encolhido, com o rosto para baixo e os cotovelos colados aos joelhos. Quem ataca costuma estar por cima, ao lado ou atrás, sem nenhuma perna para passar."
+    },
+    {
+      "code": "EM_PE",
+      "name": "Em pé",
+      "aliases": ["standing", "luta em pé"],
+      "family": "EM_PE",
+      "perspective": "NEUTRA",
+      "identify": "Os dois estão em pé, de frente ou de lado, disputando pegadas na gola e na manga antes de a luta ir para o chão. É de onde toda luta começa e para onde volta a cada reinício."
+    }
+  ]
+}

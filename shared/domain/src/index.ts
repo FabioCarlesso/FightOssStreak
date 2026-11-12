@@ -77,3 +77,19 @@ export type {
   ResumeTreeModule,
   ResumeTreeNode,
 } from './retomar.ts';
+
+export {
+  POSITION_FAMILY_LABELS,
+  POSITION_PERSPECTIVE_LABELS,
+  searchKey,
+  searchTechniques,
+  nodesFromPosition,
+  groupPositionsByFamily,
+} from './posicoes.ts';
+export type {
+  PositionFamily,
+  PositionPerspective,
+  SearchableNode,
+  SearchablePosition,
+  TechniqueSearch,
+} from './posicoes.ts';
