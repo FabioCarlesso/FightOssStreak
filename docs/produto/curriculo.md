@@ -49,6 +49,7 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 | M1.4 | Fuga de montada: upa (bridge) e elbow escape | M1.2 | Branca |
 | M1.5 | Recuperação de guarda | M1.3, M1.4 | Branca |
 | M1.6 | Fuga de costas e defesa de mata-leão | M1.1 | Branca |
+| M1.7 | Defesa nos quatro apoios: proteger e repor a guarda | M1.2 | Branca |
 
 *M1.1 é literalmente a primeira aula de qualquer academia e estava ausente da versão anterior.*
 
@@ -87,6 +88,13 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 | M3.5 | Raspagem de butterfly | M3.4 | Branca |
 | M3.6 | Meia-guarda: conceito e enquadramento | M3.1 | Branca |
 | M3.7 | Raspagem de meia-guarda (old school) | M3.6 | Branca |
+| M3.8 | Guarda X: conceito e controle | M3.4 | Branca |
+| M3.9 | Raspagem da guarda X | M3.8 | Branca |
+| M3.10 | Guarda aranha: controle e raspagem | M3.1 | Branca |
+| M3.11 | Passagem contra a guarda aranha | M3.2 | Branca |
+| M3.12 | Guarda De La Riva: conceito e raspagem | M3.1 | Branca |
+
+*M3.8–M3.12 entraram pela primeira onda da #195 (D77): guardas de distância que aparecem cedo nas aulas e que o mapa de posições (D76) mostrava sem técnica.*
 
 **Desbloqueia:** M4
 
@@ -103,6 +111,9 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 | M4.4 | Montada: manutenção e base | M4.3 | Branca |
 | M4.5 | Americana e Ezequiel | M4.1, M4.4 | Branca |
 | M4.6 | Armlock da montada | M4.4 | Branca |
+| M4.7 | Norte-sul: controle e transições | M4.1 | Branca |
+| M4.8 | Estrangulamento do norte-sul | M4.7 | Branca |
+| M4.9 | Crucifixo: controle e finalização | M4.1 | Branca |
 
 **Desbloqueia:** M5, M7
 
@@ -117,6 +128,9 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 | M5.2 | Controle de costas: hooks e seat belt | M5.1 | Azul |
 | M5.3 | Mata-leão (rear naked choke) | M5.2 | Azul |
 | M5.4 | Manutenção de costas contra defesa | M5.2 | Azul |
+| M5.5 | Pegar as costas a partir dos quatro apoios | M5.2 | Branca |
+
+*M5.5 é faixa branca num módulo azul (D77): quem está nos quatro apoios aparece desde as primeiras aulas, e a faixa é do nó, não do módulo.*
 
 **Desbloqueia:** M7
 
@@ -164,7 +178,7 @@ A versão anterior desta árvore ensinava armlock e triângulo antes de fuga de 
 ---
 
 ## Mapeamento por faixa
-- **Branca** — M0, M1, M2 (exceto M2.7), M3, M4, M6.1–6.3 → *sobrevivência, fundamentos e primeiras finalizações*
+- **Branca** — M0, M1, M2 (exceto M2.7), M3, M4, M5.5, M6.1–6.3 → *sobrevivência, fundamentos e primeiras finalizações*
 - **Azul** — M2.7, M5, M6.4, M7 → *expansão de jogo e encadeamento*
 - **Roxa+** — M8 → *integração e personalização*
 
@@ -179,18 +193,18 @@ Além do módulo, cada nó diz de que **posição** a técnica parte (D76, #194)
 
 | Família | Posições | Técnicas no currículo |
 |---|---|---|
-| Guardas | guarda fechada, guarda aberta, meia-guarda, guarda de gancho (borboleta), guarda aranha, De La Riva, guarda X | aranha, De La Riva e guarda X ainda sem nó |
-| Controle por cima | 100kg, montada, joelho na barriga, norte-sul, crucifixo | norte-sul e crucifixo ainda sem nó |
-| Costas | costas | M1.6, M5.2–M5.4, M7.1 |
-| Transição | quatro apoios (tartaruga) | M0.4, M7.2 |
+| Guardas | guarda fechada, guarda aberta, meia-guarda, guarda de gancho (borboleta), guarda aranha, De La Riva, guarda X | guarda X em M3.8–M3.9, aranha em M3.10–M3.11, De La Riva em M3.12 |
+| Controle por cima | 100kg, montada, joelho na barriga, norte-sul, crucifixo | norte-sul em M4.7–M4.8, crucifixo em M4.9 |
+| Costas | costas | M1.6, M5.2–M5.5, M7.1 |
+| Transição | quatro apoios (tartaruga) | M0.4, M1.7, M5.5, M7.2 |
 | Em pé | em pé | M0.2, M0.4, M0.5, M6.x, M7.2, M7.3 |
 
-Cada posição tem um texto curto de **como reconhecê-la**, e nunca de como chegar nela (D1). A tela `/posicoes` lista as posições com as técnicas de cada uma, e o diário busca técnica por nome, apelido ou posição. As posições sem nó são as lacunas que a fase 3 (#195) vai preencher. Nó de etiqueta e de jogo integrado (M0.1, M0.3, M8.x) não parte de posição nenhuma, e isso é válido.
+Cada posição tem um texto curto de **como reconhecê-la**, e nunca de como chegar nela (D1). A tela `/posicoes` lista as posições com as técnicas de cada uma, e o diário busca técnica por nome, apelido ou posição. Desde a primeira onda da #195, toda posição tem ao menos uma técnica. Nó de etiqueta e de jogo integrado (M0.1, M0.3, M8.x) não parte de posição nenhuma, e isso é válido.
 
 ## Notas de design
 - **SRS não revisa teoria, agenda drill.** Esse é o diferencial: o app abre e diz *"hoje revise fuga de montada e raspagem de tesoura"*, priorizando nós antigos e os de quiz com erro.
 - Nós com múltiplos pré-requisitos (M1.5, M7.1, M7.4) são bons **checkpoints** de revisão consolidada.
-- Total: **46 nós** (5+6+7+7+6+4+4+4+3). *Correção: a versão anterior deste documento dizia 43, que não batia com a soma das próprias tabelas — ver [D14](../decisoes/D14-o-curriculo-tem-46-nos-nao.md).* Cobre faixa branca com folga e entra em azul. É deliberadamente enxuto — currículo real de faixa branca é maior, e a expansão deve vir do uso, não do planejamento.
+- Total: **56 nós** (5+7+7+12+9+5+4+4+3) desde a primeira onda da #195 ([D77](../decisoes/D77-curriculo-cresce-em-ondas-nos-modulos-existentes.md)); antes eram 46 (5+6+7+7+6+4+4+4+3). *Correção: a versão anterior deste documento dizia 43, que não batia com a soma das próprias tabelas — ver [D14](../decisoes/D14-o-curriculo-tem-46-nos-nao.md).* Cobre faixa branca com folga e entra em azul. É deliberadamente enxuto — currículo real de faixa branca é maior, e a expansão deve vir do uso, não do planejamento.
 - O currículo é dado versionado (ver `docs/arquitetura.md`): alterar a árvore é um PR revisável, não uma migração de banco.
 
 ## Pendências de validação

@@ -15,7 +15,7 @@ revisão por repetição espaçada. A raiz (`/`) é a landing pública; o app co
 
 | Camada | Estado |
 |---|---|
-| Currículo (46 nós, 9 módulos) | Transcrito como dado versionado em `backend/src/main/resources/curriculum/` |
+| Currículo (56 nós, 9 módulos) | Transcrito como dado versionado em `backend/src/main/resources/curriculum/` |
 | Quiz conceitual | Escrito para **M0 a M3** (25 nós, 91 perguntas). Os outros 21 nós, de M4 a M8, estão pendentes de curadoria |
 | Vídeos do YouTube | **M0 e M1 catalogados (11/46)** pelo script, pendentes de conferência assistindo ([D21](docs/decisoes/D21-primeira-leva-de-videos-m0-e.md)). M2–M8 seguem sem vídeo — ver [instruções](backend/src/main/resources/curriculum/README.md) |
 | Clipes complementares | **7 clipes** da própria academia em M1.3, M1.5 e M1.6 (D32). O canônico ensina, o clipe lembra — no máximo 4 por nó |

@@ -77,7 +77,7 @@ proíbe. O padrão de escrita tem três movimentos, na ordem:
 2. **O mecanismo** — por que funciona; qual troca o oponente é obrigado a fazer.
 3. **O erro comum** — o que costuma dar errado e por quê.
 
-Os 46 nós seguem essa estrutura (issue #58) — é o padrão a seguir ao escrever ou revisar qualquer
+Todos os nós seguem essa estrutura (issue #58; os da #195 já nasceram nela) — é o padrão a seguir ao escrever ou revisar qualquer
 nó novo.
 
 **Faixa de tamanho: 450 a 900 caracteres.** O piso é o que M0/M1 já entregavam antes da reescrita
@@ -181,7 +181,7 @@ vídeo; não preencher à mão.
 
 ### `quiz`
 
-Preenchido para os **46 nós** (issue #59, **D44**). `quiz: []` continua um estado válido — é o que
+Preenchido para todos os nós (issue #59, **D44**; os nós da #195 já nasceram com banco de 8). `quiz: []` continua um estado válido — é o que
 um nó novo nasce com, antes de o banco ser escrito (**D15**) — mas todo nó que já tem alguma
 pergunta precisa ter **pelo menos 8**.
 

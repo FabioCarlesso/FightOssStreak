@@ -33,6 +33,7 @@ retroativamente), e a linha de cada nó passou a citar também o canal do vídeo
 | M1.4 | Canal Stephan Kesting (vídeo canônico); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
 | M1.5 | Canal Jordan Teaches Jiujitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
 | M1.6 | Canal Matt Arroyo Jiu Jitsu (vídeo canônico); Guiabasicodejiujitsu (complementares, procedência); +5 perguntas novas: mesma base do `concept` do nó, sem fonte externa adicional |
+| M1.7 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
 
 ## M2 — Guarda Fechada
 
@@ -57,6 +58,11 @@ retroativamente), e a linha de cada nó passou a citar também o canal do vídeo
 | M3.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Manual do Jiu-Jitsu (#61) |
 | M3.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
 | M3.7 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); +4 perguntas novas, mesma base (D43). Vídeo: canal Micael Galvão (#61) |
+| M3.8 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M3.9 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M3.10 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M3.11 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M3.12 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
 
 ## M4 — Controle Superior
 
@@ -68,6 +74,9 @@ retroativamente), e a linha de cada nó passou a citar também o canal do vídeo
 | M4.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Felipe Siqueira Jiu Jitsu (#61) |
 | M4.5 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Manual do Jiu-Jitsu (#61) |
 | M4.6 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal FEU BJJ (#61) |
+| M4.7 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M4.8 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
+| M4.9 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
 
 ## M5 — Costas (Back Control)
 
@@ -77,6 +86,7 @@ retroativamente), e a linha de cada nó passou a citar também o canal do vídeo
 | M5.2 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Felipe Pena Preguiça (#61) |
 | M5.3 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal FEU BJJ (#61) |
 | M5.4 | Texto: reestruturado do já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas, mesma base (D44). Vídeo: canal Fabio Gurgel (#61) |
+| M5.5 | Texto e banco de 8 perguntas escritos com assistência de IA (Claude) na primeira onda da #195, sem fonte externa consultada; **pendente de revisão humana** (D12, D77). Vídeo: pendente |
 
 ## M6 — Quedas e Entrada em Combate
 
