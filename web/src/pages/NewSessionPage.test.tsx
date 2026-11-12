@@ -150,4 +150,22 @@ describe('NewSessionPage', () => {
     expect(corpo.kind).toBe('FISICO');
     expect(corpo.attire).toBeUndefined();
   });
+
+  it('"Não dizer" esquece o kimono lembrado, e físico não mexe na lembrança', async () => {
+    localStorage.setItem('fos.ultimoKimono', 'GI');
+    renderPage();
+
+    await userEvent.click(screen.getByRole('radio', { name: /não dizer/i, checked: false }));
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+    expect(localStorage.getItem('fos.ultimoKimono')).toBeNull();
+  });
+
+  it('sessão de físico não apaga o kimono da última aula', async () => {
+    localStorage.setItem('fos.ultimoKimono', 'NOGI');
+    renderPage();
+
+    await userEvent.click(screen.getByRole('radio', { name: /físico/i }));
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+    expect(localStorage.getItem('fos.ultimoKimono')).toBe('NOGI');
+  });
 });

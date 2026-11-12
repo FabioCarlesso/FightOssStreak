@@ -9,7 +9,7 @@ import {
   toSessionBody,
 } from '../state/sessionFields.ts';
 import { RECALL_LABELS } from '../content/recall.ts';
-import { todayIso } from '../content/diario.ts';
+import { kindRecordsAttire, todayIso } from '../content/diario.ts';
 import { useDemoMode } from '../state/demoMode.ts';
 import { lembrarKimono, lerUltimoKimono } from '../state/ultimoKimono.ts';
 import { useAsync } from '../state/useAsync.ts';
@@ -72,7 +72,7 @@ export function NewSessionPage() {
         ...toSessionBody(fields),
         tecnicas: marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
       });
-      lembrarKimono(criada.attire);
+      if (kindRecordsAttire(fields.kind)) lembrarKimono(fields.attire);
       void navigate(`/diario/${criada.id}`);
     } catch (cause) {
       setFailure(cause instanceof Error ? cause.message : String(cause));

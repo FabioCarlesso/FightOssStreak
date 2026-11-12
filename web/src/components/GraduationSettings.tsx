@@ -22,7 +22,7 @@ export function GraduationSettings() {
   const goal = graduacao.data?.goal;
   // Chave por meta carregada: o formulário recomeça a partir do que o servidor tem, e não do que
   // ficou digitado antes de salvar ou remover.
-  const chave = goal ? `${goal.lastGraduationOn}:${goal.minTotal}:${goal.nextLabel}` : 'sem-meta';
+  const chave = goal ? JSON.stringify(goal) : 'sem-meta';
 
   return (
     <section className="card" aria-labelledby="graduacao-conta-titulo">

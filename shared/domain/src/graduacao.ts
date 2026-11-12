@@ -9,8 +9,13 @@
  * `TrainingSessionRepository.countClassesSince` mais `GraduationService.count`.
  */
 
-/** `GI` com kimono, `NOGI` sem. Não é conteúdo No-Gi — o currículo segue só Gi (D6). */
-export type Attire = 'GI' | 'NOGI';
+import type { SessionAttire } from '@fos/types';
+
+/**
+ * `GI` com kimono, `NOGI` sem. Não é conteúdo No-Gi — o currículo segue só Gi (D6). Sai do tipo
+ * gerado, como `SessionKind`: valor novo no backend aparece aqui sem segunda lista para manter.
+ */
+export type Attire = SessionAttire;
 
 /** Rótulos do campo, na ordem do vestiário: com kimono primeiro, porque é o caso dominante. */
 export const ATTIRE_LABELS: ReadonlyArray<{ value: Attire; label: string }> = [

@@ -19,10 +19,15 @@ export function lerUltimoKimono(): Attire | '' {
   }
 }
 
-export function lembrarKimono(attire: Attire | '' | null | undefined): void {
-  if (attire !== 'GI' && attire !== 'NOGI') return;
+/**
+ * Guarda a escolha, inclusive "Não dizer": quem desmarcou de propósito não quer o kimono antigo
+ * voltando marcado na próxima sessão. Quem chama decide se a sessão registrava kimono — sessão de
+ * físico ou descanso não deve apagar a lembrança da última aula.
+ */
+export function lembrarKimono(attire: Attire | ''): void {
   try {
-    localStorage.setItem(CHAVE_DO_KIMONO, attire);
+    if (attire === '') localStorage.removeItem(CHAVE_DO_KIMONO);
+    else localStorage.setItem(CHAVE_DO_KIMONO, attire);
   } catch {
     // Sem armazenamento a próxima sessão só não vem marcada.
   }

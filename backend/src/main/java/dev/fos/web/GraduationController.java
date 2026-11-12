@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.Clock;
 import java.time.LocalDate;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +47,26 @@ public class GraduationController {
         return graduacao.get(currentUser.currentUserId());
     }
 
+    /**
+     * Grava a meta.
+     *
+     * <p>Duas primeiras gravações ao mesmo tempo (duas abas, um reenvio) leem "sem meta" e as duas
+     * inserem; a segunda bate na chave primária. Sem tratamento isso seria 500 da própria
+     * aplicação, entrando na taxa que dispara o alerta da D54, por uma corrida inofensiva. A nova
+     * tentativa roda em transação própria — o controlador não é transacional —, encontra a linha da
+     * outra e vira atualização. Uma vez só: a segunda falha já não é corrida.
+     */
     @PutMapping
     @Operation(summary = "Grava a meta do próximo grau — só a data do último grau é obrigatória")
     public GraduationDtos.GraduationView saveGoal(
             @Valid @RequestBody GraduationDtos.GoalRequest request) {
-        return graduacao.save(currentUser.currentUserId(), request, LocalDate.now(clock));
+        Long userId = currentUser.currentUserId();
+        LocalDate today = LocalDate.now(clock);
+        try {
+            return graduacao.save(userId, request, today);
+        } catch (DataIntegrityViolationException corrida) {
+            return graduacao.save(userId, request, today);
+        }
     }
 
     @DeleteMapping

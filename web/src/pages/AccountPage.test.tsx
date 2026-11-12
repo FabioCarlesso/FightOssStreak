@@ -1,6 +1,6 @@
-import type { AccountView } from '@fos/types';
+import type { AccountView, GraduationView } from '@fos/types';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AccountContext } from '../state/account.ts';
 import { AccountPage } from './AccountPage.tsx';
 
@@ -11,6 +11,16 @@ import { AccountPage } from './AccountPage.tsx';
  * o cadastro aberto (D47) a maioria das contas passou a ler "Entrou por: password" — id interno
  * onde deveria haver uma frase.
  */
+// A seção Graduação (#193) carrega a meta ao montar; sem o mock, cada teste aqui iria à rede.
+const { apiMock } = vi.hoisted(() => ({
+  apiMock: { getGraduation: vi.fn<() => Promise<GraduationView>>(() => Promise.resolve({})) },
+}));
+
+vi.mock('../api/client.ts', async () => {
+  const real = await vi.importActual<typeof import('@fos/api-client')>('@fos/api-client');
+  return { api: apiMock, ApiError: real.ApiError };
+});
+
 function renderCom(account: Partial<AccountView>) {
   return render(
     <AccountContext.Provider
