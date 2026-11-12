@@ -56,14 +56,17 @@ e regras em [`autenticacao.md`](autenticacao.md).
 | `GET /api/reviews/today` | o que drillar hoje, do mais atrasado para o menos |
 | `GET /api/streak` | streak atual, recorde, dias ativos e saldo de freeze do mês — e **grava** o freeze gasto (D55) |
 | `GET /api/streak/historico` | dias com registro no período — insumo do heatmap (D59) |
-| `GET` / `POST /api/sessoes` | linha do tempo do diário / registra um treino (só a data é obrigatória) |
+| `GET` / `POST /api/sessoes` | linha do tempo do diário / registra um treino (só a data é obrigatória; `attire` = `GI`/`NOGI` só fora de `FISICO` e `DESCANSO`, senão 400) |
 | `GET` / `PATCH /api/sessoes/{id}` | detalhe / edição da sessão; as técnicas vinculadas não são tocadas |
 | `POST /api/sessoes/{id}/tecnicas` | vincula uma técnica — alimenta o SRS pelo caminho de sempre |
 | `DELETE /api/sessoes/{id}/tecnicas/{code}` | desvincula a técnica; o drill permanece no histórico do nó |
+| `GET /api/graduacao` | meta do próximo grau e aulas (`AULA`) registradas desde o último, com e sem kimono; sem meta, `goal` e `classes` vêm nulos (D75) |
+| `PUT /api/graduacao` | grava a meta — só `lastGraduationOn` é obrigatório; data futura, mínimo fora de 0–2000 ou rótulo acima de 60 caracteres dão 400 |
+| `DELETE /api/graduacao` | remove a meta (204, também sem meta); as sessões do diário não são tocadas |
 | `POST /api/feedback` | envia um feedback, opcionalmente amarrado a um nó |
 | `GET /api/metrics/mvp` | os quatro critérios de sucesso do MVP, com valor e meta |
 
-As regras por trás de streak, diário e SRS estão em [`regras-de-negocio.md`](regras-de-negocio.md).
+As regras por trás de streak, diário, próximo grau e SRS estão em [`regras-de-negocio.md`](regras-de-negocio.md).
 
 ## Administração
 

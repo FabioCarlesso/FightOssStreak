@@ -1,4 +1,9 @@
-import { FEELING_LABELS, SESSION_KIND_LABELS } from '../content/diario.ts';
+import {
+  ATTIRE_LABELS,
+  FEELING_LABELS,
+  SESSION_KIND_LABELS,
+  kindRecordsAttire,
+} from '../content/diario.ts';
 import type { SessionFieldsState } from '../state/sessionFields.ts';
 
 /**
@@ -90,6 +95,39 @@ export function SessionFields({
           </p>
         )}
       </fieldset>
+
+      {/* Com ou sem kimono só existe no tatame (#193): físico e descanso não mostram o campo, e
+          o valor que ficou marcado não vai junto (`toSessionBody`). */}
+      {kindRecordsAttire(value.kind) && (
+        <fieldset className="session-form__group">
+          <legend>Kimono</legend>
+          <div className="session-form__chips">
+            {ATTIRE_LABELS.map((option) => (
+              <label
+                key={option.value}
+                className={value.attire === option.value ? 'chip chip--on' : 'chip'}
+              >
+                <input
+                  type="radio"
+                  name="attire"
+                  checked={value.attire === option.value}
+                  onChange={() => set('attire', option.value)}
+                />
+                {option.label}
+              </label>
+            ))}
+            <label className={value.attire === '' ? 'chip chip--on' : 'chip'}>
+              <input
+                type="radio"
+                name="attire"
+                checked={value.attire === ''}
+                onChange={() => set('attire', '')}
+              />
+              Não dizer
+            </label>
+          </div>
+        </fieldset>
+      )}
 
       <fieldset className="session-form__group">
         <legend>Sensação</legend>

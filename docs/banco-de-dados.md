@@ -28,6 +28,7 @@ dizendo o porquê; este arquivo é só o mapa.
 | `V16__streak_freeze` | `streak_freeze` | D55, #99 |
 | `V17__training_session` | `training_session` e `drill_log.session_id` | D56–D58, #114 |
 | `V18__facebook_email_nao_verificado` | e-mail de provedor só é verificado quando o provedor afirma | D63 |
+| `V20__graduacao` | `training_session.attire` (com/sem kimono, anulável) e `graduation_goal` (uma linha por conta) | D75, #193 |
 
 ## Regras que valem para toda migration
 

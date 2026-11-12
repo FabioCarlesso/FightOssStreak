@@ -9,6 +9,7 @@ import dev.fos.repo.AppleCredentialRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.FeedbackRepository;
+import dev.fos.repo.GraduationGoalRepository;
 import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.MobileTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
@@ -56,6 +57,7 @@ public class AccountService {
     private final SrsReviewRepository reviews;
     private final DrillLogRepository drills;
     private final StreakFreezeRepository streakFreezes;
+    private final GraduationGoalRepository graduationGoals;
     private final TrainingSessionRepository trainingSessions;
     private final LoginTokenRepository loginTokens;
     private final PasswordCredentialRepository credentials;
@@ -75,6 +77,7 @@ public class AccountService {
             SrsReviewRepository reviews,
             DrillLogRepository drills,
             StreakFreezeRepository streakFreezes,
+            GraduationGoalRepository graduationGoals,
             TrainingSessionRepository trainingSessions,
             LoginTokenRepository loginTokens,
             PasswordCredentialRepository credentials,
@@ -92,6 +95,7 @@ public class AccountService {
         this.reviews = reviews;
         this.drills = drills;
         this.streakFreezes = streakFreezes;
+        this.graduationGoals = graduationGoals;
         this.trainingSessions = trainingSessions;
         this.loginTokens = loginTokens;
         this.credentials = credentials;
@@ -456,6 +460,9 @@ public class AccountService {
         // promessa, não faxina.
         trainingSessions.deleteByUserId(userId);
         streakFreezes.deleteByUserId(userId);
+        // A meta do próximo grau (#193, D75): datas e mínimos que a própria pessoa digitou. Sai
+        // pela mesma promessa do diário — é dela, e de mais ninguém.
+        graduationGoals.deleteById(userId);
         reviews.deleteByIdUserId(userId);
         progress.deleteByIdUserId(userId);
         disclaimers.deleteByUserId(userId);

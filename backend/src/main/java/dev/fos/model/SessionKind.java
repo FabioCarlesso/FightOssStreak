@@ -23,4 +23,18 @@ public enum SessionKind {
     public boolean contaComoTreino() {
         return this != DESCANSO;
     }
+
+    /**
+     * Se a sessão registra com ou sem kimono (#193, D75): só o que acontece no tatame. Físico é
+     * fora dele, e descanso é dia sem treino — marcar kimono nos dois seria afirmar uma aula que
+     * não houve.
+     */
+    public boolean registraKimono() {
+        return this != FISICO && this != DESCANSO;
+    }
+
+    /** O que conta como aula para o próximo grau (#193, D75): só {@link #AULA}. */
+    public boolean contaComoAula() {
+        return this == AULA;
+    }
 }

@@ -5,6 +5,7 @@ import { api } from '../api/client.ts';
 import { useAsync } from '../state/useAsync.ts';
 import { useDemoMode } from '../state/demoMode.ts';
 import { StreakCard } from '../components/StreakCard.tsx';
+import { GraduationCard } from '../components/GraduationCard.tsx';
 import { monthRange, todayIso } from '../content/diario.ts';
 
 /**
@@ -20,6 +21,9 @@ import { monthRange, todayIso } from '../content/diario.ts';
  * O atalho "Continuar" (#104) mora **dentro** do card da agenda, e não num card acima dele, pelo
  * mesmo motivo: com revisão vencida ele aponta para o primeiro da própria agenda, e só sem nada
  * vencido ele sugere o próximo nó da árvore — onde antes havia apenas "conclua nós na árvore".
+ *
+ * O card do próximo grau (#193, D75) vem por último, depois do diário: é motivo para registrar a
+ * aula, e os mínimos dele são da academia de quem usa — o app conta, não estabelece meta própria.
  */
 export function HomePage() {
   const streak = useAsync(() => api.getStreak(), []);
@@ -37,6 +41,8 @@ export function HomePage() {
   const tree = useAsync(() => api.getTree(), []);
   const mes = useMemo(() => monthRange(todayIso()), []);
   const diario = useAsync(() => api.getDiary({ ...mes, limite: 1 }), [mes.de, mes.ate]);
+  // Próximo grau (#193, D75): sem meta, o card não aparece.
+  const graduacao = useAsync(() => api.getGraduation(), []);
   const demo = useDemoMode();
   const continuar = agenda.data ? resumeFrom(agenda.data.due, tree.data?.modules) : undefined;
 
@@ -106,6 +112,8 @@ export function HomePage() {
           )}
         </p>
       </section>
+
+      <GraduationCard graduation={graduacao.data} />
     </div>
   );
 }

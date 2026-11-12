@@ -1,4 +1,5 @@
 import type { Feeling, SessionKind } from '@fos/types';
+import { type Attire, kindRecordsAttire } from './graduacao.ts';
 
 // Datas de calendário e o formulário de sessão do diário, compartilhados entre web e app (#141).
 
@@ -47,6 +48,8 @@ export function monthRange(iso: string): { de: string; ate: string } {
 export interface SessionFieldsState {
   readonly trainedOn: string;
   readonly kind: SessionKind;
+  /** Com ou sem kimono (#193). Vazio é "não informado", e é o que o app mobile manda por ora. */
+  readonly attire: Attire | '';
   readonly durationMinutes: string;
   readonly feeling: Feeling | '';
   readonly weightKg: string;
@@ -54,10 +57,18 @@ export interface SessionFieldsState {
   readonly improve: string;
 }
 
-export function emptySessionFields(trainedOn: string): SessionFieldsState {
+/**
+ * @param attire o kimono pré-selecionado — a tela passa o último que a pessoa usou, para registrar
+ *     a aula não custar um toque a mais (#193)
+ */
+export function emptySessionFields(
+  trainedOn: string,
+  attire: Attire | '' = '',
+): SessionFieldsState {
   return {
     trainedOn,
     kind: 'AULA',
+    attire,
     durationMinutes: '',
     feeling: '',
     weightKg: '',
@@ -78,6 +89,9 @@ export function toSessionBody(fields: SessionFieldsState) {
   return {
     trainedOn: fields.trainedOn,
     kind: fields.kind,
+    // Físico e descanso não registram kimono, e o backend recusa a combinação: o valor que ficou
+    // marcado de antes de trocar o tipo não vai junto.
+    attire: fields.attire && kindRecordsAttire(fields.kind) ? fields.attire : undefined,
     durationMinutes: Number.isFinite(duracao) && duracao > 0 ? duracao : undefined,
     feeling: fields.feeling || undefined,
     weightKg: Number.isFinite(peso) && peso > 0 ? peso : undefined,

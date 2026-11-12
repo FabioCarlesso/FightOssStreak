@@ -253,3 +253,18 @@
   color: var(--accent);
   text-decoration: none;
 }
+
+/*
+ * Próximo grau (#193, D75): a mesma grade de rótulo e valor da tela Conta (`.account`). Bater o
+ * mínimo não muda cor — o card informa e não premia.
+ */
+.graduation__lines {
+  margin: 0.6rem 0;
+}
+
+.graduation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}

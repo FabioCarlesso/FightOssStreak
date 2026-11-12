@@ -1,5 +1,6 @@
 package dev.fos.service;
 
+import dev.fos.model.Attire;
 import dev.fos.model.DrillLog;
 import dev.fos.model.Node;
 import dev.fos.model.SessionKind;
@@ -89,6 +90,7 @@ public class TrainingSessionService {
         }
 
         TrainingSession session = new TrainingSession(userId, trainedOn, kind, clock.instant());
+        session.setAttire(requireKindAcceptsAttire(kind, request.attire()));
         session.setDurationMinutes(request.durationMinutes());
         session.setFeeling(request.feeling());
         session.setWeightKg(request.weightKg());
@@ -126,9 +128,11 @@ public class TrainingSessionService {
         }
 
         LocalDate trainedOn = requireNotFuture(patch.trainedOn(), today);
+        Attire attire = requireKindAcceptsAttire(kind, patch.attire());
         moveTechniques(userId, session, trainedOn);
         session.setTrainedOn(trainedOn);
         session.setKind(kind);
+        session.setAttire(attire);
         session.setDurationMinutes(patch.durationMinutes());
         session.setFeeling(patch.feeling());
         session.setWeightKg(patch.weightKg());
@@ -309,6 +313,24 @@ public class TrainingSessionService {
         }
     }
 
+    /**
+     * Com ou sem kimono só existe no tatame (#193, D75).
+     *
+     * <p>Recusar, e não descartar em silêncio: a tela não oferece o campo para físico e descanso,
+     * então quem manda os dois juntos está dizendo uma coisa contraditória — e gravar o tipo
+     * ignorando o kimono esconderia isso de quem chamou.
+     */
+    private Attire requireKindAcceptsAttire(SessionKind kind, Attire attire) {
+        if (attire != null && !kind.registraKimono()) {
+            throw new IllegalArgumentException(
+                    "Sessão de "
+                            + kind
+                            + " não registra kimono: com ou sem kimono é só para o que"
+                            + " acontece no tatame.");
+        }
+        return attire;
+    }
+
     private LocalDate requireNotFuture(LocalDate day, LocalDate today) {
         if (day.isAfter(today)) {
             throw new IllegalArgumentException(
@@ -335,6 +357,7 @@ public class TrainingSessionService {
                 session.getTrainedOn(),
                 session.getKind(),
                 session.getKind().contaComoTreino(),
+                session.getAttire(),
                 session.getDurationMinutes(),
                 session.getFeeling(),
                 session.getWeightKg(),

@@ -40,6 +40,10 @@
       "description": "Conta com e-mail e senha, confirmada por link"
     },
     {
+      "name": "Graduação",
+      "description": "Meta do próximo grau e aulas registradas desde o último"
+    },
+    {
       "name": "Atividade",
       "description": "Streak, agenda de revisão e aceite do aviso"
     },
@@ -98,6 +102,69 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/graduacao": {
+      "get": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Meta do próximo grau e aulas desde o último",
+        "description": "Sem meta configurada, `goal` e `classes` vêm nulos.",
+        "operationId": "graduation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraduationView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Grava a meta do próximo grau — só a data do último grau é obrigatória",
+        "operationId": "saveGoal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraduationView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Remove a meta; as sessões do diário não são tocadas",
+        "operationId": "deleteGoal",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1465,6 +1532,105 @@
           }
         }
       },
+      "GoalRequest": {
+        "required": [
+          "lastGraduationOn"
+        ],
+        "type": "object",
+        "properties": {
+          "lastGraduationOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "currentLabel": {
+            "maxLength": 60,
+            "minLength": 0,
+            "type": "string"
+          },
+          "nextLabel": {
+            "maxLength": 60,
+            "minLength": 0,
+            "type": "string"
+          },
+          "minTotal": {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "minGi": {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "minNogi": {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ClassCount": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gi": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nogi": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unspecified": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GoalView": {
+        "type": "object",
+        "properties": {
+          "lastGraduationOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "currentLabel": {
+            "type": "string"
+          },
+          "nextLabel": {
+            "type": "string"
+          },
+          "minTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minGi": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minNogi": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GraduationView": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "$ref": "#/components/schemas/GoalView"
+          },
+          "classes": {
+            "$ref": "#/components/schemas/ClassCount"
+          }
+        }
+      },
       "EventRequest": {
         "type": "object",
         "properties": {
@@ -1515,6 +1681,13 @@
               "FISICO",
               "DESCANSO",
               "OUTRO"
+            ]
+          },
+          "attire": {
+            "type": "string",
+            "enum": [
+              "GI",
+              "NOGI"
             ]
           },
           "durationMinutes": {
@@ -1606,6 +1779,13 @@
           },
           "countsAsTrainingDay": {
             "type": "boolean"
+          },
+          "attire": {
+            "type": "string",
+            "enum": [
+              "GI",
+              "NOGI"
+            ]
           },
           "durationMinutes": {
             "type": "integer",
@@ -2213,6 +2393,13 @@
               "FISICO",
               "DESCANSO",
               "OUTRO"
+            ]
+          },
+          "attire": {
+            "type": "string",
+            "enum": [
+              "GI",
+              "NOGI"
             ]
           },
           "durationMinutes": {

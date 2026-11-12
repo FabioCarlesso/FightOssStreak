@@ -45,6 +45,11 @@ public class TrainingSession {
     @Column(nullable = false)
     private SessionKind kind;
 
+    /** Com ou sem kimono (#193, D75). Nulo é "não informado", e é o que toda sessão antiga tem. */
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Attire attire;
+
     @Column(name = "duration_minutes")
     private Integer durationMinutes;
 
@@ -100,6 +105,14 @@ public class TrainingSession {
 
     public void setKind(SessionKind kind) {
         this.kind = kind;
+    }
+
+    public Attire getAttire() {
+        return attire;
+    }
+
+    public void setAttire(Attire attire) {
+        this.attire = attire;
     }
 
     public Integer getDurationMinutes() {

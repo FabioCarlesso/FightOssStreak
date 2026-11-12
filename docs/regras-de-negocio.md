@@ -61,6 +61,25 @@ segunda sem a primeira.
 - Não há exclusão de sessão inteira — correção é por edição. **Corrigir a data leva junto o
   `drilled_on` das técnicas vinculadas**, sem reagendar o SRS.
 
+## Próximo grau (D75)
+
+- **Com ou sem kimono** é campo da sessão (`attire` = `GI` | `NOGI`), anulável: sessão antiga é "não
+  informado". Só existe no tatame — `AULA`, `DRILL`, `ROLA`, `OUTRO` —, e `FISICO` ou `DESCANSO`
+  com kimono é recusado com 400. Na tela, o formulário só mostra o campo para esses tipos, não manda
+  o valor que ficou marcado ao trocar o tipo, e vem com o último kimono usado (guardado no
+  navegador, `fos.ultimoKimono`). Não é conteúdo No-Gi: o currículo segue só Gi (D6).
+- **A meta é da conta e vem de fora**: data do último grau (obrigatória, nunca futura), rótulos
+  livres do grau atual e do próximo, e mínimos opcionais de aulas — total, com kimono, sem kimono.
+  São os números que a academia de quem usa exige, digitados pela pessoa; o app não traz lista nem
+  mínimo de academia nenhuma. Uma linha por conta: mudar de grau é gravar a data nova.
+- **Conta só `AULA`**, de `last_graduation_on` em diante, **inclusive** o próprio dia. Aula sem
+  marcação de kimono entra no total e em nenhuma das metades. A contagem é **derivada a cada
+  leitura**, como o streak — nada grava número de aula. A regra pura é `countClassesSince`, em
+  `shared/domain`, espelhada em `TrainingSessionRepository.countClassesSince` (D17).
+- **O card da home** fica abaixo da agenda e do diário (D56c), só aparece com meta configurada,
+  mostra feito, mínimo e quanto falta, e não premia: bater o mínimo não muda cor. A última linha
+  lembra que mínimo de aulas não é graduação — quem decide é o professor.
+
 ## Streak e freeze
 
 - O streak é **derivado a cada leitura** e conta **dia com registro**:

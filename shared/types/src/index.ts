@@ -61,6 +61,17 @@ export type DiaryTimeline = Schemas['DiaryTimeline'];
 export type SessionKind = NonNullable<TrainingSession['kind']>;
 /** `BEM | NEUTRO | MAL`. Guardado e mostrado, nunca interpretado (D57). */
 export type Feeling = NonNullable<TrainingSession['feeling']>;
+/** `GI | NOGI` — como a aula aconteceu, não conteúdo No-Gi (#193, D75). */
+export type SessionAttire = NonNullable<TrainingSession['attire']>;
+
+/**
+ * Próximo grau (#193, D75): a meta que a pessoa digita a partir do que a academia dela exige, e as
+ * aulas que o diário já registrou desde o último grau. Sem meta, `goal` e `classes` vêm nulos.
+ */
+export type GraduationView = Schemas['GraduationView'];
+export type GraduationGoal = Schemas['GoalView'];
+export type GraduationGoalRequest = Schemas['GoalRequest'];
+export type GraduationClassCount = Schemas['ClassCount'];
 export type DemoSession = Schemas['DemoSessionView'];
 
 export type MvpMetrics = Schemas['MvpMetrics'];
