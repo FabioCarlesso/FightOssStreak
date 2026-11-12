@@ -1,5 +1,6 @@
 package dev.fos.web.dto;
 
+import dev.fos.model.Attire;
 import dev.fos.model.Feeling;
 import dev.fos.model.Recall;
 import dev.fos.model.SessionKind;
@@ -48,6 +49,8 @@ public final class DiaryDtos {
      * @param kind ausente = {@code AULA}, o caso dominante e o que a tela já vem marcando. Nunca é
      *     nulo no banco: {@code DESCANSO} precisa ser uma escolha explícita, porque é ele que fica
      *     fora do streak (D58)
+     * @param attire com ou sem kimono (#193, D75); ausente é "não informado". Só para o que
+     *     acontece no tatame: com {@code FISICO} ou {@code DESCANSO} a requisição é recusada
      * @param weightKg opcional e <b>por sessão</b>, nunca diário (D57)
      * @param tecnicas técnicas do currículo treinadas nesta sessão; cada uma vira um {@code
      *     drill_log} pelo mesmo caminho de código do registro pela tela do nó
@@ -55,6 +58,7 @@ public final class DiaryDtos {
     public record SessionRequest(
             @NotNull LocalDate trainedOn,
             SessionKind kind,
+            Attire attire,
             @Min(1) @Max(1440) Integer durationMinutes,
             Feeling feeling,
             @DecimalMin(PESO_MINIMO) @DecimalMax(PESO_MAXIMO) BigDecimal weightKg,
@@ -74,6 +78,7 @@ public final class DiaryDtos {
     public record SessionPatch(
             @NotNull LocalDate trainedOn,
             SessionKind kind,
+            Attire attire,
             @Min(1) @Max(1440) Integer durationMinutes,
             Feeling feeling,
             @DecimalMin(PESO_MINIMO) @DecimalMax(PESO_MAXIMO) BigDecimal weightKg,
@@ -101,6 +106,7 @@ public final class DiaryDtos {
             LocalDate trainedOn,
             SessionKind kind,
             boolean countsAsTrainingDay,
+            Attire attire,
             Integer durationMinutes,
             Feeling feeling,
             BigDecimal weightKg,

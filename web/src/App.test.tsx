@@ -4,6 +4,7 @@ import type {
   AuthProviders,
   DemoSession,
   DiaryTimeline,
+  GraduationView,
   DisclaimerStatus,
   NodeDetail,
   ReviewAgenda,
@@ -38,6 +39,7 @@ const { apiMock } = vi.hoisted(() => ({
     getStreakHistory: vi.fn<() => Promise<StreakHistory>>(),
     getReviewsToday: vi.fn<() => Promise<ReviewAgenda>>(),
     getDiary: vi.fn<() => Promise<DiaryTimeline>>(),
+    getGraduation: vi.fn<() => Promise<GraduationView>>(),
     getTree: vi.fn<() => Promise<TreeView>>(),
     getNode: vi.fn<(code: string) => Promise<NodeDetail>>(),
     getAuthProviders: vi.fn<() => Promise<AuthProviders>>(),
@@ -105,6 +107,8 @@ beforeEach(() => {
     sessionsInMonth: 0,
     days: [],
   });
+  // O card do próximo grau (#193) fica no fim da home e só aparece com meta configurada.
+  apiMock.getGraduation.mockResolvedValue({});
   apiMock.getTree.mockResolvedValue({
     modules: [],
     summary: { totalNodes: 46, completedNodes: 0, availableNodes: 1, lockedNodes: 45 },

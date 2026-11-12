@@ -56,6 +56,7 @@ function renderPage() {
 beforeEach(() => {
   vi.clearAllMocks();
   sessionStorage.clear();
+  localStorage.clear();
   apiMock.getReviewsToday.mockResolvedValue(AGENDA);
   apiMock.createTrainingSession.mockResolvedValue({ id: 7, trainedOn: '2026-03-10' });
   // A data padrão do formulário sai de `new Date()`. Sem relógio fixo, um teste que roda perto da
@@ -116,5 +117,37 @@ describe('NewSessionPage', () => {
 
     expect(screen.getByText(/descanso é dia sem treino/i)).toBeInTheDocument();
     expect(screen.queryByRole('checkbox', { name: /queda de base/i })).not.toBeInTheDocument();
+  });
+
+  it('o kimono da última aula já vem marcado, viaja junto e fica lembrado (#193)', async () => {
+    localStorage.setItem('fos.ultimoKimono', 'NOGI');
+    apiMock.createTrainingSession.mockResolvedValue({
+      id: 8,
+      trainedOn: '2026-03-10',
+      attire: 'GI',
+    });
+    renderPage();
+
+    // Registrar a aula não pode custar um toque a mais: o último valor usado vem marcado.
+    expect(screen.getByRole('radio', { name: /sem kimono/i })).toBeChecked();
+
+    await userEvent.click(screen.getByRole('radio', { name: /com kimono/i }));
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+
+    expect(apiMock.createTrainingSession.mock.calls[0]![0].attire).toBe('GI');
+    expect(localStorage.getItem('fos.ultimoKimono')).toBe('GI');
+  });
+
+  it('físico não oferece kimono, e o que estava marcado não vai junto', async () => {
+    localStorage.setItem('fos.ultimoKimono', 'GI');
+    renderPage();
+
+    await userEvent.click(screen.getByRole('radio', { name: /físico/i }));
+    expect(screen.queryByRole('radio', { name: /com kimono/i })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /registrar treino/i }));
+    const corpo = apiMock.createTrainingSession.mock.calls[0]![0];
+    expect(corpo.kind).toBe('FISICO');
+    expect(corpo.attire).toBeUndefined();
   });
 });

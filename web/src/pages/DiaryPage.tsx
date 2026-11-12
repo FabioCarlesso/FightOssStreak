@@ -9,6 +9,7 @@ import {
   feelingLabel,
   formatDay,
   monthRange,
+  attireLabel,
   sessionKindLabel,
   todayIso,
 } from '../content/diario.ts';
@@ -158,6 +159,7 @@ function SessionRow({ session }: { session: TrainingSession }) {
         <Link to={`/diario/${session.id}`} className="diary-session__kind">
           {sessionKindLabel(session.kind)}
         </Link>
+        {session.attire && <span className="pill">{attireLabel(session.attire)}</span>}
         {session.durationMinutes != null && (
           <span className="pill">{session.durationMinutes} min</span>
         )}

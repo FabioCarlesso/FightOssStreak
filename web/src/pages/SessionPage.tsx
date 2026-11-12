@@ -9,7 +9,7 @@ import {
   emptySessionFields,
   toSessionBody,
 } from '../state/sessionFields.ts';
-import { formatDay, sessionKindLabel, todayIso } from '../content/diario.ts';
+import { attireLabel, formatDay, sessionKindLabel, todayIso } from '../content/diario.ts';
 import { RECALL_LABELS, recallLabel } from '../content/recall.ts';
 import { useAsync } from '../state/useAsync.ts';
 
@@ -72,7 +72,8 @@ export function SessionPage() {
       <section className="card">
         <header className="card__header">
           <h2>
-            {sessionKindLabel(carregada.kind)} ·{' '}
+            {sessionKindLabel(carregada.kind)}
+            {carregada.attire && ` · ${attireLabel(carregada.attire)}`} ·{' '}
             <time dateTime={carregada.trainedOn}>{formatDay(carregada.trainedOn)}</time>
           </h2>
           <Link to="/diario">Voltar ao diário</Link>
@@ -207,6 +208,7 @@ function toFields(session: TrainingSession): SessionFieldsState {
   return {
     ...emptySessionFields(session.trainedOn ?? todayIso()),
     kind: session.kind ?? 'AULA',
+    attire: session.attire ?? '',
     durationMinutes: session.durationMinutes != null ? String(session.durationMinutes) : '',
     feeling: session.feeling ?? '',
     weightKg: session.weightKg != null ? String(session.weightKg) : '',

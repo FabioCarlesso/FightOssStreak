@@ -11,6 +11,7 @@ import {
 import { RECALL_LABELS } from '../content/recall.ts';
 import { todayIso } from '../content/diario.ts';
 import { useDemoMode } from '../state/demoMode.ts';
+import { lembrarKimono, lerUltimoKimono } from '../state/ultimoKimono.ts';
 import { useAsync } from '../state/useAsync.ts';
 
 /**
@@ -29,7 +30,9 @@ export function NewSessionPage() {
   const navigate = useNavigate();
   const demo = useDemoMode();
   const today = todayIso();
-  const [fields, setFields] = useState<SessionFieldsState>(() => emptySessionFields(today));
+  const [fields, setFields] = useState<SessionFieldsState>(() =>
+    emptySessionFields(today, lerUltimoKimono()),
+  );
   const [tecnicas, setTecnicas] = useState<Record<string, Recall>>({});
   const [saving, setSaving] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -69,6 +72,7 @@ export function NewSessionPage() {
         ...toSessionBody(fields),
         tecnicas: marcadas.map((nodeCode) => ({ nodeCode, recall: tecnicas[nodeCode]! })),
       });
+      lembrarKimono(criada.attire);
       void navigate(`/diario/${criada.id}`);
     } catch (cause) {
       setFailure(cause instanceof Error ? cause.message : String(cause));

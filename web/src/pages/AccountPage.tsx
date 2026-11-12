@@ -1,5 +1,6 @@
 import { DeleteAccount } from '../components/DeleteAccount.tsx';
 import { EscolhaDeTema } from '../components/EscolhaDeTema.tsx';
+import { GraduationSettings } from '../components/GraduationSettings.tsx';
 import { useAccount } from '../state/account.ts';
 
 /**
@@ -35,6 +36,8 @@ export function AccountPage() {
           <dd>{demo ? 'demonstração pública' : rotuloDoProvedor(account.provider)}</dd>
         </dl>
       </section>
+
+      <GraduationSettings />
 
       <EscolhaDeTema />
 

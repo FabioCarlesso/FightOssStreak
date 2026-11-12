@@ -26,6 +26,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/graduacao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Meta do próximo grau e aulas desde o último
+         * @description Sem meta configurada, `goal` e `classes` vêm nulos.
+         */
+        get: operations["graduation"];
+        /** Grava a meta do próximo grau — só a data do último grau é obrigatória */
+        put: operations["saveGoal"];
+        post?: never;
+        /** Remove a meta; as sessões do diário não são tocadas */
+        delete: operations["deleteGoal"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/telemetria/evento": {
         parameters: {
             query?: never;
@@ -743,6 +765,44 @@ export interface components {
             nodeCode?: string;
             note?: string;
         };
+        GoalRequest: {
+            /** Format: date */
+            lastGraduationOn: string;
+            currentLabel?: string;
+            nextLabel?: string;
+            /** Format: int32 */
+            minTotal?: number;
+            /** Format: int32 */
+            minGi?: number;
+            /** Format: int32 */
+            minNogi?: number;
+        };
+        ClassCount: {
+            /** Format: int32 */
+            total?: number;
+            /** Format: int32 */
+            gi?: number;
+            /** Format: int32 */
+            nogi?: number;
+            /** Format: int32 */
+            unspecified?: number;
+        };
+        GoalView: {
+            /** Format: date */
+            lastGraduationOn?: string;
+            currentLabel?: string;
+            nextLabel?: string;
+            /** Format: int32 */
+            minTotal?: number;
+            /** Format: int32 */
+            minGi?: number;
+            /** Format: int32 */
+            minNogi?: number;
+        };
+        GraduationView: {
+            goal?: components["schemas"]["GoalView"];
+            classes?: components["schemas"]["ClassCount"];
+        };
         /** @description Uma mudança de rota no app. Nada aqui identifica quem navega. */
         EventRequest: {
             caminho?: string;
@@ -756,6 +816,8 @@ export interface components {
             trainedOn: string;
             /** @enum {string} */
             kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
+            /** @enum {string} */
+            attire?: "GI" | "NOGI";
             /** Format: int32 */
             durationMinutes?: number;
             /** @enum {string} */
@@ -779,6 +841,8 @@ export interface components {
             /** @enum {string} */
             kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
             countsAsTrainingDay?: boolean;
+            /** @enum {string} */
+            attire?: "GI" | "NOGI";
             /** Format: int32 */
             durationMinutes?: number;
             /** @enum {string} */
@@ -972,6 +1036,8 @@ export interface components {
             trainedOn: string;
             /** @enum {string} */
             kind?: "AULA" | "DRILL" | "ROLA" | "FISICO" | "DESCANSO" | "OUTRO";
+            /** @enum {string} */
+            attire?: "GI" | "NOGI";
             /** Format: int32 */
             durationMinutes?: number;
             /** @enum {string} */
@@ -1387,6 +1453,68 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["PinnedNoteView"];
                 };
+            };
+        };
+    };
+    graduation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GraduationView"];
+                };
+            };
+        };
+    };
+    saveGoal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GraduationView"];
+                };
+            };
+        };
+    };
+    deleteGoal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

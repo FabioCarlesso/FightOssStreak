@@ -19,6 +19,8 @@ import type {
   FeedbackRequest,
   FeedbackStatus,
   FeedbackView,
+  GraduationGoalRequest,
+  GraduationView,
   HealthView,
   MvpMetrics,
   NodeDetail,
@@ -384,6 +386,22 @@ export function createApiClient(options: ApiClientOptions = {}) {
       request<TrainingSession>(`/api/sessoes/${id}/tecnicas/${encodeURIComponent(nodeCode)}`, {
         method: 'DELETE',
       }),
+
+    /**
+     * Próximo grau (#193, D75): a meta e as aulas registradas desde o último grau. Sem meta
+     * configurada, `goal` e `classes` vêm nulos — e a home não mostra o card.
+     */
+    getGraduation: () => request<GraduationView>('/api/graduacao'),
+
+    /** Grava a meta. É uma linha por conta: mudar de grau é mandar a data nova. */
+    saveGraduationGoal: (goal: GraduationGoalRequest) =>
+      request<GraduationView>('/api/graduacao', {
+        method: 'PUT',
+        body: JSON.stringify(goal),
+      }),
+
+    /** Tira a meta. As sessões do diário ficam. */
+    deleteGraduationGoal: () => requestNoContent('/api/graduacao', { method: 'DELETE' }),
 
     /** Critérios de sucesso do MVP medidos sobre o uso real (docs/produto/mvp-web.md). */
     getMvpMetrics: (days?: number) =>

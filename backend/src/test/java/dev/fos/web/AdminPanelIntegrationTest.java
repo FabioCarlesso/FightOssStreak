@@ -8,11 +8,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import dev.fos.model.Attire;
+import dev.fos.model.GraduationGoal;
 import dev.fos.model.SessionKind;
 import dev.fos.model.TrainingSession;
 import dev.fos.model.UsageDaily;
 import dev.fos.model.UsageDimension;
 import dev.fos.model.UsageEventType;
+import dev.fos.repo.GraduationGoalRepository;
 import dev.fos.repo.TrainingSessionRepository;
 import dev.fos.repo.UsageDailyRepository;
 import dev.fos.repo.UsageEventRepository;
@@ -81,6 +84,7 @@ class AdminPanelIntegrationTest {
     @Autowired private UsageDailyRepository daily;
     @Autowired private UsageEventRepository events;
     @Autowired private TrainingSessionRepository sessoes;
+    @Autowired private GraduationGoalRepository metas;
 
     /** Os ids das contas plantadas — o diário precisa de dono, e o painel não pode saber quem é. */
     private final Map<String, Long> contas = new HashMap<>();
@@ -122,12 +126,22 @@ class AdminPanelIntegrationTest {
         // saúde. O painel lê `usage_daily` e nunca `training_session`, então plantar uma sessão
         // aqui é a prova de que nada dela atravessa — e é o teste que quebraria no dia em que
         // alguém resolvesse cruzar as duas tabelas para "enriquecer" o painel.
-        sessoes.save(
+        TrainingSession sessao =
                 new TrainingSession(
                         contas.get("ana"),
                         HOJE.minusDays(1),
                         SessionKind.AULA,
-                        Instant.parse("2026-08-26T10:00:00Z")));
+                        Instant.parse("2026-08-26T10:00:00Z"));
+        sessao.setAttire(Attire.NOGI);
+        sessoes.save(sessao);
+
+        // A meta do próximo grau (#193, D75) também é da conta e de mais ninguém.
+        GraduationGoal meta = new GraduationGoal(contas.get("ana"));
+        meta.setLastGraduationOn(HOJE.minusDays(30));
+        meta.setNextLabel("branca 2º grau");
+        meta.setMinTotal(40);
+        meta.touch(Instant.parse("2026-08-26T10:00:00Z"));
+        metas.save(meta);
 
         String corpo =
                 mockMvc.perform(get("/api/admin/painel").with(as("dono")))
@@ -152,7 +166,13 @@ class AdminPanelIntegrationTest {
                 .doesNotContain("peso")
                 .doesNotContain("feeling")
                 .doesNotContain("learned")
-                .doesNotContain("improve");
+                .doesNotContain("improve")
+                // O kimono da sessão e a meta de graduação (#193, D75).
+                .doesNotContain("attire")
+                .doesNotContain("nogi")
+                .doesNotContain("graduation")
+                .doesNotContain("mintotal")
+                .doesNotContain("grau");
     }
 
     @Test

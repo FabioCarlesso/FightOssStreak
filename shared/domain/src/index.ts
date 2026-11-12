@@ -47,6 +47,25 @@ export {
 export { formatDay, todayIso, monthRange, emptySessionFields, toSessionBody } from './diario.ts';
 export type { SessionFieldsState } from './diario.ts';
 
+export {
+  ATTIRE_LABELS,
+  kindRecordsAttire,
+  kindCountsAsClass,
+  countClassesSince,
+  graduationLines,
+  graduationForm,
+  toGraduationGoalBody,
+} from './graduacao.ts';
+export type {
+  Attire,
+  ClassCount,
+  CountableSession,
+  GraduationFormState,
+  GraduationGoalLike,
+  GraduationGoalNumbers,
+  GraduationLine,
+} from './graduacao.ts';
+
 export { previewIntervalDays } from './previsao.ts';
 export type { ScheduleSnapshot } from './previsao.ts';
 

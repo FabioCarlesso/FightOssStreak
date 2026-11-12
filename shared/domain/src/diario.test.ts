@@ -34,6 +34,20 @@ describe('toSessionBody', () => {
     const corpo = toSessionBody({ ...emptySessionFields('2026-10-05'), weightKg: '78,4' });
     assert.equal(corpo.weightKg, 78.4);
   });
+
+  it('kimono vazio não vai, e o pré-selecionado vai (#193)', () => {
+    assert.equal(toSessionBody(emptySessionFields('2026-10-05')).attire, undefined);
+    assert.equal(toSessionBody(emptySessionFields('2026-10-05', 'NOGI')).attire, 'NOGI');
+  });
+
+  it('físico e descanso não levam o kimono que ficou marcado de antes de trocar o tipo', () => {
+    for (const kind of ['FISICO', 'DESCANSO'] as const) {
+      const corpo = toSessionBody({ ...emptySessionFields('2026-10-05', 'GI'), kind });
+      assert.equal(corpo.attire, undefined, kind);
+    }
+    const rola = toSessionBody({ ...emptySessionFields('2026-10-05', 'GI'), kind: 'ROLA' });
+    assert.equal(rola.attire, 'GI');
+  });
 });
 
 describe('previewIntervalDays', () => {

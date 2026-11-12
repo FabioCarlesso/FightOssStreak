@@ -72,6 +72,24 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
     long countTrainingSessions(
             @Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
+    /**
+     * Aulas desde o último grau, por com/sem kimono — a contagem do próximo grau (#193, D75).
+     *
+     * <p>Só {@code AULA} conta, e a regra mora na consulta pelo mesmo motivo do filtro de {@code
+     * DESCANSO} acima: academia conta aula, e somar rola, drill ou físico inflaria o número que a
+     * pessoa compara com o mínimo da academia. A regra pura é {@code countClassesSince}, em {@code
+     * shared/domain} (D17). O limite de cima não existe porque sessão futura é recusada na
+     * gravação.
+     */
+    @Query(
+            "select new dev.fos.repo.AttireCount(s.attire, count(s)) from TrainingSession s"
+                    + " where s.userId = :userId"
+                    + " and s.kind = dev.fos.model.SessionKind.AULA"
+                    + " and s.trainedOn >= :since"
+                    + " group by s.attire")
+    List<AttireCount> countClassesSince(
+            @Param("userId") Long userId, @Param("since") LocalDate since);
+
     long countByUserIdAndKind(Long userId, SessionKind kind);
 
     void deleteByUserId(Long userId);

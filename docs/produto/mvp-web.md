@@ -54,6 +54,11 @@ O diário trouxe dois números que **não** são critério de sucesso e nunca de
 | Sessões com técnica vinculada | leitura do diário | idem: o que interessa é a revisão que a técnica gera, e isso já é medido abaixo |
 
 Meta em cima deles empurraria o app para o caderno, que é exatamente o critério de falha da D56.
+
+O **card do próximo grau** (#193, D75) mostra aulas contra um mínimo, e não é exceção a esta regra:
+o mínimo não é do app, é o que a academia de quem usa exige, digitado pela própria pessoa. O app
+não inventa alvo de quantidade, e o card informa sem premiar. Se ele passar a competir com a agenda
+— aulas registradas subindo e revisões atendidas caindo —, é ele que perde lugar na home.
 **O critério de revisões atendidas (≥ 60%) não afrouxa** — é ele que segura a D58: se o streak médio
 subir enquanto as revisões atendidas caem, o número virou presença e não retenção, e ou o streak
 volta a contar só `drill_log`, ou a agenda passa a ser o indicador principal da home.

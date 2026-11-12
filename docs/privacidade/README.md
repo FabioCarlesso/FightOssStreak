@@ -18,6 +18,7 @@ por quanto tempo.
 | Data do primeiro e do último login | do próprio app | saber se a conta ainda é usada |
 | Progresso, streak, agenda de revisão, drills, anotações e os dias sem treino perdoados por freeze (#99) | do uso do app | é o produto |
 | Diário de treino: data, tipo, duração, **peso**, **sensação** e o que você escreveu sobre o treino (#114) | de você, ao registrar um treino | é a entrada do app desde a D56 — e peso e sensação são **dado referente à saúde**, com seção própria abaixo |
+| Próximo grau: data do último grau, rótulos dos graus e mínimos de aulas que você digitou; e, por sessão do diário, se a aula foi com ou sem kimono (#193) | de você, na tela Conta e ao registrar um treino | é o que conta as aulas até o próximo grau (D75). Não é dado de saúde, mas segue a mesma regra do diário: fica só na sua conta, sai com `DELETE /api/me`, e a coleta de uso e o painel nunca o leem |
 | Aceite do aviso de responsabilidade, com data e versão | do uso do app | requisito de produto (`docs/produto/disclaimer.md`) |
 | **Hash da sua senha**, se você criou conta com e-mail e senha | de você, no cadastro | é o que confere a senha na entrada |
 | Papel da conta (`role`), com data e id de quem o mudou | de quem administra, ou da semente `fos.auth.owner-emails` na subida | decide quem vê a administração do app (D49) |
@@ -26,6 +27,8 @@ por quanto tempo.
 **A senha não é guardada — o hash dela é.** Até a D47 o app não via credencial nenhuma: a autenticação acontecia no provedor, e esta seção dizia isso. Com o cadastro aberto (#81) passou a existir uma senha, e o que fica no banco é só o hash (bcrypt, com o prefixo do algoritmo), numa tabela separada da identidade. Do valor que você digita não sobra nada depois da requisição — nem em log, nem em resposta de API. **Quem entra pelo Google continua sem ter senha aqui**, e nada muda para essa pessoa.
 
 **O que a confirmação de e-mail guarda.** Os links de confirmação e de redefinição também vivem só como hash, valem uma vez (24 horas e 1 hora, respectivamente) e são queimados quando a senha muda.
+
+**O último "com ou sem kimono" que você marcou fica só no navegador** (`localStorage`, #193): serve para a próxima sessão já vir marcada, e não vai para a API.
 
 **O lembrete de revisão do app não sai do aparelho** (#142, D70). A notificação é local: não há token de dispositivo, servidor de push nem terceiro. Se o lembrete está ligado e a que horas ele toca ficam guardados só no aparelho, e o texto diz apenas quantas técnicas venceram, sem nome de técnica e sem peso ou sensação.
 
