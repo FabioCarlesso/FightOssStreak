@@ -158,3 +158,9 @@ export type FeedbackCategory = NonNullable<FeedbackRequest['category']>;
 export type FeedbackStatus = NonNullable<FeedbackStatusRequest['status']>;
 
 export type { components, paths } from '../generated/api.ts';
+
+/**
+ * Mapa de posições (#194, D76): vem dentro da árvore (`TreeView.positions`), e cada nó diz as
+ * próprias posições em `positionCodes`.
+ */
+export type CurriculumPosition = Schemas['PositionView'];

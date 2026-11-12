@@ -84,6 +84,7 @@ nesta tabela, no mesmo PR.
 | [D73](D73-css-por-area.md) | O CSS do web é dividido por área em `web/src/styles/`, importado em `main.tsx` numa ordem fixa que é a da cascata; `@media` no arquivo da área; CSS Modules só para tela nova, sem migrar as existentes (#184) |
 | [D74](D74-tema-claro.md) | Tema claro em `shared/tokens`, com contraste conferido por teste nos dois temas: segue o sistema, a tela Conta sobrescreve (Sistema / Escuro / Claro), a escolha fica só no aparelho; web e app juntos, landing também; faixas, moldura, prints, sombras e imagem do marco ficam fixos (#187) |
 | [D75](D75-proximo-grau-conta-aulas-do-diario.md) | O próximo grau conta as aulas (`AULA`) do diário desde o último grau, com e sem kimono, contra os mínimos que a própria pessoa digita a partir da academia dela — dado da conta, nunca lista de academia no repositório; marcar "sem kimono" não reabre a D6 (#193) |
+| [D76](D76-posicao-como-entidade-do-curriculo.md) | Posição é entidade do currículo (`positions.json`, D11) e o nó diz de qual parte; o `identify` diz como reconhecer a posição e nunca como chegar nela (D1); apelido aponta para uma posição só; as posições viajam dentro da árvore, e a busca de técnica do diário é regra pura em `shared/domain` (#194) |
 
 ## Política de uso de vídeo (D7) — limites
 

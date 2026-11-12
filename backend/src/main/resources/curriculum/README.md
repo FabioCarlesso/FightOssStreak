@@ -8,7 +8,8 @@ um diff legível em vez de um dump de SQL.
 
 ## Arquivos
 
-Um arquivo por módulo (`m0.json` … `m8.json`), mais o índice `modules.json` que define a ordem.
+Um arquivo por módulo (`m0.json` … `m8.json`), mais o índice `modules.json`, que define a ordem e
+aponta o mapa de posições (`"positions": "positions.json"`, D76).
 
 ## Formato de um nó
 
@@ -23,9 +24,48 @@ Um arquivo por módulo (`m0.json` … `m8.json`), mais o índice `modules.json` 
   "concept": "...",            // o *porquê* da posição, não o passo a passo
   "video": null,               // null = ainda não catalogado (ver abaixo)
   "extraVideos": [],           // opcional — clipes complementares (ver abaixo)
-  "quiz": []                   // banco de perguntas: [] ou 8+ (D44) — ver seção `quiz` abaixo
+  "quiz": [],                  // banco de perguntas: [] ou 8+ (D44) — ver seção `quiz` abaixo
+  "positions": ["CEM_QUILOS"], // opcional — de que posição a técnica parte (D76)
+  "aliases": ["armbar"]        // opcional — apelidos para a busca do diário (D76)
 }
 ```
+
+### `positions` e `aliases`
+
+`positions` lista os códigos de `positions.json` de onde a técnica **parte**. É opcional: etiqueta,
+tap e jogo integrado não partem de posição nenhuma. Kimura, que sai da guarda, do 100kg e das
+costas, lista as três.
+
+`aliases` são os nomes que se ouvem no tatame e que o título não diz ("armbar", "RNC"). O título e o
+código já entram na busca, então apelido que repete o título não ajuda em nada. Até 60 caracteres,
+sem repetir dentro do nó.
+
+## `positions.json` (D76)
+
+```jsonc
+{
+  "code": "MEIA_GUARDA",        // estável, MAIÚSCULAS_COM_SUBLINHADO
+  "name": "Meia-guarda",
+  "aliases": ["half guard"],    // termos de busca; um termo aponta para uma posição só
+  "family": "GUARDA",           // GUARDA | CONTROLE_POR_CIMA | COSTAS | TRANSICAO | EM_PE
+  "perspective": "BAIXO",       // BAIXO | CIMA | NEUTRA — de que lado o nome é dito
+  "identify": "..."             // como RECONHECER a posição, em 60 a 280 caracteres
+}
+```
+
+A ordem do arquivo é a ordem da tela `/posicoes` dentro de cada família.
+
+**`identify` diz o que se vê, nunca o que se faz.** "Um está deitado de costas com as pernas
+cruzadas em volta da cintura do outro" serve; "cruze as pernas e puxe a gola" não serve: chegar na
+posição e o que fazer dali são aula (D1). Um parágrafo só. Como no `concept`, a ausência de
+imperativo é item de revisão humana do PR.
+
+**Apelido é comparado sem acento, sem caixa e com hífen valendo espaço.** "Meia guarda" como
+apelido da posição "Meia-guarda" é recusado por ser o mesmo termo. Apelido de uma posição igual ao
+nome ou ao apelido de outra também é recusado, porque a busca levaria às duas.
+
+Nenhum texto de posição vem de manual de academia: o repositório é público, e a régua de fonte é
+`docs/conteudo/fontes.md`.
 
 ### `concept`
 
@@ -174,5 +214,6 @@ mecanismo que não esteja já descrito ali.
 pré-requisito inexistente, ciclo no grafo, nó órfão de módulo, faixa inválida, banco de quiz com
 menos de 8 perguntas ou enunciado repetido no mesmo nó, quiz sem exatamente uma alternativa correta,
 conceito com mais de 3 parágrafos ou fora da faixa de tamanho nos módulos já cobertos, ou
-complementar duplicado, sem crédito de canal ou acima do teto. Detecção de ciclo é feita **na
-ingestão**, nunca em runtime.
+complementar duplicado, sem crédito de canal ou acima do teto, posição inexistente ou repetida no
+nó, código de posição duplicado, apelido que leve a duas posições, ou `identify` fora da faixa.
+Detecção de ciclo é feita **na ingestão**, nunca em runtime.

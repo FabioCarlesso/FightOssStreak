@@ -45,6 +45,19 @@ public class CurriculumLoader {
         return modules;
     }
 
+    /**
+     * Carrega o mapa de posições (#194, D76), declarado no índice. Índice sem o campo é currículo
+     * sem posições — o que um currículo de teste pode ser —, e não erro.
+     */
+    public List<CurriculumSource.PositionSpec> loadPositions() {
+        CurriculumSource.Index index = read(indexLocation, CurriculumSource.Index.class);
+        if (index.positions() == null || index.positions().isBlank()) {
+            return List.of();
+        }
+        String base = indexLocation.substring(0, indexLocation.lastIndexOf('/') + 1);
+        return read(base + index.positions(), CurriculumSource.PositionsFile.class).positions();
+    }
+
     private <T> T read(String location, Class<T> type) {
         Resource resource = resourceLoader.getResource(location);
         if (!resource.exists()) {

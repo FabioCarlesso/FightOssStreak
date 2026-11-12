@@ -57,7 +57,7 @@ class ModuleMasteryTest {
                                 status ->
                                         new NodeSummaryView(
                                                 "X", "X", null, status, null, List.of(), false, 0,
-                                                null, null))
+                                                null, null, List.of(), List.of()))
                         .toList();
         return ModuleView.of("M0", "Módulo", null, nodes);
     }

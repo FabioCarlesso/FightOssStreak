@@ -10,6 +10,7 @@
       "order": 1,
       "unlockRule": "ALL",
       "prereqs": ["M0.3", "M0.4"],
+      "positions": ["CEM_QUILOS", "MONTADA"],
       "concept": "A primeira habilidade do jiu-jitsu não é escapar — é não perder enquanto você ainda não pode escapar.\n\nSob pressão, a prioridade segue uma hierarquia curta: proteger o pescoço, manter os cotovelos colados ao corpo e continuar respirando. Fugas exigem espaço e tempo, e os dois aparecem quando o oponente se move — sobreviver é o que te mantém no jogo até esse momento chegar.\n\nO erro que define o faixa branca é gastar todo o ar em explosão aleatória nos primeiros trinta segundos, contra uma posição que ainda nem ofereceu espaço nenhum. Quando a brecha real surge, não sobra nada para aproveitá-la.",
       "video": {
         "youtubeId": "6Q0iCb2Oac8",
@@ -106,6 +107,8 @@
       "order": 2,
       "unlockRule": "ALL",
       "prereqs": ["M1.1"],
+      "positions": ["CEM_QUILOS"],
+      "aliases": ["shrimp", "camarão"],
       "concept": "Shrimping é o movimento que cria espaço entre o seu quadril e o oponente — e espaço é a moeda de toda fuga em jiu-jitsu.\n\nA ideia central é que quem move o quadril move o corpo inteiro: o quadril, apoiado na perna e no chão, reposiciona a estrutura toda, enquanto empurrar com os braços apenas cansa sem deslocar nada. É por isso que o mesmo mecanismo aparece embaixo da fuga de 100kg, da fuga de montada e da recuperação de guarda.\n\nO erro comum é tratar o shrimp como aquecimento isolado em vez de reconhecê-lo como o motor comum das três fugas — quem pula essa etapa chega ao módulo seguinte sem o mecanismo que sustenta tudo o resto.",
       "video": {
         "youtubeId": "RnIlw0gQK5k",
@@ -202,6 +205,8 @@
       "order": 3,
       "unlockRule": "ALL",
       "prereqs": ["M1.2"],
+      "positions": ["CEM_QUILOS"],
+      "aliases": ["fuga de lateral"],
       "concept": "Embaixo do 100kg o problema não é o peso — é a falta de enquadramento: sem estruturas de braço separando você do oponente, o peito dele cola no seu e o espaço desaparece.\n\nA fuga segue uma sequência lógica: construir o enquadramento primeiro, usar o shrimp para abrir espaço com essa estrutura já no lugar, e ocupar o espaço aberto com o joelho antes que ele feche de novo. Cada etapa depende da anterior ter funcionado.\n\nO erro comum é pular uma delas: tentar empurrar sem enquadramento gasta força à toa, e fazer o shrimp sem ter para onde levar o joelho cria espaço só para devolvê-lo de graça um instante depois.",
       "video": {
         "youtubeId": "5ALqUk9uefk",
@@ -318,6 +323,7 @@
       "order": 4,
       "unlockRule": "ALL",
       "prereqs": ["M1.2"],
+      "positions": ["MONTADA"],
       "concept": "As duas fugas de montada resolvem o mesmo problema por caminhos opostos, e qual delas funciona depende do que o oponente faz para se defender.\n\nA upa usa a ponte para jogar o peso dele por cima da sua cabeça, mas só funciona se o braço daquele lado estiver bloqueado — sem isso, ele apoia a mão no chão e a ponte para no meio do caminho. O elbow escape trabalha de lado, recuperando espaço para trazer o joelho por dentro.\n\nO erro comum é tratá-las como técnicas isoladas: na prática elas formam um par, porque quando o oponente se defende de uma, abre a outra. Decorar cada uma sem entender essa relação rende pouco contra quem resiste de verdade.",
       "video": {
         "youtubeId": "whaSmJBrKZY",
@@ -414,6 +420,7 @@
       "order": 5,
       "unlockRule": "ALL",
       "prereqs": ["M1.3", "M1.4"],
+      "positions": ["CEM_QUILOS"],
       "concept": "Recuperar a guarda é o ponto onde a sobrevivência vira jogo outra vez: você deixa de só resistir e volta a ter pernas entre você e o oponente, controlando a distância de novo.\n\nÉ um checkpoint natural do currículo porque consolida shrimp, enquadramento e as duas fugas de M1 — nenhuma delas termina de verdade sem essa etapa final. O critério de sucesso não é chegar à guarda fechada especificamente, e sim reconstruir qualquer barreira de pernas que devolva a distância ao seu controle.\n\nO erro comum é achar que o objetivo é uma posição específica, e não a função que ela cumpre: perseguir a guarda fechada quando a guarda aberta já devolveu o controle da distância é gastar tempo num detalhe que não muda o que importa.",
       "video": {
         "youtubeId": "cdV5cRGYsyA",
@@ -524,6 +531,7 @@
       "order": 6,
       "unlockRule": "ALL",
       "prereqs": ["M1.1"],
+      "positions": ["COSTAS"],
       "concept": "Costas é a pior posição do jiu-jitsu porque o oponente vê você e você não vê ele — e o pescoço fica exposto o tempo todo, sem aviso do que vem a seguir.\n\nPor isso a ordem de prioridade é rígida: primeiro defender o pescoço com as mãos, só depois trabalhar a fuga levando os ombros para o chão do lado do braço que estrangula. Ir para o lado errado gira você direto para dentro do próprio estrangulamento.\n\nO erro que mais custa é inverter essa ordem: tentar escapar antes de neutralizar a mão que busca a gola simplesmente entrega o estrangulamento durante a própria tentativa de fuga — a pressa detona exatamente o que deveria proteger primeiro.",
       "video": {
         "youtubeId": "N6lKNqUOZoY",

@@ -1245,6 +1245,18 @@ export interface components {
             lastQuizScore?: number;
             /** Format: date */
             nextReviewOn?: string;
+            positionCodes?: string[];
+            aliases?: string[];
+        };
+        PositionView: {
+            code?: string;
+            name?: string;
+            aliases?: string[];
+            /** @enum {string} */
+            family?: "GUARDA" | "CONTROLE_POR_CIMA" | "COSTAS" | "TRANSICAO" | "EM_PE";
+            /** @enum {string} */
+            perspective?: "BAIXO" | "CIMA" | "NEUTRA";
+            identify?: string;
         };
         ProgressSummary: {
             /** Format: int32 */
@@ -1259,6 +1271,7 @@ export interface components {
         TreeView: {
             modules?: components["schemas"]["ModuleView"][];
             summary?: components["schemas"]["ProgressSummary"];
+            positions?: components["schemas"]["PositionView"][];
         };
         LinkView: {
             valido?: boolean;

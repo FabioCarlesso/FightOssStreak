@@ -254,3 +254,55 @@
   gap: 0.7rem;
   margin-top: 0.8rem;
 }
+
+/*
+ * Busca de técnica (#194, D76): substitui o código digitado à mão. Os resultados são botões de
+ * linha inteira, com o código na cor da agenda, para o toque no celular acertar sem mira.
+ */
+.technique-picker {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: 0.8rem;
+}
+
+.technique-picker__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.7rem;
+}
+
+.technique-picker__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.technique-picker__option {
+  width: 100%;
+  text-align: left;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0.5rem 0.7rem;
+  font: inherit;
+  font-size: var(--text-md);
+  cursor: pointer;
+}
+
+.technique-picker__option:hover,
+.technique-picker__option:focus-visible {
+  border-color: var(--accent);
+}
+
+.technique-picker__chosen {
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+.session-techniques__more {
+  margin: 1rem 0 0;
+  font-size: var(--text-md);
+}

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { Recall } from '@fos/domain';
-import type { TrainingSession } from '@fos/types';
+import type { NodeSummary, TrainingSession } from '@fos/types';
 import { api } from '../api/client.ts';
 import { SessionFields } from '../components/SessionFields.tsx';
+import { TechniquePicker } from '../components/TechniquePicker.tsx';
 import {
   type SessionFieldsState,
   emptySessionFields,
@@ -107,8 +108,10 @@ function TechniqueSection({
   session: TrainingSession;
   onChanged: () => void;
 }) {
-  const [nodeCode, setNodeCode] = useState('');
+  const [escolhida, setEscolhida] = useState<NodeSummary | null>(null);
   const [recall, setRecall] = useState<Recall>('OK');
+  // A árvore traz os nós, as posições e os apelidos que a busca usa (#194, D76).
+  const tree = useAsync(() => api.getTree(), []);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const descanso = session.kind === 'DESCANSO';
@@ -160,38 +163,46 @@ function TechniqueSection({
         <p className="hint">Descanso é dia sem treino: não recebe técnica.</p>
       ) : (
         <form
-          className="session-link"
+          className="session-link-form"
           onSubmit={(event) => {
             event.preventDefault();
-            const code = nodeCode.trim().toUpperCase();
+            const code = escolhida?.code;
             if (!code) return;
             void executar(async () => {
               await api.addSessionTechnique(session.id ?? 0, { nodeCode: code, recall });
-              setNodeCode('');
+              setEscolhida(null);
             });
           }}
         >
-          <label className="session-form__field">
-            <span>Código do nó</span>
-            <input
-              value={nodeCode}
-              onChange={(event) => setNodeCode(event.target.value)}
-              placeholder="M0.1"
+          {escolhida ? (
+            <p className="technique-picker__chosen">
+              <span className="due-list__code">{escolhida.code}</span> {escolhida.title}{' '}
+              <button type="button" className="link-button" onClick={() => setEscolhida(null)}>
+                Trocar
+              </button>
+            </p>
+          ) : (
+            <TechniquePicker
+              tree={tree.data}
+              onPick={setEscolhida}
+              exclude={(session.tecnicas ?? []).map((tecnica) => tecnica.nodeCode ?? '')}
             />
-          </label>
-          <label className="session-form__field">
-            <span>Como saiu</span>
-            <select value={recall} onChange={(event) => setRecall(event.target.value as Recall)}>
-              {RECALL_LABELS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button type="submit" disabled={busy || !nodeCode.trim()}>
-            Vincular
-          </button>
+          )}
+          <div className="session-link">
+            <label className="session-form__field">
+              <span>Como saiu</span>
+              <select value={recall} onChange={(event) => setRecall(event.target.value as Recall)}>
+                {RECALL_LABELS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="submit" disabled={busy || !escolhida}>
+              Vincular
+            </button>
+          </div>
         </form>
       )}
 

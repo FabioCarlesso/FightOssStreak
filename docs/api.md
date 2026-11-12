@@ -48,7 +48,7 @@ e regras em [`autenticacao.md`](autenticacao.md).
 | `GET /api/me` | conta autenticada, com o estado do acesso e o `role` |
 | `DELETE /api/me` | exclui a conta e todo o dado dela |
 | `GET /api/disclaimer` · `POST /api/disclaimer/accept` | estado do aceite do aviso / registra o aceite com data e versão |
-| `GET /api/curriculum/tree` | árvore completa com o bloqueio resolvido para a conta |
+| `GET /api/curriculum/tree` | árvore completa com o bloqueio resolvido para a conta. Traz também o mapa de posições (`positions`), e cada nó traz `positionCodes` e `aliases` (D76). As posições vêm aqui, e não em rota própria, porque as telas que as usam precisam dos nós e do status junto |
 | `GET /api/nodes/{code}` | detalhe do nó: conceito, vídeo, quiz e agenda de revisão |
 | `POST /api/nodes/{code}/quiz` | submete o quiz e devolve nota e explicações |
 | `POST /api/nodes/{code}/drill` | registra "treinei isso hoje" — alimenta streak e reagenda o SRS |

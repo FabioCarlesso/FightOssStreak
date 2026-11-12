@@ -103,3 +103,12 @@ retroativamente), e a linha de cada nó passou a citar também o canal do vídeo
 | M8.1 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 | M8.2 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
 | M8.3 | Reestruturado do texto já existente no currículo, sem fonte externa nova (D43); banco de 8 perguntas derivado do mesmo `concept`, sem fonte externa nova (D44) |
+
+## Mapa de posições (#194, D76)
+
+Os 15 textos de `identify` em `curriculum/positions.json` descrevem o que se vê em cada posição, com
+palavras próprias e sem passo a passo. Fonte: nomenclatura comum de jiu-jitsu (item 5 de
+[`fontes.md`](fontes.md), só para o nome) e o próprio treino (item 1) para a descrição. Nenhum
+trecho de manual de academia. Os apelidos dos nós e das posições são os nomes correntes em
+português e inglês, sem fonte específica.
+

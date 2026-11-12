@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Uma unidade de revisão do currículo.
@@ -74,6 +75,27 @@ public class Node {
     @CollectionTable(name = "node_prereq", joinColumns = @JoinColumn(name = "node_id"))
     @Column(name = "prereq_node_id", nullable = false)
     private Set<Long> prereqNodeIds = new LinkedHashSet<>();
+
+    /**
+     * Códigos das posições de onde a técnica parte (#194, D76), na ordem do JSON. Código e não
+     * referência: a posição é reescrita a cada ingestão, e quem garante que o código existe é o
+     * {@code CurriculumValidator}.
+     */
+    // Em lote: a árvore lê as posições dos 46 nós de uma vez, e sem isso seria uma consulta por nó.
+    @BatchSize(size = 64)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "node_position", joinColumns = @JoinColumn(name = "node_id"))
+    @OrderColumn(name = "position_order")
+    @Column(name = "position_code", nullable = false)
+    private List<String> positionCodes = new ArrayList<>();
+
+    /** Apelidos do nó ("armbar", "RNC"), para a busca do diário (#194, D76). */
+    @BatchSize(size = 64)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "node_alias", joinColumns = @JoinColumn(name = "node_id"))
+    @OrderColumn(name = "alias_order")
+    @Column(name = "alias", nullable = false)
+    private List<String> aliases = new ArrayList<>();
 
     protected Node() {
         // JPA
@@ -146,6 +168,26 @@ public class Node {
 
     public void setPrereqNodeIds(Set<Long> prereqNodeIds) {
         this.prereqNodeIds = prereqNodeIds;
+    }
+
+    public List<String> getPositionCodes() {
+        return positionCodes;
+    }
+
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    /**
+     * Posições e apelidos do nó (#194, D76). Separado de {@link #update} porque é taxonomia de
+     * busca, não conteúdo; e substitui o conteúdo das listas pelo mesmo motivo de {@code
+     * setExtraVideos}.
+     */
+    public void setTaxonomy(List<String> positionCodes, List<String> aliases) {
+        this.positionCodes.clear();
+        this.positionCodes.addAll(positionCodes);
+        this.aliases.clear();
+        this.aliases.addAll(aliases);
     }
 
     /** Usado pela ingestão do currículo, que reescreve o nó a partir do JSON versionado. */

@@ -33,6 +33,7 @@ public final class UsagePaths {
                     "/senha/esquecida",
                     "/hoje",
                     "/arvore",
+                    "/posicoes",
                     "/diario",
                     "/diario/nova",
                     "/progresso",

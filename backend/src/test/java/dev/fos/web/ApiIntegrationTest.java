@@ -164,6 +164,42 @@ class ApiIntegrationTest {
     }
 
     @Test
+    @DisplayName("a árvore traz o mapa de posições e as posições e apelidos de cada nó (#194)")
+    void treeCarriesThePositionMap() throws Exception {
+        JsonNode tree = getJson("/api/curriculum/tree");
+
+        JsonNode positions = tree.get("positions");
+        assertThat(positions).hasSize(15);
+        JsonNode meiaGuarda =
+                StreamSupport.stream(positions.spliterator(), false)
+                        .filter(p -> p.get("code").asString().equals("MEIA_GUARDA"))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(meiaGuarda.get("family").asString()).isEqualTo("GUARDA");
+        assertThat(meiaGuarda.get("perspective").asString()).isEqualTo("BAIXO");
+        assertThat(meiaGuarda.get("identify").asString()).isNotBlank();
+        assertThat(meiaGuarda.get("aliases").toString()).contains("half guard");
+
+        JsonNode m36 = nodeOf(tree, "M3.6");
+        assertThat(m36.get("positionCodes").toString()).contains("MEIA_GUARDA");
+        JsonNode m71 = nodeOf(tree, "M7.1");
+        assertThat(m71.get("aliases").toString()).contains("chave de ombro");
+        // Nó sem posição vem com lista vazia, não ausente: o cliente não precisa tratar null.
+        assertThat(nodeOf(tree, "M0.1").get("positionCodes")).isEmpty();
+    }
+
+    private static JsonNode nodeOf(JsonNode tree, String code) {
+        for (JsonNode module : tree.get("modules")) {
+            for (JsonNode node : module.get("nodes")) {
+                if (node.get("code").asString().equals(code)) {
+                    return node;
+                }
+            }
+        }
+        throw new AssertionError("nó não encontrado: " + code);
+    }
+
+    @Test
     @DisplayName("M0 abre desbloqueado e M2.1 começa travado")
     void initialLockState() throws Exception {
         JsonNode tree = getJson("/api/curriculum/tree");

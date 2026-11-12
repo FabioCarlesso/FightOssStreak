@@ -1,6 +1,7 @@
 {
   "version": "2026-08-16",
   "scope": "GI",
+  "positions": "positions.json",
   "modules": [
     { "order": 0, "file": "m0.json" },
     { "order": 1, "file": "m1.json" },

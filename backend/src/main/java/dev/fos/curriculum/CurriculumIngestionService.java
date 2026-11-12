@@ -3,13 +3,17 @@ package dev.fos.curriculum;
 import dev.fos.config.FosProperties;
 import dev.fos.model.Belt;
 import dev.fos.model.CurriculumModule;
+import dev.fos.model.CurriculumPosition;
 import dev.fos.model.ExtraVideoRef;
 import dev.fos.model.Node;
+import dev.fos.model.PositionFamily;
+import dev.fos.model.PositionPerspective;
 import dev.fos.model.QuizOption;
 import dev.fos.model.QuizQuestion;
 import dev.fos.model.UnlockRule;
 import dev.fos.model.VideoOrientation;
 import dev.fos.model.VideoRef;
+import dev.fos.repo.CurriculumPositionRepository;
 import dev.fos.repo.ModuleRepository;
 import dev.fos.repo.NodeRepository;
 import dev.fos.repo.QuizQuestionRepository;
@@ -20,6 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +48,7 @@ public class CurriculumIngestionService {
     private final ModuleRepository moduleRepository;
     private final NodeRepository nodeRepository;
     private final QuizQuestionRepository quizQuestionRepository;
+    private final CurriculumPositionRepository positionRepository;
     private final EntityManager entityManager;
     private final boolean syncOnStartup;
 
@@ -51,6 +58,7 @@ public class CurriculumIngestionService {
             ModuleRepository moduleRepository,
             NodeRepository nodeRepository,
             QuizQuestionRepository quizQuestionRepository,
+            CurriculumPositionRepository positionRepository,
             EntityManager entityManager,
             FosProperties properties) {
         this.loader = loader;
@@ -58,6 +66,7 @@ public class CurriculumIngestionService {
         this.moduleRepository = moduleRepository;
         this.nodeRepository = nodeRepository;
         this.quizQuestionRepository = quizQuestionRepository;
+        this.positionRepository = positionRepository;
         this.entityManager = entityManager;
         this.syncOnStartup = properties.curriculum().syncOnStartup();
     }
@@ -74,7 +83,9 @@ public class CurriculumIngestionService {
     @Transactional
     public void sync() {
         List<CurriculumSource.Module> modules = loader.load();
-        validator.validate(modules);
+        List<CurriculumSource.PositionSpec> positions = loader.loadPositions();
+        validator.validate(modules, positions);
+        syncPositions(positions);
 
         Map<String, Node> nodesByCode = new HashMap<>();
         int moduleOrder = 0;
@@ -82,7 +93,10 @@ public class CurriculumIngestionService {
         for (CurriculumSource.Module source : modules) {
             CurriculumModule module = upsertModule(source, moduleOrder++);
             for (CurriculumSource.NodeSpec spec : source.nodes()) {
-                nodesByCode.put(spec.code(), upsertNode(module, spec));
+                Node node = upsertNode(module, spec);
+                node.setTaxonomy(
+                        spec.positions(), spec.aliases().stream().map(String::strip).toList());
+                nodesByCode.put(spec.code(), node);
             }
         }
 
@@ -91,7 +105,39 @@ public class CurriculumIngestionService {
         linkPrereqs(modules, nodesByCode);
         replaceQuizzes(modules, nodesByCode);
 
-        log.info("Currículo sincronizado: {} módulos, {} nós", modules.size(), nodesByCode.size());
+        log.info(
+                "Currículo sincronizado: {} módulos, {} nós, {} posições",
+                modules.size(),
+                nodesByCode.size(),
+                positions.size());
+    }
+
+    /**
+     * O mapa de posições (#194, D76): reescreve as que estão no JSON e apaga as que saíram dele.
+     * Apagar é seguro porque nenhum dado de usuário aponta para posição — o nó guarda o código, e o
+     * validador acabou de conferir que todo código referenciado continua existindo.
+     */
+    private void syncPositions(List<CurriculumSource.PositionSpec> specs) {
+        Map<String, CurriculumPosition> existing =
+                positionRepository.findAll().stream()
+                        .collect(
+                                Collectors.toMap(CurriculumPosition::getCode, Function.identity()));
+        int order = 0;
+        for (CurriculumSource.PositionSpec spec : specs) {
+            CurriculumPosition position = existing.remove(spec.code());
+            if (position == null) {
+                position = new CurriculumPosition(spec.code());
+            }
+            position.update(
+                    spec.name().strip(),
+                    PositionFamily.valueOf(spec.family()),
+                    PositionPerspective.valueOf(spec.perspective()),
+                    spec.identify().strip(),
+                    order++,
+                    spec.aliases().stream().map(String::strip).toList());
+            positionRepository.save(position);
+        }
+        positionRepository.deleteAll(existing.values());
     }
 
     private CurriculumModule upsertModule(CurriculumSource.Module source, int orderIndex) {
