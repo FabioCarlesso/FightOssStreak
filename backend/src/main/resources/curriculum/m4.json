@@ -689,7 +689,7 @@
       "prereqs": ["M4.7"],
       "positions": ["NORTE_SUL"],
       "aliases": ["north-south choke"],
-      "concept": "O estrangulamento do norte-sul transforma o controle de M4.7 em finalização sem abrir mão da posição: usa o próprio peso e o braço por baixo do pescoço, sem soltar o peito do oponente.\n\nCom o braço passado por baixo do pescoço e o peito apoiado sobre o lado oposto, o peso do corpo faz o trabalho que os braços não fariam sozinhos. O braço do oponente costuma ficar preso no mesmo enlace, o que impede a defesa mais natural, que é proteger o pescoço com a mão.\n\nO erro comum é apertar só com os braços, levantando o peito: o enlace afrouxa e o oponente ganha espaço para virar. Como toda finalização no pescoço, o tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "concept": "O estrangulamento do norte-sul transforma o controle de M4.7 em finalização sem abrir mão da posição: usa o próprio peso e o braço por baixo do pescoço, sem soltar o peito do oponente.\n\nCom o braço passado por baixo do pescoço e o peito apoiado sobre o lado oposto, o peso do corpo faz o trabalho que os braços não fariam sozinhos. A defesa mais natural é enfiar a mão entre esse braço e o pescoço, e por isso o braço do oponente precisa ficar fora do enlace antes do aperto.\n\nO erro comum é apertar só com os braços, levantando o peito: o enlace afrouxa e o oponente ganha espaço para virar. Como toda finalização no pescoço, o tap vem cedo, e quem aplica solta na hora (M0.3).",
       "video": null,
       "quiz": [
         {
@@ -733,13 +733,13 @@
           ]
         },
         {
-          "prompt": "Por que o braço do oponente preso no enlace importa?",
-          "explanation": "Impede a defesa mais natural, que é proteger o pescoço com a mão.",
+          "prompt": "Por que o braço do oponente precisa ficar fora do enlace antes do aperto?",
+          "explanation": "A defesa mais natural é enfiar a mão entre o braço de quem aplica e o pescoço; com o braço dele de fora, essa defesa não tem por onde entrar.",
           "options": [
-            { "text": "Impede de proteger o pescoço com a mão", "correct": true },
-            { "text": "Dá a ele mais força para escapar", "correct": false },
-            { "text": "Não importa para a finalização", "correct": false },
-            { "text": "Libera o quadril dele", "correct": false }
+            { "text": "Porque a mão dele entre o braço e o pescoço desfaz o estrangulamento", "correct": true },
+            { "text": "Porque o braço dele dentro do enlace aperta mais o pescoço", "correct": false },
+            { "text": "Porque a regra proíbe prender o braço", "correct": false },
+            { "text": "Porque o braço não importa para a finalização", "correct": false }
           ]
         },
         {
@@ -748,7 +748,7 @@
           "options": [
             { "text": "Apertar só com os braços, levantando o peito", "correct": true },
             { "text": "Manter o peso sobre o oponente", "correct": false },
-            { "text": "Prender o braço dele no enlace", "correct": false },
+            { "text": "Deixar o braço dele fora do enlace", "correct": false },
             { "text": "Soltar quando ele bate", "correct": false }
           ]
         },
