@@ -392,6 +392,99 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M5.5",
+      "title": "Pegar as costas a partir dos quatro apoios",
+      "belt": "BRANCA",
+      "order": 5,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.2"],
+      "positions": ["QUATRO_APOIOS", "COSTAS"],
+      "concept": "Os quatro apoios parecem fechados, mas deixam as costas viradas para quem ataca. O problema de quem está por cima é transformar essa exposição em controle de costas de verdade, com o seat belt e os ganchos de M5.2, antes que o oponente volte para a guarda.\n\nO tronco vem antes das pernas. Com o peito colado nas costas e o seat belt encaixado, o oponente não se afasta nem vira sem levar quem ataca junto; aí os ganchos entram pelo espaço entre cotovelo e joelho, o mesmo que a defesa de M1.7 tenta fechar.\n\nO erro comum é enfiar os ganchos antes de controlar o tronco: o oponente rola e quem ataca cai por baixo. Procurar o pescoço antes dos ganchos também costuma devolver a posição.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "O que os quatro apoios deixam expostos para quem ataca?",
+          "explanation": "As costas: pescoço e peito ficam protegidos, mas as costas ficam viradas para quem ataca.",
+          "options": [
+            { "text": "As costas", "correct": true },
+            { "text": "O pescoço e o peito", "correct": false },
+            { "text": "Os pés", "correct": false },
+            { "text": "Nada: são fechados", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o problema de quem está por cima diante dos quatro apoios?",
+          "explanation": "Transformar a exposição das costas em controle antes que o oponente volte para a guarda.",
+          "options": [
+            { "text": "Transformar a exposição em controle de costas antes que ele vire", "correct": true },
+            { "text": "Esperar o oponente cansar", "correct": false },
+            { "text": "Puxar para a guarda", "correct": false },
+            { "text": "Ficar em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que ferramentas de M5.2 o controle a partir dos quatro apoios usa?",
+          "explanation": "O seat belt e os ganchos.",
+          "options": [
+            { "text": "O seat belt e os ganchos", "correct": true },
+            { "text": "A pegada no tornozelo", "correct": false },
+            { "text": "O gancho por fora da perna", "correct": false },
+            { "text": "O sprawl", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que vem primeiro, segundo o conceito de pegar as costas dos quatro apoios?",
+          "explanation": "O tronco, e só depois as pernas.",
+          "options": [
+            { "text": "O tronco, depois as pernas", "correct": true },
+            { "text": "As pernas, depois o tronco", "correct": false },
+            { "text": "O pescoço, depois o tronco", "correct": false },
+            { "text": "Os pés, depois as mãos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o peito colado nas costas importa?",
+          "explanation": "O oponente não consegue se afastar nem virar sem levar quem ataca junto.",
+          "options": [
+            { "text": "O oponente não se afasta nem vira sem levar quem ataca junto", "correct": true },
+            { "text": "Deixa quem ataca mais leve", "correct": false },
+            { "text": "Libera os braços do oponente", "correct": false },
+            { "text": "Faz a luta reiniciar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por onde os ganchos entram a partir dos quatro apoios?",
+          "explanation": "Pelo espaço entre cotovelo e joelho, o mesmo que a defesa de M1.7 tenta fechar.",
+          "options": [
+            { "text": "Pelo espaço entre cotovelo e joelho", "correct": true },
+            { "text": "Por cima dos ombros", "correct": false },
+            { "text": "Por fora das pernas", "correct": false },
+            { "text": "Pela frente do pescoço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum ao pegar as costas dos quatro apoios?",
+          "explanation": "Enfiar os ganchos antes de controlar o tronco: o oponente rola e quem ataca cai por baixo.",
+          "options": [
+            { "text": "Enfiar os ganchos antes de controlar o tronco", "correct": true },
+            { "text": "Encaixar o seat belt primeiro", "correct": false },
+            { "text": "Colar o peito nas costas", "correct": false },
+            { "text": "Controlar o tronco antes das pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que costuma acontecer quando se procura o pescoço antes dos ganchos?",
+          "explanation": "A posição costuma voltar para o oponente.",
+          "options": [
+            { "text": "A posição volta para o oponente", "correct": true },
+            { "text": "A finalização sai mais rápido", "correct": false },
+            { "text": "O oponente bate na hora", "correct": false },
+            { "text": "Os ganchos entram sozinhos", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

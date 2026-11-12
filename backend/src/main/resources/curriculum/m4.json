@@ -586,6 +586,286 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M4.7",
+      "title": "Norte-sul: controle e transições",
+      "belt": "BRANCA",
+      "order": 7,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "positions": ["NORTE_SUL"],
+      "concept": "O norte-sul resolve o problema de manter o controle por cima quando o oponente começa a enquadrar o 100kg: girando até ficar alinhado em sentido oposto, quem está por cima tira os apoios que o enquadramento usava.\n\nNo 100kg o oponente empurra o quadril de quem está por cima; no norte-sul esse quadril está longe, e o peso cai sobre o peito dele, com os braços presos junto à cabeça. Dali o controle volta para qualquer lado do 100kg de M4.1, ou para o estrangulamento de M4.8.\n\nO erro comum é ficar alto, com o peito longe: sem peso sobre o peito, quem está embaixo vira para os quatro apoios ou recoloca as pernas na frente, e o controle se perde na troca de lado que deveria mantê-lo.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o norte-sul resolve?",
+          "explanation": "Ele mantém o controle por cima quando o oponente começa a enquadrar o 100kg.",
+          "options": [
+            { "text": "Manter o controle quando o oponente enquadra o 100kg", "correct": true },
+            { "text": "Escapar da guarda fechada", "correct": false },
+            { "text": "Cair com segurança", "correct": false },
+            { "text": "Defender a guilhotina", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como os dois ficam alinhados no norte-sul?",
+          "explanation": "Em sentidos opostos, peito com peito.",
+          "options": [
+            { "text": "Em sentidos opostos, peito com peito", "correct": true },
+            { "text": "Lado a lado, olhando na mesma direção", "correct": false },
+            { "text": "Um sentado nas costas do outro", "correct": false },
+            { "text": "Os dois em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o enquadramento do 100kg perde força no norte-sul?",
+          "explanation": "O quadril de quem está por cima, que era o ponto empurrado, fica longe, do outro lado.",
+          "options": [
+            { "text": "O quadril de quem está por cima fica longe", "correct": true },
+            { "text": "Os braços de baixo ficam livres", "correct": false },
+            { "text": "O peso sai do peito", "correct": false },
+            { "text": "A luta reinicia", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde cai o peso de quem está por cima no norte-sul?",
+          "explanation": "Sobre o peito de quem está embaixo.",
+          "options": [
+            { "text": "Sobre o peito de quem está embaixo", "correct": true },
+            { "text": "Sobre os próprios joelhos", "correct": false },
+            { "text": "Sobre as pernas do oponente", "correct": false },
+            { "text": "No tatame, longe do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde ficam os braços de quem está embaixo no norte-sul?",
+          "explanation": "Presos junto à cabeça, sem alcance para empurrar o quadril.",
+          "options": [
+            { "text": "Presos junto à cabeça", "correct": true },
+            { "text": "Livres para empurrar o quadril", "correct": false },
+            { "text": "Cruzados nas costas", "correct": false },
+            { "text": "Segurando as pernas de cima", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Para onde o controle pode voltar a partir do norte-sul?",
+          "explanation": "Para qualquer lado do 100kg de M4.1, ou para o estrangulamento de M4.8.",
+          "options": [
+            { "text": "Para qualquer lado do 100kg (M4.1)", "correct": true },
+            { "text": "Só para a guarda fechada", "correct": false },
+            { "text": "Para a posição em pé", "correct": false },
+            { "text": "Para os quatro apoios de quem está por cima", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum no norte-sul?",
+          "explanation": "Ficar alto, com o peito longe do oponente.",
+          "options": [
+            { "text": "Ficar alto, com o peito longe do oponente", "correct": true },
+            { "text": "Colar o peito no oponente", "correct": false },
+            { "text": "Prender os braços junto à cabeça", "correct": false },
+            { "text": "Mudar de eixo a partir do 100kg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que quem está embaixo faz quando encontra espaço no norte-sul?",
+          "explanation": "Vira para os quatro apoios ou recoloca as pernas na frente.",
+          "options": [
+            { "text": "Vira para os quatro apoios ou recoloca as pernas", "correct": true },
+            { "text": "Fica parado esperando", "correct": false },
+            { "text": "Pede para reiniciar", "correct": false },
+            { "text": "Fecha a guarda sem espaço", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M4.8",
+      "title": "Estrangulamento do norte-sul",
+      "belt": "BRANCA",
+      "order": 8,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.7"],
+      "positions": ["NORTE_SUL"],
+      "aliases": ["north-south choke"],
+      "concept": "O estrangulamento do norte-sul transforma o controle de M4.7 em finalização sem abrir mão da posição: usa o próprio peso e o braço por baixo do pescoço, sem soltar o peito do oponente.\n\nCom o braço passado por baixo do pescoço e o peito apoiado sobre o lado oposto, o peso do corpo faz o trabalho que os braços não fariam sozinhos. O braço do oponente costuma ficar preso no mesmo enlace, o que impede a defesa mais natural, que é proteger o pescoço com a mão.\n\nO erro comum é apertar só com os braços, levantando o peito: o enlace afrouxa e o oponente ganha espaço para virar. Como toda finalização no pescoço, o tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "O estrangulamento do norte-sul não exige abrir mão de quê?",
+          "explanation": "Do controle do peito do oponente: o peso continua sobre ele.",
+          "options": [
+            { "text": "Do controle do peito do oponente", "correct": true },
+            { "text": "Da pegada na gola", "correct": false },
+            { "text": "Dos ganchos nas costas", "correct": false },
+            { "text": "Da posição em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que tipo de pressão o estrangulamento do norte-sul usa?",
+          "explanation": "Pressão lateral no pescoço.",
+          "options": [
+            { "text": "Pressão lateral no pescoço", "correct": true },
+            { "text": "Torção no ombro", "correct": false },
+            { "text": "Hiperextensão do cotovelo", "correct": false },
+            { "text": "Torção do joelho", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por onde passa o braço de quem aplica o estrangulamento do norte-sul?",
+          "explanation": "Por baixo do pescoço do oponente.",
+          "options": [
+            { "text": "Por baixo do pescoço do oponente", "correct": true },
+            { "text": "Por dentro das pernas", "correct": false },
+            { "text": "Pelas costas, na faixa", "correct": false },
+            { "text": "Por cima da cabeça, sem contato", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que faz o trabalho que os braços não fariam sozinhos?",
+          "explanation": "O peso do corpo, com o peito apoiado sobre o lado oposto.",
+          "options": [
+            { "text": "O peso do corpo apoiado sobre o lado oposto", "correct": true },
+            { "text": "A velocidade do movimento", "correct": false },
+            { "text": "A força das pernas", "correct": false },
+            { "text": "A pegada no tornozelo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o braço do oponente preso no enlace importa?",
+          "explanation": "Impede a defesa mais natural, que é proteger o pescoço com a mão.",
+          "options": [
+            { "text": "Impede de proteger o pescoço com a mão", "correct": true },
+            { "text": "Dá a ele mais força para escapar", "correct": false },
+            { "text": "Não importa para a finalização", "correct": false },
+            { "text": "Libera o quadril dele", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum ao aplicar o estrangulamento do norte-sul?",
+          "explanation": "Apertar só com os braços, levantando o peito.",
+          "options": [
+            { "text": "Apertar só com os braços, levantando o peito", "correct": true },
+            { "text": "Manter o peso sobre o oponente", "correct": false },
+            { "text": "Prender o braço dele no enlace", "correct": false },
+            { "text": "Soltar quando ele bate", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando o peito sobe durante o aperto?",
+          "explanation": "O enlace afrouxa e o oponente ganha espaço para virar.",
+          "options": [
+            { "text": "O enlace afrouxa e o oponente ganha espaço para virar", "correct": true },
+            { "text": "O estrangulamento fica mais forte", "correct": false },
+            { "text": "O oponente fica imóvel", "correct": false },
+            { "text": "A posição vira montada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que vale para o tap em toda finalização no pescoço?",
+          "explanation": "Ele vem cedo, e quem aplica solta na hora (M0.3).",
+          "options": [
+            { "text": "Vem cedo, e quem aplica solta na hora", "correct": true },
+            { "text": "Só vale depois de alguns segundos", "correct": false },
+            { "text": "Quem aplica decide quando soltar", "correct": false },
+            { "text": "Não é necessário em treino", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M4.9",
+      "title": "Crucifixo: controle e finalização",
+      "belt": "BRANCA",
+      "order": 9,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "positions": ["CRUCIFIXO"],
+      "concept": "O crucifixo resolve o problema de finalizar quem defende bem com os dois braços: um braço preso entre as pernas de quem ataca e o outro controlado pelas mãos tiram do oponente as duas ferramentas de defesa ao mesmo tempo.\n\nCom os braços abertos, longe do pescoço e do peito, quem está preso não consegue enquadrar nem proteger o pescoço, e estrangulamentos e chaves de braço ganham caminho livre. A entrada costuma surgir quando o oponente vira para os quatro apoios ou estica o braço no 100kg de M4.1.\n\nO erro comum é prender o braço só com o pé, sem cruzar as pernas: ele escorrega, o cotovelo volta para o corpo e o crucifixo se desfaz. Outro é soltar o segundo braço antes de usá-lo.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o crucifixo resolve?",
+          "explanation": "Ele tira as duas ferramentas de defesa de quem defende bem com os dois braços.",
+          "options": [
+            { "text": "Finalizar quem defende bem com os dois braços", "correct": true },
+            { "text": "Escapar da montada", "correct": false },
+            { "text": "Passar a guarda fechada", "correct": false },
+            { "text": "Cair com segurança", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como os dois braços do oponente ficam presos no crucifixo?",
+          "explanation": "Um entre as pernas de quem ataca e o outro controlado pelas mãos.",
+          "options": [
+            { "text": "Um entre as pernas de quem ataca, o outro nas mãos", "correct": true },
+            { "text": "Os dois presos pela faixa", "correct": false },
+            { "text": "Os dois entre as pernas", "correct": false },
+            { "text": "Nenhum, só o pescoço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde ficam os braços de quem está preso no crucifixo?",
+          "explanation": "Abertos, longe do pescoço e do peito.",
+          "options": [
+            { "text": "Abertos, longe do pescoço e do peito", "correct": true },
+            { "text": "Colados ao corpo", "correct": false },
+            { "text": "Cruzados na frente do pescoço", "correct": false },
+            { "text": "Nas costas de quem ataca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que quem está preso não consegue fazer sem trazer os cotovelos de volta?",
+          "explanation": "Enquadrar e proteger o pescoço: os dois dependem dos cotovelos perto do corpo.",
+          "options": [
+            { "text": "Enquadrar nem proteger o pescoço", "correct": true },
+            { "text": "Respirar", "correct": false },
+            { "text": "Bater", "correct": false },
+            { "text": "Falar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quando costuma surgir a entrada para o crucifixo?",
+          "explanation": "Quando o oponente vira para os quatro apoios ou estica o braço no 100kg de M4.1.",
+          "options": [
+            { "text": "Quando o oponente vira para os quatro apoios ou estica o braço no 100kg", "correct": true },
+            { "text": "Só a partir da guarda fechada", "correct": false },
+            { "text": "Quando os dois estão em pé", "correct": false },
+            { "text": "No começo da luta", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum ao prender o braço no crucifixo?",
+          "explanation": "Prender só com o pé, sem cruzar as pernas.",
+          "options": [
+            { "text": "Prender só com o pé, sem cruzar as pernas", "correct": true },
+            { "text": "Cruzar as pernas sobre o braço", "correct": false },
+            { "text": "Controlar o outro braço com as mãos", "correct": false },
+            { "text": "Manter os braços abertos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando o braço escorrega para fora das pernas?",
+          "explanation": "O cotovelo volta para o corpo e o crucifixo se desfaz.",
+          "options": [
+            { "text": "O cotovelo volta para o corpo e o crucifixo se desfaz", "correct": true },
+            { "text": "A finalização fica mais fácil", "correct": false },
+            { "text": "O oponente fica de costas", "correct": false },
+            { "text": "Nada muda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que outro erro o conceito do crucifixo aponta?",
+          "explanation": "Soltar o controle do segundo braço antes de usá-lo.",
+          "options": [
+            { "text": "Soltar o segundo braço antes de usá-lo", "correct": true },
+            { "text": "Usar o segundo braço", "correct": false },
+            { "text": "Manter as pernas cruzadas", "correct": false },
+            { "text": "Finalizar devagar", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

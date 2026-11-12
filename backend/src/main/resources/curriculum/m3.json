@@ -684,6 +684,472 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M3.8",
+      "title": "Guarda X: conceito e controle",
+      "belt": "BRANCA",
+      "order": 8,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.4"],
+      "positions": ["GUARDA_X"],
+      "concept": "A guarda X resolve o problema de jogar por baixo contra quem está em pé: em vez de puxar o oponente para o chão, quem está embaixo se coloca sob o centro de gravidade dele e passa a sustentar o peso de uma perna inteira.\n\nCom o X por baixo de uma perna, o oponente fica com um só pé de apoio de verdade, e estender as pernas de baixo empurra essa base para longe: ele precisa cair ou dar um passo. É comum chegar nela pela guarda de gancho de M3.4, quando o oponente se levanta.\n\nO erro comum é deixar a perna presa escapar para o lado: sem o braço segurando essa perna junto ao corpo, a base volta a ser dupla e o X vira pernas soltas no ar.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema a guarda X resolve?",
+          "explanation": "Ela é uma resposta a quem está em pé: em vez de trazê-lo para o chão, quem está embaixo se coloca sob ele.",
+          "options": [
+            { "text": "Jogar por baixo contra quem está em pé", "correct": true },
+            { "text": "Defender a montada", "correct": false },
+            { "text": "Finalizar das costas", "correct": false },
+            { "text": "Passar a meia-guarda por cima", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde quem está embaixo se coloca na guarda X?",
+          "explanation": "Sob o centro de gravidade do oponente, sustentando o peso de uma perna inteira.",
+          "options": [
+            { "text": "Sob o centro de gravidade de quem está em pé", "correct": true },
+            { "text": "Ao lado do oponente, de joelhos", "correct": false },
+            { "text": "Nas costas do oponente", "correct": false },
+            { "text": "Longe, fora do alcance das pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece com a base de quem está em pé dentro do X?",
+          "explanation": "Uma perna fica sustentada pelo X, e sobra um só pé de apoio de verdade.",
+          "options": [
+            { "text": "Fica com apenas um pé de apoio de verdade", "correct": true },
+            { "text": "Ganha uma base mais larga", "correct": false },
+            { "text": "Fica com os dois pés firmes no chão", "correct": false },
+            { "text": "Passa a se apoiar nas mãos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Diante da extensão das pernas de baixo, que escolha sobra para quem está em pé?",
+          "explanation": "A base é empurrada para longe, e ele precisa cair ou dar um passo.",
+          "options": [
+            { "text": "Cair ou dar um passo", "correct": true },
+            { "text": "Sentar na guarda fechada", "correct": false },
+            { "text": "Pular para a montada", "correct": false },
+            { "text": "Ignorar e seguir passando", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De que guarda é comum chegar à guarda X quando o oponente se levanta?",
+          "explanation": "Da guarda de gancho de M3.4, que já trabalha com as pernas por dentro das do oponente.",
+          "options": [
+            { "text": "Da guarda de gancho (M3.4)", "correct": true },
+            { "text": "Da guarda fechada (M2.1)", "correct": false },
+            { "text": "Da montada (M4.4)", "correct": false },
+            { "text": "Dos quatro apoios", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum na guarda X?",
+          "explanation": "Deixar a perna presa escapar para o lado devolve a base dupla ao oponente.",
+          "options": [
+            { "text": "Deixar a perna presa escapar para o lado", "correct": true },
+            { "text": "Segurar a perna junto ao corpo", "correct": false },
+            { "text": "Ficar debaixo do centro de gravidade", "correct": false },
+            { "text": "Usar as duas pernas no X", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que impede a perna presa de escapar na guarda X?",
+          "explanation": "O braço que segura essa perna junto ao corpo de quem está embaixo.",
+          "options": [
+            { "text": "O braço segurando a perna junto ao corpo", "correct": true },
+            { "text": "Os pés cruzados nas costas do oponente", "correct": false },
+            { "text": "A pegada na gola do oponente", "correct": false },
+            { "text": "Ficar sentado longe", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem o controle da perna, em que a guarda X se transforma?",
+          "explanation": "O oponente recupera a base dupla, e o X vira pernas soltas no ar.",
+          "options": [
+            { "text": "Em pernas soltas no ar, com o oponente de base dupla", "correct": true },
+            { "text": "Numa montada", "correct": false },
+            { "text": "Numa guarda fechada mais forte", "correct": false },
+            { "text": "Numa finalização automática", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M3.9",
+      "title": "Raspagem da guarda X",
+      "belt": "BRANCA",
+      "order": 9,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.8"],
+      "positions": ["GUARDA_X"],
+      "aliases": ["x guard sweep"],
+      "concept": "A raspagem da guarda X é a consequência do controle de M3.8: quem já sustenta o peso de uma perna do oponente só precisa decidir para que lado tirar a outra base.\n\nEsticar o X leva a perna presa para longe, enquanto a mão de baixo impede o pé livre de dar o passo de recuperação. Sem nenhum dos dois apoios, a queda vai para trás ou para o lado, e quem estava embaixo sobe junto, já por cima. A transição para a queda de uma perna de M6.2 segue o mesmo princípio, terminando em pé.\n\nO erro comum é raspar e ficar no chão: o oponente cai, mas cai de guarda, e a raspagem não vira mudança de posição.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "De que depende a raspagem da guarda X, segundo o conceito?",
+          "explanation": "Ela é consequência do controle de M3.8: o peso de uma perna já está sustentado pelo X.",
+          "options": [
+            { "text": "Do controle de M3.8 sobre o peso de uma perna", "correct": true },
+            { "text": "Da força dos braços puxando a gola", "correct": false },
+            { "text": "De o oponente estar de joelhos", "correct": false },
+            { "text": "De uma pegada nas costas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a base de quem está em pé é frágil dentro do X?",
+          "explanation": "Uma perna está sustentada pelo X; só sobra um pé de apoio.",
+          "options": [
+            { "text": "Depende de um único pé", "correct": true },
+            { "text": "Depende das duas mãos no chão", "correct": false },
+            { "text": "Está apoiada no quadril de quem está embaixo", "correct": false },
+            { "text": "Está sentada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o papel da mão de baixo na raspagem da guarda X?",
+          "explanation": "Impedir o pé livre de dar o passo que recuperaria a base.",
+          "options": [
+            { "text": "Impedir o pé livre de dar o passo de recuperação", "correct": true },
+            { "text": "Segurar a gola para um estrangulamento", "correct": false },
+            { "text": "Apoiar no chão para se levantar", "correct": false },
+            { "text": "Empurrar a cabeça do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando nenhum dos dois apoios sobra para quem está em pé?",
+          "explanation": "Sem base, a queda vai para trás ou para o lado.",
+          "options": [
+            { "text": "A queda vai para trás ou para o lado", "correct": true },
+            { "text": "Ele se ajoelha e passa a guarda", "correct": false },
+            { "text": "A luta para", "correct": false },
+            { "text": "Ele cai para frente, por cima", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como quem estava embaixo termina uma raspagem bem feita?",
+          "explanation": "Subindo junto com a queda, já por cima: é isso que transforma raspagem em posição.",
+          "options": [
+            { "text": "Subindo junto com a queda, já por cima", "correct": true },
+            { "text": "Deitado, esperando o oponente", "correct": false },
+            { "text": "De costas para o oponente", "correct": false },
+            { "text": "Em pé, longe da luta", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A transição para qual nó segue o mesmo princípio de tirar a base?",
+          "explanation": "A queda de uma perna de M6.2, que termina com quem raspa em pé.",
+          "options": [
+            { "text": "A queda de uma perna (M6.2)", "correct": true },
+            { "text": "O sprawl (M6.4)", "correct": false },
+            { "text": "O mata-leão (M5.3)", "correct": false },
+            { "text": "A americana (M4.5)", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum depois de raspar da guarda X?",
+          "explanation": "Ficar no chão em vez de subir junto com a queda.",
+          "options": [
+            { "text": "Ficar no chão em vez de subir junto", "correct": true },
+            { "text": "Subir rápido demais", "correct": false },
+            { "text": "Segurar a perna depois da queda", "correct": false },
+            { "text": "Usar a mão de baixo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Se quem raspou fica no chão, como o oponente costuma cair?",
+          "explanation": "De guarda: ele caiu, mas a posição não mudou.",
+          "options": [
+            { "text": "De guarda, sem mudança real de posição", "correct": true },
+            { "text": "De costas, já finalizado", "correct": false },
+            { "text": "Na montada de quem raspou", "correct": false },
+            { "text": "Em pé, longe", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M3.10",
+      "title": "Guarda aranha: controle e raspagem",
+      "belt": "BRANCA",
+      "order": 10,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "positions": ["GUARDA_ARANHA"],
+      "concept": "A guarda aranha resolve o problema da distância: com as mangas nas mãos e os pés nos bíceps, quem está embaixo transforma os braços do oponente em alavancas que controla, e a passagem fica longe.\n\nPés empurrando e mãos puxando deixam os braços de quem está por cima esticados e ocupados, sem servir para afastar as pernas. Inclinar essa tensão para um lado, com um gancho na perna dele, faz a base ceder e a raspagem acontecer. É a leitura de distância de M3.1 com uma pegada mais longa.\n\nO erro comum é afrouxar a tensão: o oponente recolhe o braço, solta a manga e a guarda vira pegada sem controle. Segurar a manga sem usá-la só cansa o antebraço.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema a guarda aranha resolve?",
+          "explanation": "Ela controla a distância: os braços do oponente ficam presos longe.",
+          "options": [
+            { "text": "O controle da distância", "correct": true },
+            { "text": "A defesa das costas", "correct": false },
+            { "text": "A finalização da montada", "correct": false },
+            { "text": "A queda em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde ficam mãos e pés na guarda aranha?",
+          "explanation": "Mãos nas mangas e pés nos bíceps do oponente.",
+          "options": [
+            { "text": "Mãos nas mangas, pés nos bíceps", "correct": true },
+            { "text": "Mãos na faixa, pés no quadril", "correct": false },
+            { "text": "Mãos no chão, pés cruzados", "correct": false },
+            { "text": "Mãos na gola, pés nas costas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Em que a guarda aranha transforma os braços do oponente?",
+          "explanation": "Em alavancas que quem está embaixo controla.",
+          "options": [
+            { "text": "Em alavancas controladas por quem está embaixo", "correct": true },
+            { "text": "Em apoios para a passagem", "correct": false },
+            { "text": "Em escudos contra a raspagem", "correct": false },
+            { "text": "Em pegadas para estrangular", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que mantém os braços de quem está por cima ocupados na aranha?",
+          "explanation": "A tensão entre os pés empurrando e as mãos puxando.",
+          "options": [
+            { "text": "A tensão entre pés empurrando e mãos puxando", "correct": true },
+            { "text": "A força de agarrar a faixa", "correct": false },
+            { "text": "O peso do corpo de quem está embaixo", "correct": false },
+            { "text": "Uma distância grande, sem contato", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que faz a base de quem está por cima ceder na raspagem da aranha?",
+          "explanation": "Inclinar a tensão para um lado, combinada com um gancho na perna dele.",
+          "options": [
+            { "text": "Inclinar a tensão para um lado, com um gancho na perna", "correct": true },
+            { "text": "Soltar as mangas de repente", "correct": false },
+            { "text": "Fechar a guarda", "correct": false },
+            { "text": "Sentar e esperar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Com que outro nó a guarda aranha compartilha a leitura de distância?",
+          "explanation": "Com M3.1, a guarda aberta: a aranha é a mesma leitura com a pegada mais longa.",
+          "options": [
+            { "text": "M3.1, guarda aberta", "correct": true },
+            { "text": "M5.2, controle de costas", "correct": false },
+            { "text": "M4.4, montada", "correct": false },
+            { "text": "M0.1, etiqueta", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum na guarda aranha?",
+          "explanation": "Afrouxar a tensão deixa o oponente recolher o braço e soltar a manga.",
+          "options": [
+            { "text": "Afrouxar a tensão de pés e mãos", "correct": true },
+            { "text": "Manter a tensão o tempo todo", "correct": false },
+            { "text": "Usar os pés nos bíceps", "correct": false },
+            { "text": "Segurar as mangas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que segurar a manga sem usá-la é um problema na aranha?",
+          "explanation": "Cansa o antebraço sem gerar controle nenhum.",
+          "options": [
+            { "text": "Cansa o antebraço sem gerar controle", "correct": true },
+            { "text": "É proibido pela regra", "correct": false },
+            { "text": "Rasga o kimono", "correct": false },
+            { "text": "Impede o oponente de se mexer", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M3.11",
+      "title": "Passagem contra a guarda aranha",
+      "belt": "BRANCA",
+      "order": 11,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.2"],
+      "positions": ["GUARDA_ARANHA"],
+      "concept": "Passar a guarda aranha é primeiro um problema de pegada: com as mangas presas e os braços esticados, quem está por cima não tem mãos para passar. Nenhuma passagem funciona antes de desfazer ao menos uma dessas pegadas.\n\nO que se desfaz é a tensão da qual a aranha depende. Quando o braço preso volta para perto do corpo, ou o pé no bíceps perde o ângulo, a perna de baixo deixa de empurrar e vira só peso. Com ela desligada, a passagem volta a ser a de M3.2, contornando as pernas pelo lado.\n\nO erro comum é passar empurrando para frente com os braços ainda presos: é a força que quem está embaixo usa para raspar, e a passagem vira a raspagem de M3.10 ao contrário.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Qual é o primeiro problema de quem passa a guarda aranha?",
+          "explanation": "As pegadas nas mangas: com elas presas, quem está por cima não tem mãos para passar.",
+          "options": [
+            { "text": "As pegadas nas mangas", "correct": true },
+            { "text": "A velocidade das pernas", "correct": false },
+            { "text": "A distância do tatame", "correct": false },
+            { "text": "O cansaço de quem está embaixo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que nenhuma passagem funciona com as mangas presas?",
+          "explanation": "Quem está por cima fica sem mãos livres para passar.",
+          "options": [
+            { "text": "Quem está por cima fica sem mãos para passar", "correct": true },
+            { "text": "A regra exige soltar antes", "correct": false },
+            { "text": "O kimono escorrega", "correct": false },
+            { "text": "O árbitro interrompe", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que a passagem precisa tirar da guarda aranha?",
+          "explanation": "A tensão da qual ela depende.",
+          "options": [
+            { "text": "A tensão da qual ela depende", "correct": true },
+            { "text": "Os pés do chão", "correct": false },
+            { "text": "A faixa do oponente", "correct": false },
+            { "text": "O peso de quem está embaixo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando o braço preso volta para perto do próprio corpo?",
+          "explanation": "A perna de baixo deixa de empurrar e vira só peso.",
+          "options": [
+            { "text": "A perna de baixo deixa de empurrar e vira só peso", "correct": true },
+            { "text": "A aranha fica mais forte", "correct": false },
+            { "text": "A luta reinicia em pé", "correct": false },
+            { "text": "O oponente ganha as costas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Com a perna desligada, a passagem contra a aranha volta a ser qual nó?",
+          "explanation": "M3.2, a passagem torreando, que contorna as pernas pelo lado.",
+          "options": [
+            { "text": "M3.2, a passagem torreando", "correct": true },
+            { "text": "M2.1, a guarda fechada", "correct": false },
+            { "text": "M6.3, a queda de dois pés", "correct": false },
+            { "text": "M1.3, a fuga de 100kg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como a passagem contorna as pernas depois de desligá-las?",
+          "explanation": "Pelo lado, em vez de atravessá-las.",
+          "options": [
+            { "text": "Pelo lado, em vez de atravessá-las", "correct": true },
+            { "text": "Por cima, com os braços esticados", "correct": false },
+            { "text": "Por baixo, rolando", "correct": false },
+            { "text": "Pulando sobre elas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum contra a guarda aranha?",
+          "explanation": "Empurrar para frente com os braços ainda presos.",
+          "options": [
+            { "text": "Empurrar para frente com os braços ainda presos", "correct": true },
+            { "text": "Desfazer uma pegada antes de passar", "correct": false },
+            { "text": "Contornar as pernas pelo lado", "correct": false },
+            { "text": "Trazer o braço para perto do corpo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que empurrar para frente com os braços presos é perigoso contra a aranha?",
+          "explanation": "É a força que quem está embaixo usa para raspar (M3.10).",
+          "options": [
+            { "text": "É a força que quem está embaixo usa para raspar", "correct": true },
+            { "text": "Machuca o ombro de quem está embaixo", "correct": false },
+            { "text": "Cansa as pernas de quem passa", "correct": false },
+            { "text": "É falta pela regra", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M3.12",
+      "title": "Guarda De La Riva: conceito e raspagem",
+      "belt": "BRANCA",
+      "order": 12,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "positions": ["DE_LA_RIVA"],
+      "concept": "A De La Riva resolve o problema de jogar contra quem está em pé e quer passar pelo lado: o gancho por fora da perna da frente prende o oponente num ponto fixo, e a passagem por aquele lado deixa de existir.\n\nSegurando o tornozelo da perna enganchada, quem está embaixo controla a base dela; o gancho leva o joelho do oponente para fora enquanto o outro pé empurra o quadril, e a base fica tensionada em duas direções. Dessa tensão saem as raspagens e também entradas para as costas.\n\nO erro comum é manter o gancho sem a pegada no tornozelo: o oponente dá um passo para trás, o pé enganchado fica solto e sobra uma guarda aberta comum, sem o ponto fixo que dava sentido a ela.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema a De La Riva resolve?",
+          "explanation": "Ela responde a quem está em pé e quer passar pelo lado, prendendo-o num ponto fixo.",
+          "options": [
+            { "text": "Jogar contra quem está em pé e quer passar pelo lado", "correct": true },
+            { "text": "Escapar da montada", "correct": false },
+            { "text": "Finalizar das costas", "correct": false },
+            { "text": "Cair com segurança", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde fica o gancho na De La Riva?",
+          "explanation": "Por fora da perna da frente do oponente, com o pé por dentro da coxa dele.",
+          "options": [
+            { "text": "Por fora da perna da frente, com o pé por dentro da coxa", "correct": true },
+            { "text": "Por dentro das duas pernas", "correct": false },
+            { "text": "Nas costas, cruzado", "correct": false },
+            { "text": "No quadril, sem enganchar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o gancho faz com a passagem pelo lado dele?",
+          "explanation": "Prende o oponente num ponto fixo, e a passagem por ali deixa de existir.",
+          "options": [
+            { "text": "A passagem por ali deixa de existir", "correct": true },
+            { "text": "A passagem fica mais fácil", "correct": false },
+            { "text": "Não muda nada", "correct": false },
+            { "text": "Vira uma queda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a pegada no tornozelo importa na De La Riva?",
+          "explanation": "Ela controla a base da perna enganchada.",
+          "options": [
+            { "text": "Controla a base da perna enganchada", "correct": true },
+            { "text": "É obrigatória pela regra", "correct": false },
+            { "text": "Serve para finalizar a perna", "correct": false },
+            { "text": "Impede o oponente de falar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde saem as raspagens da De La Riva?",
+          "explanation": "Da base do oponente tensionada em duas direções: o gancho leva o joelho para fora e o outro pé empurra o quadril.",
+          "options": [
+            { "text": "Da tensão da base em duas direções", "correct": true },
+            { "text": "De soltar todas as pegadas", "correct": false },
+            { "text": "De fechar a guarda", "correct": false },
+            { "text": "De ficar parado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Além das raspagens, o que mais pode sair da mesma tensão na De La Riva?",
+          "explanation": "Entradas para as costas, a partir da mesma base tensionada.",
+          "options": [
+            { "text": "Entradas para as costas", "correct": true },
+            { "text": "A montada direta", "correct": false },
+            { "text": "O armlock da montada", "correct": false },
+            { "text": "A queda de dois pés", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum na De La Riva?",
+          "explanation": "Manter o gancho sem a pegada no tornozelo deixa o oponente recuar e soltar o pé.",
+          "options": [
+            { "text": "Manter o gancho sem a pegada no tornozelo", "correct": true },
+            { "text": "Segurar o tornozelo", "correct": false },
+            { "text": "Empurrar o quadril com o outro pé", "correct": false },
+            { "text": "Prender a perna da frente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Sem o ponto fixo, a De La Riva vira o quê?",
+          "explanation": "Uma guarda aberta comum, sem o que dava sentido a ela.",
+          "options": [
+            { "text": "Uma guarda aberta comum", "correct": true },
+            { "text": "Uma guarda fechada", "correct": false },
+            { "text": "Uma montada", "correct": false },
+            { "text": "Um 100kg", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

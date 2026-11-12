@@ -154,12 +154,12 @@ class ApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("a árvore sobe com os 46 nós do currículo versionado")
+    @DisplayName("a árvore sobe com os 56 nós do currículo versionado")
     void treeIsServed() throws Exception {
         mockMvc.perform(get("/api/curriculum/tree"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.modules.length()").value(9))
-                .andExpect(jsonPath("$.summary.totalNodes").value(46))
+                .andExpect(jsonPath("$.summary.totalNodes").value(56))
                 .andExpect(jsonPath("$.modules[0].code").value("M0"));
     }
 
@@ -609,7 +609,7 @@ class ApiIntegrationTest {
     @Test
     @DisplayName("nó sem quiz escrito responde 409, não erro de servidor")
     void nodeWithoutQuizReturnsConflict() throws Exception {
-        // Desde a #59 (D44) todos os 46 nós têm banco de quiz; o estado vazio (D15) só existe mais
+        // Desde a #59 (D44) todos os nós têm banco de quiz; o estado vazio (D15) só existe mais
         // para um nó futuro. Simula esse estado esvaziando o banco de um nó real.
         wipeQuiz("M8.3");
 

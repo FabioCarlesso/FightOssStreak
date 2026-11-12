@@ -10,7 +10,7 @@ const MAX_RESULTS = 8;
  *
  * Busca por título, código e apelido — "kimura", "side control", "M3.7" —, com filtro por posição
  * de onde a técnica parte. A regra de busca é a de `@fos/domain`, para o app usar a mesma. Sem
- * texto e sem posição a lista fica vazia de propósito: listar os 46 nós é o atrito que isto
+ * texto e sem posição a lista fica vazia de propósito: listar todos os nós é o atrito que isto
  * substitui.
  */
 export function TechniquePicker({

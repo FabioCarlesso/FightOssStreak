@@ -81,7 +81,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("meia-guarda liga M3.6 e M3.7, e as posições sem técnica ficam vazias (#194)")
+    @DisplayName("meia-guarda liga M3.6 e M3.7, e toda posição do mapa tem técnica (#194, #195)")
     void halfGuardLinksItsNodes() {
         Map<String, List<String>> nodesByPosition =
                 byCode().values().stream()
@@ -96,10 +96,9 @@ class CurriculumIntegrityTest {
                                                 Map.Entry::getValue, Collectors.toList())));
 
         assertThat(nodesByPosition.get("MEIA_GUARDA")).containsExactlyInAnyOrder("M3.6", "M3.7");
-        // As lacunas que a fase 3 (#195) vai preencher: a tela diz "ainda não há técnica".
-        assertThat(nodesByPosition)
-                .doesNotContainKeys(
-                        "GUARDA_ARANHA", "DE_LA_RIVA", "GUARDA_X", "NORTE_SUL", "CRUCIFIXO");
+        // As cinco lacunas que a #194 deixou foram preenchidas pela primeira onda da #195.
+        assertThat(nodesByPosition.keySet())
+                .containsAll(positions.stream().map(CurriculumSource.PositionSpec::code).toList());
     }
 
     @Test
@@ -262,16 +261,14 @@ class CurriculumIntegrityTest {
         assertThat(countByModule)
                 .containsExactlyInAnyOrderEntriesOf(
                         Map.of(
-                                "M0", 5, "M1", 6, "M2", 7, "M3", 7, "M4", 6, "M5", 4, "M6", 4, "M7",
-                                4, "M8", 3));
+                                "M0", 5, "M1", 7, "M2", 7, "M3", 12, "M4", 9, "M5", 5, "M6", 4,
+                                "M7", 4, "M8", 3));
 
-        // docs/produto/curriculo.md afirma "Total: 43 nós", mas a soma das tabelas do próprio
-        // documento dá 46.
-        // O código segue as tabelas — elas são o conteúdo real. Divergência anotada em
-        // docs/decisoes/README.md
-        // (D14).
+        // A contagem é livro-caixa, não teto (D77): cada onda da #195 acrescenta nós e atualiza
+        // este número junto com as tabelas de docs/produto/curriculo.md. A D14 corrigiu o 43 para
+        // 46; a primeira onda da #195 levou a 56.
         int total = countByModule.values().stream().mapToInt(Integer::intValue).sum();
-        assertThat(total).isEqualTo(46);
+        assertThat(total).isEqualTo(56);
     }
 
     @Test
@@ -289,7 +286,8 @@ class CurriculumIntegrityTest {
 
         // Toda finalização da guarda fechada depende de M2.1, que depende da recuperação
         // de guarda (M1.5) — a inversão pedagógica corrigida em D10.
-        for (String submission : List.of("M2.4", "M2.5", "M2.6")) {
+        // As finalizações da #195 (norte-sul e crucifixo) entram pela mesma régua.
+        for (String submission : List.of("M2.4", "M2.5", "M2.6", "M4.8", "M4.9")) {
             assertThat(ancestorsOf(submission, byCode))
                     .as("pré-requisitos transitivos de %s", submission)
                     .contains("M1.5", "M1.1");
@@ -297,7 +295,7 @@ class CurriculumIntegrityTest {
     }
 
     @Test
-    @DisplayName("todos os 46 nós têm banco de quiz com pelo menos 8 perguntas (issue #59, D44)")
+    @DisplayName("todo nó tem banco de quiz com pelo menos 8 perguntas (issue #59, D44)")
     void everyNodeHasAQuizBankOfAtLeastEight() {
         for (CurriculumSource.NodeSpec node : byCode().values()) {
             assertThat(node.quiz())
@@ -853,7 +851,19 @@ class CurriculumIntegrityTest {
      * altura apesar da busca) onde `video: null` é o resultado esperado, não uma lacuna. M2–M7
      * entraram pela #61, bloco a bloco.
      */
+    /**
+     * Nós escritos pela primeira onda da #195 (D77): nascem com {@code video: null}, porque
+     * catalogar vídeo é curadoria humana e issue própria (`docs/conteudo/videos.md`).
+     */
+    private static final Set<String> AGUARDANDO_VIDEO_195 =
+            Set.of(
+                    "M1.7", "M3.8", "M3.9", "M3.10", "M3.11", "M3.12", "M4.7", "M4.8", "M4.9",
+                    "M5.5");
+
     private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
+        if (AGUARDANDO_VIDEO_195.contains(node.code())) {
+            return false;
+        }
         return node.code().startsWith("M0.")
                 || node.code().startsWith("M1.")
                 || node.code().startsWith("M2.")
