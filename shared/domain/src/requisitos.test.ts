@@ -25,6 +25,18 @@ describe('parseRequirements', () => {
     assert.deepEqual(parseRequirements('\n - \n•\n'), []);
   });
 
+  it('NBSP e outros espaços Unicode contam como espaço, como no Java', () => {
+    assert.deepEqual(
+      parseRequirements(
+        '\u00A0•\u00A0Armlock\u00A0da montada\n' +
+          'b)\u00A0Passagem de guarda\n' +
+          '\u2003-\u202FFuga\u3000de\u2009montada\uFEFF\n' +
+          '\u00A0\u00A0',
+      ),
+      ['Armlock da montada', 'Passagem de guarda', 'Fuga de montada'],
+    );
+  });
+
   it('linha acima do teto lança apontando a linha, e não é cortada', () => {
     assert.throws(() => parseRequirements(`ok\n${'x'.repeat(201)}`), /linha 2/);
   });

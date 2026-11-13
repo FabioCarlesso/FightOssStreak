@@ -45,13 +45,36 @@ public class GraduationRequirementService {
     public static final int MAX_ITEM_LENGTH = 200;
 
     /**
+     * Espaço como o {@code \s} e o {@code trim()} do JS o entendem, e não como o {@code \s} e o
+     * {@code strip()} do Java: o NBSP ({@code U+00A0}), que texto copiado de PDF e de editor traz
+     * depois de marcador, não é espaço para o Java. Sem isto, a prévia da tela ({@code
+     * parseRequirements}) limpava o marcador seguido de NBSP e o servidor o gravava junto (D17).
+     */
+    private static final String ESPACO =
+            "[\\s\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF]";
+
+    /**
      * Marcador no começo da linha: {@code •}, {@code -}, {@code *}, numeração ({@code 1.}, {@code
      * 2)}, {@code (3)}) e letra ({@code a)}, {@code B.}). Número sem pontuação depois não é
      * marcador ("100kg..." começa com número e é texto), nem número decimal ("1.5 ...").
      */
     private static final Pattern MARCADOR =
             Pattern.compile(
-                    "^(?:[-*•·–—▪◦►]+\\s*|\\(?\\d{1,3}[.)](?!\\d)\\s*|\\(\\d{1,3}\\)\\s*|[A-Za-z][.)]\\s+)");
+                    "^(?:[-*•·–—▪◦►]+"
+                            + ESPACO
+                            + "*|\\(?\\d{1,3}[.)](?!\\d)"
+                            + ESPACO
+                            + "*|\\(\\d{1,3}\\)"
+                            + ESPACO
+                            + "*|[A-Za-z][.)]"
+                            + ESPACO
+                            + "+)");
+
+    /** Espaço nas pontas da linha, no mesmo conjunto do {@code trim()} do JS. */
+    private static final Pattern PONTAS = Pattern.compile("^" + ESPACO + "+|" + ESPACO + "+$");
+
+    /** Sequência de espaço no meio da linha, que vira um espaço só. */
+    private static final Pattern SEQUENCIA = Pattern.compile(ESPACO + "+");
 
     private final GraduationChecklistRepository checklists;
     private final GraduationRequirementRepository requirements;
@@ -182,13 +205,13 @@ public class GraduationRequirementService {
         List<String> itens = new ArrayList<>();
         String[] linhas = texto.split("\\r?\\n|\\r");
         for (int i = 0; i < linhas.length; i++) {
-            String linha = linhas[i].strip();
+            String linha = semPontas(linhas[i]);
             String anterior;
             do {
                 anterior = linha;
-                linha = MARCADOR.matcher(linha).replaceFirst("").strip();
+                linha = semPontas(MARCADOR.matcher(linha).replaceFirst(""));
             } while (!linha.equals(anterior) && !linha.isEmpty());
-            linha = linha.replaceAll("\\s+", " ");
+            linha = SEQUENCIA.matcher(linha).replaceAll(" ");
             if (linha.isEmpty()) {
                 continue;
             }
@@ -304,6 +327,10 @@ public class GraduationRequirementService {
             resultado.add(limpo);
         }
         return resultado;
+    }
+
+    private static String semPontas(String linha) {
+        return PONTAS.matcher(linha).replaceAll("");
     }
 
     private static String trimToNull(String value) {
