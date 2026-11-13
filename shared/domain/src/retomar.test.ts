@@ -99,4 +99,30 @@ describe('retomar de onde parei', () => {
   it('título ausente cai para o código, para o atalho nunca sair vazio', () => {
     assert.equal(nextNodeToResume([{ nodeCode: 'M0.9' }], [])?.title, 'M0.9');
   });
+
+  it('com checklist do próximo grau, o nó dela vem antes do resto da árvore (#196)', () => {
+    // M0.2 está liberado e é da checklist; M1.1 está em andamento e não é. A checklist ganha.
+    assert.deepEqual(nextNodeToResume([], ARVORE, new Set(['M0.2'])), {
+      code: 'M0.2',
+      title: 'Quedas',
+      reason: 'NOVO',
+      nextGrade: true,
+    });
+  });
+
+  it('a checklist nunca passa na frente da revisão vencida', () => {
+    assert.equal(
+      nextNodeToResume([{ nodeCode: 'M0.1', title: 'Etiqueta' }], ARVORE, new Set(['M0.2']))
+        ?.reason,
+      'REVISAO',
+    );
+  });
+
+  it('nó da checklist travado ou concluído não é sugerido: cai para a árvore', () => {
+    assert.deepEqual(nextNodeToResume([], ARVORE, new Set(['M1.2', 'M0.1'])), {
+      code: 'M1.1',
+      title: 'Fuga de montada',
+      reason: 'EM_ANDAMENTO',
+    });
+  });
 });

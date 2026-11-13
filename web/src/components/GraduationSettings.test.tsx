@@ -1,5 +1,6 @@
 import type { GraduationGoalRequest, GraduationView } from '@fos/types';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GraduationSettings } from './GraduationSettings.tsx';
@@ -26,7 +27,11 @@ beforeEach(() => {
 describe('GraduationSettings (#193)', () => {
   it('sem meta, grava só a data e os mínimos preenchidos — vazio não vira zero', async () => {
     apiMock.getGraduation.mockResolvedValue({});
-    render(<GraduationSettings />);
+    render(
+      <MemoryRouter>
+        <GraduationSettings />
+      </MemoryRouter>,
+    );
 
     const data = await screen.findByLabelText(/data do último grau/i);
     expect(screen.queryByRole('button', { name: /remover meta/i })).not.toBeInTheDocument();
@@ -51,7 +56,11 @@ describe('GraduationSettings (#193)', () => {
       goal: { lastGraduationOn: '2026-08-01', nextLabel: 'branca 2º grau', minTotal: 80 },
       classes: { total: 3, gi: 2, nogi: 1, unspecified: 0 },
     });
-    render(<GraduationSettings />);
+    render(
+      <MemoryRouter>
+        <GraduationSettings />
+      </MemoryRouter>,
+    );
 
     expect(await screen.findByDisplayValue('branca 2º grau')).toBeInTheDocument();
     expect(screen.getByDisplayValue('80')).toBeInTheDocument();

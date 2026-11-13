@@ -268,3 +268,76 @@
   align-items: center;
   gap: var(--space-4);
 }
+
+/* Nó da checklist do próximo grau na agenda (#196, D78): marca discreta, sem reordenar a fila. */
+.pill--grade {
+  margin-left: 0.4rem;
+  color: var(--accent);
+}
+
+/* Checklist do próximo grau (#196, D78) */
+.requirements__summary {
+  margin: 0.4rem 0 0;
+}
+
+.requirements {
+  margin: 0.6rem 0 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.requirement__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.requirement__status--concluido {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.requirement__status--em_andamento {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.requirement__nodes,
+.requirement__options {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.2rem;
+  font-size: var(--text-sm);
+}
+
+.requirement__manual {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  font-size: var(--text-sm);
+}
+
+.requirement__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+  align-items: center;
+}
+
+.requirement__link {
+  margin-top: 0.6rem;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+}
+
+.requirements__danger {
+  margin: 1rem 0 0;
+  font-size: var(--text-sm);
+}

@@ -9,7 +9,9 @@ import dev.fos.repo.AppleCredentialRepository;
 import dev.fos.repo.DisclaimerAcceptanceRepository;
 import dev.fos.repo.DrillLogRepository;
 import dev.fos.repo.FeedbackRepository;
+import dev.fos.repo.GraduationChecklistRepository;
 import dev.fos.repo.GraduationGoalRepository;
+import dev.fos.repo.GraduationRequirementRepository;
 import dev.fos.repo.LoginTokenRepository;
 import dev.fos.repo.MobileTokenRepository;
 import dev.fos.repo.PasswordCredentialRepository;
@@ -58,6 +60,8 @@ public class AccountService {
     private final DrillLogRepository drills;
     private final StreakFreezeRepository streakFreezes;
     private final GraduationGoalRepository graduationGoals;
+    private final GraduationRequirementRepository graduationRequirements;
+    private final GraduationChecklistRepository graduationChecklists;
     private final TrainingSessionRepository trainingSessions;
     private final LoginTokenRepository loginTokens;
     private final PasswordCredentialRepository credentials;
@@ -78,6 +82,8 @@ public class AccountService {
             DrillLogRepository drills,
             StreakFreezeRepository streakFreezes,
             GraduationGoalRepository graduationGoals,
+            GraduationRequirementRepository graduationRequirements,
+            GraduationChecklistRepository graduationChecklists,
             TrainingSessionRepository trainingSessions,
             LoginTokenRepository loginTokens,
             PasswordCredentialRepository credentials,
@@ -96,6 +102,8 @@ public class AccountService {
         this.drills = drills;
         this.streakFreezes = streakFreezes;
         this.graduationGoals = graduationGoals;
+        this.graduationRequirements = graduationRequirements;
+        this.graduationChecklists = graduationChecklists;
         this.trainingSessions = trainingSessions;
         this.loginTokens = loginTokens;
         this.credentials = credentials;
@@ -463,6 +471,10 @@ public class AccountService {
         // A meta do próximo grau (#193, D75): datas e mínimos que a própria pessoa digitou. Sai
         // pela mesma promessa do diário — é dela, e de mais ninguém.
         graduationGoals.deleteById(userId);
+        // A checklist do próximo grau (#196, D78): texto que veio da academia da pessoa, colado
+        // por ela. Requisitos antes da checklist, e os vínculos com nós vão junto com cada um.
+        graduationRequirements.deleteByUserId(userId);
+        graduationChecklists.deleteById(userId);
         reviews.deleteByIdUserId(userId);
         progress.deleteByIdUserId(userId);
         disclaimers.deleteByUserId(userId);

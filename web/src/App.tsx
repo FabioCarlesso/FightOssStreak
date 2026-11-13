@@ -20,6 +20,7 @@ import { ReviewPage } from './pages/ReviewPage.tsx';
 import { SessionPage } from './pages/SessionPage.tsx';
 import { TreePage } from './pages/TreePage.tsx';
 import { PositionsPage } from './pages/PositionsPage.tsx';
+import { RequirementsPage } from './pages/RequirementsPage.tsx';
 import { ConfirmEmailPage } from './pages/auth/ConfirmEmailPage.tsx';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage.tsx';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage.tsx';
@@ -69,6 +70,7 @@ export function App() {
           <Route path="/hoje" element={<HomePage />} />
           <Route path="/arvore" element={<TreePage />} />
           <Route path="/posicoes" element={<PositionsPage />} />
+          <Route path="/graduacao" element={<RequirementsPage />} />
           {/* `/diario/nova` antes de `/diario/:id`: as duas casam o mesmo formato, e quem vence é
               a rota literal — sem esta ordem, "nova" viraria um id que não existe. */}
           <Route path="/diario" element={<DiaryPage />} />

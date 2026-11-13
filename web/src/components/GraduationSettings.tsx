@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   graduationForm,
   toGraduationGoalBody,
@@ -161,6 +162,10 @@ function GraduationForm({
         )}
       </div>
       {failure && <p className="error">{failure}</p>}
+      <p className="hint">
+        A lista de requisitos que a academia entregou vira checklist em{' '}
+        <Link to="/graduacao">Requisitos do próximo grau</Link>.
+      </p>
     </form>
   );
 }

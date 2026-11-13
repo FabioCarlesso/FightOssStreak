@@ -54,4 +54,21 @@ describe('GraduationCard (#193)', () => {
     expect(screen.queryByText(/faltam/i)).not.toBeInTheDocument();
     expect(screen.getByText('12')).toBeInTheDocument();
   });
+
+  it('sem meta, mas com checklist, o card aparece só com o link e o resumo (#196)', () => {
+    render(
+      <MemoryRouter>
+        <GraduationCard
+          graduation={{}}
+          requirements={{ label: 'branca 2º grau', done: 1, total: 3, items: [], nodeCodes: [] }}
+        />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole('heading', { name: /próximo grau: branca 2º grau/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /requisitos do próximo grau \(1 de 3 concluídos\)/i }),
+    ).toHaveAttribute('href', '/graduacao');
+  });
 });

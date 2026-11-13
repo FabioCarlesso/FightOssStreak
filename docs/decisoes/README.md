@@ -86,6 +86,7 @@ nesta tabela, no mesmo PR.
 | [D75](D75-proximo-grau-conta-aulas-do-diario.md) | O próximo grau conta as aulas (`AULA`) do diário desde o último grau, com e sem kimono, contra os mínimos que a própria pessoa digita a partir da academia dela — dado da conta, nunca lista de academia no repositório; marcar "sem kimono" não reabre a D6 (#193) |
 | [D76](D76-posicao-como-entidade-do-curriculo.md) | Posição é entidade do currículo (`positions.json`, D11) e o nó diz de qual parte; o `identify` diz como reconhecer a posição e nunca como chegar nela (D1); apelido aponta para uma posição só; as posições viajam dentro da árvore, e a busca de técnica do diário é regra pura em `shared/domain` (#194) |
 | [D77](D77-curriculo-cresce-em-ondas-nos-modulos-existentes.md) | O currículo cresce em ondas dentro dos módulos existentes (M1, M3, M4, M5), com a contagem de nós por módulo como livro-caixa e não teto; pré-requisito segue a pedagogia, e a faixa é do nó, não do módulo — primeira onda da #195: 46 → 56 nós |
+| [D78](D78-requisitos-de-graduacao-sao-dado-da-conta.md) | Requisito de graduação é dado da conta, colado pela própria pessoa e nunca currículo; a ligação com a árvore é sugerida pela busca e só gravada na confirmação; o status é derivado do progresso gravado; na home a checklist marca a agenda e tem preferência no "Continuar", sem reordenar o SRS (#196) |
 
 ## Política de uso de vídeo (D7) — limites
 

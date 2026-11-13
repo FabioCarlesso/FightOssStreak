@@ -12,6 +12,7 @@ import dev.fos.service.OwnerRequiredException;
 import dev.fos.service.PasswordAccessException;
 import dev.fos.service.QuizStaleException;
 import dev.fos.service.QuizUnavailableException;
+import dev.fos.service.RequirementNotFoundException;
 import dev.fos.service.TrainingSessionNotFoundException;
 import dev.fos.service.UnauthenticatedException;
 import java.security.SecureRandom;
@@ -205,6 +206,12 @@ class ApiExceptionHandler {
     ResponseEntity<ApiError> handleNotFound(NodeNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiError.of("node_not_found", e.getMessage()));
+    }
+
+    @ExceptionHandler(RequirementNotFoundException.class)
+    ResponseEntity<ApiError> handleRequirementNotFound(RequirementNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiError.of("requisito_nao_encontrado", e.getMessage()));
     }
 
     @ExceptionHandler(TrainingSessionNotFoundException.class)

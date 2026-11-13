@@ -169,6 +169,37 @@
         }
       }
     },
+    "/api/graduacao/requisitos/ordem": {
+      "put": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Reordena a checklist: todos os ids, cada um uma vez",
+        "operationId": "reorder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/telemetria/evento": {
       "post": {
         "tags": [
@@ -507,6 +538,38 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/MobileTokenView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/graduacao/requisitos/importar": {
+      "post": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Cola a lista da academia: um requisito por linha, acrescentado ao fim",
+        "description": "Linhas vazias e marcadores (•, -, *, 1., a)) são limpos. Acima do teto de itens ou de tamanho de linha responde 400.",
+        "operationId": "importText",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistView"
                 }
               }
             }
@@ -1028,6 +1091,79 @@
         }
       }
     },
+    "/api/graduacao/requisitos/{id}": {
+      "delete": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Remove um requisito",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Edita um requisito: texto, marcação à mão ou nós ligados",
+        "description": "Campo ausente fica como está. `nodeCodes` substitui os nós ligados.",
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequirementPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/streak": {
       "get": {
         "tags": [
@@ -1195,6 +1331,40 @@
         "summary": "Exclui a conta e todo o dado dela",
         "description": "Irreversível: apaga a conta, a identidade, o hash da senha, os links pendentes, os tokens do app e todo o progresso, e revoga na Apple o acesso de quem entrou por ela. A sessão é invalidada junto.",
         "operationId": "deleteMe",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/graduacao/requisitos": {
+      "get": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Checklist do próximo grau, com o status de cada requisito",
+        "description": "O status vem do progresso dos nós ligados; sem nó, da marcação à mão.",
+        "operationId": "checklist",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Graduação"
+        ],
+        "summary": "Apaga a checklist inteira; nós e progresso não são tocados",
+        "operationId": "deleteAll",
         "responses": {
           "200": {
             "description": "OK"
@@ -1628,6 +1798,104 @@
           },
           "classes": {
             "$ref": "#/components/schemas/ClassCount"
+          }
+        }
+      },
+      "ReorderRequest": {
+        "required": [
+          "ids"
+        ],
+        "type": "object",
+        "properties": {
+          "ids": {
+            "maxItems": 200,
+            "minItems": 0,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "ChecklistView": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequirementView"
+            }
+          },
+          "done": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodeCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LinkedNodeView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOCKED",
+              "AVAILABLE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          }
+        }
+      },
+      "RequirementView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDENTE",
+              "EM_ANDAMENTO",
+              "CONCLUIDO"
+            ]
+          },
+          "manualDone": {
+            "type": "boolean"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedNodeView"
+            }
           }
         }
       },
@@ -2098,6 +2366,24 @@
           }
         }
       },
+      "ImportRequest": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "label": {
+            "maxLength": 60,
+            "minLength": 0,
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 8000,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
       "FeedbackRequest": {
         "required": [
           "category",
@@ -2432,6 +2718,28 @@
             "maxLength": 2000,
             "minLength": 0,
             "type": "string"
+          }
+        }
+      },
+      "RequirementPatch": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "manualDone": {
+            "type": "boolean"
+          },
+          "nodeCodes": {
+            "maxItems": 10,
+            "minItems": 0,
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            }
           }
         }
       },

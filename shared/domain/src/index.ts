@@ -93,3 +93,11 @@ export type {
   SearchablePosition,
   TechniqueSearch,
 } from './posicoes.ts';
+
+export {
+  MAX_REQUIREMENT_LENGTH,
+  parseRequirements,
+  requirementStatus,
+  suggestTechniques,
+} from './requisitos.ts';
+export type { RequirementStatus } from './requisitos.ts';
