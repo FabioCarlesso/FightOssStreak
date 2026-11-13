@@ -217,6 +217,33 @@ class GraduationRequirementIntegrationTest {
     }
 
     @Test
+    @DisplayName("editar normaliza o espaço como colar: sem quebra de linha e sem NBSP")
+    void editingNormalizesSpaces() throws Exception {
+        long id = primeiroId(importar("", "Kimura"));
+
+        editar(id, "{\"text\":\" Kimura\\nda\\u00A0guarda\\tfechada \"}")
+                .andExpect(jsonPath("$.items[0].text").value("Kimura da guarda fechada"));
+        editar(id, "{\"text\":\"\\u00A0\\n\"}").andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("ligar nós apaga a marcação à mão: desligar depois não conclui sozinho")
+    void linkingNodesClearsTheManualMark() throws Exception {
+        long id = primeiroId(importar("", "Fuga de montada"));
+        editar(id, "{\"manualDone\":true}")
+                .andExpect(jsonPath("$.items[0].status").value("CONCLUIDO"));
+
+        editar(id, "{\"nodeCodes\":[\"M0.1\"]}")
+                .andExpect(jsonPath("$.items[0].manualDone").value(false));
+        editar(id, "{\"manualDone\":true}")
+                .andExpect(jsonPath("$.items[0].manualDone").value(false));
+
+        editar(id, "{\"nodeCodes\":[]}")
+                .andExpect(jsonPath("$.items[0].status").value("PENDENTE"))
+                .andExpect(jsonPath("$.items[0].manualDone").value(false));
+    }
+
+    @Test
     @DisplayName("reordenar exige todos os ids da checklist, cada um uma vez")
     void reorderNeedsEveryIdOnce() throws Exception {
         String corpo =

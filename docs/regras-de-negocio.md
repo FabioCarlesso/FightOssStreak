@@ -87,12 +87,15 @@ segunda sem a primeira.
   sem pontuação ("100kg") e decimal ("1.5") são texto. Tetos: 60 requisitos por checklist, 200
   caracteres por linha (recusada com o número da linha, e não cortada) e 8000 no texto colado.
   Colar de novo **acrescenta** ao fim; o rótulo em branco mantém o atual. Uma checklist por conta.
+  O teto vale sob importações simultâneas: a importação trava a linha da conta antes de contar.
+  Espaço é o do JS (NBSP incluso), e editar o texto normaliza do mesmo jeito que colar.
 - **A ligação com nós é confirmada pela pessoa**: a sugestão (`suggestTechniques`) pontua as
   palavras do requisito contra título, apelido e posição dos nós, vem desmarcada, e só vira vínculo
   na confirmação. O vínculo guarda o código do nó (D11).
 - **Status derivado do progresso gravado**: com nós, concluído quando todos estão `COMPLETED`, em
   andamento quando algum está `IN_PROGRESS` ou `COMPLETED`, pendente nos outros casos. Sem nó, vale
-  a marcação à mão, que não conta para requisito com nó. Regra pura `requirementStatus` em
+  a marcação à mão, que não conta para requisito com nó — e por isso é **apagada** quando o
+  requisito ganha nós: desligar os nós depois não o deixa concluído sozinho. Regra pura `requirementStatus` em
   `shared/domain`, espelhada em `GraduationRequirementService.statusOf` (D17).
 - **Na home**: os nós ligados ganham a marca "próximo grau" na agenda, **sem reordenar** a fila. Sem
   revisão vencida, o *Continuar* procura primeiro um nó da checklist em andamento, depois liberado,

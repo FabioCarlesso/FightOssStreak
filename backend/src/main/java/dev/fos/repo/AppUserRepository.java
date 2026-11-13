@@ -2,11 +2,15 @@ package dev.fos.repo;
 
 import dev.fos.model.AppUser;
 import dev.fos.model.Role;
+import jakarta.persistence.LockModeType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * As contas.
@@ -56,4 +60,14 @@ public interface AppUserRepository
      * contá-la faria o app se achar coberto por uma conta que vence em duas horas.
      */
     long countByRoleAndDemoExpiresAtIsNull(Role role);
+
+    /**
+     * A conta com trava de escrita até o fim da transação ({@code SELECT ... FOR UPDATE}).
+     *
+     * <p>Serializa por conta o que conta e depois grava — hoje, o teto da checklist do próximo grau
+     * (#196): duas importações simultâneas não podem ler o mesmo total.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select u from AppUser u where u.id = :id")
+    Optional<AppUser> lockById(@Param("id") Long id);
 }

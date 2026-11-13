@@ -28,7 +28,9 @@ concluído quando todos os nós estão `COMPLETED`, em andamento quando algum fo
 e pendente nos outros casos. A regra lê o progresso **gravado**, e não o status exibido: um nó
 drillado pelo diário mas ainda travado na árvore aparece como `LOCKED`, e mesmo assim foi treinado.
 Concluir um nó no quiz ou pelo drill muda o requisito sem nenhuma ação na checklist, pela mesma
-lógica do streak e da contagem de aulas (D55, D75). A marcação à mão só vale para requisito sem nó.
+lógica do streak e da contagem de aulas (D55, D75). A marcação à mão só vale para requisito sem nó,
+e é apagada quando ele ganha nós: guardada debaixo do vínculo, voltaria a valer sozinha no dia em
+que a pessoa desligasse os nós.
 A regra pura é `requirementStatus`, em `shared/domain`, espelhada no backend (D17).
 
 **(d) Na home, a checklist marca e prefere, mas não reordena.** Na agenda de revisão, os nós

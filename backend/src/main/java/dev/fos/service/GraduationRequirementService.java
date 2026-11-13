@@ -6,6 +6,7 @@ import dev.fos.model.Node;
 import dev.fos.model.ProgressStatus;
 import dev.fos.model.RequirementStatus;
 import dev.fos.model.UserProgress;
+import dev.fos.repo.AppUserRepository;
 import dev.fos.repo.GraduationChecklistRepository;
 import dev.fos.repo.GraduationRequirementRepository;
 import dev.fos.repo.NodeRepository;
@@ -76,6 +77,7 @@ public class GraduationRequirementService {
     /** Sequência de espaço no meio da linha, que vira um espaço só. */
     private static final Pattern SEQUENCIA = Pattern.compile(ESPACO + "+");
 
+    private final AppUserRepository contas;
     private final GraduationChecklistRepository checklists;
     private final GraduationRequirementRepository requirements;
     private final NodeRepository nodes;
@@ -84,12 +86,14 @@ public class GraduationRequirementService {
     private final Clock clock;
 
     public GraduationRequirementService(
+            AppUserRepository contas,
             GraduationChecklistRepository checklists,
             GraduationRequirementRepository requirements,
             NodeRepository nodes,
             UserProgressRepository progress,
             UnlockService unlock,
             Clock clock) {
+        this.contas = contas;
         this.checklists = checklists;
         this.requirements = requirements;
         this.nodes = nodes;
@@ -114,6 +118,11 @@ public class GraduationRequirementService {
         if (linhas.isEmpty()) {
             throw new IllegalArgumentException("Nenhum requisito no texto colado.");
         }
+        // Trava a linha da conta antes de contar: sem isto, dois "importar" simultâneos liam o
+        // mesmo total, passavam juntos do teto e repetiam o order_index. A conta, e não a
+        // checklist, porque a checklist pode ainda não existir — e dois INSERT da mesma chave
+        // fariam o perdedor responder 500.
+        contas.lockById(userId);
         List<GraduationRequirement> atuais =
                 requirements.findByUserIdOrderByOrderIndexAscIdAsc(userId);
         if (atuais.size() + linhas.size() > MAX_ITEMS) {
@@ -146,17 +155,25 @@ public class GraduationRequirementService {
             Long userId, Long id, RequirementDtos.RequirementPatch patch) {
         GraduationRequirement requisito = require(userId, id);
         if (patch.text() != null) {
-            String texto = patch.text().strip();
+            // O mesmo espaço do texto colado: editar não pode gravar quebra de linha nem NBSP que
+            // colar não gravaria. Marcador não é tirado — aqui a pessoa digitou o texto inteiro.
+            String texto = normalizeSpaces(patch.text());
             if (texto.isEmpty()) {
                 throw new IllegalArgumentException("O requisito não pode ficar vazio.");
             }
             requisito.setText(texto);
         }
+        if (patch.nodeCodes() != null) {
+            requisito.setNodeCodes(requireNodes(patch.nodeCodes()));
+        }
         if (patch.manualDone() != null) {
             requisito.setManualDone(patch.manualDone());
         }
-        if (patch.nodeCodes() != null) {
-            requisito.setNodeCodes(requireNodes(patch.nodeCodes()));
+        // A marcação à mão só existe em requisito sem nó. Guardada debaixo de um vínculo, ela
+        // voltaria a valer sozinha no dia em que a pessoa desligasse os nós, e o requisito
+        // apareceria concluído sem ninguém ter marcado nada.
+        if (!requisito.getNodeCodes().isEmpty()) {
+            requisito.setManualDone(false);
         }
         return view(userId);
     }
@@ -211,7 +228,7 @@ public class GraduationRequirementService {
                 anterior = linha;
                 linha = semPontas(MARCADOR.matcher(linha).replaceFirst(""));
             } while (!linha.equals(anterior) && !linha.isEmpty());
-            linha = SEQUENCIA.matcher(linha).replaceAll(" ");
+            linha = normalizeSpaces(linha);
             if (linha.isEmpty()) {
                 continue;
             }
@@ -327,6 +344,11 @@ public class GraduationRequirementService {
             resultado.add(limpo);
         }
         return resultado;
+    }
+
+    /** Pontas aparadas e toda sequência de espaço (quebra de linha e NBSP inclusos) vira um. */
+    static String normalizeSpaces(String texto) {
+        return SEQUENCIA.matcher(semPontas(texto)).replaceAll(" ");
     }
 
     private static String semPontas(String linha) {

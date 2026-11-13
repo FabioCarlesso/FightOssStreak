@@ -65,7 +65,7 @@ e regras em [`autenticacao.md`](autenticacao.md).
 | `DELETE /api/graduacao` | remove a meta (204, também sem meta); as sessões do diário não são tocadas |
 | `GET /api/graduacao/requisitos` | checklist do próximo grau: rótulo, requisitos com status derivado e nós ligados, `done`/`total` e `nodeCodes` (todos os nós ligados, para a home); sem checklist, `items` vem vazio (D78) |
 | `POST /api/graduacao/requisitos/importar` | cola a lista (`label`, `text`): um requisito por linha, acrescentado ao fim; marcadores e linhas vazias são limpos; acima de 60 itens, linha acima de 200 caracteres ou texto acima de 8000 dão 400 |
-| `PATCH /api/graduacao/requisitos/{id}` | edição parcial: `text`, `manualDone` (só vale sem nó) e `nodeCodes` (substitui os nós ligados; nó inexistente dá 400) |
+| `PATCH /api/graduacao/requisitos/{id}` | edição parcial: `text` (espaço normalizado como no colar), `manualDone` (só vale sem nó; ligar nós a apaga) e `nodeCodes` (substitui os nós ligados; nó inexistente dá 400) |
 | `PUT /api/graduacao/requisitos/ordem` | reordena: `ids` com todos os requisitos da checklist, cada um uma vez, senão 400 |
 | `DELETE /api/graduacao/requisitos/{id}` · `DELETE /api/graduacao/requisitos` | remove um requisito / a checklist inteira (204); nós e progresso não são tocados. Requisito de outra conta responde 404, como o inexistente |
 | `POST /api/feedback` | envia um feedback, opcionalmente amarrado a um nó |
