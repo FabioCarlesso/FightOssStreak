@@ -261,14 +261,15 @@ class CurriculumIntegrityTest {
         assertThat(countByModule)
                 .containsExactlyInAnyOrderEntriesOf(
                         Map.of(
-                                "M0", 5, "M1", 7, "M2", 7, "M3", 12, "M4", 9, "M5", 5, "M6", 4,
+                                "M0", 5, "M1", 10, "M2", 7, "M3", 13, "M4", 12, "M5", 7, "M6", 4,
                                 "M7", 4, "M8", 3));
 
         // A contagem é livro-caixa, não teto (D77): cada onda da #195 acrescenta nós e atualiza
         // este número junto com as tabelas de docs/produto/curriculo.md. A D14 corrigiu o 43 para
-        // 46; a primeira onda da #195 levou a 56.
+        // 46; a primeira onda da #195 levou a 56, e a segunda (estrangulamentos, chaves e saídas),
+        // a 65.
         int total = countByModule.values().stream().mapToInt(Integer::intValue).sum();
-        assertThat(total).isEqualTo(56);
+        assertThat(total).isEqualTo(65);
     }
 
     @Test
@@ -286,8 +287,12 @@ class CurriculumIntegrityTest {
 
         // Toda finalização da guarda fechada depende de M2.1, que depende da recuperação
         // de guarda (M1.5) — a inversão pedagógica corrigida em D10.
-        // As finalizações da #195 (norte-sul e crucifixo) entram pela mesma régua.
-        for (String submission : List.of("M2.4", "M2.5", "M2.6", "M4.8", "M4.9")) {
+        // As finalizações da #195 entram pela mesma régua: norte-sul e crucifixo na primeira
+        // onda; chave de pé reta, katagatame, 100kg, dez dedos, arco e flecha e relógio na segunda.
+        for (String submission :
+                List.of(
+                        "M2.4", "M2.5", "M2.6", "M3.13", "M4.8", "M4.9", "M4.10", "M4.11", "M4.12",
+                        "M5.6", "M5.7")) {
             assertThat(ancestorsOf(submission, byCode))
                     .as("pré-requisitos transitivos de %s", submission)
                     .contains("M1.5", "M1.1");
@@ -852,13 +857,14 @@ class CurriculumIntegrityTest {
      * entraram pela #61, bloco a bloco.
      */
     /**
-     * Nós escritos pela primeira onda da #195 (D77): nascem com {@code video: null}, porque
-     * catalogar vídeo é curadoria humana e issue própria (`docs/conteudo/videos.md`).
+     * Nós escritos pelas ondas da #195 (D77): nascem com {@code video: null}, porque catalogar
+     * vídeo é curadoria humana e issue própria (`docs/conteudo/videos.md`).
      */
     private static final Set<String> AGUARDANDO_VIDEO_195 =
             Set.of(
                     "M1.7", "M3.8", "M3.9", "M3.10", "M3.11", "M3.12", "M4.7", "M4.8", "M4.9",
-                    "M5.5");
+                    "M5.5", "M1.8", "M1.9", "M1.10", "M3.13", "M4.10", "M4.11", "M4.12", "M5.6",
+                    "M5.7");
 
     private boolean hasCuratedVideo(CurriculumSource.NodeSpec node) {
         if (AGUARDANDO_VIDEO_195.contains(node.code())) {

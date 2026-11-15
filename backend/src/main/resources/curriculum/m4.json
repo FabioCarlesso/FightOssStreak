@@ -399,7 +399,7 @@
       "unlockRule": "ALL",
       "prereqs": ["M4.1", "M4.4"],
       "positions": ["CEM_QUILOS", "MONTADA"],
-      "aliases": ["keylock", "chave americana"],
+      "aliases": ["keylock", "chave americana", "ude-garami"],
       "concept": "A americana e o ezequiel são duas finalizações que nascem de posições que você já mantém, sem exigir abrir mão do controle — essa é a lição comum às duas.\n\nA americana pune o braço que o oponente deixa apoiado no chão em ângulo; o ezequiel usa a própria manga do gi e funciona bem justamente porque exige pouquíssimo espaço para ser armado.\n\nO erro comum é caçar finalizações que custam a posição: ataques que exigem abrir mão do 100kg ou da montada para tentar são ruins neste estágio, porque perder o controle devolve tudo o que a manutenção da posição já custou para conquistar. A escolha mais sensata costuma ser esperar pela oportunidade que já nasce dentro da posição, em vez de forçar uma que ainda não apareceu.",
       "video": {
         "youtubeId": "LiJjKHly97w",
@@ -863,6 +863,288 @@
             { "text": "Não dá para bater, então é aguentar até soltar", "correct": false },
             { "text": "Só com a mão, como em qualquer finalização", "correct": false },
             { "text": "Esperando o árbitro interromper", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M4.10",
+      "title": "Katagatame: estrangulamento com o braço do oponente",
+      "belt": "BRANCA",
+      "order": 10,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "positions": ["MONTADA", "CEM_QUILOS"],
+      "aliases": ["arm triangle", "kata-gatame"],
+      "concept": "O katagatame resolve o problema de estrangular quem protege bem o pescoço com as mãos: em vez de procurar espaço entre a mão dele e a gola, usa o próprio ombro do oponente como metade do aperto.\n\nCom o braço dele cruzando a frente do rosto e preso junto à cabeça, o ombro fecha um lado do pescoço e o braço de quem ataca, passado por trás, fecha o outro. A pressão vem do peito e do ombro de quem está por cima, não da força dos braços, e por isso o katagatame costuma terminar fora da montada, no 100kg (M4.1) do lado oposto ao braço preso, onde o ângulo fecha o espaço que sobrava.\n\nO erro comum é tentar fechar ainda montado, com o corpo em cima: sem o ângulo, o aperto vira força de braço e o oponente ganha tempo para puxar o braço de volta. O tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o katagatame resolve?",
+          "explanation": "Estrangular quem protege bem o pescoço com as mãos.",
+          "options": [
+            { "text": "Estrangular quem protege bem o pescoço com as mãos", "correct": true },
+            { "text": "Escapar da montada", "correct": false },
+            { "text": "Passar a guarda aberta", "correct": false },
+            { "text": "Prender os dois braços do oponente ao mesmo tempo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que faz metade do aperto no katagatame?",
+          "explanation": "O próprio ombro do oponente.",
+          "options": [
+            { "text": "O próprio ombro do oponente", "correct": true },
+            { "text": "A gola do oponente", "correct": false },
+            { "text": "A faixa de quem ataca", "correct": false },
+            { "text": "As pernas de quem ataca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde fica o braço preso do oponente no katagatame?",
+          "explanation": "Cruzando a frente do rosto, preso junto à cabeça.",
+          "options": [
+            { "text": "Cruzando a frente do rosto, junto à cabeça", "correct": true },
+            { "text": "Esticado ao lado do corpo", "correct": false },
+            { "text": "Preso nas costas dele", "correct": false },
+            { "text": "Entre as pernas de quem ataca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde vem a pressão do katagatame?",
+          "explanation": "Do peito e do ombro de quem está por cima, não da força dos braços.",
+          "options": [
+            { "text": "Do peito e do ombro de quem está por cima", "correct": true },
+            { "text": "Só da força dos braços", "correct": false },
+            { "text": "Da gola puxada", "correct": false },
+            { "text": "Do quadril do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde o katagatame costuma terminar?",
+          "explanation": "Fora da montada, no 100kg, do lado oposto ao braço preso.",
+          "options": [
+            { "text": "No 100kg, do lado oposto ao braço preso", "correct": true },
+            { "text": "Na montada, sentado sobre o quadril", "correct": false },
+            { "text": "Na guarda fechada", "correct": false },
+            { "text": "Nas costas do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que sair da montada para terminar o katagatame?",
+          "explanation": "No 100kg o ângulo fecha o espaço que sobrava.",
+          "options": [
+            { "text": "O ângulo fecha o espaço que sobrava", "correct": true },
+            { "text": "Para descansar os braços", "correct": false },
+            { "text": "Porque a montada não permite estrangulamento", "correct": false },
+            { "text": "Para soltar o braço do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum no katagatame?",
+          "explanation": "Tentar fechar ainda montado, com o corpo em cima.",
+          "options": [
+            { "text": "Tentar fechar ainda montado, com o corpo em cima", "correct": true },
+            { "text": "Sair para o lado oposto ao braço preso", "correct": false },
+            { "text": "Apertar com o peito e o ombro", "correct": false },
+            { "text": "Manter o braço do oponente junto à cabeça", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o oponente ganha quando o aperto vira força de braço?",
+          "explanation": "Tempo para puxar o braço de volta.",
+          "options": [
+            { "text": "Tempo para puxar o braço de volta", "correct": true },
+            { "text": "Uma pegada na gola", "correct": false },
+            { "text": "A montada", "correct": false },
+            { "text": "Nada: o aperto fica mais forte", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M4.11",
+      "title": "Estrangulamentos do 100kg",
+      "belt": "BRANCA",
+      "order": 11,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.1"],
+      "positions": ["CEM_QUILOS"],
+      "aliases": ["paper cutter", "estrangulamento da lateral"],
+      "concept": "Os estrangulamentos do 100kg resolvem o problema de finalizar quem já defende a americana e a kimura com os cotovelos colados: no 100kg o pescoço do oponente está perto, e a gola dele, ao alcance, vira ferramenta sem que a posição precise mudar.\n\nA mão funda na gola faz uma das bordas do aperto, e a outra vem do antebraço atravessando o pescoço ou do próprio peso apoiado sobre ele. Como em M4.8, quem fecha é o corpo, não a força dos braços: o peito continua pressionando, e o oponente, ocupado em respirar sob o peso, demora a perceber a gola.\n\nO erro comum é soltar o peito para ganhar espaço e armar a pegada: o oponente usa o instante para enquadrar e virar, como em M1.3, e a finalização custa a posição. O tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema os estrangulamentos do 100kg resolvem?",
+          "explanation": "Finalizar quem já defende a americana e a kimura com os cotovelos colados.",
+          "options": [
+            { "text": "Finalizar quem defende a americana e a kimura com os cotovelos colados", "correct": true },
+            { "text": "Escapar da montada", "correct": false },
+            { "text": "Pegar as costas", "correct": false },
+            { "text": "Passar a guarda aberta", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a gola vira ferramenta no 100kg?",
+          "explanation": "O pescoço e a gola do oponente ficam ao alcance sem que a posição precise mudar.",
+          "options": [
+            { "text": "O pescoço e a gola ficam ao alcance sem mudar a posição", "correct": true },
+            { "text": "Porque o oponente fica de costas", "correct": false },
+            { "text": "Porque a gola é a única pegada permitida", "correct": false },
+            { "text": "Porque o 100kg exige soltar o peso", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que faz uma das bordas do aperto?",
+          "explanation": "A mão funda na gola.",
+          "options": [
+            { "text": "A mão funda na gola", "correct": true },
+            { "text": "O joelho na barriga", "correct": false },
+            { "text": "A faixa de quem ataca", "correct": false },
+            { "text": "A pegada na manga", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde pode vir a outra borda do aperto?",
+          "explanation": "Do antebraço atravessando o pescoço ou do próprio peso apoiado sobre ele.",
+          "options": [
+            { "text": "Do antebraço atravessando o pescoço ou do próprio peso", "correct": true },
+            { "text": "Da pegada na calça", "correct": false },
+            { "text": "Do joelho de quem está embaixo", "correct": false },
+            { "text": "Da faixa do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quem fecha o estrangulamento do 100kg?",
+          "explanation": "O corpo, não a força dos braços, como em M4.8.",
+          "options": [
+            { "text": "O corpo, não a força dos braços", "correct": true },
+            { "text": "Só os braços", "correct": false },
+            { "text": "O oponente, ao tentar escapar", "correct": false },
+            { "text": "As pernas de quem ataca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o oponente demora a perceber a gola?",
+          "explanation": "Está ocupado em respirar sob o peso.",
+          "options": [
+            { "text": "Está ocupado em respirar sob o peso", "correct": true },
+            { "text": "Porque não sente o pescoço", "correct": false },
+            { "text": "Porque está de costas", "correct": false },
+            { "text": "Porque a pegada é feita na manga", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum ao armar a pegada no 100kg?",
+          "explanation": "Soltar o peito para ganhar espaço.",
+          "options": [
+            { "text": "Soltar o peito para ganhar espaço", "correct": true },
+            { "text": "Manter o peito pressionando", "correct": false },
+            { "text": "Usar o peso sobre o pescoço", "correct": false },
+            { "text": "Pegar fundo na gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o oponente faz quando o peito sai de cima dele?",
+          "explanation": "Enquadra e vira, como em M1.3, e a finalização custa a posição.",
+          "options": [
+            { "text": "Enquadra e vira, como em M1.3", "correct": true },
+            { "text": "Fica parado, esperando", "correct": false },
+            { "text": "Oferece as costas sem defesa", "correct": false },
+            { "text": "Desiste da luta", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M4.12",
+      "title": "Estrangulamento dez dedos",
+      "belt": "BRANCA",
+      "order": 12,
+      "unlockRule": "ALL",
+      "prereqs": ["M4.4"],
+      "positions": ["MONTADA"],
+      "aliases": ["ten finger choke"],
+      "concept": "O estrangulamento dez dedos resolve o problema de finalizar da montada quem protege o pescoço sem entregar o braço para a americana ou para o armlock: as duas mãos entram fundo na gola, uma de cada lado do pescoço, e o próprio gi do oponente vira o laço.\n\nComo na gola cruzada de M2.4, quem estrangula são as bordas da gola contra as laterais do pescoço, e quanto mais fundas as pegadas, menos força o aperto pede. A diferença é a posição: de cima, o peso desce junto com os cotovelos abertos e trabalha a favor, em vez de contra.\n\nO erro comum é armar as duas pegadas com o corpo alto e sem base: com as duas mãos ocupadas na gola, quem está por cima não tem com que se apoiar, e o oponente usa exatamente esse instante para a upa de M1.4. O tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o estrangulamento dez dedos resolve?",
+          "explanation": "Finalizar da montada quem protege o pescoço sem entregar o braço.",
+          "options": [
+            { "text": "Finalizar da montada quem protege o pescoço sem entregar o braço", "correct": true },
+            { "text": "Escapar da montada", "correct": false },
+            { "text": "Raspar da guarda fechada", "correct": false },
+            { "text": "Pegar as costas a partir do 100kg", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde ficam as duas mãos no dez dedos?",
+          "explanation": "Fundas na gola, uma de cada lado do pescoço.",
+          "options": [
+            { "text": "Fundas na gola, uma de cada lado do pescoço", "correct": true },
+            { "text": "Uma na gola e outra na faixa", "correct": false },
+            { "text": "As duas no braço do oponente", "correct": false },
+            { "text": "As duas no tatame, para dar base", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que estrangula, de fato, no dez dedos?",
+          "explanation": "As bordas da gola contra as laterais do pescoço.",
+          "options": [
+            { "text": "As bordas da gola contra as laterais do pescoço", "correct": true },
+            { "text": "Os antebraços contra a frente da garganta", "correct": false },
+            { "text": "O peso do quadril sobre o peito", "correct": false },
+            { "text": "O ombro do próprio oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que pegadas fundas importam no dez dedos?",
+          "explanation": "Quanto mais fundas as pegadas, menos força o aperto pede.",
+          "options": [
+            { "text": "Quanto mais fundas, menos força o aperto pede", "correct": true },
+            { "text": "Porque protegem quem ataca da upa", "correct": false },
+            { "text": "Porque soltam o gi do oponente", "correct": false },
+            { "text": "Não importam: a força dos braços resolve", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que nó usa a mesma lógica de gola, mas de baixo?",
+          "explanation": "M2.4, a gola cruzada da guarda fechada.",
+          "options": [
+            { "text": "M2.4, a gola cruzada da guarda fechada", "correct": true },
+            { "text": "M1.4, a fuga da montada", "correct": false },
+            { "text": "M4.6, o armlock da montada", "correct": false },
+            { "text": "M5.3, o mata-leão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual a vantagem de aplicar a lógica da gola de cima, na montada?",
+          "explanation": "O peso desce junto com os cotovelos e trabalha a favor do aperto.",
+          "options": [
+            { "text": "O peso trabalha a favor do aperto", "correct": true },
+            { "text": "Não há risco de perder a posição", "correct": false },
+            { "text": "O oponente não consegue mexer as pernas", "correct": false },
+            { "text": "Dispensa as pegadas fundas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum ao armar o dez dedos?",
+          "explanation": "Armar as duas pegadas com o corpo alto e sem base.",
+          "options": [
+            { "text": "Armar as duas pegadas com o corpo alto e sem base", "correct": true },
+            { "text": "Manter o peso baixo", "correct": false },
+            { "text": "Pegar fundo na gola", "correct": false },
+            { "text": "Abrir os cotovelos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que fuga o oponente aproveita no instante em que as duas mãos estão na gola?",
+          "explanation": "A upa de M1.4: quem está por cima não tem com que se apoiar.",
+          "options": [
+            { "text": "A upa de M1.4", "correct": true },
+            { "text": "A saída das costas de M1.6", "correct": false },
+            { "text": "A defesa de guilhotina de M7.3", "correct": false },
+            { "text": "O sprawl de M6.4", "correct": false }
           ]
         }
       ]

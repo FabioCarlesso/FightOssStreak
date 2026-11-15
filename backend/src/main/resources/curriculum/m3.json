@@ -1150,6 +1150,100 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M3.13",
+      "title": "Chave de pé reta: ataque e defesa",
+      "belt": "BRANCA",
+      "order": 13,
+      "unlockRule": "ALL",
+      "prereqs": ["M3.1"],
+      "positions": ["GUARDA_ABERTA"],
+      "aliases": ["straight footlock", "chave de tornozelo"],
+      "concept": "A chave de pé reta resolve o problema de finalizar quem está passando a guarda aberta de M3.1 sem precisar alcançar o tronco dele: o alvo é o tornozelo, que fica ao alcance justamente quando o oponente se aproxima. É a chave de perna que os regulamentos costumam liberar já na faixa branca.\n\nO mecanismo é de alavanca: o pé preso sob a axila, o antebraço logo acima do calcanhar e as pernas controlando a perna do oponente fazem do quadril de quem ataca o motor, e não dos braços. A defesa nasce do mesmo ponto: com o pé dobrado em direção à canela, o antebraço não encaixa no tendão.\n\nO erro comum de quem ataca é torcer o pé para fora da linha da perna, levando a pressão para o joelho, que é outra lesão e outra regra. O de quem defende é esperar a dor: chave de pé dói tarde, e o tap vem antes (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema a chave de pé reta resolve?",
+          "explanation": "Finalizar quem está passando a guarda sem precisar alcançar o tronco dele.",
+          "options": [
+            { "text": "Finalizar quem está passando a guarda sem alcançar o tronco dele", "correct": true },
+            { "text": "Escapar do 100kg", "correct": false },
+            { "text": "Pegar as costas", "correct": false },
+            { "text": "Recuperar a guarda fechada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o tornozelo é um alvo natural contra quem passa a guarda?",
+          "explanation": "Ele fica ao alcance justamente quando o oponente se aproxima.",
+          "options": [
+            { "text": "Fica ao alcance justamente quando o oponente se aproxima", "correct": true },
+            { "text": "Porque é a articulação mais forte do corpo", "correct": false },
+            { "text": "Porque o oponente não consegue defendê-lo", "correct": false },
+            { "text": "Porque fica longe das mãos de quem ataca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é o motor da chave de pé reta?",
+          "explanation": "O quadril de quem ataca, e não os braços.",
+          "options": [
+            { "text": "O quadril de quem ataca", "correct": true },
+            { "text": "A força dos braços", "correct": false },
+            { "text": "O peso do oponente", "correct": false },
+            { "text": "A pegada na gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde se apoia o antebraço de quem ataca?",
+          "explanation": "Logo acima do calcanhar, no tendão.",
+          "options": [
+            { "text": "Logo acima do calcanhar, no tendão", "correct": true },
+            { "text": "Atrás do joelho", "correct": false },
+            { "text": "Na ponta do pé", "correct": false },
+            { "text": "Na canela, perto do joelho", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que dobrar o pé em direção à canela ajuda a defender?",
+          "explanation": "Com o pé dobrado, o antebraço não encaixa no tendão.",
+          "options": [
+            { "text": "O antebraço de quem ataca não encaixa no tendão", "correct": true },
+            { "text": "Deixa o tornozelo mais esticado", "correct": false },
+            { "text": "Prende o braço de quem ataca", "correct": false },
+            { "text": "Faz quem ataca perder a base", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum de quem ataca a chave de pé reta?",
+          "explanation": "Torcer o pé para fora da linha da perna.",
+          "options": [
+            { "text": "Torcer o pé para fora da linha da perna", "correct": true },
+            { "text": "Usar o quadril em vez dos braços", "correct": false },
+            { "text": "Controlar a perna do oponente com as pernas", "correct": false },
+            { "text": "Prender o pé sob a axila", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que torcer o pé para fora da linha da perna é um problema?",
+          "explanation": "A pressão vai para o joelho, que é outra lesão e outra regra.",
+          "options": [
+            { "text": "Leva a pressão para o joelho, que é outra lesão e outra regra", "correct": true },
+            { "text": "Alivia a pressão e dá tempo à defesa, e só", "correct": false },
+            { "text": "Solta o pé da axila", "correct": false },
+            { "text": "Faz o oponente cair de costas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que esperar a dor é o erro de quem defende?",
+          "explanation": "Chave de pé dói tarde, e o tap precisa vir antes (M0.3).",
+          "options": [
+            { "text": "Chave de pé dói tarde, e o tap precisa vir antes", "correct": true },
+            { "text": "Porque a dor nunca chega numa chave de pé", "correct": false },
+            { "text": "Porque a dor mostra que a defesa funcionou", "correct": false },
+            { "text": "Porque o árbitro sempre interrompe antes", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }
