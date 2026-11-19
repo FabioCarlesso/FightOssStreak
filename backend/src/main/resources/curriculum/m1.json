@@ -728,6 +728,288 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M1.8",
+      "title": "Defesa e saída do armlock",
+      "belt": "BRANCA",
+      "order": 8,
+      "unlockRule": "ALL",
+      "prereqs": ["M1.1"],
+      "positions": ["GUARDA_FECHADA", "MONTADA"],
+      "aliases": ["defesa de armbar", "saída de chave de braço"],
+      "concept": "A saída do armlock é um problema de tempo: a chave só funciona com o braço esticado e o cotovelo apoiado contra o quadril de quem ataca, e toda defesa existe para impedir que essas duas coisas aconteçam juntas.\n\nPor isso a primeira linha é manter o braço dobrado e junto do outro, o que divide a força de quem puxa entre os dois braços. Dali, a saída depende de tirar o cotovelo da linha do quadril, girando o braço ou, na guarda, levando o peso para cima do oponente até o quadril dele perder o apoio. É a mesma relação entre cotovelo e quadril que M2.5 e M4.6 atacam, vista do outro lado.\n\nO erro comum é tentar arrancar o braço com um puxão quando ele já está quase esticado: o puxão passa pela extensão que a chave procura. Braço esticado é hora do tap, não da fuga (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Quais duas condições o armlock precisa reunir para funcionar?",
+          "explanation": "Braço esticado e cotovelo apoiado contra o quadril de quem ataca: a defesa existe para impedir que as duas aconteçam juntas.",
+          "options": [
+            { "text": "Braço esticado e cotovelo apoiado contra o quadril de quem ataca", "correct": true },
+            { "text": "Braço dobrado e mão presa na gola", "correct": false },
+            { "text": "Pescoço exposto e braço colado ao corpo", "correct": false },
+            { "text": "Oponente de costas e ganchos por dentro", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que manter o braço atacado junto do outro ajuda a defender?",
+          "explanation": "Os dois braços juntos dividem a força de quem puxa.",
+          "options": [
+            { "text": "Divide a força de quem puxa entre os dois braços", "correct": true },
+            { "text": "Deixa o cotovelo mais exposto", "correct": false },
+            { "text": "Libera as pernas para a fuga", "correct": false },
+            { "text": "Impede o oponente de respirar", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual é a primeira linha de defesa contra o armlock?",
+          "explanation": "Manter o braço dobrado: sem braço esticado, a chave não funciona.",
+          "options": [
+            { "text": "Manter o braço dobrado", "correct": true },
+            { "text": "Esticar o braço para longe do corpo", "correct": false },
+            { "text": "Fazer ponte com o quadril", "correct": false },
+            { "text": "Proteger o pescoço com as duas mãos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Depois que o braço está protegido, do que a saída depende?",
+          "explanation": "De tirar o cotovelo da linha do quadril de quem ataca.",
+          "options": [
+            { "text": "Tirar o cotovelo da linha do quadril de quem ataca", "correct": true },
+            { "text": "Puxar o braço com força para trás", "correct": false },
+            { "text": "Esperar o oponente cansar", "correct": false },
+            { "text": "Agarrar a gola do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Na guarda, como o peso de quem defende ajuda a sair do armlock?",
+          "explanation": "Levado para cima do oponente, tira o apoio do quadril dele.",
+          "options": [
+            { "text": "Levado para cima do oponente, tira o apoio do quadril dele", "correct": true },
+            { "text": "Jogado para trás, afasta o corpo da chave", "correct": false },
+            { "text": "Apoiado no tatame, poupa os braços", "correct": false },
+            { "text": "Não ajuda: a saída é feita só com os braços", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que um puxão com o braço quase esticado costuma piorar a situação?",
+          "explanation": "O puxão passa pela extensão que a chave procura.",
+          "options": [
+            { "text": "O puxão passa pela extensão que a chave procura", "correct": true },
+            { "text": "Porque cansa o braço de quem defende", "correct": false },
+            { "text": "Porque dá ao oponente a chance de montar", "correct": false },
+            { "text": "Porque solta a pegada na gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Com o braço já esticado na chave, qual é a resposta certa?",
+          "explanation": "Braço esticado é hora do tap, não da fuga (M0.3).",
+          "options": [
+            { "text": "Bater: é hora do tap, não da fuga", "correct": true },
+            { "text": "Tentar a fuga com mais força", "correct": false },
+            { "text": "Esperar a dor aumentar para ter certeza", "correct": false },
+            { "text": "Fazer ponte para inverter a posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Que nós do currículo atacam a mesma relação entre cotovelo e quadril, do outro lado?",
+          "explanation": "M2.5 e M4.6, os armlocks da guarda e da montada.",
+          "options": [
+            { "text": "M2.5 e M4.6, os armlocks da guarda e da montada", "correct": true },
+            { "text": "M1.3 e M1.4, as fugas de baixo", "correct": false },
+            { "text": "M5.3, o mata-leão", "correct": false },
+            { "text": "M6.2, a queda de uma perna", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M1.9",
+      "title": "Defesa do arco e flecha",
+      "belt": "BRANCA",
+      "order": 9,
+      "unlockRule": "ALL",
+      "prereqs": ["M1.6"],
+      "positions": ["COSTAS"],
+      "aliases": ["defesa do bow and arrow"],
+      "concept": "O arco e flecha é um estrangulamento de gola feito das costas, e o problema da defesa é diferente do mata-leão de M1.6: o aperto não vem só do braço no pescoço, vem do corpo inteiro sendo esticado entre a gola e a perna.\n\nA gola funda é a corda e a pegada na calça é o arco: quanto mais quem ataca afasta as duas pontas, mais a gola fecha. Por isso a defesa age nas duas pontas, com as mãos disputando a pegada da gola antes que ela fique funda e o corpo encolhido, sem deixar a perna ser levada para longe, o que tira a distância de que o estrangulamento precisa.\n\nO erro comum é olhar só para o pescoço: com as duas mãos na gola e a perna solta, quem ataca segura a calça, alonga o corpo, e a defesa das mãos deixa de bastar. Como em toda finalização no pescoço, o tap vem cedo (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Para quem defende, em que o arco e flecha difere do mata-leão?",
+          "explanation": "O aperto não vem só do braço no pescoço: vem do corpo inteiro esticado entre a gola e a perna.",
+          "options": [
+            { "text": "O aperto vem do corpo esticado entre a gola e a perna", "correct": true },
+            { "text": "Ele não ataca o pescoço", "correct": false },
+            { "text": "Ele só acontece a partir da guarda fechada", "correct": false },
+            { "text": "Ele dispensa a gola", "correct": false }
+          ]
+        },
+        {
+          "prompt": "No arco e flecha, o que faz o papel da corda e o que faz o papel do arco?",
+          "explanation": "A gola funda é a corda; a pegada na calça é o arco.",
+          "options": [
+            { "text": "A gola funda é a corda; a pegada na calça é o arco", "correct": true },
+            { "text": "A faixa é a corda; o braço é o arco", "correct": false },
+            { "text": "O braço no pescoço é a corda; os ganchos são o arco", "correct": false },
+            { "text": "A manga é a corda; a gola é o arco", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que faz o arco e flecha apertar mais?",
+          "explanation": "Quanto mais quem ataca afasta as duas pontas, gola e perna, mais a gola fecha.",
+          "options": [
+            { "text": "Afastar as duas pontas, a gola e a perna", "correct": true },
+            { "text": "Aproximar o corpo de quem ataca", "correct": false },
+            { "text": "Soltar a pegada na calça", "correct": false },
+            { "text": "Ficar por baixo do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quando as mãos de quem defende devem disputar a pegada da gola?",
+          "explanation": "Antes que ela fique funda.",
+          "options": [
+            { "text": "Antes que ela fique funda", "correct": true },
+            { "text": "Só depois que o aperto começa", "correct": false },
+            { "text": "Depois de soltar a perna", "correct": false },
+            { "text": "Nunca: a defesa é feita só com as pernas", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que manter o corpo encolhido ajuda a defender o arco e flecha?",
+          "explanation": "Sem deixar a perna ser levada para longe, o estrangulamento perde a distância de que precisa.",
+          "options": [
+            { "text": "Tira a distância de que o estrangulamento precisa", "correct": true },
+            { "text": "Facilita a pegada de quem ataca", "correct": false },
+            { "text": "Protege os joelhos", "correct": false },
+            { "text": "Deixa as costas livres para o chão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum na defesa do arco e flecha?",
+          "explanation": "Olhar só para o pescoço e deixar a perna solta.",
+          "options": [
+            { "text": "Olhar só para o pescoço e deixar a perna solta", "correct": true },
+            { "text": "Disputar a pegada da gola cedo", "correct": false },
+            { "text": "Manter o corpo encolhido", "correct": false },
+            { "text": "Bater cedo", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a defesa das mãos deixa de bastar quando a perna é pegada?",
+          "explanation": "Quem ataca alonga o corpo, e a gola fecha mesmo com as mãos nela.",
+          "options": [
+            { "text": "Quem ataca alonga o corpo, e a gola fecha mesmo com as mãos nela", "correct": true },
+            { "text": "Porque as mãos ficam presas na calça", "correct": false },
+            { "text": "Porque o oponente solta a gola", "correct": false },
+            { "text": "Porque a posição vira montada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Quando o tap deve vir no arco e flecha?",
+          "explanation": "Cedo, como em toda finalização no pescoço (M0.3).",
+          "options": [
+            { "text": "Cedo, como em toda finalização no pescoço", "correct": true },
+            { "text": "Só quando a visão começar a escurecer", "correct": false },
+            { "text": "Depois de tentar a fuga mais uma vez", "correct": false },
+            { "text": "Quando quem ataca soltar a perna", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M1.10",
+      "title": "Fuga do norte-sul",
+      "belt": "BRANCA",
+      "order": 10,
+      "unlockRule": "ALL",
+      "prereqs": ["M1.3"],
+      "positions": ["NORTE_SUL"],
+      "aliases": ["saída do norte-sul"],
+      "concept": "No norte-sul o oponente fica com o peito sobre o seu e a cabeça virada para os seus pés, e o problema é que a fuga do 100kg de M1.3 não encaixa: o quadril dele não está ao lado do seu, e o shrimp sozinho não leva a lugar nenhum.\n\nA fuga passa por mudar o ângulo, e não por empurrar o peso para cima: com enquadramentos nos ombros ou nos quadris dele, quem está embaixo gira até ficar de lado, e de lado as pernas voltam a ter por onde entrar, repondo a guarda (M1.5) ou indo para os quatro apoios (M1.7).\n\nO erro comum é deixar um braço longe do corpo enquanto tenta girar: é por ele que quem está por cima entra no estrangulamento de M4.8 ou na kimura de M7.1. Cotovelos perto das costelas vêm antes da fuga, como em toda saída de baixo.",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Por que a fuga do 100kg (M1.3) não encaixa direto no norte-sul?",
+          "explanation": "O quadril do oponente não está ao lado do seu, e o shrimp sozinho não leva a lugar nenhum.",
+          "options": [
+            { "text": "O quadril do oponente não está ao lado do seu", "correct": true },
+            { "text": "Porque o oponente fica de costas", "correct": false },
+            { "text": "Porque no norte-sul não há peso sobre quem está embaixo", "correct": false },
+            { "text": "Porque o norte-sul só acontece em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Como fica o corpo de quem está por cima no norte-sul?",
+          "explanation": "Peito sobre o seu, com a cabeça virada para os seus pés.",
+          "options": [
+            { "text": "Peito sobre o seu, com a cabeça virada para os seus pés", "correct": true },
+            { "text": "Sentado sobre o seu quadril", "correct": false },
+            { "text": "Ao lado, com o joelho na barriga", "correct": false },
+            { "text": "Atrás de você, com os ganchos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "A fuga do norte-sul passa principalmente por quê?",
+          "explanation": "Por mudar o ângulo até ficar de lado, e não por empurrar o peso para cima.",
+          "options": [
+            { "text": "Mudar o ângulo até ficar de lado", "correct": true },
+            { "text": "Empurrar o peso do oponente para cima", "correct": false },
+            { "text": "Fazer ponte reta", "correct": false },
+            { "text": "Esperar o oponente mudar de posição", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde ficam os enquadramentos na fuga do norte-sul?",
+          "explanation": "Nos ombros ou nos quadris do oponente.",
+          "options": [
+            { "text": "Nos ombros ou nos quadris do oponente", "correct": true },
+            { "text": "Na própria faixa", "correct": false },
+            { "text": "No tatame, atrás da cabeça", "correct": false },
+            { "text": "Nos pés do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Depois de ficar de lado, para onde a fuga pode levar?",
+          "explanation": "Para a reposição de guarda (M1.5) ou para os quatro apoios (M1.7).",
+          "options": [
+            { "text": "Para a reposição de guarda ou para os quatro apoios", "correct": true },
+            { "text": "Direto para a montada por cima", "correct": false },
+            { "text": "Sempre para as costas do oponente", "correct": false },
+            { "text": "Para a luta em pé, sem passar pelo chão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum na fuga do norte-sul?",
+          "explanation": "Deixar um braço longe do corpo enquanto tenta girar.",
+          "options": [
+            { "text": "Deixar um braço longe do corpo enquanto gira", "correct": true },
+            { "text": "Manter os cotovelos perto das costelas", "correct": false },
+            { "text": "Usar enquadramentos", "correct": false },
+            { "text": "Girar para ficar de lado", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o braço solto entrega a quem está por cima no norte-sul?",
+          "explanation": "O estrangulamento de M4.8 ou a kimura de M7.1.",
+          "options": [
+            { "text": "O estrangulamento do norte-sul ou a kimura", "correct": true },
+            { "text": "A guarda fechada", "correct": false },
+            { "text": "Uma raspagem", "correct": false },
+            { "text": "Nada: no norte-sul só o pescoço importa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que vem antes da fuga, como em toda saída de baixo?",
+          "explanation": "Cotovelos perto das costelas.",
+          "options": [
+            { "text": "Cotovelos perto das costelas", "correct": true },
+            { "text": "Uma ponte explosiva", "correct": false },
+            { "text": "Uma pegada na faixa do oponente", "correct": false },
+            { "text": "Braços esticados para empurrar", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }

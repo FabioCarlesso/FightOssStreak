@@ -485,6 +485,194 @@
           ]
         }
       ]
+    },
+    {
+      "code": "M5.6",
+      "title": "Arco e flecha",
+      "belt": "BRANCA",
+      "order": 6,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.2"],
+      "positions": ["COSTAS"],
+      "aliases": ["bow and arrow"],
+      "concept": "O arco e flecha resolve o problema de finalizar das costas quem defende bem o mata-leão de M5.3: em vez de disputar o espaço sob o queixo, usa a gola do oponente e o corpo inteiro dele como alavanca.\n\nUma mão funda na gola faz a corda e a outra, na calça, faz o arco. Quem ataca sai de trás para o lado, e é a distância entre as duas pegadas, com o corpo do oponente esticado entre elas, que fecha a gola, e não a força do braço que puxa. É por isso que a defesa, em M1.9, começa pelo corpo encolhido.\n\nO erro comum é pegar a gola rasa e tentar compensar puxando mais forte: o arco estica o corpo do oponente, mas a gola não fecha no pescoço, e o braço cansa antes de o estrangulamento entrar. O tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o arco e flecha resolve?",
+          "explanation": "Finalizar das costas quem defende bem o mata-leão de M5.3.",
+          "options": [
+            { "text": "Finalizar das costas quem defende bem o mata-leão", "correct": true },
+            { "text": "Escapar das costas", "correct": false },
+            { "text": "Passar a guarda aberta", "correct": false },
+            { "text": "Manter os ganchos contra a defesa", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que o arco e flecha usa como alavanca?",
+          "explanation": "A gola do oponente e o corpo inteiro dele.",
+          "options": [
+            { "text": "A gola e o corpo inteiro do oponente", "correct": true },
+            { "text": "Só o braço sob o queixo", "correct": false },
+            { "text": "Os ganchos nas coxas", "correct": false },
+            { "text": "O peso sobre o peito", "correct": false }
+          ]
+        },
+        {
+          "prompt": "No arco e flecha, que pegada faz a corda e qual faz o arco?",
+          "explanation": "A gola funda é a corda; a pegada na calça é o arco.",
+          "options": [
+            { "text": "A gola funda é a corda; a calça é o arco", "correct": true },
+            { "text": "A calça é a corda; a gola é o arco", "correct": false },
+            { "text": "A faixa é a corda; a manga é o arco", "correct": false },
+            { "text": "O queixo é a corda; o ombro é o arco", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Para onde quem ataca se desloca no arco e flecha?",
+          "explanation": "De trás para o lado.",
+          "options": [
+            { "text": "De trás para o lado", "correct": true },
+            { "text": "Para a montada", "correct": false },
+            { "text": "Para a frente do oponente", "correct": false },
+            { "text": "Para cima, ficando em pé", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que fecha a gola no arco e flecha?",
+          "explanation": "A distância entre as duas pegadas, com o corpo do oponente esticado entre elas.",
+          "options": [
+            { "text": "A distância entre as pegadas, com o corpo do oponente esticado", "correct": true },
+            { "text": "A força do braço que puxa", "correct": false },
+            { "text": "O peso do quadril", "correct": false },
+            { "text": "O aperto das pernas no pescoço", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que a defesa do arco e flecha (M1.9) começa pelo corpo encolhido?",
+          "explanation": "Encolher tira a distância entre as pegadas de que o estrangulamento precisa.",
+          "options": [
+            { "text": "Tira a distância entre as pegadas de que o estrangulamento precisa", "correct": true },
+            { "text": "Protege os joelhos", "correct": false },
+            { "text": "Facilita rolar para a montada", "correct": false },
+            { "text": "Deixa a gola mais funda", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum no arco e flecha?",
+          "explanation": "Pegar a gola rasa e tentar compensar puxando mais forte.",
+          "options": [
+            { "text": "Pegar a gola rasa e compensar puxando mais forte", "correct": true },
+            { "text": "Pegar a gola funda", "correct": false },
+            { "text": "Sair de trás para o lado", "correct": false },
+            { "text": "Usar a calça como alavanca", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando a gola está rasa?",
+          "explanation": "O corpo do oponente estica, mas a gola não fecha no pescoço, e o braço cansa.",
+          "options": [
+            { "text": "O corpo estica, mas a gola não fecha no pescoço", "correct": true },
+            { "text": "O estrangulamento entra mais rápido", "correct": false },
+            { "text": "O oponente fica preso sem defesa", "correct": false },
+            { "text": "A posição vira montada", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "M5.7",
+      "title": "Relógio: estrangulamento nos quatro apoios",
+      "belt": "BRANCA",
+      "order": 7,
+      "unlockRule": "ALL",
+      "prereqs": ["M5.5"],
+      "positions": ["QUATRO_APOIOS"],
+      "aliases": ["clock choke"],
+      "concept": "O relógio resolve o problema de finalizar quem fecha bem os quatro apoios e não deixa entrar os ganchos de M5.5: em vez de insistir nas costas, ataca o pescoço dali mesmo, com a gola do oponente.\n\nCom uma mão funda na gola e o peso do peito sobre as costas dele, quem ataca caminha com as pernas em volta da cabeça do oponente, como o ponteiro que dá nome à técnica. Cada passo gira o corpo em torno da gola presa e fecha o pescoço, e o peso nas costas impede que o oponente levante o tronco ou role para aliviar.\n\nO erro comum é atacar a gola ajoelhado ao lado, com o corpo alto: sem o peso nas costas, o oponente levanta ou rola, e o estrangulamento vira guarda para ele. O tap vem cedo, e quem aplica solta na hora (M0.3).",
+      "video": null,
+      "quiz": [
+        {
+          "prompt": "Que problema o relógio resolve?",
+          "explanation": "Finalizar quem fecha bem os quatro apoios e não deixa entrar os ganchos de M5.5.",
+          "options": [
+            { "text": "Finalizar quem fecha bem os quatro apoios e não deixa entrar os ganchos", "correct": true },
+            { "text": "Escapar dos quatro apoios", "correct": false },
+            { "text": "Passar a guarda aranha", "correct": false },
+            { "text": "Manter a montada", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Com que o relógio estrangula?",
+          "explanation": "Com a gola do oponente.",
+          "options": [
+            { "text": "Com a gola do oponente", "correct": true },
+            { "text": "Com o braço sob o queixo, sem usar o gi", "correct": false },
+            { "text": "Com as pernas em triângulo", "correct": false },
+            { "text": "Com o ombro do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Onde fica o peso de quem ataca no relógio?",
+          "explanation": "No peito, apoiado sobre as costas do oponente.",
+          "options": [
+            { "text": "No peito, sobre as costas do oponente", "correct": true },
+            { "text": "Nos joelhos, ao lado dele", "correct": false },
+            { "text": "No tatame, nas mãos", "correct": false },
+            { "text": "Sobre as pernas do oponente", "correct": false }
+          ]
+        },
+        {
+          "prompt": "De onde vem o nome relógio?",
+          "explanation": "Das pernas de quem ataca caminhando em volta da cabeça do oponente, como um ponteiro.",
+          "options": [
+            { "text": "Das pernas de quem ataca caminhando em volta da cabeça, como um ponteiro", "correct": true },
+            { "text": "Do tempo que leva para finalizar", "correct": false },
+            { "text": "Da contagem do árbitro", "correct": false },
+            { "text": "Do giro do oponente no chão", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que cada passo em volta da cabeça faz no relógio?",
+          "explanation": "Gira o corpo em torno da gola presa e fecha o pescoço.",
+          "options": [
+            { "text": "Gira o corpo em torno da gola presa e fecha o pescoço", "correct": true },
+            { "text": "Solta a gola para uma nova pegada", "correct": false },
+            { "text": "Afasta quem ataca do oponente", "correct": false },
+            { "text": "Abre espaço para os ganchos", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Por que o peso nas costas é essencial no relógio?",
+          "explanation": "Impede o oponente de levantar o tronco ou rolar para aliviar.",
+          "options": [
+            { "text": "Impede o oponente de levantar o tronco ou rolar", "correct": true },
+            { "text": "Protege os joelhos de quem ataca", "correct": false },
+            { "text": "Deixa a gola mais rasa", "correct": false },
+            { "text": "Não é essencial: os braços resolvem", "correct": false }
+          ]
+        },
+        {
+          "prompt": "Qual o erro comum no relógio?",
+          "explanation": "Atacar a gola ajoelhado ao lado, com o corpo alto.",
+          "options": [
+            { "text": "Atacar a gola ajoelhado ao lado, com o corpo alto", "correct": true },
+            { "text": "Apoiar o peso nas costas do oponente", "correct": false },
+            { "text": "Pegar fundo na gola", "correct": false },
+            { "text": "Caminhar em volta da cabeça", "correct": false }
+          ]
+        },
+        {
+          "prompt": "O que acontece quando o oponente consegue rolar no relógio?",
+          "explanation": "O estrangulamento vira guarda para ele.",
+          "options": [
+            { "text": "O estrangulamento vira guarda para ele", "correct": true },
+            { "text": "A finalização fica mais justa", "correct": false },
+            { "text": "Quem ataca pega a montada", "correct": false },
+            { "text": "Nada muda na posição", "correct": false }
+          ]
+        }
+      ]
     }
   ]
 }
