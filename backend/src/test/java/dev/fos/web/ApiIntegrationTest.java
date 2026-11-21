@@ -154,12 +154,12 @@ class ApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("a árvore sobe com os 56 nós do currículo versionado")
+    @DisplayName("a árvore sobe com os 65 nós do currículo versionado")
     void treeIsServed() throws Exception {
         mockMvc.perform(get("/api/curriculum/tree"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.modules.length()").value(9))
-                .andExpect(jsonPath("$.summary.totalNodes").value(56))
+                .andExpect(jsonPath("$.summary.totalNodes").value(65))
                 .andExpect(jsonPath("$.modules[0].code").value("M0"));
     }
 
