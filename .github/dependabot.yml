@@ -1,6 +1,6 @@
 # Atualização de dependência em projeto solo apodrece em silêncio: nada avisa que uma versão
 # ficou para trás até o dia em que atualizar vira obrigatório e vem com três breaking changes de
-# uma vez. São três ecossistemas versionados aqui, e nenhum tinha aviso.
+# uma vez. São quatro ecossistemas versionados aqui, e nenhum tinha aviso.
 #
 # Sem automerge de propósito. Com `required_approving_review_count: 0` seria tecnicamente
 # possível, mas mergear sem ninguém ler o changelog é justamente o que a D18 evita — o PR do bot
@@ -51,6 +51,24 @@ updates:
       patch-e-minor:
         applies-to: version-updates
         update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
+
+  # A imagem base do backend (D79, #206). O runtime fixa a versão exata da JRE, e é este bloco que
+  # a atualiza: sem ele, a tag fixa deixaria a próxima correção de segurança para trás em silêncio.
+  # Major fica de fora porque trocar de Java (21 -> 25) é decisão própria, não atualização de rotina.
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     commit-message:
       prefix: chore
       include: scope
