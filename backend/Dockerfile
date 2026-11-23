@@ -51,7 +51,12 @@ RUN set -eux; \
     fi; \
     ls -l /build/geoip.csv.gz
 
-FROM eclipse-temurin:21-jre-alpine AS runtime
+# Tag fixa na versão exata da JRE (D79, #206). A flutuante `21-jre-alpine` deixava a correção de
+# segurança depender de o Docker Hub atualizá-la e de a Railway não reaproveitar a camada em
+# cache; fixa, a versão que roda em produção é a que está escrita aqui, e a próxima correção
+# trimestral chega como PR do Dependabot (ecossistema `docker`), que troca esta linha.
+# Só o runtime é fixado: o estágio de build compila e não fica exposto à rede.
+FROM eclipse-temurin:21.0.13.1_2-jre-alpine AS runtime
 
 # O streak usa LocalDate.now() no servidor: container em UTC faria um drill às 22h de
 # Brasília contar como do dia seguinte. tzdata vem explícito para o fuso não depender de
