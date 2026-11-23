@@ -10,7 +10,7 @@
 # A mesma imagem roda no Compose local e na Railway. Nada de host, porta ou credencial fixo
 # aqui — tudo o que varia entre os dois entra por variável de ambiente (ver README).
 
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-26 AS build
 WORKDIR /build
 
 # O pom vem antes de src/: assim mudar código não invalida a camada de dependências, que é
